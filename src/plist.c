@@ -21,143 +21,136 @@
 #include <stdlib.h>
 
 P_API PList *
-p_list_append (PList *list, ppointer data)
-{
-	PList *item, *cur;
+p_list_append(PList *list, ppointer data) {
+  PList *item, *cur;
 
-	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
-		P_ERROR ("PList::p_list_append: failed to allocate memory");
-		return list;
-	}
+  if (P_UNLIKELY ((item = p_malloc0(sizeof(PList))) == NULL)) {
+    P_ERROR ("PList::p_list_append: failed to allocate memory");
+    return list;
+  }
 
-	item->data = data;
+  item->data = data;
 
-	/* List is empty */
-	if (P_UNLIKELY (list == NULL))
-		return item;
+  /* List is empty */
+  if (P_UNLIKELY (list == NULL))
+    return item;
 
-	for (cur = list; cur->next != NULL; cur = cur->next);
-	cur->next = item;
+  for (cur = list; cur->next != NULL; cur = cur->next);
+  cur->next = item;
 
-	return list;
+  return list;
 }
 
 P_API PList *
-p_list_remove (PList *list, ppointer data)
-{
-	PList *cur, *prev, *head;
+p_list_remove(PList *list, ppointer data) {
+  PList *cur, *prev, *head;
 
-	if (P_UNLIKELY (list == NULL))
-		return NULL;
+  if (P_UNLIKELY (list == NULL))
+    return NULL;
 
-	for (head = list, prev = NULL, cur = list; cur != NULL;  prev = cur, cur = cur->next) {
-		if (cur->data == data) {
-			if (prev == NULL)
-				head = cur->next;
-			else
-				prev->next = cur->next;
+  for (head = list, prev = NULL, cur = list; cur != NULL;
+    prev = cur, cur = cur->next) {
+    if (cur->data == data) {
+      if (prev == NULL)
+        head = cur->next;
+      else
+        prev->next = cur->next;
 
-			p_free (cur);
+      p_free(cur);
 
-			break;
-		}
-	}
+      break;
+    }
+  }
 
-	return head;
+  return head;
 }
 
 P_API void
-p_list_foreach (PList *list, PFunc func, ppointer user_data)
-{
-	PList *cur;
+p_list_foreach(PList *list, PFunc func, ppointer user_data) {
+  PList *cur;
 
-	if (P_UNLIKELY (list == NULL || func == NULL))
-		return;
+  if (P_UNLIKELY (list == NULL || func == NULL))
+    return;
 
-	for (cur = list; cur != NULL; cur = cur->next)
-		func (cur->data, user_data);
+  for (cur = list; cur != NULL; cur = cur->next)
+    func(cur->data, user_data);
 }
 
 P_API void
-p_list_free (PList *list)
-{
-	PList *cur, *next;
+p_list_free(PList *list) {
+  PList *cur, *next;
 
-	if (P_UNLIKELY (list == NULL))
-		return;
+  if (P_UNLIKELY (list == NULL))
+    return;
 
-	for (next = cur = list; cur != NULL && next != NULL; cur = next)  {
-		next = cur->next;
-		p_free (cur);
-	}
+  for (next = cur = list; cur != NULL && next != NULL; cur = next) {
+    next = cur->next;
+    p_free(cur);
+  }
 }
 
 P_API PList *
-p_list_last (PList *list)
-{
-	PList *cur;
+p_list_last(PList *list) {
+  PList *cur;
 
-	if (P_UNLIKELY (list == NULL))
-		return NULL;
+  if (P_UNLIKELY (list == NULL))
+    return NULL;
 
-	for (cur = list; cur->next != NULL; cur = cur->next);
+  for (cur = list; cur->next != NULL; cur = cur->next);
 
-	return cur;
+  return cur;
 }
 
 P_API psize
-p_list_length (const PList *list)
-{
-	const PList	*cur;
-	psize		ret;
+p_list_length(const PList *list) {
+  const PList *cur;
+  psize ret;
 
-	if (P_UNLIKELY (list == NULL))
-		return 0;
+  if (P_UNLIKELY (list == NULL))
+    return 0;
 
-	for (cur = list, ret = 1; cur->next != NULL; cur = cur->next, ++ret);
+  for (cur = list, ret = 1; cur->next != NULL; cur = cur->next, ++ret);
 
-	return ret;
+  return ret;
 }
 
 P_API PList *
-p_list_prepend	(PList *list, ppointer data)
-{
-	PList *item;
+p_list_prepend(PList *list, ppointer data) {
+  PList *item;
 
-	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
-		P_ERROR ("PList::p_list_prepend: failed to allocate memory");
-		return list;
-	}
+  if (P_UNLIKELY ((item = p_malloc0(sizeof(PList))) == NULL)) {
+    P_ERROR ("PList::p_list_prepend: failed to allocate memory");
+    return list;
+  }
 
-	item->data = data;
+  item->data = data;
 
-	/* List is empty */
-	if (P_UNLIKELY (list == NULL))
-		return item;
+  /* List is empty */
+  if (P_UNLIKELY (list == NULL))
+    return item;
 
-	item->next = list;
+  item->next = list;
 
-	return item;
+  return item;
 }
 
 P_API PList *
-p_list_reverse	(PList *list)
-{
-	PList *prev, *cur, *tmp;
+p_list_reverse(PList *list) {
+  PList *prev, *cur, *tmp;
 
-	if (P_UNLIKELY (list == NULL))
-		return NULL;
+  if (P_UNLIKELY (list == NULL))
+    return NULL;
 
-	prev	   = list;
-	cur	   = list->next;
-	prev->next = NULL;
+  prev = list;
+  cur = list->next;
+  prev->next = NULL;
 
-	while (cur != NULL) {
-		tmp	  = cur->next;
-		cur->next = prev;
-		prev	  = cur;
-		cur	  = tmp;
-	}
+  while (cur != NULL) {
+    tmp = cur->next;
+    cur->next = prev;
+    prev = cur;
+    cur = tmp;
+  }
 
-	return prev;
+  return prev;
 }

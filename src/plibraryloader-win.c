@@ -21,102 +21,97 @@
 #include "pmem.h"
 #include "pstring.h"
 
-typedef HINSTANCE	plibrary_handle;
+typedef HINSTANCE plibrary_handle;
 
 struct PLibraryLoader_ {
-	plibrary_handle	handle;
+  plibrary_handle handle;
 };
 
-static void pp_library_loader_clean_handle (plibrary_handle handle);
+static void pp_library_loader_clean_handle(plibrary_handle handle);
 
 static void
-pp_library_loader_clean_handle (plibrary_handle handle)
-{
-	if (P_UNLIKELY (!FreeLibrary (handle)))
-		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: FreeLibrary() failed");
+pp_library_loader_clean_handle(plibrary_handle handle) {
+  if (P_UNLIKELY (!FreeLibrary(handle)))
+    P_ERROR (
+      "PLibraryLoader::pp_library_loader_clean_handle: FreeLibrary() failed");
 }
 
 P_API PLibraryLoader *
-p_library_loader_new (const pchar *path)
-{
-	PLibraryLoader	*loader = NULL;
-	plibrary_handle	handle;
+p_library_loader_new(const pchar *path) {
+  PLibraryLoader *loader = NULL;
+  plibrary_handle handle;
 
-	if (!p_file_is_exists (path))
-		return NULL;
+  if (!p_file_is_exists(path))
+    return NULL;
 
-	if (P_UNLIKELY ((handle = LoadLibraryA (path)) == NULL)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: LoadLibraryA() failed");
-		return NULL;
-	}
+  if (P_UNLIKELY ((handle = LoadLibraryA(path)) == NULL)) {
+    P_ERROR ("PLibraryLoader::p_library_loader_new: LoadLibraryA() failed");
+    return NULL;
+  }
 
-	if (P_UNLIKELY ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
-		pp_library_loader_clean_handle (handle);
-		return NULL;
-	}
+  if (P_UNLIKELY ((loader = p_malloc0(sizeof(PLibraryLoader))) == NULL)) {
+    P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
+    pp_library_loader_clean_handle(handle);
+    return NULL;
+  }
 
-	loader->handle = handle;
+  loader->handle = handle;
 
-	return loader;
+  return loader;
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
-{
-	PFuncAddr ret_sym = NULL;
+p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+  PFuncAddr ret_sym = NULL;
 
-	if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
-		return NULL;
+  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
+    return NULL;
 
-	ret_sym = (PFuncAddr) GetProcAddress (loader->handle, sym);
+  ret_sym = (PFuncAddr) GetProcAddress(loader->handle, sym);
 
-	return ret_sym;
+  return ret_sym;
 }
 
 P_API void
-p_library_loader_free (PLibraryLoader *loader)
-{
-	if (P_UNLIKELY (loader == NULL))
-		return;
+p_library_loader_free(PLibraryLoader *loader) {
+  if (P_UNLIKELY (loader == NULL))
+    return;
 
-	pp_library_loader_clean_handle (loader->handle);
+  pp_library_loader_clean_handle(loader->handle);
 
-	p_free (loader);
+  p_free(loader);
 }
 
 P_API pchar *
-p_library_loader_get_last_error (PLibraryLoader *loader)
-{
-	pchar	*res = NULL;
-	DWORD	err_code;
-	LPVOID	msg_buf;
+p_library_loader_get_last_error(PLibraryLoader *loader) {
+  pchar *res = NULL;
+  DWORD err_code;
+  LPVOID msg_buf;
 
-	P_UNUSED (loader);
+  P_UNUSED (loader);
 
-	err_code = p_error_get_last_system ();
+  err_code = p_error_get_last_system();
 
-	if (err_code == 0)
-		return NULL;
+  if (err_code == 0)
+    return NULL;
 
-	if (P_LIKELY (FormatMessageA (FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				      FORMAT_MESSAGE_FROM_SYSTEM |
-				      FORMAT_MESSAGE_IGNORE_INSERTS,
-				      NULL,
-				      err_code,
-				      MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
-				      (LPSTR) &msg_buf,
-				      0,
-				      NULL) != 0)) {
-		res = p_strdup ((pchar *) msg_buf);
-		LocalFree (msg_buf);
-	}
+  if (P_LIKELY (FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+      FORMAT_MESSAGE_FROM_SYSTEM |
+      FORMAT_MESSAGE_IGNORE_INSERTS,
+    NULL,
+    err_code,
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+    (LPSTR) & msg_buf,
+    0,
+    NULL) != 0)) {
+    res = p_strdup((pchar *) msg_buf);
+    LocalFree(msg_buf);
+  }
 
-	return res;
+  return res;
 }
 
 P_API pboolean
-p_library_loader_is_ref_counted (void)
-{
-	return TRUE;
+p_library_loader_is_ref_counted(void) {
+  return TRUE;
 }

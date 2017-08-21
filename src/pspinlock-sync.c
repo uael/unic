@@ -19,56 +19,52 @@
 #include "pspinlock.h"
 
 struct PSpinLock_ {
-	volatile pint spin;
+  volatile pint spin;
 };
 
 P_API PSpinLock *
-p_spinlock_new (void)
-{
-	PSpinLock *ret;
+p_spinlock_new(void) {
+  PSpinLock *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
-		P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSpinLock))) == NULL)) {
+    P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_spinlock_lock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_lock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	while ((pboolean) __sync_bool_compare_and_swap (&(spinlock->spin), 0, 1) == FALSE);
+  while ((pboolean) __sync_bool_compare_and_swap(&(spinlock->spin), 0, 1)
+    == FALSE);
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API pboolean
-p_spinlock_trylock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_trylock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	return (pboolean) __sync_bool_compare_and_swap (&(spinlock->spin), 0, 1);
+  return (pboolean) __sync_bool_compare_and_swap(&(spinlock->spin), 0, 1);
 }
 
 P_API pboolean
-p_spinlock_unlock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_unlock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	spinlock->spin = 0;
-	__sync_synchronize ();
+  spinlock->spin = 0;
+  __sync_synchronize();
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API void
-p_spinlock_free (PSpinLock *spinlock)
-{
-	p_free (spinlock);
+p_spinlock_free(PSpinLock *spinlock) {
+  p_free(spinlock);
 }

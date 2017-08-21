@@ -69,10 +69,10 @@
 
 /** Memory management table. */
 typedef struct PMemVTable_ {
-	ppointer	(*malloc)	(psize		n_bytes);	/**< malloc() implementation.	*/
-	ppointer	(*realloc)	(ppointer	mem,
-					 psize		n_bytes);	/**< realloc() implementation.	*/
-	void		(*free)		(ppointer	mem);		/**< free() implementation.	*/
+  ppointer (*malloc)(psize n_bytes);  /**< malloc() implementation.	*/
+  ppointer (*realloc)(ppointer mem,
+    psize n_bytes);  /**< realloc() implementation.	*/
+  void (*free)(ppointer mem);    /**< free() implementation.	*/
 } PMemVTable;
 
 /**
@@ -82,7 +82,7 @@ typedef struct PMemVTable_ {
  * otherwise.
  * @since 0.0.1
  */
-P_API ppointer	p_malloc		(psize			n_bytes);
+P_API ppointer p_malloc(psize n_bytes);
 
 /**
  * @brief Allocates a memory block for the specified number of bytes and fills
@@ -92,7 +92,7 @@ P_API ppointer	p_malloc		(psize			n_bytes);
  * of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ppointer	p_malloc0		(psize			n_bytes);
+P_API ppointer p_malloc0(psize n_bytes);
 
 /**
  * @brief Changes the memory block size.
@@ -102,8 +102,8 @@ P_API ppointer	p_malloc0		(psize			n_bytes);
  * @a mem is NULL then it acts like p_malloc()), NULL otherwise.
  * @since 0.0.1
  */
-P_API ppointer	p_realloc		(ppointer		mem,
-						 psize			n_bytes);
+P_API ppointer p_realloc(ppointer mem,
+  psize n_bytes);
 
 /**
  * @brief Frees a memory block by its pointer.
@@ -116,7 +116,7 @@ P_API ppointer	p_realloc		(ppointer		mem,
  *
  * Checks the pointer for the NULL value.
  */
-P_API void		p_free			(ppointer		mem);
+P_API void p_free(ppointer mem);
 
 /**
  * @brief Sets custom memory management routines.
@@ -132,7 +132,7 @@ P_API void		p_free			(ppointer		mem);
  * In most cases you do not need to use this function. Use it only when you know
  * what are you doing!
  */
-P_API pboolean	p_mem_set_vtable	(const PMemVTable	*table);
+P_API pboolean p_mem_set_vtable(const PMemVTable *table);
 
 /**
  * @brief Restores system memory management routines.
@@ -141,7 +141,7 @@ P_API pboolean	p_mem_set_vtable	(const PMemVTable	*table);
  *
  * The following system routines are restored: malloc(), free(), realloc().
  */
-P_API void		p_mem_restore_vtable	(void);
+P_API void p_mem_restore_vtable(void);
 
 /**
  * @brief Gets a memory mapped block from the system.
@@ -160,8 +160,8 @@ P_API void		p_mem_restore_vtable	(void);
  * @warning On OS/2 returned memory is mapped to physical storage and can be
  * swapped.
  */
-P_API ppointer	p_mem_mmap		(psize			n_bytes,
-						 PError			**error);
+P_API ppointer p_mem_mmap(psize n_bytes,
+  PError **error);
 
 /**
  * @brief Unmaps memory back to the system.
@@ -172,8 +172,8 @@ P_API ppointer	p_mem_mmap		(psize			n_bytes,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean	p_mem_munmap		(ppointer		mem,
-						 psize			n_bytes,
-						 PError			**error);
+P_API pboolean p_mem_munmap(ppointer mem,
+  psize n_bytes,
+  PError **error);
 
 #endif /* PLIBSYS_HEADER_PMEM_H */

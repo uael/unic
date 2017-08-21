@@ -19,95 +19,90 @@
 #include "pcondvariable.h"
 
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <pthread.h>
 
 struct PCondVariable_ {
-	pthread_cond_t hdl;
+  pthread_cond_t hdl;
 };
 
 P_API PCondVariable *
-p_cond_variable_new (void)
-{
-	PCondVariable *ret;
+p_cond_variable_new(void) {
+  PCondVariable *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCondVariable))) == NULL)) {
-		P_ERROR ("PCondVariable::p_cond_variable_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PCondVariable))) == NULL)) {
+    P_ERROR ("PCondVariable::p_cond_variable_new: failed to allocate memory");
+    return NULL;
+  }
 
-	if (P_UNLIKELY (pthread_cond_init (&ret->hdl, NULL) != 0)) {
-		P_ERROR ("PCondVariable::p_cond_variable_new: failed to initialize");
-		p_free (ret);
-		return NULL;
-	}
+  if (P_UNLIKELY (pthread_cond_init(&ret->hdl, NULL) != 0)) {
+    P_ERROR ("PCondVariable::p_cond_variable_new: failed to initialize");
+    p_free(ret);
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API void
-p_cond_variable_free (PCondVariable *cond)
-{
-	if (P_UNLIKELY (cond == NULL))
-		return;
+p_cond_variable_free(PCondVariable *cond) {
+  if (P_UNLIKELY (cond == NULL))
+    return;
 
-	if (P_UNLIKELY (pthread_cond_destroy (&cond->hdl) != 0))
-		P_WARNING ("PCondVariable::p_cond_variable_free: pthread_cond_destroy() failed");
+  if (P_UNLIKELY (pthread_cond_destroy(&cond->hdl) != 0))
+    P_WARNING (
+      "PCondVariable::p_cond_variable_free: pthread_cond_destroy() failed");
 
-	p_free (cond);
+  p_free(cond);
 }
 
 P_API pboolean
-p_cond_variable_wait (PCondVariable	*cond,
-		      PMutex		*mutex)
-{
-	if (P_UNLIKELY (cond == NULL || mutex == NULL))
-		return FALSE;
+p_cond_variable_wait(PCondVariable *cond,
+  PMutex *mutex) {
+  if (P_UNLIKELY (cond == NULL || mutex == NULL))
+    return FALSE;
 
-	/* Cast is eligible since there is only one field in the PMutex structure */
-	if (P_UNLIKELY (pthread_cond_wait (&cond->hdl, (pthread_mutex_t *) mutex) != 0)) {
-		P_ERROR ("PCondVariable::p_cond_variable_wait: pthread_cond_wait() failed");
-		return FALSE;
-	}
+  /* Cast is eligible since there is only one field in the PMutex structure */
+  if (P_UNLIKELY (
+    pthread_cond_wait(&cond->hdl, (pthread_mutex_t *) mutex) != 0)) {
+    P_ERROR ("PCondVariable::p_cond_variable_wait: pthread_cond_wait() failed");
+    return FALSE;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API pboolean
-p_cond_variable_signal (PCondVariable *cond)
-{
-	if (P_UNLIKELY (cond == NULL))
-		return FALSE;
+p_cond_variable_signal(PCondVariable *cond) {
+  if (P_UNLIKELY (cond == NULL))
+    return FALSE;
 
-	if (P_UNLIKELY (pthread_cond_signal (&cond->hdl) != 0)) {
-		P_ERROR ("PCondVariable::p_cond_variable_signal: pthread_cond_signal() failed");
-		return FALSE;
-	}
+  if (P_UNLIKELY (pthread_cond_signal(&cond->hdl) != 0)) {
+    P_ERROR (
+      "PCondVariable::p_cond_variable_signal: pthread_cond_signal() failed");
+    return FALSE;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API pboolean
-p_cond_variable_broadcast (PCondVariable *cond)
-{
-	if (P_UNLIKELY (cond == NULL))
-		return FALSE;
+p_cond_variable_broadcast(PCondVariable *cond) {
+  if (P_UNLIKELY (cond == NULL))
+    return FALSE;
 
-	if (P_UNLIKELY (pthread_cond_broadcast (&cond->hdl) != 0)) {
-		P_ERROR ("PCondVariable::p_cond_variable_broadcast: thread_cond_broadcast() failed");
-		return FALSE;
-	}
+  if (P_UNLIKELY (pthread_cond_broadcast(&cond->hdl) != 0)) {
+    P_ERROR (
+      "PCondVariable::p_cond_variable_broadcast: thread_cond_broadcast() failed");
+    return FALSE;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 void
-p_cond_variable_init (void)
-{
+p_cond_variable_init(void) {
 }
 
 void
-p_cond_variable_shutdown (void)
-{
+p_cond_variable_shutdown(void) {
 }

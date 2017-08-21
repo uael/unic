@@ -20,53 +20,46 @@
 #include <stdlib.h>
 
 struct PCondVariable_ {
-	pint hdl;
+  pint hdl;
 };
 
 P_API PCondVariable *
-p_cond_variable_new (void)
-{
-	return NULL;
+p_cond_variable_new(void) {
+  return NULL;
 }
 
 P_API void
-p_cond_variable_free (PCondVariable *cond)
-{
-	P_UNUSED (cond);
+p_cond_variable_free(PCondVariable *cond) {
+  P_UNUSED (cond);
 }
 
 P_API pboolean
-p_cond_variable_wait (PCondVariable	*cond,
-		      PMutex		*mutex)
-{
-	P_UNUSED (cond);
-	P_UNUSED (mutex);
+p_cond_variable_wait(PCondVariable *cond,
+  PMutex *mutex) {
+  P_UNUSED (cond);
+  P_UNUSED (mutex);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_cond_variable_signal (PCondVariable *cond)
-{
-	P_UNUSED (cond);
+p_cond_variable_signal(PCondVariable *cond) {
+  P_UNUSED (cond);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_cond_variable_broadcast (PCondVariable *cond)
-{
-	P_UNUSED (cond);
+p_cond_variable_broadcast(PCondVariable *cond) {
+  P_UNUSED (cond);
 
-	return FALSE;
+  return FALSE;
 }
 
 void
-p_cond_variable_init (void)
-{
+p_cond_variable_init(void) {
 }
 
 void
-p_cond_variable_shutdown (void)
-{
+p_cond_variable_shutdown(void) {
 }

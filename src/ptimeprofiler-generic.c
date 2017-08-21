@@ -21,30 +21,27 @@
 #include <time.h>
 
 puint64
-p_time_profiler_get_ticks_internal ()
-{
-	pint64 val;
+p_time_profiler_get_ticks_internal() {
+  pint64 val;
 
-	if (P_UNLIKELY ((val = (pint64) time (NULL)) == -1)) {
-		P_ERROR ("PTimeProfiler::p_time_profiler_get_ticks_internal: time() failed");
-		return 0;
-	}
+  if (P_UNLIKELY ((val = (pint64) time(NULL)) == -1)) {
+    P_ERROR (
+      "PTimeProfiler::p_time_profiler_get_ticks_internal: time() failed");
+    return 0;
+  }
 
-	return (puint64) (val * 1000000);
+  return (puint64) (val * 1000000);
 }
 
 puint64
-p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
-{
-	return p_time_profiler_get_ticks_internal () - profiler->counter;
+p_time_profiler_elapsed_usecs_internal(const PTimeProfiler *profiler) {
+  return p_time_profiler_get_ticks_internal() - profiler->counter;
 }
 
 void
-p_time_profiler_init (void)
-{
+p_time_profiler_init(void) {
 }
 
 void
-p_time_profiler_shutdown (void)
-{
+p_time_profiler_shutdown(void) {
 }

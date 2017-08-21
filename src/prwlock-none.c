@@ -20,76 +20,66 @@
 #include <stdlib.h>
 
 struct PRWLock_ {
-	pint hdl;
+  pint hdl;
 };
 
 P_API PRWLock *
-p_rwlock_new (void)
-{
-	return NULL;
+p_rwlock_new(void) {
+  return NULL;
 }
 
 P_API pboolean
-p_rwlock_reader_lock (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_reader_lock(PRWLock *lock) {
+  P_UNUSED (lock);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_rwlock_reader_trylock (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_reader_trylock(PRWLock *lock) {
+  P_UNUSED (lock);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_rwlock_reader_unlock (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_reader_unlock(PRWLock *lock) {
+  P_UNUSED (lock);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_rwlock_writer_lock (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_writer_lock(PRWLock *lock) {
+  P_UNUSED (lock);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_rwlock_writer_trylock (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_writer_trylock(PRWLock *lock) {
+  P_UNUSED (lock);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_rwlock_writer_unlock (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_writer_unlock(PRWLock *lock) {
+  P_UNUSED (lock);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API void
-p_rwlock_free (PRWLock *lock)
-{
-	P_UNUSED (lock);
+p_rwlock_free(PRWLock *lock) {
+  P_UNUSED (lock);
 }
 
 void
-p_rwlock_init (void)
-{
+p_rwlock_init(void) {
 }
 
 void
-p_rwlock_shutdown (void)
-{
+p_rwlock_shutdown(void) {
 }
 

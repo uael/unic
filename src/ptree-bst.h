@@ -26,21 +26,21 @@
 #include "ptypes.h"
 #include "ptree-private.h"
 
-pboolean	p_tree_bst_insert	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 ppointer		key,
-					 ppointer		value);
+pboolean p_tree_bst_insert(PTreeBaseNode **root_node,
+  PCompareDataFunc compare_func,
+  ppointer data,
+  PDestroyFunc key_destroy_func,
+  PDestroyFunc value_destroy_func,
+  ppointer key,
+  ppointer value);
 
-pboolean	p_tree_bst_remove	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 pconstpointer		key);
+pboolean p_tree_bst_remove(PTreeBaseNode **root_node,
+  PCompareDataFunc compare_func,
+  ppointer data,
+  PDestroyFunc key_destroy_func,
+  PDestroyFunc value_destroy_func,
+  pconstpointer key);
 
-void		p_tree_bst_node_free	(PTreeBaseNode	*node);
+void p_tree_bst_node_free(PTreeBaseNode *node);
 
 #endif /* PLIBSYS_HEADER_PTREEBST_H */

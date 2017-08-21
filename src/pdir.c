@@ -19,11 +19,10 @@
 #include "pdir.h"
 
 P_API void
-p_dir_entry_free (PDirEntry *entry)
-{
-	if (P_UNLIKELY (entry == NULL))
-		return;
+p_dir_entry_free(PDirEntry *entry) {
+  if (P_UNLIKELY (entry == NULL))
+    return;
 
-	p_free (entry->name);
-	p_free (entry);
+  p_free(entry->name);
+  p_free(entry);
 }

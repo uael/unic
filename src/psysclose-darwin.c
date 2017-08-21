@@ -52,8 +52,6 @@
  * overridden.
  */
 
-#include <sys/cdefs.h>
-
 /* If the non-cancelable variants of all system calls have already been chosen,
  * do nothing. */
 #if !__DARWIN_NON_CANCELABLE
@@ -67,7 +65,7 @@ extern int close$NOCANCEL$UNIX2003 (int fd);
  * has been chosen. There's no close$NOCANCEL symbol in this case, so use
  * close$NOCANCEL$UNIX2003 as the implementation. It does the same thing that
  * close$NOCANCEL would do. */
-extern int close$NOCANCEL$UNIX2003 (int fd);
+extern int close$NOCANCEL$UNIX2003(int fd);
 #    define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
 #  else
 /* When only UNIX2003 is supported. */
@@ -79,7 +77,6 @@ extern int close$NOCANCEL (int fd);
 #include "psysclose-private.h"
 
 pint
-p_sys_close (pint fd)
-{
-	return PLIBSYS_CLOSE_INTERFACE (fd);
+p_sys_close(pint fd) {
+  return PLIBSYS_CLOSE_INTERFACE(fd);
 }

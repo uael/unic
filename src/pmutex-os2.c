@@ -27,77 +27,75 @@
 typedef HMTX mutex_hdl;
 
 struct PMutex_ {
-	mutex_hdl	hdl;
+  mutex_hdl hdl;
 };
 
 P_API PMutex *
-p_mutex_new (void)
-{
-	PMutex *ret;
+p_mutex_new(void) {
+  PMutex *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PMutex))) == NULL)) {
-		P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PMutex))) == NULL)) {
+    P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
+    return NULL;
+  }
 
-	if (P_UNLIKELY (DosCreateMutexSem (NULL, (PHMTX) &ret->hdl, 0, FALSE) != NO_ERROR)) {
-		P_ERROR ("PMutex::p_mutex_new: DosCreateMutexSem() failed");
-		p_free (ret);
-		return NULL;
-	}
+  if (P_UNLIKELY (
+    DosCreateMutexSem(NULL, (PHMTX) & ret->hdl, 0, FALSE) != NO_ERROR)) {
+    P_ERROR ("PMutex::p_mutex_new: DosCreateMutexSem() failed");
+    p_free(ret);
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_mutex_lock (PMutex *mutex)
-{
-	APIRET ulrc;
+p_mutex_lock(PMutex *mutex) {
+  APIRET ulrc;
 
-	if (P_UNLIKELY (mutex == NULL))
-		return FALSE;
+  if (P_UNLIKELY (mutex == NULL))
+    return FALSE;
 
-	while ((ulrc = DosRequestMutexSem (mutex->hdl, SEM_INDEFINITE_WAIT)) == ERROR_INTERRUPT);
+  while ((ulrc = DosRequestMutexSem(mutex->hdl, SEM_INDEFINITE_WAIT))
+    == ERROR_INTERRUPT);
 
-	if (P_LIKELY (ulrc == NO_ERROR))
-		return TRUE;
-	else {
-		P_ERROR ("PMutex::p_mutex_lock: DosRequestMutexSem() failed");
-		return FALSE;
-	}
+  if (P_LIKELY (ulrc == NO_ERROR))
+    return TRUE;
+  else {
+    P_ERROR ("PMutex::p_mutex_lock: DosRequestMutexSem() failed");
+    return FALSE;
+  }
 }
 
 P_API pboolean
-p_mutex_trylock (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return FALSE;
+p_mutex_trylock(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return FALSE;
 
-	return (DosRequestMutexSem (mutex->hdl, SEM_IMMEDIATE_RETURN)) == NO_ERROR ? TRUE : FALSE;
+  return (DosRequestMutexSem(mutex->hdl, SEM_IMMEDIATE_RETURN)) == NO_ERROR
+    ? TRUE : FALSE;
 }
 
 P_API pboolean
-p_mutex_unlock (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return FALSE;
+p_mutex_unlock(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return FALSE;
 
-	if (P_LIKELY (DosReleaseMutexSem (mutex->hdl) == NO_ERROR))
-		return TRUE;
-	else {
-		P_ERROR ("PMutex::p_mutex_unlock: DosReleaseMutexSem() failed");
-		return FALSE;
-	}
+  if (P_LIKELY (DosReleaseMutexSem(mutex->hdl) == NO_ERROR))
+    return TRUE;
+  else {
+    P_ERROR ("PMutex::p_mutex_unlock: DosReleaseMutexSem() failed");
+    return FALSE;
+  }
 }
 
 P_API void
-p_mutex_free (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return;
+p_mutex_free(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return;
 
-	if (P_UNLIKELY (DosCloseMutexSem (mutex->hdl) != NO_ERROR))
-		P_ERROR ("PMutex::p_mutex_free: DosCloseMutexSem() failed");
+  if (P_UNLIKELY (DosCloseMutexSem(mutex->hdl) != NO_ERROR))
+    P_ERROR ("PMutex::p_mutex_free: DosCloseMutexSem() failed");
 
-	p_free (mutex);
+  p_free(mutex);
 }

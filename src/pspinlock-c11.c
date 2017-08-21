@@ -25,71 +25,68 @@
 #endif
 
 struct PSpinLock_ {
-	volatile pint spin;
+  volatile pint spin;
 };
 
 P_API PSpinLock *
-p_spinlock_new (void)
-{
-	PSpinLock *ret;
+p_spinlock_new(void) {
+  PSpinLock *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
-		P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSpinLock))) == NULL)) {
+    P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_spinlock_lock (PSpinLock *spinlock)
-{
-	pint tmp_int;
+p_spinlock_lock(PSpinLock *spinlock) {
+  pint tmp_int;
 
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	do {
-		tmp_int = 0;
-	} while ((pboolean) __atomic_compare_exchange_n (PSPINLOCK_INT_CAST (&(spinlock->spin)),
-							 &tmp_int,
-							 1,
-							 0,
-							 __ATOMIC_ACQUIRE,
-							 __ATOMIC_RELAXED) == FALSE);
+  do {
+    tmp_int = 0;
+  } while ((pboolean) __atomic_compare_exchange_n(
+    PSPINLOCK_INT_CAST (&(spinlock->spin)),
+    &tmp_int,
+    1,
+    0,
+    __ATOMIC_ACQUIRE,
+    __ATOMIC_RELAXED) == FALSE);
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API pboolean
-p_spinlock_trylock (PSpinLock *spinlock)
-{
-	pint tmp_int = 0;
+p_spinlock_trylock(PSpinLock *spinlock) {
+  pint tmp_int = 0;
 
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	return (pboolean) __atomic_compare_exchange_n (PSPINLOCK_INT_CAST (&(spinlock->spin)),
-						       &tmp_int,
-						       1,
-						       0,
-						       __ATOMIC_ACQUIRE,
-						       __ATOMIC_RELAXED);
+  return (pboolean) __atomic_compare_exchange_n(
+    PSPINLOCK_INT_CAST (&(spinlock->spin)),
+    &tmp_int,
+    1,
+    0,
+    __ATOMIC_ACQUIRE,
+    __ATOMIC_RELAXED);
 }
 
 P_API pboolean
-p_spinlock_unlock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_unlock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	__atomic_store_4 (PSPINLOCK_INT_CAST (&(spinlock->spin)), 0, __ATOMIC_RELEASE);
+  __atomic_store_4(PSPINLOCK_INT_CAST (&(spinlock->spin)), 0, __ATOMIC_RELEASE);
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API void
-p_spinlock_free (PSpinLock *spinlock)
-{
-	p_free (spinlock);
+p_spinlock_free(PSpinLock *spinlock) {
+  p_free(spinlock);
 }

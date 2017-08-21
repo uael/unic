@@ -77,14 +77,14 @@ typedef struct PCondVariable_ PCondVariable;
  * failed.
  * @since 0.0.1
  */
-P_API PCondVariable *	p_cond_variable_new		(void);
+P_API PCondVariable *p_cond_variable_new(void);
 
 /**
  * @brief Frees #PCondVariable structure.
  * @param cond Condtion variable to free.
  * @since 0.0.1
  */
-P_API void			p_cond_variable_free		(PCondVariable	*cond);
+P_API void p_cond_variable_free(PCondVariable *cond);
 
 /**
  * @brief Waits for a signal on a given condition variable.
@@ -95,8 +95,8 @@ P_API void			p_cond_variable_free		(PCondVariable	*cond);
  *
  * The calling thread will sleep until the signal on @a cond arrived.
  */
-P_API pboolean		p_cond_variable_wait		(PCondVariable	*cond,
-								 PMutex		*mutex);
+P_API pboolean p_cond_variable_wait(PCondVariable *cond,
+  PMutex *mutex);
 
 /**
  * @brief Emitts a signal on a given condition variable for one waiting thread.
@@ -110,7 +110,7 @@ P_API pboolean		p_cond_variable_wait		(PCondVariable	*cond,
  * enough. Due that any thread can be waken up, even if it has just called
  * p_cond_variable_wait() while there are other waiting threads.
  */
-P_API pboolean		p_cond_variable_signal		(PCondVariable	*cond);
+P_API pboolean p_cond_variable_signal(PCondVariable *cond);
 
 /**
  * @brief Emitts a signal on a given condition variable for all the waiting
@@ -121,6 +121,6 @@ P_API pboolean		p_cond_variable_signal		(PCondVariable	*cond);
  *
  * After emitting the signal all the threads waiting for it will be waken up.
  */
-P_API pboolean		p_cond_variable_broadcast	(PCondVariable	*cond);
+P_API pboolean p_cond_variable_broadcast(PCondVariable *cond);
 
 #endif /* PLIBSYS_HEADER_PCONDVARIABLE_H */

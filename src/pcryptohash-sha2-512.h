@@ -29,14 +29,15 @@
 
 typedef struct PHashSHA2_512_ PHashSHA2_512;
 
-PHashSHA2_512 *	p_crypto_hash_sha2_512_new	(void);
-void		p_crypto_hash_sha2_512_update	(PHashSHA2_512 *ctx, const puchar *data, psize len);
-void		p_crypto_hash_sha2_512_finish	(PHashSHA2_512 *ctx);
-const puchar *	p_crypto_hash_sha2_512_digest	(PHashSHA2_512 *ctx);
-void		p_crypto_hash_sha2_512_reset	(PHashSHA2_512 *ctx);
-void		p_crypto_hash_sha2_512_free	(PHashSHA2_512 *ctx);
+PHashSHA2_512 *p_crypto_hash_sha2_512_new(void);
+void p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx, const puchar *data,
+  psize len);
+void p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx);
+const puchar *p_crypto_hash_sha2_512_digest(PHashSHA2_512 *ctx);
+void p_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx);
+void p_crypto_hash_sha2_512_free(PHashSHA2_512 *ctx);
 
-PHashSHA2_512 *	p_crypto_hash_sha2_384_new	(void);
+PHashSHA2_512 *p_crypto_hash_sha2_384_new(void);
 
 #define p_crypto_hash_sha2_384_update p_crypto_hash_sha2_512_update
 #define p_crypto_hash_sha2_384_finish p_crypto_hash_sha2_512_finish

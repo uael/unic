@@ -22,120 +22,105 @@
 #include <stdlib.h>
 
 struct PUThread_ {
-	PUThreadBase	base;
-	pint		hdl;
+  PUThreadBase base;
+  pint hdl;
 };
 
 void
-p_uthread_init_internal (void)
-{
+p_uthread_init_internal(void) {
 }
 
 void
-p_uthread_shutdown_internal (void)
-{
+p_uthread_shutdown_internal(void) {
 }
 
 void
-p_uthread_win32_thread_detach (void)
-{
+p_uthread_win32_thread_detach(void) {
 }
 
 PUThread *
-p_uthread_create_internal (PUThreadFunc		func,
-			   pboolean		joinable,
-			   PUThreadPriority	prio,
-			   psize		stack_size)
-{
-	PUThread	*ret;
+p_uthread_create_internal(PUThreadFunc func,
+  pboolean joinable,
+  PUThreadPriority prio,
+  psize stack_size) {
+  PUThread *ret;
 
-	P_UNUSED (stack_size);
+  P_UNUSED (stack_size);
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
-		P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThread))) == NULL)) {
+    P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
+    return NULL;
+  }
 
-	ret->hdl           = -1;
-	ret->base.joinable = joinable;
-	ret->base.prio     = prio;
+  ret->hdl = -1;
+  ret->base.joinable = joinable;
+  ret->base.prio = prio;
 
-	ret->base.func (ret);
+  ret->base.func(ret);
 
-	return ret;
+  return ret;
 }
 
 void
-p_uthread_exit_internal (void)
-{
+p_uthread_exit_internal(void) {
 }
 
 void
-p_uthread_wait_internal (PUThread *thread)
-{
-	P_UNUSED (thread);
+p_uthread_wait_internal(PUThread *thread) {
+  P_UNUSED (thread);
 }
 
 void
-p_uthread_free_internal (PUThread *thread)
-{
-	p_free (thread);
+p_uthread_free_internal(PUThread *thread) {
+  p_free(thread);
 }
 
 P_API void
-p_uthread_yield (void)
-{
+p_uthread_yield(void) {
 }
 
 P_API pboolean
-p_uthread_set_priority (PUThread		*thread,
-			PUThreadPriority	prio)
-{
-	if (P_UNLIKELY (thread == NULL))
-		return FALSE;
+p_uthread_set_priority(PUThread *thread,
+  PUThreadPriority prio) {
+  if (P_UNLIKELY (thread == NULL))
+    return FALSE;
 
-	thread->base.prio = prio;
+  thread->base.prio = prio;
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API P_HANDLE
-p_uthread_current_id (void)
-{
-	return (P_HANDLE) 0;
+p_uthread_current_id(void) {
+  return (P_HANDLE) 0;
 }
 
 P_API PUThreadKey *
-p_uthread_local_new (PDestroyFunc free_func)
-{
-	P_UNUSED (free_func);
-	return NULL;
+p_uthread_local_new(PDestroyFunc free_func) {
+  P_UNUSED (free_func);
+  return NULL;
 }
 
 P_API void
-p_uthread_local_free (PUThreadKey *key)
-{
-	P_UNUSED (key);
+p_uthread_local_free(PUThreadKey *key) {
+  P_UNUSED (key);
 }
 
 P_API ppointer
-p_uthread_get_local (PUThreadKey *key)
-{
-	P_UNUSED (key);
+p_uthread_get_local(PUThreadKey *key) {
+  P_UNUSED (key);
 }
 
 P_API void
-p_uthread_set_local (PUThreadKey	*key,
-		     ppointer		value)
-{
-	P_UNUSED (key);
-	P_UNUSED (value);
+p_uthread_set_local(PUThreadKey *key,
+  ppointer value) {
+  P_UNUSED (key);
+  P_UNUSED (value);
 }
 
 P_API void
-p_uthread_replace_local	(PUThreadKey	*key,
-			 ppointer	value)
-{
-	P_UNUSED (key);
-	P_UNUSED (value);
+p_uthread_replace_local(PUThreadKey *key,
+  ppointer value) {
+  P_UNUSED (key);
+  P_UNUSED (value);
 }

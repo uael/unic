@@ -73,7 +73,7 @@ typedef struct PRWLock_ PRWLock;
  * @return Pointer to a newly created #PRWLock object.
  * @since 0.0.1
  */
-P_API PRWLock *	p_rwlock_new		(void);
+P_API PRWLock *p_rwlock_new(void);
 
 /**
  * @brief Locks a read-write lock for reading.
@@ -86,7 +86,7 @@ P_API PRWLock *	p_rwlock_new		(void);
  * Forces the calling thread to sleep until the @a lock becomes available for
  * locking.
  */
-P_API pboolean	p_rwlock_reader_lock	(PRWLock *lock);
+P_API pboolean p_rwlock_reader_lock(PRWLock *lock);
 
 /**
  * @brief Tries to lock a read-write lock for reading immediately.
@@ -99,7 +99,7 @@ P_API pboolean	p_rwlock_reader_lock	(PRWLock *lock);
  * Tries to lock the @a lock and returns immediately if it is not available for
  * locking.
  */
-P_API pboolean	p_rwlock_reader_trylock	(PRWLock *lock);
+P_API pboolean p_rwlock_reader_trylock(PRWLock *lock);
 
 /**
  * @brief Releases a locked for reading read-write lock.
@@ -116,7 +116,7 @@ P_API pboolean	p_rwlock_reader_trylock	(PRWLock *lock);
  * It's implementation dependent whether only the same thread can lock and
  * unlock the same read-write lock.
  */
-P_API pboolean	p_rwlock_reader_unlock	(PRWLock *lock);
+P_API pboolean p_rwlock_reader_unlock(PRWLock *lock);
 
 /**
  * @brief Locks a read-write lock for writing.
@@ -129,7 +129,7 @@ P_API pboolean	p_rwlock_reader_unlock	(PRWLock *lock);
  * Forces the calling thread to sleep until the @a lock becomes available for
  * locking.
  */
-P_API pboolean	p_rwlock_writer_lock	(PRWLock *lock);
+P_API pboolean p_rwlock_writer_lock(PRWLock *lock);
 
 /**
  * @brief Tries to lock a read-write lock immediately.
@@ -142,7 +142,7 @@ P_API pboolean	p_rwlock_writer_lock	(PRWLock *lock);
  * Tries to lock the @a lock and returns immediately if it is not available for
  * locking.
  */
-P_API pboolean	p_rwlock_writer_trylock	(PRWLock *lock);
+P_API pboolean p_rwlock_writer_trylock(PRWLock *lock);
 
 /**
  * @brief Releases a locked for writing read-write lock.
@@ -159,7 +159,7 @@ P_API pboolean	p_rwlock_writer_trylock	(PRWLock *lock);
  * It's implementation dependent whether only the same thread can lock and
  * unlock the same read-write lock.
  */
-P_API pboolean	p_rwlock_writer_unlock	(PRWLock *lock);
+P_API pboolean p_rwlock_writer_unlock(PRWLock *lock);
 
 /**
  * @brief Frees a #PRWLock object.
@@ -168,6 +168,6 @@ P_API pboolean	p_rwlock_writer_unlock	(PRWLock *lock);
  * @warning It doesn't unlock the @a lock before freeing memory, so you should
  * do it manually.
  */
-P_API void		p_rwlock_free		(PRWLock *lock);
+P_API void p_rwlock_free(PRWLock *lock);
 
 #endif /* PLIBSYS_HEADER_PRWLOCK_H */

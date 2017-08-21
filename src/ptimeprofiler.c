@@ -19,44 +19,41 @@
 #include "ptimeprofiler.h"
 #include "ptimeprofiler-private.h"
 
-extern puint64 p_time_profiler_get_ticks_internal (void);
-extern puint64 p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler);
+extern puint64 p_time_profiler_get_ticks_internal(void);
+extern puint64 p_time_profiler_elapsed_usecs_internal(
+  const PTimeProfiler *profiler);
 
 P_API PTimeProfiler *
-p_time_profiler_new ()
-{
-	PTimeProfiler *ret;
+p_time_profiler_new() {
+  PTimeProfiler *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
-		P_ERROR ("PTimeProfiler: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PTimeProfiler))) == NULL)) {
+    P_ERROR ("PTimeProfiler: failed to allocate memory");
+    return NULL;
+  }
 
-	ret->counter = p_time_profiler_get_ticks_internal ();
+  ret->counter = p_time_profiler_get_ticks_internal();
 
-	return ret;
+  return ret;
 }
 
 P_API void
-p_time_profiler_reset (PTimeProfiler *profiler)
-{
-	if (P_UNLIKELY (profiler == NULL))
-		return;
+p_time_profiler_reset(PTimeProfiler *profiler) {
+  if (P_UNLIKELY (profiler == NULL))
+    return;
 
-	profiler->counter = p_time_profiler_get_ticks_internal ();
+  profiler->counter = p_time_profiler_get_ticks_internal();
 }
 
 P_API puint64
-p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
-{
-	if (P_UNLIKELY (profiler == NULL))
-		return 0;
+p_time_profiler_elapsed_usecs(const PTimeProfiler *profiler) {
+  if (P_UNLIKELY (profiler == NULL))
+    return 0;
 
-	return p_time_profiler_elapsed_usecs_internal (profiler);
+  return p_time_profiler_elapsed_usecs_internal(profiler);
 }
 
 P_API void
-p_time_profiler_free (PTimeProfiler *profiler)
-{
-	p_free (profiler);
+p_time_profiler_free(PTimeProfiler *profiler) {
+  p_free(profiler);
 }

@@ -24,120 +24,109 @@
 typedef pthread_rwlock_t rwlock_hdl;
 
 struct PRWLock_ {
-	rwlock_hdl hdl;
+  rwlock_hdl hdl;
 };
 
-static pboolean pp_rwlock_unlock_any (PRWLock *lock);
+static pboolean pp_rwlock_unlock_any(PRWLock *lock);
 
 static pboolean
-pp_rwlock_unlock_any (PRWLock *lock)
-{
-	if (P_UNLIKELY (lock == NULL))
-		return FALSE;
+pp_rwlock_unlock_any(PRWLock *lock) {
+  if (P_UNLIKELY (lock == NULL))
+    return FALSE;
 
-	if (P_LIKELY (pthread_rwlock_unlock (&lock->hdl) == 0))
-		return TRUE;
-	else {
-		P_ERROR ("PRWLock::pp_rwlock_unlock_any: pthread_rwlock_unlock() failed");
-		return FALSE;
-	}
+  if (P_LIKELY (pthread_rwlock_unlock(&lock->hdl) == 0))
+    return TRUE;
+  else {
+    P_ERROR ("PRWLock::pp_rwlock_unlock_any: pthread_rwlock_unlock() failed");
+    return FALSE;
+  }
 }
 
 P_API PRWLock *
-p_rwlock_new (void)
-{
-	PRWLock *ret;
+p_rwlock_new(void) {
+  PRWLock *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PRWLock))) == NULL)) {
-		P_ERROR ("PRWLock::p_rwlock_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PRWLock))) == NULL)) {
+    P_ERROR ("PRWLock::p_rwlock_new: failed to allocate memory");
+    return NULL;
+  }
 
-	if (P_UNLIKELY (pthread_rwlock_init (&ret->hdl, NULL) != 0)) {
-		P_ERROR ("PRWLock::p_rwlock_new: pthread_rwlock_init() failed");
-		p_free (ret);
-		return NULL;
-	}
+  if (P_UNLIKELY (pthread_rwlock_init(&ret->hdl, NULL) != 0)) {
+    P_ERROR ("PRWLock::p_rwlock_new: pthread_rwlock_init() failed");
+    p_free(ret);
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_rwlock_reader_lock (PRWLock *lock)
-{
-	if (P_UNLIKELY (lock == NULL))
-		return FALSE;
+p_rwlock_reader_lock(PRWLock *lock) {
+  if (P_UNLIKELY (lock == NULL))
+    return FALSE;
 
-	if (P_UNLIKELY (pthread_rwlock_rdlock (&lock->hdl) == 0))
-		return TRUE;
-	else {
-		P_ERROR ("PRWLock::p_rwlock_reader_lock: pthread_rwlock_rdlock() failed");
-		return FALSE;
-	}
+  if (P_UNLIKELY (pthread_rwlock_rdlock(&lock->hdl) == 0))
+    return TRUE;
+  else {
+    P_ERROR ("PRWLock::p_rwlock_reader_lock: pthread_rwlock_rdlock() failed");
+    return FALSE;
+  }
 }
 
 P_API pboolean
-p_rwlock_reader_trylock (PRWLock *lock)
-{
-	if (P_UNLIKELY (lock == NULL))
-		return FALSE;
+p_rwlock_reader_trylock(PRWLock *lock) {
+  if (P_UNLIKELY (lock == NULL))
+    return FALSE;
 
-	return (pthread_rwlock_tryrdlock (&lock->hdl) == 0) ? TRUE : FALSE;
+  return (pthread_rwlock_tryrdlock(&lock->hdl) == 0) ? TRUE : FALSE;
 }
 
 P_API pboolean
-p_rwlock_reader_unlock (PRWLock *lock)
-{
-	return pp_rwlock_unlock_any (lock);
+p_rwlock_reader_unlock(PRWLock *lock) {
+  return pp_rwlock_unlock_any(lock);
 }
 
 P_API pboolean
-p_rwlock_writer_lock (PRWLock *lock)
-{
-	if (P_UNLIKELY (lock == NULL))
-		return FALSE;
+p_rwlock_writer_lock(PRWLock *lock) {
+  if (P_UNLIKELY (lock == NULL))
+    return FALSE;
 
-	if (P_UNLIKELY (pthread_rwlock_wrlock (&lock->hdl) == 0))
-		return TRUE;
-	else {
-		P_ERROR ("PRWLock::p_rwlock_writer_lock: pthread_rwlock_wrlock() failed");
-		return FALSE;
-	}
+  if (P_UNLIKELY (pthread_rwlock_wrlock(&lock->hdl) == 0))
+    return TRUE;
+  else {
+    P_ERROR ("PRWLock::p_rwlock_writer_lock: pthread_rwlock_wrlock() failed");
+    return FALSE;
+  }
 }
 
 P_API pboolean
-p_rwlock_writer_trylock (PRWLock *lock)
-{
-	if (P_UNLIKELY (lock == NULL))
-		return FALSE;
+p_rwlock_writer_trylock(PRWLock *lock) {
+  if (P_UNLIKELY (lock == NULL))
+    return FALSE;
 
-	return (pthread_rwlock_trywrlock (&lock->hdl) == 0) ? TRUE : FALSE;
+  return (pthread_rwlock_trywrlock(&lock->hdl) == 0) ? TRUE : FALSE;
 }
 
 P_API pboolean
-p_rwlock_writer_unlock (PRWLock *lock)
-{
-	return pp_rwlock_unlock_any (lock);
+p_rwlock_writer_unlock(PRWLock *lock) {
+  return pp_rwlock_unlock_any(lock);
 }
 
 P_API void
-p_rwlock_free (PRWLock *lock)
-{
-	if (P_UNLIKELY (lock == NULL))
-		return;
+p_rwlock_free(PRWLock *lock) {
+  if (P_UNLIKELY (lock == NULL))
+    return;
 
-	if (P_UNLIKELY (pthread_rwlock_destroy (&lock->hdl) != 0))
-		P_ERROR ("PRWLock::p_rwlock_free: pthread_rwlock_destroy() failed");
+  if (P_UNLIKELY (pthread_rwlock_destroy(&lock->hdl) != 0))
+    P_ERROR ("PRWLock::p_rwlock_free: pthread_rwlock_destroy() failed");
 
-	p_free (lock);
+  p_free(lock);
 }
 
 void
-p_rwlock_init (void)
-{
+p_rwlock_init(void) {
 }
 
 void
-p_rwlock_shutdown (void)
-{
+p_rwlock_shutdown(void) {
 }

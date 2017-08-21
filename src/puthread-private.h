@@ -28,13 +28,13 @@
 
 /** Base thread structure */
 typedef struct PUThreadBase_ {
-	pint			ref_count;	/**< Reference counter.	*/
-	pint			ret_code;	/**< Return code.	*/
-	pboolean		ours;		/**< Our thread flag.	*/
-	pboolean		joinable;	/**< Joinable flag.	*/
-	PUThreadFunc		func;		/**< Thread routine.	*/
-	ppointer		data;		/**< Thread input data.	*/
-	PUThreadPriority	prio;		/**< Thread priority.	*/
+  pint ref_count;  /**< Reference counter.	*/
+  pint ret_code;  /**< Return code.	*/
+  pboolean ours;    /**< Our thread flag.	*/
+  pboolean joinable;  /**< Joinable flag.	*/
+  PUThreadFunc func;    /**< Thread routine.	*/
+  ppointer data;    /**< Thread input data.	*/
+  PUThreadPriority prio;    /**< Thread priority.	*/
 } PUThreadBase;
 
 #endif /* PLIBSYS_HEADER_PUTHREAD_PRIVATE_H */

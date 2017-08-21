@@ -26,99 +26,95 @@
 typedef image_id plibrary_handle;
 
 struct PLibraryLoader_ {
-	plibrary_handle	handle;
-	status_t	last_status;
+  plibrary_handle handle;
+  status_t last_status;
 };
 
-static void pp_library_loader_clean_handle (plibrary_handle handle);
+static void pp_library_loader_clean_handle(plibrary_handle handle);
 
 static void
-pp_library_loader_clean_handle (plibrary_handle handle)
-{
-	if (P_UNLIKELY (unload_add_on (handle) != B_OK))
-		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: unload_add_on() failed");
+pp_library_loader_clean_handle(plibrary_handle handle) {
+  if (P_UNLIKELY (unload_add_on(handle) != B_OK))
+    P_ERROR (
+      "PLibraryLoader::pp_library_loader_clean_handle: unload_add_on() failed");
 }
 
 P_API PLibraryLoader *
-p_library_loader_new (const pchar *path)
-{
-	PLibraryLoader	*loader = NULL;
-	plibrary_handle	handle;
+p_library_loader_new(const pchar *path) {
+  PLibraryLoader *loader = NULL;
+  plibrary_handle handle;
 
-	if (!p_file_is_exists (path))
-		return NULL;
+  if (!p_file_is_exists(path))
+    return NULL;
 
-	if (P_UNLIKELY ((handle = load_add_on (path)) == B_ERROR)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: load_add_on() failed");
-		return NULL;
-	}
+  if (P_UNLIKELY ((handle = load_add_on(path)) == B_ERROR)) {
+    P_ERROR ("PLibraryLoader::p_library_loader_new: load_add_on() failed");
+    return NULL;
+  }
 
-	if (P_UNLIKELY ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
-		pp_library_loader_clean_handle (handle);
-		return NULL;
-	}
+  if (P_UNLIKELY ((loader = p_malloc0(sizeof(PLibraryLoader))) == NULL)) {
+    P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
+    pp_library_loader_clean_handle(handle);
+    return NULL;
+  }
 
-	loader->handle      = handle;
-	loader->last_status = B_OK;
+  loader->handle = handle;
+  loader->last_status = B_OK;
 
-	return loader;
+  return loader;
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
-{
-	ppointer	location = NULL;
-	status_t	status;
+p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+  ppointer location = NULL;
+  status_t status;
 
-	if (P_UNLIKELY (loader == NULL || sym == NULL))
-		return NULL;
+  if (P_UNLIKELY (loader == NULL || sym == NULL))
+    return NULL;
 
-	if (P_UNLIKELY ((status = get_image_symbol (loader->handle,
-						    (pchar *) sym,
-						    B_SYMBOL_TYPE_ANY,
-						    &location)) != B_OK)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: get_image_symbol() failed");
-		loader->last_status = status;
-		return NULL;
-	}
+  if (P_UNLIKELY ((status = get_image_symbol(loader->handle,
+    (pchar *) sym,
+    B_SYMBOL_TYPE_ANY,
+    &location)) != B_OK)) {
+    P_ERROR (
+      "PLibraryLoader::p_library_loader_get_symbol: get_image_symbol() failed");
+    loader->last_status = status;
+    return NULL;
+  }
 
-	loader->last_status = B_OK;
+  loader->last_status = B_OK;
 
-	return (PFuncAddr) location;
+  return (PFuncAddr) location;
 }
 
 P_API void
-p_library_loader_free (PLibraryLoader *loader)
-{
-	if (P_UNLIKELY (loader == NULL))
-		return;
+p_library_loader_free(PLibraryLoader *loader) {
+  if (P_UNLIKELY (loader == NULL))
+    return;
 
-	pp_library_loader_clean_handle (loader->handle);
+  pp_library_loader_clean_handle(loader->handle);
 
-	p_free (loader);
+  p_free(loader);
 }
 
 P_API pchar *
-p_library_loader_get_last_error (PLibraryLoader *loader)
-{
-	if (loader == NULL)
-		return NULL;
+p_library_loader_get_last_error(PLibraryLoader *loader) {
+  if (loader == NULL)
+    return NULL;
 
-	switch (loader->last_status) {
-		case B_OK:
-			return NULL;
-		case B_BAD_IMAGE_ID:
-			return p_strdup ("Image handler doesn't identify an existing image");
-		case B_BAD_INDEX:
-			return p_strdup ("Invalid symbol index");
-		default:
-			return p_strdup ("Unknown error");
-	}
+  switch (loader->last_status) {
+    case B_OK:
+      return NULL;
+    case B_BAD_IMAGE_ID:
+      return p_strdup("Image handler doesn't identify an existing image");
+    case B_BAD_INDEX:
+      return p_strdup("Invalid symbol index");
+    default:
+      return p_strdup("Unknown error");
+  }
 }
 
 P_API pboolean
-p_library_loader_is_ref_counted (void)
-{
-	return TRUE;
+p_library_loader_is_ref_counted(void) {
+  return TRUE;
 }

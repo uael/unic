@@ -20,61 +20,56 @@
 #include "pspinlock.h"
 
 struct PSpinLock_ {
-	PMutex *mutex;
+  PMutex *mutex;
 };
 
 P_API PSpinLock *
-p_spinlock_new (void)
-{
-	PSpinLock *ret;
+p_spinlock_new(void) {
+  PSpinLock *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
-		P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSpinLock))) == NULL)) {
+    P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
+    return NULL;
+  }
 
-	if (P_UNLIKELY ((ret->mutex = p_mutex_new ()) == NULL)) {
-		P_ERROR ("PSpinLock::p_spinlock_new: p_mutex_new() failed");
-		p_free (ret);
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret->mutex = p_mutex_new()) == NULL)) {
+    P_ERROR ("PSpinLock::p_spinlock_new: p_mutex_new() failed");
+    p_free(ret);
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_spinlock_lock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_lock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	return p_mutex_lock (spinlock->mutex);
+  return p_mutex_lock(spinlock->mutex);
 }
 
 P_API pboolean
-p_spinlock_trylock (PSpinLock *spinlock)
-{
-	if (spinlock == NULL)
-		return FALSE;
+p_spinlock_trylock(PSpinLock *spinlock) {
+  if (spinlock == NULL)
+    return FALSE;
 
-	return p_mutex_trylock (spinlock->mutex);
+  return p_mutex_trylock(spinlock->mutex);
 }
 
 P_API pboolean
-p_spinlock_unlock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_unlock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	return p_mutex_unlock (spinlock->mutex);
+  return p_mutex_unlock(spinlock->mutex);
 }
 
 P_API void
-p_spinlock_free (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return;
+p_spinlock_free(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return;
 
-	p_mutex_free (spinlock->mutex);
-	p_free (spinlock);
+  p_mutex_free(spinlock->mutex);
+  p_free(spinlock);
 }

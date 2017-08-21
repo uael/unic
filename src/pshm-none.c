@@ -20,67 +20,60 @@
 #include <stdlib.h>
 
 struct PShm_ {
-	pint	hdl;
+  pint hdl;
 };
 
 P_API PShm *
-p_shm_new (const pchar		*name,
-	   psize		size,
-	   PShmAccessPerms	perms,
-	   PError		**error)
-{
-	P_UNUSED (name);
-	P_UNUSED (size);
-	P_UNUSED (perms);
-	P_UNUSED (error);
+p_shm_new(const pchar *name,
+  psize size,
+  PShmAccessPerms perms,
+  PError **error) {
+  P_UNUSED (name);
+  P_UNUSED (size);
+  P_UNUSED (perms);
+  P_UNUSED (error);
 
-	return NULL;
+  return NULL;
 }
 
 P_API void
-p_shm_take_ownership (PShm *shm)
-{
-	P_UNUSED (shm);
+p_shm_take_ownership(PShm *shm) {
+  P_UNUSED (shm);
 }
 
 P_API void
-p_shm_free (PShm *shm)
-{
-	P_UNUSED (shm);
+p_shm_free(PShm *shm) {
+  P_UNUSED (shm);
 }
 
 P_API pboolean
-p_shm_lock (PShm	*shm,
-	    PError	**error)
-{
-	P_UNUSED (shm);
-	P_UNUSED (error);
+p_shm_lock(PShm *shm,
+  PError **error) {
+  P_UNUSED (shm);
+  P_UNUSED (error);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_shm_unlock (PShm	*shm,
-	      PError	**error)
-{
-	P_UNUSED (shm);
-	P_UNUSED (error);
+p_shm_unlock(PShm *shm,
+  PError **error) {
+  P_UNUSED (shm);
+  P_UNUSED (error);
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API ppointer
-p_shm_get_address (const PShm *shm)
-{
-	P_UNUSED (shm);
+p_shm_get_address(const PShm *shm) {
+  P_UNUSED (shm);
 
-	return NULL;
+  return NULL;
 }
 
 P_API psize
-p_shm_get_size (const PShm *shm)
-{
-	P_UNUSED (shm);
+p_shm_get_size(const PShm *shm) {
+  P_UNUSED (shm);
 
-	return 0;
+  return 0;
 }

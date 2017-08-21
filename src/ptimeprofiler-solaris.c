@@ -18,28 +18,20 @@
 #include "ptimeprofiler.h"
 #include "ptimeprofiler-private.h"
 
-#include <unistd.h>
-#include <time.h>
-#include <sys/time.h>
-
 puint64
-p_time_profiler_get_ticks_internal ()
-{
-	return (puint64) gethrtime ();
+p_time_profiler_get_ticks_internal() {
+  return (puint64) gethrtime();
 }
 
 puint64
-p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
-{
-	return (((puint64) gethrtime ()) - profiler->counter) / 1000;
+p_time_profiler_elapsed_usecs_internal(const PTimeProfiler *profiler) {
+  return (((puint64) gethrtime()) - profiler->counter) / 1000;
 }
 
 void
-p_time_profiler_init (void)
-{
+p_time_profiler_init(void) {
 }
 
 void
-p_time_profiler_shutdown (void)
-{
+p_time_profiler_shutdown(void) {
 }

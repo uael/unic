@@ -18,40 +18,35 @@
 #include "plibraryloader.h"
 
 P_API PLibraryLoader *
-p_library_loader_new (const pchar *path)
-{
-	P_ERROR ("PLibraryLoader::p_library_loader_new: not implemented");
-	return NULL;
+p_library_loader_new(const pchar *path) {
+  P_ERROR ("PLibraryLoader::p_library_loader_new: not implemented");
+  return NULL;
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
-{
-	P_UNUSED (loader);
-	P_UNUSED (sym);
+p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+  P_UNUSED (loader);
+  P_UNUSED (sym);
 
-	P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: not implemented");
-	return NULL;
+  P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: not implemented");
+  return NULL;
 }
 
 P_API void
-p_library_loader_free (PLibraryLoader *loader)
-{
-	P_UNUSED (loader);
-	P_ERROR ("PLibraryLoader::p_library_loader_free: not implemented");
+p_library_loader_free(PLibraryLoader *loader) {
+  P_UNUSED (loader);
+  P_ERROR ("PLibraryLoader::p_library_loader_free: not implemented");
 }
 
 P_API pchar *
-p_library_loader_get_last_error (PLibraryLoader *loader)
-{
-	P_UNUSED (loader);
+p_library_loader_get_last_error(PLibraryLoader *loader) {
+  P_UNUSED (loader);
 
-	P_ERROR ("PLibraryLoader::p_library_loader_get_last_error: not implemented");
-	return NULL;
+  P_ERROR ("PLibraryLoader::p_library_loader_get_last_error: not implemented");
+  return NULL;
 }
 
 P_API pboolean
-p_library_loader_is_ref_counted (void)
-{
-	return FALSE;
+p_library_loader_is_ref_counted(void) {
+  return FALSE;
 }

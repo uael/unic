@@ -27,7 +27,7 @@
 
 /** Time profiler opaque data structure. */
 struct PTimeProfiler_ {
-	puint64 counter; /**< Ticks counter. */
+  puint64 counter; /**< Ticks counter. */
 };
 
 #endif /* PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H */

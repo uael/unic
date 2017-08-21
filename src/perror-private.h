@@ -31,25 +31,25 @@
  * @param err_code System error code.
  * @return IO error code.
  */
-PErrorIO	p_error_get_io_from_system	(pint	err_code);
+PErrorIO p_error_get_io_from_system(pint err_code);
 
 /**
  * @brief Gets an IO error code from the last call result.
  * @return IO error code.
  */
-PErrorIO	p_error_get_last_io		(void);
+PErrorIO p_error_get_last_io(void);
 
 /**
  * @brief Gets an IPC error code from a system error code
  * @param err_code System error code.
  * @return IPC error code.
  */
-PErrorIPC	p_error_get_ipc_from_system	(pint	err_code);
+PErrorIPC p_error_get_ipc_from_system(pint err_code);
 
 /**
  * @brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
-PErrorIPC	p_error_get_last_ipc		(void);
+PErrorIPC p_error_get_last_ipc(void);
 
 #endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */

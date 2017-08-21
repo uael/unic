@@ -23,62 +23,57 @@
 typedef CRITICAL_SECTION mutex_hdl;
 
 struct PMutex_ {
-	mutex_hdl hdl;
+  mutex_hdl hdl;
 };
 
 P_API PMutex *
-p_mutex_new (void)
-{
-	PMutex *ret;
+p_mutex_new(void) {
+  PMutex *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PMutex))) == NULL)) {
-		P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PMutex))) == NULL)) {
+    P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
+    return NULL;
+  }
 
-	InitializeCriticalSection (&ret->hdl);
+  InitializeCriticalSection(&ret->hdl);
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_mutex_lock (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return FALSE;
+p_mutex_lock(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return FALSE;
 
-	EnterCriticalSection (&mutex->hdl);
+  EnterCriticalSection(&mutex->hdl);
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API pboolean
-p_mutex_trylock (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return FALSE;
+p_mutex_trylock(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return FALSE;
 
-	return TryEnterCriticalSection (&mutex->hdl) != 0 ? TRUE : FALSE;
+  return TryEnterCriticalSection(&mutex->hdl) != 0 ? TRUE : FALSE;
 }
 
 P_API pboolean
-p_mutex_unlock (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return FALSE;
+p_mutex_unlock(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return FALSE;
 
-	LeaveCriticalSection (&mutex->hdl);
+  LeaveCriticalSection(&mutex->hdl);
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API void
-p_mutex_free (PMutex *mutex)
-{
-	if (P_UNLIKELY (mutex == NULL))
-		return;
+p_mutex_free(PMutex *mutex) {
+  if (P_UNLIKELY (mutex == NULL))
+    return;
 
-	DeleteCriticalSection (&mutex->hdl);
+  DeleteCriticalSection(&mutex->hdl);
 
-	p_free (mutex);
+  p_free(mutex);
 }

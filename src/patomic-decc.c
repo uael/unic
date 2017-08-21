@@ -25,254 +25,238 @@
 
 #ifdef __ia64
 #  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_SWAP_LONG ((volatile void *) (atomic_src),		\
-			   (pint) (oldval),				\
-			   (pint) (newval))
+    __CMP_SWAP_LONG ((volatile void *) (atomic_src),		\
+         (pint) (oldval),				\
+         (pint) (newval))
 #  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_SWAP_QUAD ((volatile void *) (atomic_src),		\
-			   (pint64) (oldval),				\
-			   (pint64) (newval))	  
+    __CMP_SWAP_QUAD ((volatile void *) (atomic_src),		\
+         (pint64) (oldval),				\
+         (pint64) (newval))
 #else
-#  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_STORE_LONG ((volatile void *) (atomic_src),		\
-			    (pint) (oldval),				\
-			    (pint) (newval),				\
-			    (volatile void *) (atomic_dst))
-#  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_STORE_QUAD ((volatile void *) (atomic_src),		\
-			    (pint64) (oldval),				\
-			    (pint64) (newval),				\
-			    (volatile void *) (atomic_dst))
+#  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)  \
+    __CMP_STORE_LONG ((volatile void *) (atomic_src),    \
+          (pint) (oldval),        \
+          (pint) (newval),        \
+          (volatile void *) (atomic_dst))
+#  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)  \
+    __CMP_STORE_QUAD ((volatile void *) (atomic_src),    \
+          (pint64) (oldval),        \
+          (pint64) (newval),        \
+          (volatile void *) (atomic_dst))
 #endif
 
 P_API pint
-p_atomic_int_get (const volatile pint *atomic)
-{
-	__MB ();
-	return (pint) *atomic;
+p_atomic_int_get(const volatile pint *atomic) {
+  __MB();
+  return (pint) *atomic;
 }
 
 P_API void
-p_atomic_int_set (volatile pint	*atomic,
-		  pint		val)
-{
-	(void) __ATOMIC_EXCH_LONG ((volatile void *) atomic, val);
-	__MB ();
+p_atomic_int_set(volatile pint *atomic,
+  pint val) {
+  (void) __ATOMIC_EXCH_LONG((volatile void *) atomic, val);
+  __MB();
 }
 
 P_API void
-p_atomic_int_inc (volatile pint *atomic)
-{
-	__MB ();
-	(void) __ATOMIC_INCREMENT_LONG ((volatile void *) atomic);
-	__MB ();
+p_atomic_int_inc(volatile pint *atomic) {
+  __MB();
+  (void) __ATOMIC_INCREMENT_LONG((volatile void *) atomic);
+  __MB();
 }
 
 P_API pboolean
-p_atomic_int_dec_and_test (volatile pint *atomic)
-{
-	pboolean result;
+p_atomic_int_dec_and_test(volatile pint *atomic) {
+  pboolean result;
 
-	__MB ();
-	result = __ATOMIC_DECREMENT_LONG ((volatile void *) atomic) == 1 ? TRUE : FALSE;
-	__MB ();
+  __MB();
+  result =
+    __ATOMIC_DECREMENT_LONG((volatile void *) atomic) == 1 ? TRUE : FALSE;
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API pboolean
-p_atomic_int_compare_and_exchange (volatile pint	*atomic,
-				   pint			oldval,
-				   pint			newval)
-{
-	pboolean result;
+p_atomic_int_compare_and_exchange(volatile pint *atomic,
+  pint oldval,
+  pint newval) {
+  pboolean result;
 
-	__MB ();
-	result = PATOMIC_DECC_CAS_LONG (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
-	__MB ();
+  __MB();
+  result =
+    PATOMIC_DECC_CAS_LONG (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API pint
-p_atomic_int_add (volatile pint	*atomic,
-		  pint		val)
-{
-	pint result;
+p_atomic_int_add(volatile pint *atomic,
+  pint val) {
+  pint result;
 
-	__MB ();
-	result = __ATOMIC_ADD_LONG ((volatile void *) atomic, val);
-	__MB ();
+  __MB();
+  result = __ATOMIC_ADD_LONG((volatile void *) atomic, val);
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API puint
-p_atomic_int_and (volatile puint	*atomic,
-		  puint			val)
-{
-	puint result;
+p_atomic_int_and(volatile puint *atomic,
+  puint val) {
+  puint result;
 
-	__MB ();
-	result = (puint) __ATOMIC_AND_LONG ((volatile void *) atomic, (pint) val);
-	__MB ();
+  __MB();
+  result = (puint) __ATOMIC_AND_LONG((volatile void *) atomic, (pint) val);
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API puint
-p_atomic_int_or (volatile puint	*atomic,
-		 puint		val)
-{
-	puint result;
+p_atomic_int_or(volatile puint *atomic,
+  puint val) {
+  puint result;
 
-	__MB ();
-	result = (puint) __ATOMIC_OR_LONG ((volatile void *) atomic, (pint) val);
-	__MB ();
+  __MB();
+  result = (puint) __ATOMIC_OR_LONG((volatile void *) atomic, (pint) val);
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API puint
-p_atomic_int_xor (volatile puint	*atomic,
-		  puint			val)
-{
-	pint i;
+p_atomic_int_xor(volatile puint *atomic,
+  puint val) {
+  pint i;
 
-	do {
-		__MB ();
-		i = (pint) (*atomic);
-	} while (PATOMIC_DECC_CAS_LONG (atomic, i, i ^ ((pint) val), atomic) != 1);
+  do {
+    __MB();
+    i = (pint) (*atomic);
+  } while (PATOMIC_DECC_CAS_LONG (atomic, i, i ^ ((pint) val), atomic) != 1);
 
-	__MB ();
+  __MB();
 
-	return i;
+  return i;
 }
 
 P_API ppointer
-p_atomic_pointer_get (const volatile void *atomic)
-{
-	__MB ();
-	return (ppointer) (* ((const volatile psize *) atomic));
+p_atomic_pointer_get(const volatile void *atomic) {
+  __MB();
+  return (ppointer) (*((const volatile psize *) atomic));
 }
 
 P_API void
-p_atomic_pointer_set (volatile void	*atomic,
-		      ppointer		val)
-{
+p_atomic_pointer_set(volatile void *atomic,
+  ppointer val) {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	(void) __ATOMIC_EXCH_QUAD (atomic, (pint64) val);
+  (void) __ATOMIC_EXCH_QUAD(atomic, (pint64) val);
 #else
-	(void) __ATOMIC_EXCH_LONG (atomic, (pint) val);
+  (void) __ATOMIC_EXCH_LONG (atomic, (pint) val);
 #endif
-	__MB ();
+  __MB();
 }
 
 P_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
-				       ppointer		oldval,
-				       ppointer		newval)
-{
-	pboolean result;
+p_atomic_pointer_compare_and_exchange(volatile void *atomic,
+  ppointer oldval,
+  ppointer newval) {
+  pboolean result;
 
-	__MB ();
+  __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	result = PATOMIC_DECC_CAS_QUAD (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
+  result =
+    PATOMIC_DECC_CAS_QUAD (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
 #else
-	result = PATOMIC_DECC_CAS_LONG (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
+  result = PATOMIC_DECC_CAS_LONG (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
 #endif
-	__MB ();
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API pssize
-p_atomic_pointer_add (volatile void	*atomic,
-		      pssize		val)
-{
-	pssize result;
+p_atomic_pointer_add(volatile void *atomic,
+  pssize val) {
+  pssize result;
 
-	__MB ();
+  __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	result = (pssize) __ATOMIC_ADD_QUAD (atomic, (pint64) val);
+  result = (pssize) __ATOMIC_ADD_QUAD(atomic, (pint64) val);
 #else
-	result = (pssize) __ATOMIC_ADD_LONG (atomic, (pint) val);
+  result = (pssize) __ATOMIC_ADD_LONG (atomic, (pint) val);
 #endif
-	__MB ();
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API psize
-p_atomic_pointer_and (volatile void	*atomic,
-		      psize		val)
-{
-	psize result;
+p_atomic_pointer_and(volatile void *atomic,
+  psize val) {
+  psize result;
 
-	__MB ();
+  __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	result = (psize) __ATOMIC_AND_QUAD (atomic, (pint64) val);
+  result = (psize) __ATOMIC_AND_QUAD(atomic, (pint64) val);
 #else
-	result = (psize) __ATOMIC_AND_LONG (atomic, (pint) val);
+  result = (psize) __ATOMIC_AND_LONG (atomic, (pint) val);
 #endif
-	__MB ();
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API psize
-p_atomic_pointer_or (volatile void	*atomic,
-		     psize		val)
-{
-	psize result;
+p_atomic_pointer_or(volatile void *atomic,
+  psize val) {
+  psize result;
 
-	__MB ();
+  __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	result = (psize) __ATOMIC_OR_QUAD (atomic, (pint64) val);
+  result = (psize) __ATOMIC_OR_QUAD(atomic, (pint64) val);
 #else
-	result = (psize) __ATOMIC_OR_LONG (atomic, (pint) val);
+  result = (psize) __ATOMIC_OR_LONG (atomic, (pint) val);
 #endif
-	__MB ();
+  __MB();
 
-	return result;
+  return result;
 }
 
 P_API psize
-p_atomic_pointer_xor (volatile void	*atomic,
-		      psize		val)
-{
+p_atomic_pointer_xor(volatile void *atomic,
+  psize val) {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	pint64 i;
+  pint64 i;
 
-	do {
-		__MB ();
-		i = (pint64) (* ((volatile psize *) atomic));
-	} while (PATOMIC_DECC_CAS_QUAD (atomic, i, i ^ ((pint64) val), atomic) != 1);
+  do {
+    __MB();
+    i = (pint64) (*((volatile psize *) atomic));
+  } while (PATOMIC_DECC_CAS_QUAD (atomic, i, i ^ ((pint64) val), atomic) != 1);
 #else
-	pint i;
+  pint i;
 
-	do {
-		__MB ();
-		i = (pint) (* ((volatile psize *) atomic));
-	} while (PATOMIC_DECC_CAS_LONG (atomic, i, i ^ ((pint) val), atomic) != 1);
+  do {
+    __MB ();
+    i = (pint) (* ((volatile psize *) atomic));
+  } while (PATOMIC_DECC_CAS_LONG (atomic, i, i ^ ((pint) val), atomic) != 1);
 #endif
-	__MB ();
+  __MB();
 
-	return (psize) i;
+  return (psize) i;
 }
 
 P_API pboolean
-p_atomic_is_lock_free (void)
-{
-	return TRUE;
+p_atomic_is_lock_free(void) {
+  return TRUE;
 }
 
 void
-p_atomic_thread_init (void)
-{
+p_atomic_thread_init(void) {
 }
 
 void
-p_atomic_thread_shutdown (void)
-{
+p_atomic_thread_shutdown(void) {
 }

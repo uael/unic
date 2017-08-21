@@ -67,7 +67,7 @@ typedef struct PHashTable_ PHashTable;
  * @since 0.0.1
  * @note Free with p_hash_table_free() after usage.
  */
-P_API PHashTable *	p_hash_table_new		(void);
+P_API PHashTable *p_hash_table_new(void);
 
 /**
  * @brief Inserts a new key-value pair into a hash table.
@@ -79,9 +79,9 @@ P_API PHashTable *	p_hash_table_new		(void);
  * This function only stores pointers, so you need to manually free pointed
  * data after using the hash table.
  */
-P_API void		p_hash_table_insert		(PHashTable		*table,
-							 ppointer		key,
-							 ppointer		value);
+P_API void p_hash_table_insert(PHashTable *table,
+  ppointer key,
+  ppointer value);
 
 /**
  * @brief Searches for a specifed key in the hash table.
@@ -91,8 +91,8 @@ P_API void		p_hash_table_insert		(PHashTable		*table,
  * value was found.
  * @since 0.0.1
  */
-P_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
-							 pconstpointer		key);
+P_API ppointer p_hash_table_lookup(const PHashTable *table,
+  pconstpointer key);
 
 /**
  * @brief Gives a list of all the stored keys in the hash table.
@@ -103,7 +103,7 @@ P_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
  * @note You should manually free the returned list with p_list_free() after
  * using it.
  */
-P_API PList *	p_hash_table_keys		(const PHashTable	*table);
+P_API PList *p_hash_table_keys(const PHashTable *table);
 
 /**
  * @brief Gives a list of all the stored values in the hash table.
@@ -114,14 +114,14 @@ P_API PList *	p_hash_table_keys		(const PHashTable	*table);
  * @note You should manually free the returned list with p_list_free() after
  * using it.
  */
-P_API PList *	p_hash_table_values		(const PHashTable	*table);
+P_API PList *p_hash_table_values(const PHashTable *table);
 
 /**
  * @brief Frees a previously initialized #PHashTable.
  * @param table Hash table to free.
  * @since 0.0.1
  */
-P_API void		p_hash_table_free		(PHashTable		*table);
+P_API void p_hash_table_free(PHashTable *table);
 
 /**
  * @brief Removes @a key from a hash table.
@@ -129,8 +129,8 @@ P_API void		p_hash_table_free		(PHashTable		*table);
  * @param key Key to remove (if exists).
  * @since 0.0.1
  */
-P_API void		p_hash_table_remove		(PHashTable		*table,
-							 pconstpointer		key);
+P_API void p_hash_table_remove(PHashTable *table,
+  pconstpointer key);
 
 /**
  * @brief Searches for a specifed key in the hash table by its value.
@@ -148,8 +148,8 @@ P_API void		p_hash_table_remove		(PHashTable		*table,
  * first parameter) is accepted related to the given lookup value (the second
  * parameter), and -1 or 1 otherwise.
  */
-P_API PList *	p_hash_table_lookup_by_value	(const PHashTable	*table,
-							 pconstpointer		val,
-							 PCompareFunc		func);
+P_API PList *p_hash_table_lookup_by_value(const PHashTable *table,
+  pconstpointer val,
+  PCompareFunc func);
 
 #endif /* PLIBSYS_HEADER_PHASHTABLE_H */

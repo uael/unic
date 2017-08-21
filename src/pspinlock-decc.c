@@ -25,55 +25,51 @@
 #endif
 
 struct PSpinLock_ {
-	volatile pint spin;
+  volatile pint spin;
 };
 
 P_API PSpinLock *
-p_spinlock_new (void)
-{
-	PSpinLock *ret;
+p_spinlock_new(void) {
+  PSpinLock *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
-		P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
-		return NULL;
-	}
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSpinLock))) == NULL)) {
+    P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
+    return NULL;
+  }
 
-	return ret;
+  return ret;
 }
 
 P_API pboolean
-p_spinlock_lock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_lock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	(void) __LOCK_LONG ((volatile void *) &(spinlock->spin));
+  (void) __LOCK_LONG((volatile void *) &(spinlock->spin));
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API pboolean
-p_spinlock_trylock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_trylock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	return __LOCK_LONG_RETRY ((volatile void *) &(spinlock->spin), 1) == 1 ? TRUE : FALSE;
+  return __LOCK_LONG_RETRY((volatile void *) &(spinlock->spin), 1) == 1 ? TRUE
+    : FALSE;
 }
 
 P_API pboolean
-p_spinlock_unlock (PSpinLock *spinlock)
-{
-	if (P_UNLIKELY (spinlock == NULL))
-		return FALSE;
+p_spinlock_unlock(PSpinLock *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL))
+    return FALSE;
 
-	(void) __UNLOCK_LONG ((volatile void *) &(spinlock->spin));
+  (void) __UNLOCK_LONG((volatile void *) &(spinlock->spin));
 
-	return TRUE;
+  return TRUE;
 }
 
 P_API void
-p_spinlock_free (PSpinLock *spinlock)
-{
-	p_free (spinlock);
+p_spinlock_free(PSpinLock *spinlock) {
+  p_free(spinlock);
 }

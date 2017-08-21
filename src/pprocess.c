@@ -24,30 +24,28 @@
 #endif
 
 P_API puint32
-p_process_get_current_pid (void)
-{
+p_process_get_current_pid(void) {
 #ifdef P_OS_WIN
-	return (puint32) GetCurrentProcessId ();
+  return (puint32) GetCurrentProcessId ();
 #else
-	return (puint32) getpid ();
+  return (puint32) getpid();
 #endif
 }
 
 P_API pboolean
-p_process_is_running (puint32 pid)
-{
+p_process_is_running(puint32 pid) {
 #ifdef P_OS_WIN
-	HANDLE proc;
-	DWORD ret;
+  HANDLE proc;
+  DWORD ret;
 
-	if ((proc = OpenProcess (SYNCHRONIZE, FALSE, pid)) == NULL)
-		return FALSE;
+  if ((proc = OpenProcess (SYNCHRONIZE, FALSE, pid)) == NULL)
+    return FALSE;
 
-	ret = WaitForSingleObject (proc, 0);
-	CloseHandle (proc);
+  ret = WaitForSingleObject (proc, 0);
+  CloseHandle (proc);
 
-	return ret == WAIT_TIMEOUT;
+  return ret == WAIT_TIMEOUT;
 #else
-	return kill ((pid_t) pid, 0) == 0;
+  return kill((pid_t) pid, 0) == 0;
 #endif
 }

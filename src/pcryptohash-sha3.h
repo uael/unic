@@ -29,16 +29,16 @@
 
 typedef struct PHashSHA3_ PHashSHA3;
 
-void		p_crypto_hash_sha3_update	(PHashSHA3 *ctx, const puchar *data, psize len);
-void		p_crypto_hash_sha3_finish	(PHashSHA3 *ctx);
-const puchar *	p_crypto_hash_sha3_digest	(PHashSHA3 *ctx);
-void		p_crypto_hash_sha3_reset	(PHashSHA3 *ctx);
-void		p_crypto_hash_sha3_free		(PHashSHA3 *ctx);
+void p_crypto_hash_sha3_update(PHashSHA3 *ctx, const puchar *data, psize len);
+void p_crypto_hash_sha3_finish(PHashSHA3 *ctx);
+const puchar *p_crypto_hash_sha3_digest(PHashSHA3 *ctx);
+void p_crypto_hash_sha3_reset(PHashSHA3 *ctx);
+void p_crypto_hash_sha3_free(PHashSHA3 *ctx);
 
-PHashSHA3 *	p_crypto_hash_sha3_224_new	(void);
-PHashSHA3 *	p_crypto_hash_sha3_256_new	(void);
-PHashSHA3 *	p_crypto_hash_sha3_384_new	(void);
-PHashSHA3 *	p_crypto_hash_sha3_512_new	(void);
+PHashSHA3 *p_crypto_hash_sha3_224_new(void);
+PHashSHA3 *p_crypto_hash_sha3_256_new(void);
+PHashSHA3 *p_crypto_hash_sha3_384_new(void);
+PHashSHA3 *p_crypto_hash_sha3_512_new(void);
 
 #define p_crypto_hash_sha3_224_update p_crypto_hash_sha3_update
 #define p_crypto_hash_sha3_224_finish p_crypto_hash_sha3_finish

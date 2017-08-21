@@ -18,8 +18,7 @@
 #include "psysclose-private.h"
 
 pint
-p_sys_close (pint fd)
-{
-	/* On Windows we can only close a socket descriptor */
-	return closesocket (fd) == 0 ? 0 : -1;
+p_sys_close(pint fd) {
+  /* On Windows we can only close a socket descriptor */
+  return closesocket(fd) == 0 ? 0 : -1;
 }

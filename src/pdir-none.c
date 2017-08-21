@@ -20,97 +20,89 @@
 #include <stdlib.h>
 
 struct PDir_ {
-	pint	hdl;
+  pint hdl;
 };
 
 P_API PDir *
-p_dir_new (const pchar	*path,
-	   PError	**error)
-{
-	P_UNUSED (path);
+p_dir_new(const pchar *path,
+  PError **error) {
+  P_UNUSED (path);
 
-	p_error_set_error_p (error,
-			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
-			     0,
-			     "No directory implementation");
+  p_error_set_error_p(error,
+    (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+    0,
+    "No directory implementation");
 
-	return NULL;
+  return NULL;
 }
 
 P_API pboolean
-p_dir_create (const pchar	*path,
-	      pint		mode,
-	      PError		**error)
-{
-	P_UNUSED (path);
-	P_UNUSED (mode);
+p_dir_create(const pchar *path,
+  pint mode,
+  PError **error) {
+  P_UNUSED (path);
+  P_UNUSED (mode);
 
-	p_error_set_error_p (error,
-			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
-			     0,
-			     "No directory implementation");
+  p_error_set_error_p(error,
+    (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+    0,
+    "No directory implementation");
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_dir_remove (const pchar	*path,
-	      PError		**error)
-{
-	P_UNUSED (path);
+p_dir_remove(const pchar *path,
+  PError **error) {
+  P_UNUSED (path);
 
-	p_error_set_error_p (error,
-			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
-			     0,
-			     "No directory implementation");
+  p_error_set_error_p(error,
+    (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+    0,
+    "No directory implementation");
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API pboolean
-p_dir_is_exists (const pchar *path)
-{
-	P_UNUSED (path);
-	return FALSE;
+p_dir_is_exists(const pchar *path) {
+  P_UNUSED (path);
+  return FALSE;
 }
 
 P_API pchar *
-p_dir_get_path (const PDir *dir)
-{
-	P_UNUSED (dir);
-	return NULL;
+p_dir_get_path(const PDir *dir) {
+  P_UNUSED (dir);
+  return NULL;
 }
 
 P_API PDirEntry *
-p_dir_get_next_entry (PDir	*dir,
-		      PError	**error)
-{
-	P_UNUSED (dir);
+p_dir_get_next_entry(PDir *dir,
+  PError **error) {
+  P_UNUSED (dir);
 
-	p_error_set_error_p (error,
-			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
-			     0,
-			     "No directory implementation");
+  p_error_set_error_p(error,
+    (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+    0,
+    "No directory implementation");
 
-	return NULL;
+  return NULL;
 }
 
 P_API pboolean
-p_dir_rewind (PDir	*dir,
-	      PError	**error)
-{
-	P_UNUSED (dir);
+p_dir_rewind(PDir *dir,
+  PError **error) {
+  P_UNUSED (dir);
 
-	p_error_set_error_p (error,
-			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
-			     0,
-			     "No directory implementation");
+  p_error_set_error_p(error,
+    (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+    0,
+    "No directory implementation");
 
-	return FALSE;
+  return FALSE;
 }
 
 P_API void
-p_dir_free (PDir *dir)
-{
-	P_UNUSED (dir);
+p_dir_free(PDir *dir) {
+  P_UNUSED (dir);
 }

@@ -62,7 +62,7 @@ typedef struct PError_ PError;
  * @return Newly initialized #PError object in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API PError *	p_error_new		(void);
+P_API PError *p_error_new(void);
 
 /**
  * @brief Initializes a new #PError with data.
@@ -72,9 +72,9 @@ P_API PError *	p_error_new		(void);
  * @return Newly initialized #PError object in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API PError *	p_error_new_literal	(pint		code,
-						 pint		native_code,
-						 const pchar	*message);
+P_API PError *p_error_new_literal(pint code,
+  pint native_code,
+  const pchar *message);
 
 /**
  * @brief Gets an error message.
@@ -82,7 +82,7 @@ P_API PError *	p_error_new_literal	(pint		code,
  * @return Error message in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API const pchar *	p_error_get_message	(PError		*error);
+P_API const pchar *p_error_get_message(PError *error);
 
 /**
  * @brief Gets an error code.
@@ -90,7 +90,7 @@ P_API const pchar *	p_error_get_message	(PError		*error);
  * @return Error code in case of success, 0 otherwise.
  * @since 0.0.1
  */
-P_API pint		p_error_get_code	(PError		*error);
+P_API pint p_error_get_code(PError *error);
 
 /**
  * @brief Gets a platform native error code, if any.
@@ -100,7 +100,7 @@ P_API pint		p_error_get_code	(PError		*error);
  * @note In some situations there can be no native code error, i.e. when an
  * internal library call failed. Do not rely on this code.
  */
-P_API pint		p_error_get_native_code	(PError		*error);
+P_API pint p_error_get_native_code(PError *error);
 
 /**
  * @brief Gets an error domain.
@@ -108,7 +108,7 @@ P_API pint		p_error_get_native_code	(PError		*error);
  * @return Error domain in case of success, #P_ERROR_DOMAIN_NONE otherwise.
  * @since 0.0.1
  */
-P_API PErrorDomain	p_error_get_domain	(PError		*error);
+P_API PErrorDomain p_error_get_domain(PError *error);
 
 /**
  * @brief Creates a copy of a #PError object.
@@ -118,7 +118,7 @@ P_API PErrorDomain	p_error_get_domain	(PError		*error);
  * @note The caller is responsible to free memory of the created object after
  * usage.
  */
-P_API PError *	p_error_copy		(PError		*error);
+P_API PError *p_error_copy(PError *error);
 
 /**
  * @brief Sets error data.
@@ -128,10 +128,10 @@ P_API PError *	p_error_copy		(PError		*error);
  * @param message Error message.
  * @since 0.0.1
  */
-P_API void		p_error_set_error	(PError		*error,
-						 pint		code,
-						 pint		native_code,
-						 const pchar	*message);
+P_API void p_error_set_error(PError *error,
+  pint code,
+  pint native_code,
+  const pchar *message);
 
 /**
  * @brief Sets error data through a double pointer.
@@ -146,10 +146,10 @@ P_API void		p_error_set_error	(PError		*error,
  * error data and assigns it to @a *error. The caller is responsible to free
  * memory of the created object after usage.
  */
-P_API void		p_error_set_error_p	(PError		**error,
-						 pint		code,
-						 pint		native_code,
-						 const pchar	*message);
+P_API void p_error_set_error_p(PError **error,
+  pint code,
+  pint native_code,
+  const pchar *message);
 
 /**
  * @brief Sets an error code.
@@ -157,8 +157,8 @@ P_API void		p_error_set_error_p	(PError		**error,
  * @param code Error code.
  * @since 0.0.1
  */
-P_API void		p_error_set_code	(PError		*error,
-						 pint		code);
+P_API void p_error_set_code(PError *error,
+  pint code);
 
 /**
  * @brief Sets a platform native error code.
@@ -166,8 +166,8 @@ P_API void		p_error_set_code	(PError		*error,
  * @param native_code Platform native error code.
  * @since 0.0.1
  */
-P_API void		p_error_set_native_code	(PError		*error,
-						 pint		native_code);
+P_API void p_error_set_native_code(PError *error,
+  pint native_code);
 
 /**
  * @brief Sets an error message.
@@ -175,8 +175,8 @@ P_API void		p_error_set_native_code	(PError		*error,
  * @param message Error message.
  * @since 0.0.1
  */
-P_API void		p_error_set_message	(PError		*error,
-						 const pchar	*message);
+P_API void p_error_set_message(PError *error,
+  const pchar *message);
 
 /**
  * @brief Clears error data.
@@ -184,14 +184,14 @@ P_API void		p_error_set_message	(PError		*error,
  * @since 0.0.1
  * @note Error code is reseted to 0.
  */
-P_API void		p_error_clear		(PError		*error);
+P_API void p_error_clear(PError *error);
 
 /**
  * @brief Frees a previously initialized error object.
  * @param error #PError object to free.
  * @since 0.0.1
  */
-P_API void		p_error_free		(PError		*error);
+P_API void p_error_free(PError *error);
 
 /**
  * @brief Gets the last system native error code.
@@ -203,7 +203,7 @@ P_API void		p_error_free		(PError		*error);
  * p_error_get_last_net() instead.
  */
 
-P_API pint		p_error_get_last_system	(void);
+P_API pint p_error_get_last_system(void);
 
 /**
  * @brief Gets the last network native error code.
@@ -212,7 +212,7 @@ P_API pint		p_error_get_last_system	(void);
  * @sa p_error_get_last_system(), p_error_set_last_net(),
  * p_error_set_last_system()
  */
-P_API pint		p_error_get_last_net	(void);
+P_API pint p_error_get_last_net(void);
 
 /**
  * @brief Sets the last system native error code.
@@ -223,7 +223,7 @@ P_API pint		p_error_get_last_net	(void);
  * @note If you want set an error code for socket-related calls, use
  * p_error_set_last_net() instead.
  */
-P_API void		p_error_set_last_system	(pint code);
+P_API void p_error_set_last_system(pint code);
 
 /**
  * @brief Sets the last network native error code.
@@ -232,6 +232,6 @@ P_API void		p_error_set_last_system	(pint code);
  * @sa p_error_set_last_system(), p_error_get_last_net(),
  * p_error_get_last_system()
  */
-P_API void		p_error_set_last_net	(pint code);
+P_API void p_error_set_last_net(pint code);
 
 #endif /* PLIBSYS_HEADER_PERROR_H */

@@ -37,12 +37,12 @@ static P_GNUC_WARN_UNUSED_RESULT pint unused_result_test_func ()
 	return 0;
 }
 
-P_LIB_INTERNAL_API int internal_api_test ()
+P_INTERNAL_API int internal_api_test ()
 {
 	return 0;
 }
 
-P_LIB_GLOBAL_API int global_api_test ()
+P_GLOBAL_API int global_api_test ()
 {
 	return 0;
 }

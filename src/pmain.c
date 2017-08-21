@@ -18,102 +18,98 @@
 #include "pmem.h"
 #include "pmain.h"
 
-extern void p_mem_init			(void);
-extern void p_mem_shutdown		(void);
-extern void p_atomic_thread_init	(void);
-extern void p_atomic_thread_shutdown	(void);
-extern void p_socket_init_once		(void);
-extern void p_socket_close_once		(void);
-extern void p_uthread_init		(void);
-extern void p_uthread_shutdown		(void);
-extern void p_cond_variable_init	(void);
-extern void p_cond_variable_shutdown	(void);
-extern void p_rwlock_init		(void);
-extern void p_rwlock_shutdown		(void);
-extern void p_time_profiler_init	(void);
-extern void p_time_profiler_shutdown	(void);
+extern void p_mem_init(void);
+extern void p_mem_shutdown(void);
+extern void p_atomic_thread_init(void);
+extern void p_atomic_thread_shutdown(void);
+extern void p_socket_init_once(void);
+extern void p_socket_close_once(void);
+extern void p_uthread_init(void);
+extern void p_uthread_shutdown(void);
+extern void p_cond_variable_init(void);
+extern void p_cond_variable_shutdown(void);
+extern void p_rwlock_init(void);
+extern void p_rwlock_shutdown(void);
+extern void p_time_profiler_init(void);
+extern void p_time_profiler_shutdown(void);
 
 static pboolean pp_plibsys_inited = FALSE;
 static pchar pp_plibsys_version[] = PLIBSYS_VERSION_STR;
 
 P_API void
-p_libsys_init (void)
-{
-	if (P_UNLIKELY (pp_plibsys_inited == TRUE))
-		return;
+p_libsys_init(void) {
+  if (P_UNLIKELY (pp_plibsys_inited == TRUE))
+    return;
 
-	pp_plibsys_inited = TRUE;
+  pp_plibsys_inited = TRUE;
 
-	p_mem_init ();
-	p_atomic_thread_init ();
-	p_socket_init_once ();
-	p_uthread_init ();
-	p_cond_variable_init ();
-	p_rwlock_init ();
-	p_time_profiler_init ();
+  p_mem_init();
+  p_atomic_thread_init();
+  p_socket_init_once();
+  p_uthread_init();
+  p_cond_variable_init();
+  p_rwlock_init();
+  p_time_profiler_init();
 }
 
 P_API void
-p_libsys_init_full (const PMemVTable *vtable)
-{
-	if (p_mem_set_vtable (vtable) == FALSE)
-		P_ERROR ("MAIN::p_libsys_init_full: failed to initialize memory table");
+p_libsys_init_full(const PMemVTable *vtable) {
+  if (p_mem_set_vtable(vtable) == FALSE)
+    P_ERROR ("MAIN::p_libsys_init_full: failed to initialize memory table");
 
-	p_libsys_init ();
+  p_libsys_init();
 }
 
 P_API void
-p_libsys_shutdown (void)
-{
-	if (P_UNLIKELY (pp_plibsys_inited == FALSE))
-		return;
+p_libsys_shutdown(void) {
+  if (P_UNLIKELY (pp_plibsys_inited == FALSE))
+    return;
 
-	pp_plibsys_inited = FALSE;
+  pp_plibsys_inited = FALSE;
 
-	p_time_profiler_shutdown ();
-	p_rwlock_shutdown ();
-	p_cond_variable_shutdown ();
-	p_uthread_shutdown ();
-	p_socket_close_once ();
-	p_atomic_thread_shutdown ();
-	p_mem_shutdown ();
+  p_time_profiler_shutdown();
+  p_rwlock_shutdown();
+  p_cond_variable_shutdown();
+  p_uthread_shutdown();
+  p_socket_close_once();
+  p_atomic_thread_shutdown();
+  p_mem_shutdown();
 }
 
 P_API const pchar *
-p_libsys_version (void)
-{
-	return (const pchar *) pp_plibsys_version;
+p_libsys_version(void) {
+  return (const pchar *) pp_plibsys_version;
 }
 
 #ifdef P_OS_WIN
 extern void p_uthread_win32_thread_detach (void);
 
 BOOL WINAPI DllMain (HINSTANCE	hinstDLL,
-		     DWORD	fdwReason,
-		     LPVOID	lpvReserved);
+         DWORD	fdwReason,
+         LPVOID	lpvReserved);
 
 BOOL WINAPI
 DllMain (HINSTANCE	hinstDLL,
-	 DWORD		fdwReason,
-	 LPVOID		lpvReserved)
+   DWORD		fdwReason,
+   LPVOID		lpvReserved)
 {
-	P_UNUSED (hinstDLL);
-	P_UNUSED (lpvReserved);
+  P_UNUSED (hinstDLL);
+  P_UNUSED (lpvReserved);
 
-	switch (fdwReason) {
-	case DLL_PROCESS_ATTACH:
-		break;
+  switch (fdwReason) {
+  case DLL_PROCESS_ATTACH:
+    break;
 
-	case DLL_THREAD_DETACH:
-		p_uthread_win32_thread_detach ();
-		break;
+  case DLL_THREAD_DETACH:
+    p_uthread_win32_thread_detach ();
+    break;
 
-	case DLL_PROCESS_DETACH:
-		break;
+  case DLL_PROCESS_DETACH:
+    break;
 
-	default:;
-	}
+  default:;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 #endif

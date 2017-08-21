@@ -24,49 +24,47 @@
 #endif
 
 P_API pboolean
-p_file_is_exists (const pchar *file)
-{
+p_file_is_exists(const pchar *file) {
 #ifdef P_OS_WIN
-	DWORD attrs;
+  DWORD attrs;
 #endif
 
-	if (P_UNLIKELY (file == NULL))
-		return FALSE;
+  if (P_UNLIKELY (file == NULL))
+    return FALSE;
 
 #ifdef P_OS_WIN
-	attrs = GetFileAttributesA ((LPCSTR) file);
+  attrs = GetFileAttributesA ((LPCSTR) file);
 
-	return (attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0);
+  return (attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0);
 #else
-	return access (file, F_OK) == 0;
+  return access(file, F_OK) == 0;
 #endif
 }
 
 P_API pboolean
-p_file_remove (const pchar	*file,
-	       PError		**error)
-{
-	pboolean result;
+p_file_remove(const pchar *file,
+  PError **error) {
+  pboolean result;
 
-	if (P_UNLIKELY (file == NULL)) {
-		p_error_set_error_p (error,
-				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
-				     0,
-				     "Invalid input argument");
-		return FALSE;
-	}
+  if (P_UNLIKELY (file == NULL)) {
+    p_error_set_error_p(error,
+      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      0,
+      "Invalid input argument");
+    return FALSE;
+  }
 
 #ifdef P_OS_WIN
-	result = (DeleteFileA ((LPCSTR) file) != 0);
+  result = (DeleteFileA ((LPCSTR) file) != 0);
 #else
-	result = (unlink (file) == 0);
+  result = (unlink(file) == 0);
 #endif
 
-	if (P_UNLIKELY (!result))
-		p_error_set_error_p (error,
-				     (pint) p_error_get_last_io (),
-				     p_error_get_last_system (),
-				     "Failed to remove file");
+  if (P_UNLIKELY (!result))
+    p_error_set_error_p(error,
+      (pint) p_error_get_last_io(),
+      p_error_get_last_system(),
+      "Failed to remove file");
 
-	return result;
+  return result;
 }
