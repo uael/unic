@@ -15,10 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/pcondvariable.h"
-#include "p/pspinlock.h"
-#include "p/patomic.h"
-#include "p/pmem.h"
+#include "p/condvariable.h"
+#include "p/spinlock.h"
+#include "p/atomic.h"
+#include "p/mem.h"
 
 #include <stdlib.h>
 #include <string.h>

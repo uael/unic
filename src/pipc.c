@@ -15,9 +15,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/pmem.h"
-#include "p/pcryptohash.h"
-#include "p/pstring.h"
+#include "p/mem.h"
+#include "p/hash.h"
+#include "p/string.h"
 #include "psysclose-private.h"
 
 #include <stdlib.h>

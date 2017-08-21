@@ -24,8 +24,8 @@
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHMD5_H
 #define PLIBSYS_HEADER_PCRYPTOHASHMD5_H
 
-#include "p/ptypes.h"
-#include "p/pmacros.h"
+#include "p/types.h"
+#include "p/macros.h"
 
 typedef struct PHashMD5_ PHashMD5;
 

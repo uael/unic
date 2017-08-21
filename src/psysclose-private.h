@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PSYSCLOSE_PRIVATE_H
 #define PLIBSYS_HEADER_PSYSCLOSE_PRIVATE_H
 
-#include "p/pmacros.h"
-#include "p/ptypes.h"
+#include "p/macros.h"
+#include "p/types.h"
 
 /**
  * @brief Safely closes a file descriptor.

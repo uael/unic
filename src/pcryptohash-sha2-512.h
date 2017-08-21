@@ -24,8 +24,8 @@
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
 #define PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
 
-#include "p/ptypes.h"
-#include "p/pmacros.h"
+#include "p/types.h"
+#include "p/macros.h"
 
 typedef struct PHashSHA2_512_ PHashSHA2_512;
 

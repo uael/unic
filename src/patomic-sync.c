@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/patomic.h"
+#include "p/atomic.h"
 
 P_API pint
 p_atomic_int_get(const volatile pint *atomic) {

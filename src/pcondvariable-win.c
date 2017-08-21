@@ -21,9 +21,9 @@
  * See: https://github.com/python/cpython/blob/master/Python/condvar.h
  */
 
-#include "p/patomic.h"
-#include "p/pmem.h"
-#include "p/pcondvariable.h"
+#include "p/atomic.h"
+#include "p/mem.h"
+#include "p/condvariable.h"
 
 #include <stdlib.h>
 

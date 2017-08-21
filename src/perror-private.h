@@ -22,9 +22,9 @@
 #ifndef PLIBSYS_HEADER_PERROR_PRIVATE_H
 #define PLIBSYS_HEADER_PERROR_PRIVATE_H
 
-#include "p/pmacros.h"
-#include "p/ptypes.h"
-#include "p/perrortypes.h"
+#include "p/macros.h"
+#include "p/types.h"
+#include "p/err.h"
 
 /**
  * @brief Gets an IO error code from a system error code.

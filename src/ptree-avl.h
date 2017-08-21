@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PTREEAVL_H
 #define PLIBSYS_HEADER_PTREEAVL_H
 
-#include "p/pmacros.h"
-#include "p/ptypes.h"
+#include "p/macros.h"
+#include "p/types.h"
 #include "ptree-private.h"
 
 pboolean p_tree_avl_insert(PTreeBaseNode **root_node,

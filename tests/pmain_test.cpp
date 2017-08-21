@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE pmain_test
 
-#include "p/plibsys.h"
+#include "plib.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -63,38 +63,38 @@ set(PLIBSYS_INCLUDE_DIRS
   )
 
 set(PLIBSYS_PUBLIC_HDRS
-  ${PLIBSYS_INCLUDE_DIR}/p/patomic.h
-  ${PLIBSYS_INCLUDE_DIR}/p/ptypes.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmacros.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmacroscompiler.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmacroscpu.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmacrosos.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pcondvariable.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pcryptohash.h
-  ${PLIBSYS_INCLUDE_DIR}/p/perror.h
-  ${PLIBSYS_INCLUDE_DIR}/p/perrortypes.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pdir.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pfile.h
-  ${PLIBSYS_INCLUDE_DIR}/p/phashtable.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pinifile.h
-  ${PLIBSYS_INCLUDE_DIR}/p/plibsys.h
-  ${PLIBSYS_INCLUDE_DIR}/p/plibraryloader.h
-  ${PLIBSYS_INCLUDE_DIR}/p/plist.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmain.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmem.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pmutex.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pprocess.h
-  ${PLIBSYS_INCLUDE_DIR}/p/prwlock.h
-  ${PLIBSYS_INCLUDE_DIR}/p/psemaphore.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pshm.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pshmbuffer.h
-  ${PLIBSYS_INCLUDE_DIR}/p/psocket.h
-  ${PLIBSYS_INCLUDE_DIR}/p/psocketaddress.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pspinlock.h
-  ${PLIBSYS_INCLUDE_DIR}/p/pstring.h
-  ${PLIBSYS_INCLUDE_DIR}/p/ptimeprofiler.h
-  ${PLIBSYS_INCLUDE_DIR}/p/ptree.h
-  ${PLIBSYS_INCLUDE_DIR}/p/puthread.h
+  ${PLIBSYS_INCLUDE_DIR}/p/atomic.h
+  ${PLIBSYS_INCLUDE_DIR}/p/types.h
+  ${PLIBSYS_INCLUDE_DIR}/p/macros.h
+  ${PLIBSYS_INCLUDE_DIR}/p/cc.h
+  ${PLIBSYS_INCLUDE_DIR}/p/arch.h
+  ${PLIBSYS_INCLUDE_DIR}/p/os.h
+  ${PLIBSYS_INCLUDE_DIR}/p/condvariable.h
+  ${PLIBSYS_INCLUDE_DIR}/p/hash.h
+  ${PLIBSYS_INCLUDE_DIR}/p/error.h
+  ${PLIBSYS_INCLUDE_DIR}/p/err.h
+  ${PLIBSYS_INCLUDE_DIR}/p/dir.h
+  ${PLIBSYS_INCLUDE_DIR}/p/file.h
+  ${PLIBSYS_INCLUDE_DIR}/p/htable.h
+  ${PLIBSYS_INCLUDE_DIR}/p/inifile.h
+  ${PLIBSYS_INCLUDE_DIR}/plib.h
+  ${PLIBSYS_INCLUDE_DIR}/p/libloader.h
+  ${PLIBSYS_INCLUDE_DIR}/p/list.h
+  ${PLIBSYS_INCLUDE_DIR}/p/main.h
+  ${PLIBSYS_INCLUDE_DIR}/p/mem.h
+  ${PLIBSYS_INCLUDE_DIR}/p/mutex.h
+  ${PLIBSYS_INCLUDE_DIR}/p/process.h
+  ${PLIBSYS_INCLUDE_DIR}/p/rwlock.h
+  ${PLIBSYS_INCLUDE_DIR}/p/sem.h
+  ${PLIBSYS_INCLUDE_DIR}/p/shm.h
+  ${PLIBSYS_INCLUDE_DIR}/p/shmbuffer.h
+  ${PLIBSYS_INCLUDE_DIR}/p/socket.h
+  ${PLIBSYS_INCLUDE_DIR}/p/socketaddr.h
+  ${PLIBSYS_INCLUDE_DIR}/p/spinlock.h
+  ${PLIBSYS_INCLUDE_DIR}/p/string.h
+  ${PLIBSYS_INCLUDE_DIR}/p/bench.h
+  ${PLIBSYS_INCLUDE_DIR}/p/tree.h
+  ${PLIBSYS_INCLUDE_DIR}/p/uthread.h
   )
 
 set(PLIBSYS_PRIVATE_HDRS
@@ -117,32 +117,32 @@ set(PLIBSYS_PRIVATE_HDRS
   )
 
 set(PLIBSYS_SRCS
-  pcryptohash.c
+  hash.c
   pcryptohash-gost3411.c
   pcryptohash-md5.c
   pcryptohash-sha1.c
   pcryptohash-sha2-256.c
   pcryptohash-sha2-512.c
   pcryptohash-sha3.c
-  pdir.c
-  perror.c
-  pfile.c
-  phashtable.c
-  pinifile.c
-  plist.c
-  pmain.c
-  pmem.c
-  pprocess.c
-  pshmbuffer.c
-  psocket.c
-  psocketaddress.c
-  pstring.c
-  ptimeprofiler.c
-  ptree.c
+  dir.c
+  error.c
+  file.c
+  htable.c
+  inifile.c
+  list.c
+  main.c
+  mem.c
+  process.c
+  shmbuffer.c
+  socket.c
+  socketaddr.c
+  string.c
+  bench.c
+  tree.c
   ptree-avl.c
   ptree-bst.c
   ptree-rb.c
-  puthread.c
+  uthread.c
   )
 
 if (PLIBSYS_NATIVE_WINDOWS)

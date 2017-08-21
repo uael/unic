@@ -15,9 +15,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/pdir.h"
-#include "p/pmem.h"
-#include "p/pstring.h"
+#include "p/dir.h"
+#include "p/mem.h"
+#include "p/string.h"
 #include "perror-private.h"
 
 #define INCL_DOSFILEMGR

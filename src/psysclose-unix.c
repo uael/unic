@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/perror.h"
+#include "p/error.h"
 #include "psysclose-private.h"
 
 #include <unistd.h>

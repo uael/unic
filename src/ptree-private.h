@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PTREE_PRIVATE_H
 #define PLIBSYS_HEADER_PTREE_PRIVATE_H
 
-#include "p/pmacros.h"
-#include "p/ptypes.h"
+#include "p/macros.h"
+#include "p/types.h"
 
 /** Base tree leaf structure. */
 typedef struct PTreeBaseNode_ {

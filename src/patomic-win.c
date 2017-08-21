@@ -16,7 +16,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/patomic.h"
+#include "p/atomic.h"
 
 /* Prepare MemoryBarrier() */
 #if defined (P_CC_WATCOM) || defined (P_CC_BORLAND)

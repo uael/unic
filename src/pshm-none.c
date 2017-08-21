@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/pshm.h"
+#include "p/shm.h"
 
 #include <stdlib.h>
 

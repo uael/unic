@@ -17,10 +17,10 @@
 
 /* More emulation variants: https://github.com/neosmart/RWLock */
 
-#include "p/pmem.h"
-#include "p/patomic.h"
-#include "p/puthread.h"
-#include "p/prwlock.h"
+#include "p/mem.h"
+#include "p/atomic.h"
+#include "p/uthread.h"
+#include "p/rwlock.h"
 
 #include <stdlib.h>
 

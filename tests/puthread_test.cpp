@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE puthread_test
 
-#include "p/plibsys.h"
+#include "plib.h"
 
 #ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>

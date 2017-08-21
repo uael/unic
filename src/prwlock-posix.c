@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/pmem.h"
-#include "p/prwlock.h"
+#include "p/mem.h"
+#include "p/rwlock.h"
 
 #include <stdlib.h>
 #include <pthread.h>

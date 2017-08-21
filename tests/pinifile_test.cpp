@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE pinifile_test
 
-#include "p/plibsys.h"
+#include "plib.h"
 
 #include <stdlib.h>
 #include <stdio.h>

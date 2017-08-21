@@ -18,16 +18,16 @@
 #define INCL_DOSPROCESS
 #define INCL_DOSERRORS
 #include <os2.h>
-#include "p/process.h"
+#include <process.h>
 
 #ifdef P_DEBUG
 #  undef P_DEBUG
 #endif
 
-#include "p/pmem.h"
-#include "p/patomic.h"
-#include "p/pmutex.h"
-#include "p/puthread.h"
+#include "p/mem.h"
+#include "p/atomic.h"
+#include "p/mutex.h"
+#include "p/uthread.h"
 #include "puthread-private.h"
 
 #include <stdlib.h>
