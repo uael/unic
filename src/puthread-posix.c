@@ -78,41 +78,41 @@ static PMutex *pp_uthread_tls_mutex = NULL;
 #endif
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
-static pboolean pp_uthread_get_unix_priority(PUThreadPriority prio,
+static bool pp_uthread_get_unix_priority(PUThreadPriority prio,
   int *sched_policy, int *sched_priority);
 #endif
 
 static pthread_key_t *pp_uthread_get_tls_key(PUThreadKey *key);
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
-static pboolean
+static bool
 pp_uthread_get_unix_priority(PUThreadPriority prio, int *sched_policy,
   int *sched_priority) {
-  pint lowBound, upperBound;
-  pint prio_min, prio_max;
-  pint native_prio;
+  int_t lowBound, upperBound;
+  int_t prio_min, prio_max;
+  int_t native_prio;
 
 #ifdef SCHED_IDLE
   if (prio == P_UTHREAD_PRIORITY_IDLE) {
     *sched_policy = SCHED_IDLE;
     *sched_priority = 0;
-    return TRUE;
+    return true;
   }
 
-  lowBound = (pint) P_UTHREAD_PRIORITY_LOWEST;
+  lowBound = (int_t) P_UTHREAD_PRIORITY_LOWEST;
 #else
-  lowBound = (pint) P_UTHREAD_PRIORITY_IDLE;
+  lowBound = (int_t) P_UTHREAD_PRIORITY_IDLE;
 #endif
-  upperBound = (pint) P_UTHREAD_PRIORITY_TIMECRITICAL;
+  upperBound = (int_t) P_UTHREAD_PRIORITY_TIMECRITICAL;
 
   prio_min = sched_get_priority_min(*sched_policy);
   prio_max = sched_get_priority_max(*sched_policy);
 
   if (P_UNLIKELY (prio_min == -1 || prio_max == -1))
-    return FALSE;
+    return false;
 
   native_prio =
-    ((pint) prio - lowBound) * (prio_max - prio_min) / upperBound + prio_min;
+    ((int_t) prio - lowBound) * (prio_max - prio_min) / upperBound + prio_min;
 
   if (P_UNLIKELY (native_prio > prio_max))
     native_prio = prio_max;
@@ -122,7 +122,7 @@ pp_uthread_get_unix_priority(PUThreadPriority prio, int *sched_policy,
 
   *sched_priority = native_prio;
 
-  return TRUE;
+  return true;
 }
 #endif
 
@@ -130,7 +130,7 @@ static pthread_key_t *
 pp_uthread_get_tls_key(PUThreadKey *key) {
   pthread_key_t *thread_key;
 
-  thread_key = (pthread_key_t *) p_atomic_pointer_get((ppointer) &key->key);
+  thread_key = (pthread_key_t *) p_atomic_pointer_get((ptr_t) &key->key);
 
   if (P_LIKELY (thread_key != NULL))
     return thread_key;
@@ -160,9 +160,9 @@ pp_uthread_get_tls_key(PUThreadKey *key) {
   }
 
 #ifndef P_OS_SCO
-  if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange((ppointer) &key->key,
+  if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange((ptr_t) &key->key,
     NULL,
-    (ppointer) thread_key) == FALSE)) {
+    (ptr_t) thread_key) == false)) {
     if (P_UNLIKELY (pthread_key_delete(*thread_key) != 0)) {
       P_ERROR ("PUThread::pp_uthread_get_tls_key: pthread_key_delete() failed");
       p_free(thread_key);
@@ -207,20 +207,20 @@ p_uthread_win32_thread_detach(void) {
 
 PUThread *
 p_uthread_create_internal(PUThreadFunc func,
-  pboolean joinable,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size) {
+  size_t stack_size) {
   PUThread *ret;
   pthread_attr_t attr;
-  pint create_code;
+  int_t create_code;
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
   struct sched_param sched;
-  pint native_prio;
-  pint sched_policy;
+  int_t native_prio;
+  int_t sched_policy;
 #endif
 
 #if defined (PLIBSYS_HAS_POSIX_STACKSIZE) && defined (_SC_THREAD_STACK_MIN)
-  plong min_stack;
+  long_t min_stack;
 #endif
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThread))) == NULL)) {
@@ -256,7 +256,7 @@ p_uthread_create_internal(PUThreadFunc func,
     if (P_LIKELY (pthread_attr_getschedpolicy(&attr, &sched_policy) == 0)) {
       if (P_LIKELY (pp_uthread_get_unix_priority(prio,
         &sched_policy,
-        &native_prio) == TRUE)) {
+        &native_prio) == true)) {
         memset(&sched, 0, sizeof(sched));
         sched.sched_priority = native_prio;
 
@@ -278,11 +278,11 @@ p_uthread_create_internal(PUThreadFunc func,
 #ifdef PLIBSYS_HAS_POSIX_STACKSIZE
 #  ifdef _SC_THREAD_STACK_MIN
   if (stack_size > 0) {
-    min_stack = (plong) sysconf(_SC_THREAD_STACK_MIN);
+    min_stack = (long_t) sysconf(_SC_THREAD_STACK_MIN);
 
     if (P_LIKELY (min_stack > 0)) {
-      if (P_UNLIKELY (stack_size < (psize) min_stack))
-        stack_size = (psize) min_stack;
+      if (P_UNLIKELY (stack_size < (size_t) min_stack))
+        stack_size = (size_t) min_stack;
     } else
       P_WARNING (
         "PUThread::p_uthread_create_internal: sysconf() with _SC_THREAD_STACK_MIN failed");
@@ -339,30 +339,30 @@ p_uthread_yield(void) {
   sched_yield();
 }
 
-P_API pboolean
+P_API bool
 p_uthread_set_priority(PUThread *thread,
   PUThreadPriority prio) {
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
   struct sched_param sched;
-  pint policy;
-  pint native_prio;
+  int_t policy;
+  int_t native_prio;
 #endif
 
   if (P_UNLIKELY (thread == NULL))
-    return FALSE;
+    return false;
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
   if (P_UNLIKELY (pthread_getschedparam(thread->hdl, &policy, &sched) != 0)) {
     P_ERROR (
       "PUThread::p_uthread_set_priority: pthread_getschedparam() failed");
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY (
-    pp_uthread_get_unix_priority(prio, &policy, &native_prio) == FALSE)) {
+    pp_uthread_get_unix_priority(prio, &policy, &native_prio) == false)) {
     P_ERROR (
       "PUThread::p_uthread_set_priority: pp_uthread_get_unix_priority() failed");
-    return FALSE;
+    return false;
   }
 
   memset(&sched, 0, sizeof(sched));
@@ -371,17 +371,17 @@ p_uthread_set_priority(PUThread *thread,
   if (P_UNLIKELY (pthread_setschedparam(thread->hdl, policy, &sched) != 0)) {
     P_ERROR (
       "PUThread::p_uthread_set_priority: pthread_setschedparam() failed");
-    return FALSE;
+    return false;
   }
 #endif
 
   thread->base.prio = prio;
-  return TRUE;
+  return true;
 }
 
 P_API P_HANDLE
 p_uthread_current_id(void) {
-  return (P_HANDLE) ((psize) pthread_self());
+  return (P_HANDLE) ((size_t) pthread_self());
 }
 
 P_API PUThreadKey *
@@ -406,11 +406,11 @@ p_uthread_local_free(PUThreadKey *key) {
   p_free(key);
 }
 
-P_API ppointer
+P_API ptr_t
 p_uthread_get_local(PUThreadKey *key) {
   pthread_key_t *tls_key;
 #ifdef P_OS_SCO
-  ppointer	value;
+  ptr_t	value;
 #endif
 
   if (P_UNLIKELY (key == NULL))
@@ -431,7 +431,7 @@ p_uthread_get_local(PUThreadKey *key) {
 
 P_API void
 p_uthread_set_local(PUThreadKey *key,
-  ppointer value) {
+  ptr_t value) {
   pthread_key_t *tls_key;
 
   if (P_UNLIKELY (key == NULL))
@@ -447,9 +447,9 @@ p_uthread_set_local(PUThreadKey *key,
 
 P_API void
 p_uthread_replace_local(PUThreadKey *key,
-  ppointer value) {
+  ptr_t value) {
   pthread_key_t *tls_key;
-  ppointer old_value;
+  ptr_t old_value;
 
   if (P_UNLIKELY (key == NULL))
     return;

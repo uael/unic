@@ -29,9 +29,9 @@
 
 typedef struct PHashSHA3_ PHashSHA3;
 
-void p_crypto_hash_sha3_update(PHashSHA3 *ctx, const puchar *data, psize len);
+void p_crypto_hash_sha3_update(PHashSHA3 *ctx, const ubyte_t *data, size_t len);
 void p_crypto_hash_sha3_finish(PHashSHA3 *ctx);
-const puchar *p_crypto_hash_sha3_digest(PHashSHA3 *ctx);
+const ubyte_t *p_crypto_hash_sha3_digest(PHashSHA3 *ctx);
 void p_crypto_hash_sha3_reset(PHashSHA3 *ctx);
 void p_crypto_hash_sha3_free(PHashSHA3 *ctx);
 

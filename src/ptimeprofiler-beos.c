@@ -15,25 +15,25 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/bench.h"
+#include "p/profiler.h"
 #include "ptimeprofiler-private.h"
 
 #include <kernel/OS.h>
 
-puint64
-p_time_profiler_get_ticks_internal() {
-  return (puint64) system_time();
+uint64_t
+p_profiler_get_ticks_internal() {
+  return (uint64_t) system_time();
 }
 
-puint64
-p_time_profiler_elapsed_usecs_internal(const PTimeProfiler *profiler) {
-  return ((puint64) system_time()) - profiler->counter;
-}
-
-void
-p_time_profiler_init(void) {
+uint64_t
+p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+  return ((uint64_t) system_time()) - profiler->counter;
 }
 
 void
-p_time_profiler_shutdown(void) {
+p_profiler_init(void) {
+}
+
+void
+p_profiler_shutdown(void) {
 }

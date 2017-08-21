@@ -37,7 +37,7 @@ pp_library_loader_clean_handle(plibrary_handle handle) {
 }
 
 P_API PLibraryLoader *
-p_library_loader_new(const pchar *path) {
+p_library_loader_new(const byte_t *path) {
   PLibraryLoader *loader = NULL;
   plibrary_handle handle;
 
@@ -61,7 +61,7 @@ p_library_loader_new(const pchar *path) {
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
   PFuncAddr ret_sym = NULL;
 
   if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
@@ -82,9 +82,9 @@ p_library_loader_free(PLibraryLoader *loader) {
   p_free(loader);
 }
 
-P_API pchar *
+P_API byte_t *
 p_library_loader_get_last_error(PLibraryLoader *loader) {
-  pchar *res = NULL;
+  byte_t *res = NULL;
   DWORD err_code;
   LPVOID msg_buf;
 
@@ -104,14 +104,14 @@ p_library_loader_get_last_error(PLibraryLoader *loader) {
     (LPSTR) & msg_buf,
     0,
     NULL) != 0)) {
-    res = p_strdup((pchar *) msg_buf);
+    res = p_strdup((byte_t *) msg_buf);
     LocalFree(msg_buf);
   }
 
   return res;
 }
 
-P_API pboolean
+P_API bool
 p_library_loader_is_ref_counted(void) {
-  return TRUE;
+  return true;
 }

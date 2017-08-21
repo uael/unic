@@ -34,14 +34,14 @@ struct PUThread_ {
 };
 
 struct PUThreadKey_ {
-  pint key;
+  int_t key;
   PDestroyFunc free_func;
 };
 
-static pint pp_uthread_get_atheos_priority(PUThreadPriority prio);
-static pint pp_uthread_get_tls_key(PUThreadKey *key);
+static int_t pp_uthread_get_atheos_priority(PUThreadPriority prio);
+static int_t pp_uthread_get_tls_key(PUThreadKey *key);
 
-static pint
+static int_t
 pp_uthread_get_atheos_priority(PUThreadPriority prio) {
   switch (prio) {
     case P_UTHREAD_PRIORITY_INHERIT: {
@@ -74,11 +74,11 @@ pp_uthread_get_atheos_priority(PUThreadPriority prio) {
   }
 }
 
-static pint
+static int_t
 pp_uthread_get_tls_key(PUThreadKey *key) {
-  pint thread_key;
+  int_t thread_key;
 
-  thread_key = p_atomic_int_get((const volatile pint *) &key->key);
+  thread_key = p_atomic_int_get((const volatile int_t *) &key->key);
 
   if (P_LIKELY (thread_key >= 0))
     return thread_key;
@@ -88,9 +88,9 @@ pp_uthread_get_tls_key(PUThreadKey *key) {
     return -1;
   }
 
-  if (P_UNLIKELY (p_atomic_int_compare_and_exchange((volatile pint *) &key->key,
+  if (P_UNLIKELY (p_atomic_int_compare_and_exchange((volatile int_t *) &key->key,
     -1,
-    thread_key) == FALSE)) {
+    thread_key) == false)) {
     if (P_UNLIKELY (free_tld(thread_key) != 0)) {
       P_ERROR ("PUThread::pp_uthread_get_tls_key: free_tld() failed");
       return -1;
@@ -116,9 +116,9 @@ p_uthread_win32_thread_detach(void) {
 
 PUThread *
 p_uthread_create_internal(PUThreadFunc func,
-  pboolean joinable,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size) {
+  size_t stack_size) {
   PUThread *ret;
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThread))) == NULL)) {
@@ -168,22 +168,22 @@ p_uthread_yield(void) {
   sched_yield();
 }
 
-P_API pboolean
+P_API bool
 p_uthread_set_priority(PUThread *thread,
   PUThreadPriority prio) {
   if (P_UNLIKELY (thread == NULL))
-    return FALSE;
+    return false;
 
   set_thread_priority(thread->hdl, pp_uthread_get_atheos_priority(prio));
 
   thread->base.prio = prio;
 
-  return TRUE;
+  return true;
 }
 
 P_API P_HANDLE
 p_uthread_current_id(void) {
-  return (P_HANDLE) ((psize) get_thread_id(NULL));
+  return (P_HANDLE) ((size_t) get_thread_id(NULL));
 }
 
 P_API PUThreadKey *
@@ -209,9 +209,9 @@ p_uthread_local_free(PUThreadKey *key) {
   p_free(key);
 }
 
-P_API ppointer
+P_API ptr_t
 p_uthread_get_local(PUThreadKey *key) {
-  pint tls_key;
+  int_t tls_key;
 
   if (P_UNLIKELY (key == NULL))
     return NULL;
@@ -226,8 +226,8 @@ p_uthread_get_local(PUThreadKey *key) {
 
 P_API void
 p_uthread_set_local(PUThreadKey *key,
-  ppointer value) {
-  pint tls_key;
+  ptr_t value) {
+  int_t tls_key;
 
   if (P_UNLIKELY (key == NULL))
     return;
@@ -240,9 +240,9 @@ p_uthread_set_local(PUThreadKey *key,
 
 P_API void
 p_uthread_replace_local(PUThreadKey *key,
-  ppointer value) {
-  pint tls_key;
-  ppointer old_value;
+  ptr_t value) {
+  int_t tls_key;
+  ptr_t old_value;
 
   if (P_UNLIKELY (key == NULL))
     return;

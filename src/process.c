@@ -23,23 +23,23 @@
 #  include <unistd.h>
 #endif
 
-P_API puint32
+P_API uint32_t
 p_process_get_current_pid(void) {
 #ifdef P_OS_WIN
-  return (puint32) GetCurrentProcessId ();
+  return (uint32_t) GetCurrentProcessId ();
 #else
-  return (puint32) getpid();
+  return (uint32_t) getpid();
 #endif
 }
 
-P_API pboolean
-p_process_is_running(puint32 pid) {
+P_API bool
+p_process_is_running(uint32_t pid) {
 #ifdef P_OS_WIN
   HANDLE proc;
   DWORD ret;
 
-  if ((proc = OpenProcess (SYNCHRONIZE, FALSE, pid)) == NULL)
-    return FALSE;
+  if ((proc = OpenProcess (SYNCHRONIZE, false, pid)) == NULL)
+    return false;
 
   ret = WaitForSingleObject (proc, 0);
   CloseHandle (proc);

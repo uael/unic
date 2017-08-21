@@ -30,10 +30,10 @@
 typedef struct PHashSHA2_256_ PHashSHA2_256;
 
 PHashSHA2_256 *p_crypto_hash_sha2_256_new(void);
-void p_crypto_hash_sha2_256_update(PHashSHA2_256 *ctx, const puchar *data,
-  psize len);
+void p_crypto_hash_sha2_256_update(PHashSHA2_256 *ctx, const ubyte_t *data,
+  size_t len);
 void p_crypto_hash_sha2_256_finish(PHashSHA2_256 *ctx);
-const puchar *p_crypto_hash_sha2_256_digest(PHashSHA2_256 *ctx);
+const ubyte_t *p_crypto_hash_sha2_256_digest(PHashSHA2_256 *ctx);
 void p_crypto_hash_sha2_256_reset(PHashSHA2_256 *ctx);
 void p_crypto_hash_sha2_256_free(PHashSHA2_256 *ctx);
 

@@ -35,24 +35,24 @@
 #define PRWLOCK_TEST_STRING_2 "Ouh, yet another string to check!"
 
 static PRWLock *         test_rwlock        = NULL;
-static volatile pboolean is_threads_working = FALSE;
-static volatile pint     writers_counter    = 0;
-static pchar             string_buf[50];
+static volatile bool is_threads_working = false;
+static volatile int_t     writers_counter    = 0;
+static byte_t             string_buf[50];
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -61,16 +61,16 @@ static void * reader_thread_func (void *data)
 {
 	P_UNUSED (data);
 
-	pint counter = 0;
+	int_t counter = 0;
 
 	while (p_atomic_int_get (&writers_counter) == 0)
 		p_uthread_sleep (10);
 
-	while (is_threads_working == TRUE) {
+	while (is_threads_working == true) {
 		p_uthread_sleep (10);
 
-		if (p_rwlock_reader_trylock (test_rwlock) == FALSE) {
-			if (p_rwlock_reader_lock (test_rwlock) == FALSE)
+		if (p_rwlock_reader_trylock (test_rwlock) == false) {
+			if (p_rwlock_reader_lock (test_rwlock) == false)
 				p_uthread_exit (-1);
 		}
 
@@ -80,7 +80,7 @@ static void * reader_thread_func (void *data)
 			p_uthread_exit (-1);
 		}
 
-		if (p_rwlock_reader_unlock (test_rwlock) == FALSE)
+		if (p_rwlock_reader_unlock (test_rwlock) == false)
 			p_uthread_exit (-1);
 
 		++counter;
@@ -93,14 +93,14 @@ static void * reader_thread_func (void *data)
 
 static void * writer_thread_func (void *data)
 {
-	pint string_num = PPOINTER_TO_INT (data);
-	pint counter    = 0;
+	int_t string_num = PPOINTER_TO_INT (data);
+	int_t counter    = 0;
 
-	while (is_threads_working == TRUE) {
+	while (is_threads_working == true) {
 		p_uthread_sleep (10);
 
-		if (p_rwlock_writer_trylock (test_rwlock) == FALSE) {
-			if (p_rwlock_writer_lock (test_rwlock) == FALSE)
+		if (p_rwlock_writer_trylock (test_rwlock) == false) {
+			if (p_rwlock_writer_lock (test_rwlock) == false)
 				p_uthread_exit (-1);
 		}
 
@@ -111,7 +111,7 @@ static void * writer_thread_func (void *data)
 		else
 			strcpy (string_buf, PRWLOCK_TEST_STRING_1);
 
-		if (p_rwlock_writer_unlock (test_rwlock) == FALSE)
+		if (p_rwlock_writer_unlock (test_rwlock) == false)
 			p_uthread_exit (-1);
 
 		++counter;
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE (prwlock_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_rwlock_new () == NULL);
 
@@ -149,12 +149,12 @@ BOOST_AUTO_TEST_CASE (prwlock_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_rwlock_reader_lock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_reader_trylock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_reader_unlock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_writer_lock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_writer_trylock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_writer_unlock (NULL) == FALSE);
+	BOOST_CHECK (p_rwlock_reader_lock (NULL) == false);
+	BOOST_CHECK (p_rwlock_reader_trylock (NULL) == false);
+	BOOST_CHECK (p_rwlock_reader_unlock (NULL) == false);
+	BOOST_CHECK (p_rwlock_writer_lock (NULL) == false);
+	BOOST_CHECK (p_rwlock_writer_trylock (NULL) == false);
+	BOOST_CHECK (p_rwlock_writer_unlock (NULL) == false);
 	p_rwlock_free (NULL);
 
 	p_libsys_shutdown ();
@@ -168,24 +168,24 @@ BOOST_AUTO_TEST_CASE (prwlock_general_test)
 
 	BOOST_REQUIRE (test_rwlock != NULL);
 
-	is_threads_working = TRUE;
+	is_threads_working = true;
 	writers_counter    = 0;
 
 	PUThread *reader_thr1 = p_uthread_create ((PUThreadFunc) reader_thread_func,
 						  NULL,
-						  TRUE);
+						  true);
 
 	PUThread *reader_thr2 = p_uthread_create ((PUThreadFunc) reader_thread_func,
 						  NULL,
-						  TRUE);
+						  true);
 
 	PUThread *writer_thr1 = p_uthread_create ((PUThreadFunc) writer_thread_func,
 						  NULL,
-						  TRUE);
+						  true);
 
 	PUThread *writer_thr2 = p_uthread_create ((PUThreadFunc) writer_thread_func,
 						  NULL,
-						  TRUE);
+						  true);
 
 	BOOST_REQUIRE (reader_thr1 != NULL);
 	BOOST_REQUIRE (reader_thr2 != NULL);
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE (prwlock_general_test)
 
 	p_uthread_sleep (10000);
 
-	is_threads_working = FALSE;
+	is_threads_working = false;
 
 	BOOST_CHECK (p_uthread_join (reader_thr1) > 0);
 	BOOST_CHECK (p_uthread_join (reader_thr2) > 0);

@@ -22,18 +22,18 @@
 
 struct PHashSHA2_512_ {
   union buf_ {
-    puchar buf[128];
-    puint64 buf_w[16];
+    ubyte_t buf[128];
+    uint64_t buf_w[16];
   } buf;
-  puint64 hash[8];
+  uint64_t hash[8];
 
-  puint64 len_high;
-  puint64 len_low;
+  uint64_t len_high;
+  uint64_t len_low;
 
-  pboolean is384;
+  bool is384;
 };
 
-static const puchar pp_crypto_hash_sha2_512_pad[128] = {
+static const ubyte_t pp_crypto_hash_sha2_512_pad[128] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -44,7 +44,7 @@ static const puchar pp_crypto_hash_sha2_512_pad[128] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static const puint64 pp_crypto_hash_sha2_512_K[] = {
+static const uint64_t pp_crypto_hash_sha2_512_K[] = {
   0x428A2F98D728AE22ULL, 0x7137449123EF65CDULL,
   0xB5C0FBCFEC4D3B2FULL, 0xE9B5DBA58189DBBCULL,
   0x3956C25BF348B538ULL, 0x59F111F1B605D019ULL,
@@ -87,10 +87,10 @@ static const puint64 pp_crypto_hash_sha2_512_K[] = {
   0x5FCB6FAB3AD6FAECULL, 0x6C44198C4A475817ULL
 };
 
-static void pp_crypto_hash_sha2_512_swap_bytes(puint64 *data, puint words);
+static void pp_crypto_hash_sha2_512_swap_bytes(uint64_t *data, uint_t words);
 static void pp_crypto_hash_sha2_512_process(PHashSHA2_512 *ctx,
-  const puint64 data[16]);
-static PHashSHA2_512 *pp_crypto_hash_sha2_512_new_internal(pboolean is384);
+  const uint64_t data[16]);
+static PHashSHA2_512 *pp_crypto_hash_sha2_512_new_internal(bool is384);
 
 #define P_SHA2_512_SHR(val, shift) ((val) >> (shift))
 #define P_SHA2_512_ROTR(val, shift) (P_SHA2_512_SHR(val, shift) | ((val) << (64 - (shift))))
@@ -112,8 +112,8 @@ static PHashSHA2_512 *pp_crypto_hash_sha2_512_new_internal(pboolean is384);
 }
 
 static void
-pp_crypto_hash_sha2_512_swap_bytes(puint64 *data,
-  puint words) {
+pp_crypto_hash_sha2_512_swap_bytes(uint64_t *data,
+  uint_t words) {
 #ifdef PLIBSYS_IS_BIGENDIAN
   P_UNUSED (data);
   P_UNUSED (words);
@@ -127,11 +127,11 @@ pp_crypto_hash_sha2_512_swap_bytes(puint64 *data,
 
 static void
 pp_crypto_hash_sha2_512_process(PHashSHA2_512 *ctx,
-  const puint64 data[16]) {
-  puint64 tmp_sum1, tmp_sum2;
-  puint64 W[80];
-  puint64 A[8];
-  puint i;
+  const uint64_t data[16]) {
+  uint64_t tmp_sum1, tmp_sum2;
+  uint64_t W[80];
+  uint64_t A[8];
+  uint_t i;
 
   for (i = 0; i < 8; ++i)
     A[i] = ctx->hash[i];
@@ -166,7 +166,7 @@ pp_crypto_hash_sha2_512_process(PHashSHA2_512 *ctx,
 }
 
 static PHashSHA2_512 *
-pp_crypto_hash_sha2_512_new_internal(pboolean is384) {
+pp_crypto_hash_sha2_512_new_internal(bool is384) {
   PHashSHA2_512 *ret;
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashSHA2_512))) == NULL))
@@ -186,7 +186,7 @@ p_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx) {
   ctx->len_low = 0;
   ctx->len_high = 0;
 
-  if (ctx->is384 == FALSE) {
+  if (ctx->is384 == false) {
     /* SHA2-512 */
     ctx->hash[0] = 0x6A09E667F3BCC908ULL;
     ctx->hash[1] = 0xBB67AE8584CAA73BULL;
@@ -211,29 +211,29 @@ p_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx) {
 
 PHashSHA2_512 *
 p_crypto_hash_sha2_512_new(void) {
-  return pp_crypto_hash_sha2_512_new_internal(FALSE);
+  return pp_crypto_hash_sha2_512_new_internal(false);
 }
 
 PHashSHA2_512 *
 p_crypto_hash_sha2_384_new(void) {
-  return pp_crypto_hash_sha2_512_new_internal(TRUE);
+  return pp_crypto_hash_sha2_512_new_internal(true);
 }
 
 void
 p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx,
-  const puchar *data,
-  psize len) {
-  puint32 left, to_fill;
+  const ubyte_t *data,
+  size_t len) {
+  uint32_t left, to_fill;
 
-  left = (puint32) (ctx->len_low & 0x7F);
+  left = (uint32_t) (ctx->len_low & 0x7F);
   to_fill = 128 - left;
 
-  ctx->len_low += (puint64) len;
+  ctx->len_low += (uint64_t) len;
 
-  if (ctx->len_low < (puint64) len)
+  if (ctx->len_low < (uint64_t) len)
     ++ctx->len_high;
 
-  if (left && (puint64) len >= to_fill) {
+  if (left && (uint64_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_sha2_512_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_sha2_512_process(ctx, ctx->buf.buf_w);
@@ -258,10 +258,10 @@ p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx,
 
 void
 p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx) {
-  puint64 high, low;
-  pint left, last;
+  uint64_t high, low;
+  int_t left, last;
 
-  left = (pint) (ctx->len_low & 0x7F);
+  left = (int_t) (ctx->len_low & 0x7F);
   last = (left < 112) ? (112 - left) : (240 - left);
 
   low = ctx->len_low << 3;
@@ -270,7 +270,7 @@ p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx) {
 
   if (last > 0)
     p_crypto_hash_sha2_512_update(ctx, pp_crypto_hash_sha2_512_pad,
-      (psize) last);
+      (size_t) last);
 
   ctx->buf.buf_w[14] = high;
   ctx->buf.buf_w[15] = low;
@@ -278,12 +278,12 @@ p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx) {
   pp_crypto_hash_sha2_512_swap_bytes(ctx->buf.buf_w, 14);
   pp_crypto_hash_sha2_512_process(ctx, ctx->buf.buf_w);
 
-  pp_crypto_hash_sha2_512_swap_bytes(ctx->hash, ctx->is384 == FALSE ? 8 : 6);
+  pp_crypto_hash_sha2_512_swap_bytes(ctx->hash, ctx->is384 == false ? 8 : 6);
 }
 
-const puchar *
+const ubyte_t *
 p_crypto_hash_sha2_512_digest(PHashSHA2_512 *ctx) {
-  return (const puchar *) ctx->hash;
+  return (const ubyte_t *) ctx->hash;
 }
 
 void

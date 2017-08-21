@@ -43,7 +43,7 @@
  * takes ownership of the returned string.
  * @since 0.0.1
  */
-P_API pchar *p_strdup(const pchar *str);
+P_API byte_t *p_strdup(const byte_t *str);
 
 /**
  * @brief Removes trailing and leading whitespaces.
@@ -52,7 +52,7 @@ P_API pchar *p_strdup(const pchar *str);
  * caller takes ownership of the returned string.
  * @since 0.0.1
  */
-P_API pchar *p_strchomp(const pchar *str);
+P_API byte_t *p_strchomp(const byte_t *str);
 
 /**
  * @brief Tokenizes a string by given delimiters.
@@ -86,9 +86,9 @@ P_API pchar *p_strchomp(const pchar *str);
  * Some platforms do not support the third parameter and it can be remained
  * unused. In that case this call wouldn't be thread-safe.
  */
-P_API pchar *p_strtok(pchar *str,
-  const pchar *delim,
-  pchar **buf);
+P_API byte_t *p_strtok(byte_t *str,
+  const byte_t *delim,
+  byte_t **buf);
 
 /**
  * @brief Converts a string to @a double without a locale dependency.
@@ -100,6 +100,6 @@ P_API pchar *p_strtok(pchar *str,
  * convert string variables to @a double values. The decimal point is '.' as in
  * the 'C' locale.
  */
-P_API double p_strtod(const pchar *str);
+P_API double p_strtod(const byte_t *str);
 
 #endif /* P_STRING_H__ */

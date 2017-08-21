@@ -75,16 +75,16 @@ struct PSocketAddress_ {
     struct in6_addr sin6_addr;
 #endif
   } addr;
-  puint16 port;
-  puint32 flowinfo;
-  puint32 scope_id;
+  uint16_t port;
+  uint32_t flowinfo;
+  uint32_t scope_id;
 };
 
 P_API PSocketAddress *
-p_socket_address_new_from_native(pconstpointer native,
-  psize len) {
+p_socket_address_new_from_native(const_ptr_t native,
+  size_t len) {
   PSocketAddress *ret;
-  puint16 family;
+  uint16_t family;
 
   if (P_UNLIKELY (native == NULL || len == 0))
     return NULL;
@@ -139,8 +139,8 @@ p_socket_address_new_from_native(pconstpointer native,
 }
 
 P_API PSocketAddress *
-p_socket_address_new(const pchar *address,
-  puint16 port) {
+p_socket_address_new(const byte_t *address,
+  uint16_t port) {
   PSocketAddress *ret;
 #if defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)
   struct addrinfo hints;
@@ -153,7 +153,7 @@ p_socket_address_new(const pchar *address,
 #  ifdef AF_INET6
   struct sockaddr_in6 	*sin6 = (struct sockaddr_in6 *) &sa;
 #  endif /* AF_INET6 */
-  pint 			len;
+  int_t 			len;
 #endif /* P_OS_WIN */
 
   if (P_UNLIKELY (address == NULL))
@@ -233,9 +233,9 @@ p_socket_address_new(const pchar *address,
 
 P_API PSocketAddress *
 p_socket_address_new_any(PSocketFamily family,
-  puint16 port) {
+  uint16_t port) {
   PSocketAddress *ret;
-  puchar any_addr[] = {0, 0, 0, 0};
+  ubyte_t any_addr[] = {0, 0, 0, 0};
 #ifdef AF_INET6
   struct in6_addr any6_addr = IN6ADDR_ANY_INIT;
 #endif
@@ -265,9 +265,9 @@ p_socket_address_new_any(PSocketFamily family,
 
 P_API PSocketAddress *
 p_socket_address_new_loopback(PSocketFamily family,
-  puint16 port) {
+  uint16_t port) {
   PSocketAddress *ret;
-  puchar loop_addr[] = {127, 0, 0, 0};
+  ubyte_t loop_addr[] = {127, 0, 0, 0};
 #ifdef AF_INET6
   struct in6_addr loop6_addr = IN6ADDR_LOOPBACK_INIT;
 #endif
@@ -296,17 +296,17 @@ p_socket_address_new_loopback(PSocketFamily family,
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_socket_address_to_native(const PSocketAddress *addr,
-  ppointer dest,
-  psize destlen) {
+  ptr_t dest,
+  size_t destlen) {
   struct sockaddr_in *sin;
 #ifdef AF_INET6
   struct sockaddr_in6 *sin6;
 #endif
 
   if (P_UNLIKELY (addr == NULL || dest == NULL || destlen == 0))
-    return FALSE;
+    return false;
 
   sin = (struct sockaddr_in *) dest;
 #ifdef AF_INET6
@@ -317,21 +317,21 @@ p_socket_address_to_native(const PSocketAddress *addr,
     if (P_UNLIKELY (destlen < sizeof(struct sockaddr_in))) {
       P_WARNING (
         "PSocketAddress::p_socket_address_to_native: invalid buffer size for IPv4");
-      return FALSE;
+      return false;
     }
 
     memcpy(&sin->sin_addr, &addr->addr.sin_addr, sizeof(struct in_addr));
     sin->sin_family = AF_INET;
     sin->sin_port = p_htons (addr->port);
     memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
-    return TRUE;
+    return true;
   }
 #ifdef AF_INET6
   else if (addr->family == P_SOCKET_FAMILY_INET6) {
     if (P_UNLIKELY (destlen < sizeof(struct sockaddr_in6))) {
       P_ERROR (
         "PSocketAddress::p_socket_address_to_native: invalid buffer size for IPv6");
-      return FALSE;
+      return false;
     }
 
     memcpy(&sin6->sin6_addr, &addr->addr.sin6_addr, sizeof(struct in6_addr));
@@ -343,17 +343,17 @@ p_socket_address_to_native(const PSocketAddress *addr,
 #ifdef PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
     sin6->sin6_scope_id = addr->scope_id;
 #endif
-    return TRUE;
+    return true;
   }
 #endif
   else {
     P_WARNING (
       "PSocketAddress::p_socket_address_to_native: unsupported socket address");
-    return FALSE;
+    return false;
   }
 }
 
-P_API psize
+P_API size_t
 p_socket_address_get_native_size(const PSocketAddress *addr) {
   if (P_UNLIKELY (addr == NULL))
     return 0;
@@ -379,12 +379,12 @@ p_socket_address_get_family(const PSocketAddress *addr) {
   return addr->family;
 }
 
-P_API pchar *
+P_API byte_t *
 p_socket_address_get_address(const PSocketAddress *addr) {
 #ifdef AF_INET6
-  pchar buffer[INET6_ADDRSTRLEN];
+  byte_t buffer[INET6_ADDRSTRLEN];
 #else
-  pchar			buffer[INET_ADDRSTRLEN];
+  byte_t			buffer[INET_ADDRSTRLEN];
 #endif
 
 #ifdef P_OS_WIN
@@ -442,7 +442,7 @@ p_socket_address_get_address(const PSocketAddress *addr) {
   return p_strdup(buffer);
 }
 
-P_API puint16
+P_API uint16_t
 p_socket_address_get_port(const PSocketAddress *addr) {
   if (P_UNLIKELY (addr == NULL))
     return 0;
@@ -450,7 +450,7 @@ p_socket_address_get_port(const PSocketAddress *addr) {
   return addr->port;
 }
 
-P_API puint32
+P_API uint32_t
 p_socket_address_get_flow_info(const PSocketAddress *addr) {
   if (P_UNLIKELY (addr == NULL))
     return 0;
@@ -465,7 +465,7 @@ p_socket_address_get_flow_info(const PSocketAddress *addr) {
 #endif
 }
 
-P_API puint32
+P_API uint32_t
 p_socket_address_get_scope_id(const PSocketAddress *addr) {
   if (P_UNLIKELY (addr == NULL))
     return 0;
@@ -482,7 +482,7 @@ p_socket_address_get_scope_id(const PSocketAddress *addr) {
 
 P_API void
 p_socket_address_set_flow_info(PSocketAddress *addr,
-  puint32 flowinfo) {
+  uint32_t flowinfo) {
   if (P_UNLIKELY (addr == NULL))
     return;
 
@@ -499,7 +499,7 @@ p_socket_address_set_flow_info(PSocketAddress *addr,
 
 P_API void
 p_socket_address_set_scope_id(PSocketAddress *addr,
-  puint32 scope_id) {
+  uint32_t scope_id) {
   if (P_UNLIKELY (addr == NULL))
     return;
 
@@ -514,50 +514,50 @@ p_socket_address_set_scope_id(PSocketAddress *addr,
 #endif
 }
 
-P_API pboolean
+P_API bool
 p_socket_address_is_flow_info_supported(void) {
 #ifdef AF_INET6
 #  ifdef PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO
-  return TRUE;
+  return true;
 #  else
-  return FALSE;
+  return false;
 #  endif
 #else
-  return FALSE;
+  return false;
 #endif
 }
 
-P_API pboolean
+P_API bool
 p_socket_address_is_scope_id_supported(void) {
 #ifdef AF_INET6
 #  ifdef PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
-  return TRUE;
+  return true;
 #  else
-  return FALSE;
+  return false;
 #  endif
 #else
-  return FALSE;
+  return false;
 #endif
 }
 
-P_API pboolean
+P_API bool
 p_socket_address_is_ipv6_supported(void) {
 #ifdef AF_INET6
-  return TRUE;
+  return true;
 #else
-  return FALSE;
+  return false;
 #endif
 }
 
-P_API pboolean
+P_API bool
 p_socket_address_is_any(const PSocketAddress *addr) {
-  puint32 addr4;
+  uint32_t addr4;
 
   if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN))
-    return FALSE;
+    return false;
 
   if (addr->family == P_SOCKET_FAMILY_INET) {
-    addr4 = p_ntohl (*((puint32 *) &addr->addr.sin_addr));
+    addr4 = p_ntohl (*((uint32_t *) &addr->addr.sin_addr));
 
     return (addr4 == INADDR_ANY);
   }
@@ -566,19 +566,19 @@ p_socket_address_is_any(const PSocketAddress *addr) {
     return IN6_IS_ADDR_UNSPECIFIED (&addr->addr.sin6_addr);
 #else
   else
-    return FALSE;
+    return false;
 #endif
 }
 
-P_API pboolean
+P_API bool
 p_socket_address_is_loopback(const PSocketAddress *addr) {
-  puint32 addr4;
+  uint32_t addr4;
 
   if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN))
-    return FALSE;
+    return false;
 
   if (addr->family == P_SOCKET_FAMILY_INET) {
-    addr4 = p_ntohl (*((puint32 *) &addr->addr.sin_addr));
+    addr4 = p_ntohl (*((uint32_t *) &addr->addr.sin_addr));
 
     /* 127.0.0.0/8 */
     return ((addr4 & 0xff000000) == 0x7f000000);
@@ -588,7 +588,7 @@ p_socket_address_is_loopback(const PSocketAddress *addr) {
     return IN6_IS_ADDR_LOOPBACK (&addr->addr.sin6_addr);
 #else
   else
-    return FALSE;
+    return false;
 #endif
 }
 

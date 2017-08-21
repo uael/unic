@@ -32,7 +32,7 @@
 #  include <sys/stat.h>
 #endif
 
-typedef ppointer plibrary_handle;
+typedef ptr_t plibrary_handle;
 
 struct PLibraryLoader_ {
   plibrary_handle handle;
@@ -48,7 +48,7 @@ pp_library_loader_clean_handle(plibrary_handle handle) {
 }
 
 P_API PLibraryLoader *
-p_library_loader_new(const pchar *path) {
+p_library_loader_new(const byte_t *path) {
   PLibraryLoader *loader = NULL;
   plibrary_handle handle;
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
@@ -87,7 +87,7 @@ p_library_loader_new(const pchar *path) {
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
   if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
     return NULL;
 
@@ -104,10 +104,10 @@ p_library_loader_free(PLibraryLoader *loader) {
   p_free(loader);
 }
 
-P_API pchar *
+P_API byte_t *
 p_library_loader_get_last_error(PLibraryLoader *loader) {
-  pchar *res = NULL;
-  pchar *msg;
+  byte_t *res = NULL;
+  byte_t *msg;
 
   P_UNUSED (loader);
 
@@ -119,7 +119,7 @@ p_library_loader_get_last_error(PLibraryLoader *loader) {
   return res;
 }
 
-P_API pboolean
+P_API bool
 p_library_loader_is_ref_counted(void) {
-  return TRUE;
+  return true;
 }

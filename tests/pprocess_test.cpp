@@ -33,13 +33,13 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pprocess_general_test)
 {
-	puint32	pid;
+	uint32_t	pid;
 
 	p_libsys_init ();
 
 	pid = p_process_get_current_pid ();
 	BOOST_CHECK (pid > 0);
-	BOOST_REQUIRE (p_process_is_running (pid) == TRUE);
+	BOOST_REQUIRE (p_process_is_running (pid) == true);
 
 	p_libsys_shutdown ();
 }

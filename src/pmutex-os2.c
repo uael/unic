@@ -40,7 +40,7 @@ p_mutex_new(void) {
   }
 
   if (P_UNLIKELY (
-    DosCreateMutexSem(NULL, (PHMTX) & ret->hdl, 0, FALSE) != NO_ERROR)) {
+    DosCreateMutexSem(NULL, (PHMTX) & ret->hdl, 0, false) != NO_ERROR)) {
     P_ERROR ("PMutex::p_mutex_new: DosCreateMutexSem() failed");
     p_free(ret);
     return NULL;
@@ -49,43 +49,43 @@ p_mutex_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_lock(PMutex *mutex) {
   APIRET ulrc;
 
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   while ((ulrc = DosRequestMutexSem(mutex->hdl, SEM_INDEFINITE_WAIT))
     == ERROR_INTERRUPT);
 
   if (P_LIKELY (ulrc == NO_ERROR))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_lock: DosRequestMutexSem() failed");
-    return FALSE;
+    return false;
   }
 }
 
-P_API pboolean
+P_API bool
 p_mutex_trylock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   return (DosRequestMutexSem(mutex->hdl, SEM_IMMEDIATE_RETURN)) == NO_ERROR
-    ? TRUE : FALSE;
+    ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_unlock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   if (P_LIKELY (DosReleaseMutexSem(mutex->hdl) == NO_ERROR))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_unlock: DosReleaseMutexSem() failed");
-    return FALSE;
+    return false;
   }
 }
 

@@ -51,17 +51,17 @@ struct PUThreadKey_ {
 static PMutex *pp_uthread_tls_mutex = NULL;
 #endif
 
-static pint pp_uthread_get_unix_priority(PUThreadPriority prio);
+static int_t pp_uthread_get_unix_priority(PUThreadPriority prio);
 static thread_key_t *pp_uthread_get_tls_key(PUThreadKey *key);
 
-static pint
+static int_t
 pp_uthread_get_unix_priority(PUThreadPriority prio) {
-  pint lowBound, upperBound;
+  int_t lowBound, upperBound;
 
-  lowBound = (pint) P_UTHREAD_PRIORITY_IDLE;
-  upperBound = (pint) P_UTHREAD_PRIORITY_TIMECRITICAL;
+  lowBound = (int_t) P_UTHREAD_PRIORITY_IDLE;
+  upperBound = (int_t) P_UTHREAD_PRIORITY_TIMECRITICAL;
 
-  return ((pint) prio - lowBound) *
+  return ((int_t) prio - lowBound) *
     (PLIBSYS_THREAD_MAX_PRIO - PLIBSYS_THREAD_MIN_PRIO) / upperBound +
     PLIBSYS_THREAD_MIN_PRIO;
 }
@@ -70,7 +70,7 @@ static thread_key_t *
 pp_uthread_get_tls_key(PUThreadKey *key) {
   thread_key_t *thread_key;
 
-  thread_key = (thread_key_t *) p_atomic_pointer_get((ppointer) &key->key);
+  thread_key = (thread_key_t *) p_atomic_pointer_get((ptr_t) &key->key);
 
   if (P_LIKELY (thread_key != NULL))
     return thread_key;
@@ -99,9 +99,9 @@ pp_uthread_get_tls_key(PUThreadKey *key) {
       return NULL;
     }
 #ifdef P_OS_UNIXWARE
-    if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
+    if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((ptr_t) &key->key,
                        NULL,
-                       (ppointer) thread_key) == FALSE)) {
+                       (ptr_t) thread_key) == false)) {
       if (P_UNLIKELY (thr_keydelete (*thread_key) != 0)) {
         P_ERROR ("PUThread::pp_uthread_get_tls_key: thr_keydelete() failed");
         p_free (thread_key);
@@ -146,12 +146,12 @@ p_uthread_win32_thread_detach(void) {
 
 PUThread *
 p_uthread_create_internal(PUThreadFunc func,
-  pboolean joinable,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size) {
+  size_t stack_size) {
   PUThread *ret;
-  pint32 flags;
-  psize min_stack;
+  int32_t flags;
+  size_t min_stack;
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThread))) == NULL)) {
     P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
@@ -216,26 +216,26 @@ p_uthread_yield(void) {
   thr_yield();
 }
 
-P_API pboolean
+P_API bool
 p_uthread_set_priority(PUThread *thread,
   PUThreadPriority prio) {
   if (P_UNLIKELY (thread == NULL))
-    return FALSE;
+    return false;
 
   if (P_UNLIKELY (
     thr_setprio(thread->hdl, pp_uthread_get_unix_priority(prio)) != 0)) {
     P_WARNING ("PUThread::p_uthread_set_priority: thr_setprio() failed");
-    return FALSE;
+    return false;
   }
 
   thread->base.prio = prio;
 
-  return TRUE;
+  return true;
 }
 
 P_API P_HANDLE
 p_uthread_current_id(void) {
-  return (P_HANDLE) ((psize) thr_self());
+  return (P_HANDLE) ((size_t) thr_self());
 }
 
 P_API PUThreadKey *
@@ -260,10 +260,10 @@ p_uthread_local_free(PUThreadKey *key) {
   p_free(key);
 }
 
-P_API ppointer
+P_API ptr_t
 p_uthread_get_local(PUThreadKey *key) {
   thread_key_t *tls_key;
-  ppointer ret = NULL;
+  ptr_t ret = NULL;
 
   if (P_UNLIKELY (key == NULL))
     return ret;
@@ -280,7 +280,7 @@ p_uthread_get_local(PUThreadKey *key) {
 
 P_API void
 p_uthread_set_local(PUThreadKey *key,
-  ppointer value) {
+  ptr_t value) {
   thread_key_t *tls_key;
 
   if (P_UNLIKELY (key == NULL))
@@ -296,9 +296,9 @@ p_uthread_set_local(PUThreadKey *key,
 
 P_API void
 p_uthread_replace_local(PUThreadKey *key,
-  ppointer value) {
+  ptr_t value) {
   thread_key_t *tls_key;
-  ppointer old_value = NULL;
+  ptr_t old_value = NULL;
 
   if (P_UNLIKELY (key == NULL))
     return;

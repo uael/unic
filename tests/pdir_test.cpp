@@ -37,20 +37,20 @@
 #define PDIR_TEST_DIR_IN	"." P_DIR_SEPARATOR "pdir_test_dir" P_DIR_SEPARATOR "test_2"
 #define PDIR_TEST_FILE		"." P_DIR_SEPARATOR "pdir_test_dir" P_DIR_SEPARATOR "test_file.txt"
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -67,14 +67,14 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	/* Cleanup previous run */
 	p_dir_remove (PDIR_TEST_DIR_IN, NULL);
 	p_dir_remove (PDIR_TEST_DIR, NULL);
 
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == true);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == true);
 
 	BOOST_CHECK (p_dir_new (PDIR_TEST_DIR"/", NULL) == NULL);
 
@@ -82,14 +82,14 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	p_mem_restore_vtable ();
 
 	/* Try out of memory when iterating */
-	PDir *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
+	p_dir_t *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
 	BOOST_CHECK (dir != NULL);
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_dir_get_next_entry (dir, NULL) == NULL);
 
@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 
 	p_dir_free (dir);
 
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == TRUE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == TRUE);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == true);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == true);
 
 	p_libsys_shutdown ();
 }
@@ -110,17 +110,17 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 
 	BOOST_CHECK (p_dir_new (NULL, NULL) == NULL);
 	BOOST_CHECK (p_dir_new ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == NULL);
-	BOOST_CHECK (p_dir_create (NULL, -1, NULL) == FALSE);
+	BOOST_CHECK (p_dir_create (NULL, -1, NULL) == false);
 #ifndef P_OS_VMS
-	BOOST_CHECK (p_dir_create ("." P_DIR_SEPARATOR "pdir_test_dir_new" P_DIR_SEPARATOR "test_dir", -1, NULL) == FALSE);
+	BOOST_CHECK (p_dir_create ("." P_DIR_SEPARATOR "pdir_test_dir_new" P_DIR_SEPARATOR "test_dir", -1, NULL) == false);
 #endif
-	BOOST_CHECK (p_dir_remove (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_dir_remove ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == FALSE);
-	BOOST_CHECK (p_dir_is_exists (NULL) == FALSE);
-	BOOST_CHECK (p_dir_is_exists ("." P_DIR_SEPARATOR "pdir_test_dir_new") == FALSE);
+	BOOST_CHECK (p_dir_remove (NULL, NULL) == false);
+	BOOST_CHECK (p_dir_remove ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == false);
+	BOOST_CHECK (p_dir_is_exists (NULL) == false);
+	BOOST_CHECK (p_dir_is_exists ("." P_DIR_SEPARATOR "pdir_test_dir_new") == false);
 	BOOST_CHECK (p_dir_get_path (NULL) == NULL);
 	BOOST_CHECK (p_dir_get_next_entry (NULL, NULL) == NULL);
-	BOOST_CHECK (p_dir_rewind (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_dir_rewind (NULL, NULL) == false);
 
 	p_dir_entry_free (NULL);
 	p_dir_free (NULL);
@@ -129,32 +129,32 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	p_dir_remove (PDIR_TEST_DIR_IN, NULL);
 	p_dir_remove (PDIR_TEST_DIR, NULL);
 
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == true);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == true);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == true);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == true);
 
 	FILE *file = fopen (PDIR_TEST_FILE, "w");
 	BOOST_REQUIRE (file != NULL);
-	BOOST_REQUIRE (p_file_is_exists (PDIR_TEST_FILE) == TRUE);
+	BOOST_REQUIRE (p_file_is_exists (PDIR_TEST_FILE) == true);
 
 	fprintf (file, "This is a test file string\n");
 
 	BOOST_CHECK (fclose (file) == 0);
 
-	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == TRUE);
-	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == TRUE);
+	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == true);
+	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == true);
 
-	PDir *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
+	p_dir_t *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
 
 	BOOST_CHECK (dir != NULL);
 
-	pint dir_count	= 0;
-	pint file_count	= 0;
-	pboolean has_entry_dir	= FALSE;
-	pboolean has_entry_file	= FALSE;
+	int_t dir_count	= 0;
+	int_t file_count	= 0;
+	bool has_entry_dir	= false;
+	bool has_entry_file	= false;
 
-	PDirEntry *entry;
+	p_dirent_t *entry;
 
 	while ((entry = p_dir_get_next_entry (dir, NULL)) != NULL) {
 		BOOST_CHECK (entry->name != NULL);
@@ -172,24 +172,24 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 		}
 
 		if (strcmp (entry->name, PDIR_ENTRY_DIR) == 0)
-			has_entry_dir = TRUE;
+			has_entry_dir = true;
 		else if (strcmp (entry->name, PDIR_ENTRY_FILE) == 0)
-			has_entry_file = TRUE;
+			has_entry_file = true;
 
 		p_dir_entry_free (entry);
 	}
 
 	BOOST_CHECK (dir_count > 0 && dir_count < 4);
 	BOOST_CHECK (file_count == 1);
-	BOOST_CHECK (has_entry_dir == TRUE);
-	BOOST_CHECK (has_entry_file == TRUE);
+	BOOST_CHECK (has_entry_dir == true);
+	BOOST_CHECK (has_entry_file == true);
 
-	BOOST_CHECK (p_dir_rewind (dir, NULL) == TRUE);
+	BOOST_CHECK (p_dir_rewind (dir, NULL) == true);
 
-	pint dir_count_2  = 0;
-	pint file_count_2 = 0;
-	has_entry_dir	= FALSE;
-	has_entry_file	= FALSE;
+	int_t dir_count_2  = 0;
+	int_t file_count_2 = 0;
+	has_entry_dir	= false;
+	has_entry_file	= false;
 
 	while ((entry = p_dir_get_next_entry (dir, NULL)) != NULL) {
 		BOOST_CHECK (entry->name != NULL);
@@ -207,32 +207,32 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 		}
 
 		if (strcmp (entry->name, PDIR_ENTRY_DIR) == 0)
-			has_entry_dir = TRUE;
+			has_entry_dir = true;
 		else if (strcmp (entry->name, PDIR_ENTRY_FILE) == 0)
-			has_entry_file = TRUE;
+			has_entry_file = true;
 
 		p_dir_entry_free (entry);
 	}
 
 	BOOST_CHECK (dir_count_2 > 0 && dir_count_2 < 4);
 	BOOST_CHECK (file_count_2 == 1);
-	BOOST_CHECK (has_entry_dir == TRUE);
-	BOOST_CHECK (has_entry_file == TRUE);
+	BOOST_CHECK (has_entry_dir == true);
+	BOOST_CHECK (has_entry_file == true);
 
 	/* Compare two previous attempts */
 	BOOST_CHECK (dir_count == dir_count_2);
 	BOOST_CHECK (file_count == file_count_2);
 
 	/* Remove all stuff */
-	BOOST_CHECK (p_file_remove (PDIR_TEST_FILE, NULL) == TRUE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == FALSE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == TRUE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == TRUE);
+	BOOST_CHECK (p_file_remove (PDIR_TEST_FILE, NULL) == true);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == false);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == true);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == true);
 
-	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == FALSE);
-	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == FALSE);
+	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == false);
+	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == false);
 
-	pchar *orig_path = p_dir_get_path (dir);
+	byte_t *orig_path = p_dir_get_path (dir);
 	BOOST_CHECK (strcmp (orig_path, PDIR_TEST_DIR"/") == 0);
 	p_free (orig_path);
 

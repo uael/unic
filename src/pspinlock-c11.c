@@ -19,13 +19,13 @@
 #include "p/spinlock.h"
 
 #ifdef P_CC_SUN
-#  define PSPINLOCK_INT_CAST(x) (pint *) (x)
+#  define PSPINLOCK_INT_CAST(x) (int_t *) (x)
 #else
 #  define PSPINLOCK_INT_CAST(x) x
 #endif
 
 struct PSpinLock_ {
-  volatile pint spin;
+  volatile int_t spin;
 };
 
 P_API PSpinLock *
@@ -40,34 +40,34 @@ p_spinlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_lock(PSpinLock *spinlock) {
-  pint tmp_int;
+  int_t tmp_int;
 
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   do {
     tmp_int = 0;
-  } while ((pboolean) __atomic_compare_exchange_n(
+  } while ((bool) __atomic_compare_exchange_n(
     PSPINLOCK_INT_CAST (&(spinlock->spin)),
     &tmp_int,
     1,
     0,
     __ATOMIC_ACQUIRE,
-    __ATOMIC_RELAXED) == FALSE);
+    __ATOMIC_RELAXED) == false);
 
-  return TRUE;
+  return true;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_trylock(PSpinLock *spinlock) {
-  pint tmp_int = 0;
+  int_t tmp_int = 0;
 
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
-  return (pboolean) __atomic_compare_exchange_n(
+  return (bool) __atomic_compare_exchange_n(
     PSPINLOCK_INT_CAST (&(spinlock->spin)),
     &tmp_int,
     1,
@@ -76,14 +76,14 @@ p_spinlock_trylock(PSpinLock *spinlock) {
     __ATOMIC_RELAXED);
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_unlock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   __atomic_store_4(PSPINLOCK_INT_CAST (&(spinlock->spin)), 0, __ATOMIC_RELEASE);
 
-  return TRUE;
+  return true;
 }
 
 P_API void

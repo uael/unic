@@ -36,41 +36,41 @@
 
 typedef VOID    (WINAPI
 *InitializeSRWLockFunc)          (
-ppointer lock
+ptr_t lock
 );
 typedef VOID    (WINAPI
 *AcquireSRWLockExclusiveFunc)    (
-ppointer lock
+ptr_t lock
 );
 typedef BOOLEAN (WINAPI
 *TryAcquireSRWLockExclusiveFunc) (
-ppointer lock
+ptr_t lock
 );
 typedef VOID    (WINAPI
 *ReleaseSRWLockExclusiveFunc)    (
-ppointer lock
+ptr_t lock
 );
 typedef VOID    (WINAPI
 *AcquireSRWLockSharedFunc)       (
-ppointer lock
+ptr_t lock
 );
 typedef BOOLEAN (WINAPI
 *TryAcquireSRWLockSharedFunc)    (
-ppointer lock
+ptr_t lock
 );
 typedef VOID    (WINAPI
 *ReleaseSRWLockSharedFunc)       (
-ppointer lock
+ptr_t lock
 );
 
-typedef pboolean (*PWin32LockInit)(PRWLock *lock);
+typedef bool (*PWin32LockInit)(PRWLock *lock);
 typedef void     (*PWin32LockClose)(PRWLock *lock);
-typedef pboolean (*PWin32LockStartRead)(PRWLock *lock);
-typedef pboolean (*PWin32LockStartReadTry)(PRWLock *lock);
-typedef pboolean (*PWin32LockEndRead)(PRWLock *lock);
-typedef pboolean (*PWin32LockStartWrite)(PRWLock *lock);
-typedef pboolean (*PWin32LockStartWriteTry)(PRWLock *lock);
-typedef pboolean (*PWin32LockEndWrite)(PRWLock *lock);
+typedef bool (*PWin32LockStartRead)(PRWLock *lock);
+typedef bool (*PWin32LockStartReadTry)(PRWLock *lock);
+typedef bool (*PWin32LockEndRead)(PRWLock *lock);
+typedef bool (*PWin32LockStartWrite)(PRWLock *lock);
+typedef bool (*PWin32LockStartWriteTry)(PRWLock *lock);
+typedef bool (*PWin32LockEndWrite)(PRWLock *lock);
 
 static PWin32LockInit pp_rwlock_init_func = NULL;
 static PWin32LockClose pp_rwlock_close_func = NULL;
@@ -92,44 +92,44 @@ typedef struct PRWLockVistaTable_ {
 } PRWLockVistaTable;
 
 typedef struct PRWLockXP_ {
-  volatile puint32 lock;
+  volatile uint32_t lock;
   HANDLE event;
 } PRWLockXP;
 
 struct PRWLock_ {
-  ppointer lock;
+  ptr_t lock;
 };
 
 static PRWLockVistaTable pp_rwlock_vista_table = {NULL, NULL, NULL, NULL,
   NULL, NULL, NULL};
 
 /* SRWLock routines */
-static pboolean pp_rwlock_init_vista(PRWLock *lock);
+static bool pp_rwlock_init_vista(PRWLock *lock);
 static void pp_rwlock_close_vista(PRWLock *lock);
-static pboolean pp_rwlock_start_read_vista(PRWLock *lock);
-static pboolean pp_rwlock_start_read_try_vista(PRWLock *lock);
-static pboolean pp_rwlock_end_read_vista(PRWLock *lock);
-static pboolean pp_rwlock_start_write_vista(PRWLock *lock);
-static pboolean pp_rwlock_start_write_try_vista(PRWLock *lock);
-static pboolean pp_rwlock_end_write_vista(PRWLock *lock);
+static bool pp_rwlock_start_read_vista(PRWLock *lock);
+static bool pp_rwlock_start_read_try_vista(PRWLock *lock);
+static bool pp_rwlock_end_read_vista(PRWLock *lock);
+static bool pp_rwlock_start_write_vista(PRWLock *lock);
+static bool pp_rwlock_start_write_try_vista(PRWLock *lock);
+static bool pp_rwlock_end_write_vista(PRWLock *lock);
 
 /* Windows XP emulation routines */
-static pboolean pp_rwlock_init_xp(PRWLock *lock);
+static bool pp_rwlock_init_xp(PRWLock *lock);
 static void pp_rwlock_close_xp(PRWLock *lock);
-static pboolean pp_rwlock_start_read_xp(PRWLock *lock);
-static pboolean pp_rwlock_start_read_try_xp(PRWLock *lock);
-static pboolean pp_rwlock_end_read_xp(PRWLock *lock);
-static pboolean pp_rwlock_start_write_xp(PRWLock *lock);
-static pboolean pp_rwlock_start_write_try_xp(PRWLock *lock);
-static pboolean pp_rwlock_end_write_xp(PRWLock *lock);
+static bool pp_rwlock_start_read_xp(PRWLock *lock);
+static bool pp_rwlock_start_read_try_xp(PRWLock *lock);
+static bool pp_rwlock_end_read_xp(PRWLock *lock);
+static bool pp_rwlock_start_write_xp(PRWLock *lock);
+static bool pp_rwlock_start_write_try_xp(PRWLock *lock);
+static bool pp_rwlock_end_write_xp(PRWLock *lock);
 
 /* SRWLock routines */
 
-static pboolean
+static bool
 pp_rwlock_init_vista(PRWLock *lock) {
   pp_rwlock_vista_table.rwl_init(lock);
 
-  return TRUE;
+  return true;
 }
 
 static void
@@ -137,68 +137,68 @@ pp_rwlock_close_vista(PRWLock *lock) {
   P_UNUSED (lock);
 }
 
-static pboolean
+static bool
 pp_rwlock_start_read_vista(PRWLock *lock) {
   pp_rwlock_vista_table.rwl_shr_lock(lock);
 
-  return TRUE;
+  return true;
 }
 
-static pboolean
+static bool
 pp_rwlock_start_read_try_vista(PRWLock *lock) {
-  return pp_rwlock_vista_table.rwl_shr_lock_try(lock) != 0 ? TRUE : FALSE;
+  return pp_rwlock_vista_table.rwl_shr_lock_try(lock) != 0 ? true : false;
 }
 
-static pboolean
+static bool
 pp_rwlock_end_read_vista(PRWLock *lock) {
   pp_rwlock_vista_table.rwl_shr_rel(lock);
 
-  return TRUE;
+  return true;
 }
 
-static pboolean
+static bool
 pp_rwlock_start_write_vista(PRWLock *lock) {
   pp_rwlock_vista_table.rwl_excl_lock(lock);
 
-  return TRUE;
+  return true;
 }
 
-static pboolean
+static bool
 pp_rwlock_start_write_try_vista(PRWLock *lock) {
-  return pp_rwlock_vista_table.rwl_excl_lock_try(lock) != 0 ? TRUE : FALSE;
+  return pp_rwlock_vista_table.rwl_excl_lock_try(lock) != 0 ? true : false;
 }
 
-static pboolean
+static bool
 pp_rwlock_end_write_vista(PRWLock *lock) {
   pp_rwlock_vista_table.rwl_excl_rel(lock);
 
-  return TRUE;
+  return true;
 }
 
 /* Windows XP emulation routines */
 
-static pboolean
+static bool
 pp_rwlock_init_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp;
 
   if ((lock->lock = p_malloc0(sizeof(PRWLockXP))) == NULL) {
     P_ERROR ("PRWLock::pp_rwlock_init_xp: failed to allocate memory");
-    return FALSE;
+    return false;
   }
 
   rwl_xp = ((PRWLockXP *) lock->lock);
 
   rwl_xp->lock = 0;
-  rwl_xp->event = CreateEventA(NULL, FALSE, FALSE, NULL);
+  rwl_xp->event = CreateEventA(NULL, false, false, NULL);
 
   if (P_UNLIKELY (rwl_xp->event == NULL)) {
     P_ERROR ("PRWLock::pp_rwlock_init_xp: CreateEventA() failed");
     p_free(lock->lock);
     lock->lock = NULL;
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 static void
@@ -207,25 +207,25 @@ pp_rwlock_close_xp(PRWLock *lock) {
   p_free(lock->lock);
 }
 
-static pboolean
+static bool
 pp_rwlock_start_read_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
   int i;
-  puint32 tmp_lock;
-  puint32 counter;
+  uint32_t tmp_lock;
+  uint32_t counter;
 
   for (i = 0;; ++i) {
     tmp_lock =
-      (puint32) p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+      (uint32_t) p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
 
     if (!P_RWLOCK_XP_IS_WRITER (tmp_lock)) {
       counter = P_RWLOCK_XP_SET_READERS (tmp_lock,
         P_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
 
-      if (p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-        (pint) tmp_lock,
-        (pint) counter) == TRUE)
-        return TRUE;
+      if (p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+        (int_t) tmp_lock,
+        (int_t) counter) == true)
+        return true;
       else
         continue;
     } else {
@@ -237,9 +237,9 @@ pp_rwlock_start_read_xp(PRWLock *lock) {
       counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
         P_RWLOCK_XP_WAITING_COUNT(tmp_lock) + 1);
 
-      if (p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-        (pint) tmp_lock,
-        (pint) counter) != TRUE)
+      if (p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+        (int_t) tmp_lock,
+        (int_t) counter) != true)
         continue;
 
       i = 0;
@@ -250,51 +250,51 @@ pp_rwlock_start_read_xp(PRWLock *lock) {
           "PRWLock::pp_rwlock_start_read_xp: WaitForSingleObject() failed, go ahead");
 
       do {
-        tmp_lock = p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+        tmp_lock = p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
         counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
           P_RWLOCK_XP_WAITING_COUNT(tmp_lock) - 1);
       } while (
-        p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-          (pint) tmp_lock,
-          (pint) counter) != TRUE);
+        p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+          (int_t) tmp_lock,
+          (int_t) counter) != true);
     }
   }
 
-  return TRUE;
+  return true;
 }
 
-static pboolean
+static bool
 pp_rwlock_start_read_try_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  puint32 tmp_lock;
-  puint32 counter;
+  uint32_t tmp_lock;
+  uint32_t counter;
 
-  tmp_lock = (puint32) p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+  tmp_lock = (uint32_t) p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
 
   if (P_RWLOCK_XP_IS_WRITER (tmp_lock))
-    return FALSE;
+    return false;
 
   counter =
     P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
 
-  return p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-    (pint) tmp_lock,
-    (pint) counter);
+  return p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+    (int_t) tmp_lock,
+    (int_t) counter);
 }
 
-static pboolean
+static bool
 pp_rwlock_end_read_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  puint32 tmp_lock;
-  puint32 counter;
+  uint32_t tmp_lock;
+  uint32_t counter;
 
-  while (TRUE) {
+  while (true) {
     tmp_lock =
-      (puint32) p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+      (uint32_t) p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
     counter = P_RWLOCK_XP_READER_COUNT (tmp_lock);
 
     if (P_UNLIKELY (counter == 0))
-      return TRUE;
+      return true;
 
     if (counter == 1 && P_RWLOCK_XP_WAITING_COUNT (tmp_lock) != 0) {
       /* A duplicate wake up notification is possible */
@@ -304,33 +304,33 @@ pp_rwlock_end_read_xp(PRWLock *lock) {
 
     counter = P_RWLOCK_XP_SET_READERS (tmp_lock, counter - 1);
 
-    if (p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-      (pint) tmp_lock,
-      (pint) counter) == TRUE)
+    if (p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+      (int_t) tmp_lock,
+      (int_t) counter) == true)
       break;
   }
 
-  return TRUE;
+  return true;
 }
 
-static pboolean
+static bool
 pp_rwlock_start_write_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
   int i;
-  puint32 tmp_lock;
-  puint32 counter;
+  uint32_t tmp_lock;
+  uint32_t counter;
 
   for (i = 0;; ++i) {
     tmp_lock =
-      (puint32) p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+      (uint32_t) p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
 
     if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
       counter = P_RWLOCK_XP_SET_WRITER (tmp_lock);
 
-      if (p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-        (pint) tmp_lock,
-        (pint) counter) == TRUE)
-        return TRUE;
+      if (p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+        (int_t) tmp_lock,
+        (int_t) counter) == true)
+        return true;
       else
         continue;
     } else {
@@ -342,9 +342,9 @@ pp_rwlock_start_write_xp(PRWLock *lock) {
       counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
         P_RWLOCK_XP_WAITING_COUNT(tmp_lock) + 1);
 
-      if (p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-        (pint) tmp_lock,
-        (pint) counter) != TRUE)
+      if (p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+        (int_t) tmp_lock,
+        (int_t) counter) != true)
         continue;
 
       i = 0;
@@ -355,47 +355,47 @@ pp_rwlock_start_write_xp(PRWLock *lock) {
           "PRWLock::pp_rwlock_start_write_xp: WaitForSingleObject() failed, go ahead");
 
       do {
-        tmp_lock = p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+        tmp_lock = p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
         counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
           P_RWLOCK_XP_WAITING_COUNT(tmp_lock) - 1);
       } while (
-        p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-          (pint) tmp_lock,
-          (pint) counter) != TRUE);
+        p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+          (int_t) tmp_lock,
+          (int_t) counter) != true);
     }
   }
 
-  return TRUE;
+  return true;
 }
 
-static pboolean
+static bool
 pp_rwlock_start_write_try_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  puint32 tmp_lock;
+  uint32_t tmp_lock;
 
-  tmp_lock = (puint32) p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+  tmp_lock = (uint32_t) p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
 
   if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
-    return p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-      (pint) tmp_lock,
-      (pint) P_RWLOCK_XP_SET_WRITER (tmp_lock));
+    return p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+      (int_t) tmp_lock,
+      (int_t) P_RWLOCK_XP_SET_WRITER (tmp_lock));
   }
 
-  return FALSE;
+  return false;
 }
 
-static pboolean
+static bool
 pp_rwlock_end_write_xp(PRWLock *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  puint32 tmp_lock;
+  uint32_t tmp_lock;
 
-  while (TRUE) {
-    while (TRUE) {
+  while (true) {
+    while (true) {
       tmp_lock =
-        (puint32) p_atomic_int_get((const volatile pint *) &rwl_xp->lock);
+        (uint32_t) p_atomic_int_get((const volatile int_t *) &rwl_xp->lock);
 
       if (P_UNLIKELY (!P_RWLOCK_XP_IS_WRITER(tmp_lock)))
-        return TRUE;
+        return true;
 
       if (P_RWLOCK_XP_WAITING_COUNT (tmp_lock) == 0)
         break;
@@ -405,13 +405,13 @@ pp_rwlock_end_write_xp(PRWLock *lock) {
         P_WARNING ("PRWLock::pp_rwlock_end_write_xp: SetEvent() failed");
     }
 
-    if (p_atomic_int_compare_and_exchange((volatile pint *) &rwl_xp->lock,
-      (pint) tmp_lock,
-      (pint) P_RWLOCK_XP_UNSET_WRITER (tmp_lock)) == TRUE)
+    if (p_atomic_int_compare_and_exchange((volatile int_t *) &rwl_xp->lock,
+      (int_t) tmp_lock,
+      (int_t) P_RWLOCK_XP_UNSET_WRITER (tmp_lock)) == true)
       break;
   }
 
-  return TRUE;
+  return true;
 }
 
 P_API PRWLock *
@@ -423,7 +423,7 @@ p_rwlock_new(void) {
     return NULL;
   }
 
-  if (P_UNLIKELY (pp_rwlock_init_func(ret) != TRUE)) {
+  if (P_UNLIKELY (pp_rwlock_init_func(ret) != true)) {
     P_ERROR ("PRWLock::p_rwlock_new: failed to initialize");
     p_free(ret);
     return NULL;
@@ -432,50 +432,50 @@ p_rwlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_lock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   return pp_rwlock_start_read_func(lock);
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_trylock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   return pp_rwlock_start_read_try_func(lock);
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_unlock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   return pp_rwlock_end_read_func(lock);
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_lock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   return pp_rwlock_start_write_func(lock);
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_trylock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   return pp_rwlock_start_write_try_func(lock);
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_unlock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   return pp_rwlock_end_write_func(lock);
 }

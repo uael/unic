@@ -26,35 +26,35 @@ extern void p_socket_init_once(void);
 extern void p_socket_close_once(void);
 extern void p_uthread_init(void);
 extern void p_uthread_shutdown(void);
-extern void p_cond_variable_init(void);
-extern void p_cond_variable_shutdown(void);
+extern void p_condvar_init(void);
+extern void p_condvar_shutdown(void);
 extern void p_rwlock_init(void);
 extern void p_rwlock_shutdown(void);
-extern void p_time_profiler_init(void);
-extern void p_time_profiler_shutdown(void);
+extern void p_profiler_init(void);
+extern void p_profiler_shutdown(void);
 
-static pboolean pp_plibsys_inited = FALSE;
-static pchar pp_plibsys_version[] = PLIBSYS_VERSION_STR;
+static bool pp_plibsys_inited = false;
+static byte_t pp_plibsys_version[] = PLIBSYS_VERSION_STR;
 
 P_API void
 p_libsys_init(void) {
-  if (P_UNLIKELY (pp_plibsys_inited == TRUE))
+  if (P_UNLIKELY (pp_plibsys_inited == true))
     return;
 
-  pp_plibsys_inited = TRUE;
+  pp_plibsys_inited = true;
 
   p_mem_init();
   p_atomic_thread_init();
   p_socket_init_once();
   p_uthread_init();
-  p_cond_variable_init();
+  p_condvar_init();
   p_rwlock_init();
-  p_time_profiler_init();
+  p_profiler_init();
 }
 
 P_API void
 p_libsys_init_full(const PMemVTable *vtable) {
-  if (p_mem_set_vtable(vtable) == FALSE)
+  if (p_mem_set_vtable(vtable) == false)
     P_ERROR ("MAIN::p_libsys_init_full: failed to initialize memory table");
 
   p_libsys_init();
@@ -62,23 +62,23 @@ p_libsys_init_full(const PMemVTable *vtable) {
 
 P_API void
 p_libsys_shutdown(void) {
-  if (P_UNLIKELY (pp_plibsys_inited == FALSE))
+  if (P_UNLIKELY (pp_plibsys_inited == false))
     return;
 
-  pp_plibsys_inited = FALSE;
+  pp_plibsys_inited = false;
 
-  p_time_profiler_shutdown();
+  p_profiler_shutdown();
   p_rwlock_shutdown();
-  p_cond_variable_shutdown();
+  p_condvar_shutdown();
   p_uthread_shutdown();
   p_socket_close_once();
   p_atomic_thread_shutdown();
   p_mem_shutdown();
 }
 
-P_API const pchar *
+P_API const byte_t *
 p_libsys_version(void) {
-  return (const pchar *) pp_plibsys_version;
+  return (const byte_t *) pp_plibsys_version;
 }
 
 #ifdef P_OS_WIN
@@ -110,6 +110,6 @@ DllMain (HINSTANCE	hinstDLL,
   default:;
   }
 
-  return TRUE;
+  return true;
 }
 #endif

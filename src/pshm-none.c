@@ -20,14 +20,14 @@
 #include <stdlib.h>
 
 struct PShm_ {
-  pint hdl;
+  int_t hdl;
 };
 
 P_API PShm *
-p_shm_new(const pchar *name,
-  psize size,
+p_shm_new(const byte_t *name,
+  size_t size,
   PShmAccessPerms perms,
-  PError **error) {
+  p_err_t **error) {
   P_UNUSED (name);
   P_UNUSED (size);
   P_UNUSED (perms);
@@ -46,32 +46,32 @@ p_shm_free(PShm *shm) {
   P_UNUSED (shm);
 }
 
-P_API pboolean
+P_API bool
 p_shm_lock(PShm *shm,
-  PError **error) {
+  p_err_t **error) {
   P_UNUSED (shm);
   P_UNUSED (error);
 
-  return FALSE;
+  return false;
 }
 
-P_API pboolean
+P_API bool
 p_shm_unlock(PShm *shm,
-  PError **error) {
+  p_err_t **error) {
   P_UNUSED (shm);
   P_UNUSED (error);
 
-  return FALSE;
+  return false;
 }
 
-P_API ppointer
+P_API ptr_t
 p_shm_get_address(const PShm *shm) {
   P_UNUSED (shm);
 
   return NULL;
 }
 
-P_API psize
+P_API size_t
 p_shm_get_size(const PShm *shm) {
   P_UNUSED (shm);
 

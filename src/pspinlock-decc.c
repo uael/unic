@@ -25,7 +25,7 @@
 #endif
 
 struct PSpinLock_ {
-  volatile pint spin;
+  volatile int_t spin;
 };
 
 P_API PSpinLock *
@@ -40,33 +40,33 @@ p_spinlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_lock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   (void) __LOCK_LONG((volatile void *) &(spinlock->spin));
 
-  return TRUE;
+  return true;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_trylock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
-  return __LOCK_LONG_RETRY((volatile void *) &(spinlock->spin), 1) == 1 ? TRUE
-    : FALSE;
+  return __LOCK_LONG_RETRY((volatile void *) &(spinlock->spin), 1) == 1 ? true
+    : false;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_unlock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   (void) __UNLOCK_LONG((volatile void *) &(spinlock->spin));
 
-  return TRUE;
+  return true;
 }
 
 P_API void

@@ -23,7 +23,7 @@
 
 struct PUThread_ {
   PUThreadBase base;
-  pint hdl;
+  int_t hdl;
 };
 
 void
@@ -40,9 +40,9 @@ p_uthread_win32_thread_detach(void) {
 
 PUThread *
 p_uthread_create_internal(PUThreadFunc func,
-  pboolean joinable,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size) {
+  size_t stack_size) {
   PUThread *ret;
 
   P_UNUSED (stack_size);
@@ -79,15 +79,15 @@ P_API void
 p_uthread_yield(void) {
 }
 
-P_API pboolean
+P_API bool
 p_uthread_set_priority(PUThread *thread,
   PUThreadPriority prio) {
   if (P_UNLIKELY (thread == NULL))
-    return FALSE;
+    return false;
 
   thread->base.prio = prio;
 
-  return FALSE;
+  return false;
 }
 
 P_API P_HANDLE
@@ -106,21 +106,21 @@ p_uthread_local_free(PUThreadKey *key) {
   P_UNUSED (key);
 }
 
-P_API ppointer
+P_API ptr_t
 p_uthread_get_local(PUThreadKey *key) {
   P_UNUSED (key);
 }
 
 P_API void
 p_uthread_set_local(PUThreadKey *key,
-  ppointer value) {
+  ptr_t value) {
   P_UNUSED (key);
   P_UNUSED (value);
 }
 
 P_API void
 p_uthread_replace_local(PUThreadKey *key,
-  ppointer value) {
+  ptr_t value) {
   P_UNUSED (key);
   P_UNUSED (value);
 }

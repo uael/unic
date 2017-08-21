@@ -47,41 +47,41 @@ p_mutex_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_lock(PMutex *mutex) {
   status_t ret_status;
 
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   while ((ret_status = lock_semaphore(mutex->hdl)) == EINTR);
 
   if (P_LIKELY (ret_status == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_lock: lock_semaphore() failed");
-    return FALSE;
+    return false;
   }
 }
 
-P_API pboolean
+P_API bool
 p_mutex_trylock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
-  return (lock_semaphore_x(mutex->hdl, 1, 0, 0)) == 0 ? TRUE : FALSE;
+  return (lock_semaphore_x(mutex->hdl, 1, 0, 0)) == 0 ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_unlock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   if (P_LIKELY (unlock_semaphore(mutex->hdl) == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_unlock: unlock_semaphore() failed");
-    return FALSE;
+    return false;
   }
 }
 

@@ -80,8 +80,8 @@ P_API PHashTable *p_hash_table_new(void);
  * data after using the hash table.
  */
 P_API void p_hash_table_insert(PHashTable *table,
-  ppointer key,
-  ppointer value);
+  ptr_t key,
+  ptr_t value);
 
 /**
  * @brief Searches for a specifed key in the hash table.
@@ -91,8 +91,8 @@ P_API void p_hash_table_insert(PHashTable *table,
  * value was found.
  * @since 0.0.1
  */
-P_API ppointer p_hash_table_lookup(const PHashTable *table,
-  pconstpointer key);
+P_API ptr_t p_hash_table_lookup(const PHashTable *table,
+  const_ptr_t key);
 
 /**
  * @brief Gives a list of all the stored keys in the hash table.
@@ -130,7 +130,7 @@ P_API void p_hash_table_free(PHashTable *table);
  * @since 0.0.1
  */
 P_API void p_hash_table_remove(PHashTable *table,
-  pconstpointer key);
+  const_ptr_t key);
 
 /**
  * @brief Searches for a specifed key in the hash table by its value.
@@ -149,7 +149,7 @@ P_API void p_hash_table_remove(PHashTable *table,
  * parameter), and -1 or 1 otherwise.
  */
 P_API PList *p_hash_table_lookup_by_value(const PHashTable *table,
-  pconstpointer val,
+  const_ptr_t val,
   PCompareFunc func);
 
 #endif /* P_HTABLE_H__ */

@@ -34,9 +34,9 @@
 
 static void * shm_test_thread (void *arg)
 {
-	pint		rand_num;
-	psize		shm_size;
-	ppointer	addr;
+	int_t		rand_num;
+	size_t		shm_size;
+	ptr_t	addr;
 	PShm		*shm;
 
 	if (arg == NULL)
@@ -53,8 +53,8 @@ static void * shm_test_thread (void *arg)
 	if (!p_shm_lock (shm, NULL))
 		p_uthread_exit (1);
 
-	for (puint i = 0; i < shm_size; ++i)
-		*(((pchar *) addr) + i) = (pchar) rand_num;
+	for (uint_t i = 0; i < shm_size; ++i)
+		*(((byte_t *) addr) + i) = (byte_t) rand_num;
 
 	if (!p_shm_unlock (shm, NULL))
 		p_uthread_exit (1);
@@ -64,20 +64,20 @@ static void * shm_test_thread (void *arg)
 	return NULL;
 }
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE (pshm_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL) == NULL);
 
@@ -108,8 +108,8 @@ BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 	p_libsys_init ();
 
 	BOOST_CHECK (p_shm_new (NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
-	BOOST_CHECK (p_shm_lock (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_shm_unlock (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_shm_lock (NULL, NULL) == false);
+	BOOST_CHECK (p_shm_unlock (NULL, NULL) == false);
 	BOOST_CHECK (p_shm_get_address (NULL) == NULL);
 	BOOST_CHECK (p_shm_get_size (NULL) == 0);
 	p_shm_take_ownership (NULL);
@@ -131,8 +131,8 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 #ifndef P_OS_HPUX
 	PShm		*shm2 = NULL;
 #endif
-	ppointer	addr, addr2;
-	pint		i;
+	ptr_t	addr, addr2;
+	int_t		i;
 
 	p_libsys_init ();
 
@@ -165,52 +165,52 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
-		*(((pchar *) addr) + i) = 'a';
+		*(((byte_t *) addr) + i) = 'a';
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
+		BOOST_CHECK (*(((byte_t *) addr) + i) == 'a');
 		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
+		BOOST_CHECK (*(((byte_t *) addr) + i) == 'a');
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
 
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
-		*(((pchar *) addr) + i) = 'b';
+		*(((byte_t *) addr) + i) = 'b';
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
+		BOOST_CHECK (*(((byte_t *) addr) + i) != 'c');
 		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
+		BOOST_CHECK (*(((byte_t *) addr) + i) == 'b');
 		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
+		BOOST_CHECK (*(((byte_t *) addr) + i) != 'c');
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
+		BOOST_CHECK (*(((byte_t *) addr) + i) == 'b');
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) != 'b');
+		BOOST_CHECK (*(((byte_t *) addr) + i) != 'b');
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
@@ -243,13 +243,13 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 {
 	PShm		*shm;
 	PUThread	*thr1, *thr2, *thr3;
-	ppointer	addr;
-	pint		i, val;
-	pboolean	test_ok;
+	ptr_t	addr;
+	int_t		i, val;
+	bool	test_ok;
 
 	p_libsys_init ();
 
-	srand ((puint) time (NULL));
+	srand ((uint_t) time (NULL));
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
@@ -270,29 +270,29 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	addr = p_shm_get_address (shm);
 	BOOST_REQUIRE (addr != NULL);
 
-	thr1 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
+	thr1 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ptr_t) shm, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
+	thr2 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ptr_t) shm, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
-	thr3 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
+	thr3 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ptr_t) shm, true);
 	BOOST_REQUIRE (thr3 != NULL);
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);
 	BOOST_CHECK (p_uthread_join (thr3) == 0);
 
-	test_ok = TRUE;
-	val = *((pchar *) addr);
+	test_ok = true;
+	val = *((byte_t *) addr);
 
 	for (i = 1; i < 1024 * 1024; ++i)
-		if (*(((pchar *) addr) + i) != val) {
-			test_ok = FALSE;
+		if (*(((byte_t *) addr) + i) != val) {
+			test_ok = false;
 			break;
 		}
 
-	BOOST_REQUIRE (test_ok == TRUE);
+	BOOST_REQUIRE (test_ok == true);
 
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);

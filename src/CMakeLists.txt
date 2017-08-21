@@ -69,7 +69,7 @@ set(PLIBSYS_PUBLIC_HDRS
   ${PLIBSYS_INCLUDE_DIR}/p/cc.h
   ${PLIBSYS_INCLUDE_DIR}/p/arch.h
   ${PLIBSYS_INCLUDE_DIR}/p/os.h
-  ${PLIBSYS_INCLUDE_DIR}/p/condvariable.h
+  ${PLIBSYS_INCLUDE_DIR}/p/condvar.h
   ${PLIBSYS_INCLUDE_DIR}/p/hash.h
   ${PLIBSYS_INCLUDE_DIR}/p/error.h
   ${PLIBSYS_INCLUDE_DIR}/p/err.h
@@ -92,7 +92,7 @@ set(PLIBSYS_PUBLIC_HDRS
   ${PLIBSYS_INCLUDE_DIR}/p/socketaddr.h
   ${PLIBSYS_INCLUDE_DIR}/p/spinlock.h
   ${PLIBSYS_INCLUDE_DIR}/p/string.h
-  ${PLIBSYS_INCLUDE_DIR}/p/bench.h
+  ${PLIBSYS_INCLUDE_DIR}/p/profiler.h
   ${PLIBSYS_INCLUDE_DIR}/p/tree.h
   ${PLIBSYS_INCLUDE_DIR}/p/uthread.h
   )
@@ -137,7 +137,7 @@ set(PLIBSYS_SRCS
   socket.c
   socketaddr.c
   string.c
-  bench.c
+  profiler.c
   tree.c
   ptree-avl.c
   ptree-bst.c

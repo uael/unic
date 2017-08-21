@@ -29,20 +29,20 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -59,9 +59,9 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
-	BOOST_CHECK (p_time_profiler_new () == NULL);
+	BOOST_CHECK (p_profiler_new () == NULL);
 
 	p_mem_restore_vtable ();
 
@@ -72,47 +72,47 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_time_profiler_elapsed_usecs (NULL) == 0);
-	p_time_profiler_reset (NULL);
-	p_time_profiler_free (NULL);
+	BOOST_CHECK (p_profiler_elapsed_usecs (NULL) == 0);
+	p_profiler_reset (NULL);
+	p_profiler_free (NULL);
 
 	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 {
-	PTimeProfiler	*profiler = NULL;
-	puint64		prev_val, val;
+	p_profiler_t	*profiler = NULL;
+	uint64_t		prev_val, val;
 
 	p_libsys_init ();
 
-	profiler = p_time_profiler_new ();
+	profiler = p_profiler_new ();
 	BOOST_REQUIRE (profiler != NULL);
 
 	p_uthread_sleep (50);
-	prev_val = p_time_profiler_elapsed_usecs (profiler);
+	prev_val = p_profiler_elapsed_usecs (profiler);
 	BOOST_CHECK (prev_val > 0);
 
 	p_uthread_sleep (100);
-	val = p_time_profiler_elapsed_usecs (profiler);
+	val = p_profiler_elapsed_usecs (profiler);
 	BOOST_CHECK (val > prev_val);
 	prev_val = val;
 
 	p_uthread_sleep (1000);
-	val = p_time_profiler_elapsed_usecs (profiler);
+	val = p_profiler_elapsed_usecs (profiler);
 	BOOST_CHECK (val > prev_val);
 
-	p_time_profiler_reset (profiler);
+	p_profiler_reset (profiler);
 
 	p_uthread_sleep (15);
-	prev_val = p_time_profiler_elapsed_usecs (profiler);
+	prev_val = p_profiler_elapsed_usecs (profiler);
 	BOOST_CHECK (prev_val > 0);
 
 	p_uthread_sleep (178);
-	val = p_time_profiler_elapsed_usecs (profiler);
+	val = p_profiler_elapsed_usecs (profiler);
 	BOOST_CHECK (val > prev_val);
 
-	p_time_profiler_free (profiler);
+	p_profiler_free (profiler);
 
 	p_libsys_shutdown ();
 }

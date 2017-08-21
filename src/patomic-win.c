@@ -110,65 +110,65 @@ ppInterlockedXor (LONG volatile	*atomic,
 
 /* http://msdn.microsoft.com/en-us/library/ms684122(v=vs.85).aspx */
 
-P_API pint
-p_atomic_int_get(const volatile pint *atomic) {
+P_API int_t
+p_atomic_int_get(const volatile int_t *atomic) {
   MemoryBarrier();
   return *atomic;
 }
 
 P_API void
-p_atomic_int_set(volatile pint *atomic,
-  pint val) {
+p_atomic_int_set(volatile int_t *atomic,
+  int_t val) {
   *atomic = val;
   MemoryBarrier();
 }
 
 P_API void
-p_atomic_int_inc(volatile pint *atomic) {
+p_atomic_int_inc(volatile int_t *atomic) {
   InterlockedIncrement((LONG volatile *) atomic);
 }
 
-P_API pboolean
-p_atomic_int_dec_and_test(volatile pint *atomic) {
-  return InterlockedDecrement((LONG volatile *) atomic) == 0 ? TRUE : FALSE;
+P_API bool
+p_atomic_int_dec_and_test(volatile int_t *atomic) {
+  return InterlockedDecrement((LONG volatile *) atomic) == 0 ? true : false;
 }
 
-P_API pboolean
-p_atomic_int_compare_and_exchange(volatile pint *atomic,
-  pint oldval,
-  pint newval) {
+P_API bool
+p_atomic_int_compare_and_exchange(volatile int_t *atomic,
+  int_t oldval,
+  int_t newval) {
   return InterlockedCompareExchange((LONG volatile *) atomic,
     (LONG) newval,
     (LONG) oldval) == oldval;
 }
 
-P_API pint
-p_atomic_int_add(volatile pint *atomic,
-  pint val) {
-  return (pint) InterlockedExchangeAdd((LONG volatile *) atomic, (LONG) val);
+P_API int_t
+p_atomic_int_add(volatile int_t *atomic,
+  int_t val) {
+  return (int_t) InterlockedExchangeAdd((LONG volatile *) atomic, (LONG) val);
 }
 
-P_API puint
-p_atomic_int_and(volatile puint *atomic,
-  puint val) {
-  return (puint) InterlockedAnd((LONG volatile *) atomic, (LONG) val);
+P_API uint_t
+p_atomic_int_and(volatile uint_t *atomic,
+  uint_t val) {
+  return (uint_t) InterlockedAnd((LONG volatile *) atomic, (LONG) val);
 }
 
-P_API puint
-p_atomic_int_or(volatile puint *atomic,
-  puint val) {
-  return (puint) InterlockedOr((LONG volatile *) atomic, (LONG) val);
+P_API uint_t
+p_atomic_int_or(volatile uint_t *atomic,
+  uint_t val) {
+  return (uint_t) InterlockedOr((LONG volatile *) atomic, (LONG) val);
 }
 
-P_API puint
-p_atomic_int_xor(volatile puint *atomic,
-  puint val) {
-  return (puint) InterlockedXor((LONG volatile *) atomic, (LONG) val);
+P_API uint_t
+p_atomic_int_xor(volatile uint_t *atomic,
+  uint_t val) {
+  return (uint_t) InterlockedXor((LONG volatile *) atomic, (LONG) val);
 }
 
-P_API ppointer
+P_API ptr_t
 p_atomic_pointer_get(const volatile void *atomic) {
-  const volatile ppointer *ptr = (const volatile ppointer *) atomic;
+  const volatile ptr_t *ptr = (const volatile ptr_t *) atomic;
 
   MemoryBarrier();
   return *ptr;
@@ -176,66 +176,66 @@ p_atomic_pointer_get(const volatile void *atomic) {
 
 P_API void
 p_atomic_pointer_set(volatile void *atomic,
-  ppointer val) {
-  volatile ppointer *ptr = (volatile ppointer *) atomic;
+  ptr_t val) {
+  volatile ptr_t *ptr = (volatile ptr_t *) atomic;
 
   *ptr = val;
   MemoryBarrier();
 }
 
-P_API pboolean
+P_API bool
 p_atomic_pointer_compare_and_exchange(volatile void *atomic,
-  ppointer oldval,
-  ppointer newval) {
+  ptr_t oldval,
+  ptr_t newval) {
   return InterlockedCompareExchangePointer((volatile PVOID *) atomic,
     (PVOID) newval,
-    (PVOID) oldval) == oldval ? TRUE : FALSE;
+    (PVOID) oldval) == oldval ? true : false;
 }
 
-P_API pssize
+P_API ssize_t
 p_atomic_pointer_add(volatile void *atomic,
-  pssize val) {
+  ssize_t val) {
 #if PLIBSYS_SIZEOF_VOID_P == 8
-  return (pssize) InterlockedExchangeAdd64((LONGLONG volatile *) atomic,
+  return (ssize_t) InterlockedExchangeAdd64((LONGLONG volatile *) atomic,
     (LONGLONG) val);
 #else
-  return (pssize) InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
+  return (ssize_t) InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 #endif
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_and(volatile void *atomic,
-  psize val) {
+  size_t val) {
 #if PLIBSYS_SIZEOF_VOID_P == 8
-  return (psize) InterlockedAnd64((LONGLONG volatile *) atomic, (LONGLONG) val);
+  return (size_t) InterlockedAnd64((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
-  return (psize) InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
+  return (size_t) InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
 #endif
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_or(volatile void *atomic,
-  psize val) {
+  size_t val) {
 #if PLIBSYS_SIZEOF_VOID_P == 8
-  return (psize) InterlockedOr64((LONGLONG volatile *) atomic, (LONGLONG) val);
+  return (size_t) InterlockedOr64((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
-  return (psize) InterlockedOr ((LONG volatile *) atomic, (LONG) val);
+  return (size_t) InterlockedOr ((LONG volatile *) atomic, (LONG) val);
 #endif
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_xor(volatile void *atomic,
-  psize val) {
+  size_t val) {
 #if PLIBSYS_SIZEOF_VOID_P == 8
-  return (psize) InterlockedXor64((LONGLONG volatile *) atomic, (LONGLONG) val);
+  return (size_t) InterlockedXor64((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
-  return (psize) InterlockedXor ((LONG volatile *) atomic, (LONG) val);
+  return (size_t) InterlockedXor ((LONG volatile *) atomic, (LONG) val);
 #endif
 }
 
-P_API pboolean
+P_API bool
 p_atomic_is_lock_free(void) {
-  return TRUE;
+  return true;
 }
 
 void

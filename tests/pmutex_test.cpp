@@ -29,30 +29,30 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pint mutex_test_val  = 0;
+static int_t mutex_test_val  = 0;
 static PMutex *global_mutex = NULL;
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
 
 static void * mutex_test_thread (void *)
 {
-	pint i;
+	int_t i;
 
 	for (i = 0; i < 1000; ++i) {
 		if (!p_mutex_trylock (global_mutex)) {
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 	BOOST_CHECK (p_mutex_new () == NULL);
 
 	p_mem_restore_vtable ();
@@ -100,9 +100,9 @@ BOOST_AUTO_TEST_CASE (pmutex_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_mutex_lock (NULL) == FALSE);
-	BOOST_REQUIRE (p_mutex_unlock (NULL) == FALSE);
-	BOOST_REQUIRE (p_mutex_trylock (NULL) == FALSE);
+	BOOST_REQUIRE (p_mutex_lock (NULL) == false);
+	BOOST_REQUIRE (p_mutex_unlock (NULL) == false);
+	BOOST_REQUIRE (p_mutex_trylock (NULL) == false);
 	p_mutex_free (NULL);
 
 	p_libsys_shutdown ();

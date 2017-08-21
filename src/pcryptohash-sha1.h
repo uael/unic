@@ -30,9 +30,9 @@
 typedef struct PHashSHA1_ PHashSHA1;
 
 PHashSHA1 *p_crypto_hash_sha1_new(void);
-void p_crypto_hash_sha1_update(PHashSHA1 *ctx, const puchar *data, psize len);
+void p_crypto_hash_sha1_update(PHashSHA1 *ctx, const ubyte_t *data, size_t len);
 void p_crypto_hash_sha1_finish(PHashSHA1 *ctx);
-const puchar *p_crypto_hash_sha1_digest(PHashSHA1 *ctx);
+const ubyte_t *p_crypto_hash_sha1_digest(PHashSHA1 *ctx);
 void p_crypto_hash_sha1_reset(PHashSHA1 *ctx);
 void p_crypto_hash_sha1_free(PHashSHA1 *ctx);
 

@@ -21,20 +21,20 @@
 #include "ptree-bst.h"
 #include "ptree-rb.h"
 
-typedef pboolean  (*PTreeInsertNode)(PTreeBaseNode **root_node,
+typedef bool  (*PTreeInsertNode)(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  ppointer key,
-  ppointer value);
+  ptr_t key,
+  ptr_t value);
 
-typedef pboolean  (*PTreeRemoveNode)(PTreeBaseNode **root_node,
+typedef bool  (*PTreeRemoveNode)(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  pconstpointer key);
+  const_ptr_t key);
 
 typedef void    (*PTreeFreeNode)(PTreeBaseNode *node);
 
@@ -46,9 +46,9 @@ struct PTree_ {
   PDestroyFunc key_destroy_func;
   PDestroyFunc value_destroy_func;
   PCompareDataFunc compare_func;
-  ppointer data;
+  ptr_t data;
   PTreeType type;
-  pint nnodes;
+  int_t nnodes;
 };
 
 P_API PTree *
@@ -60,14 +60,14 @@ p_tree_new(PTreeType type,
 P_API PTree *
 p_tree_new_with_data(PTreeType type,
   PCompareDataFunc func,
-  ppointer data) {
+  ptr_t data) {
   return p_tree_new_full(type, func, data, NULL, NULL);
 }
 
 P_API PTree *
 p_tree_new_full(PTreeType type,
   PCompareDataFunc func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy,
   PDestroyFunc value_destroy) {
   PTree *ret;
@@ -112,9 +112,9 @@ p_tree_new_full(PTreeType type,
 
 P_API void
 p_tree_insert(PTree *tree,
-  ppointer key,
-  ppointer value) {
-  pboolean result;
+  ptr_t key,
+  ptr_t value) {
+  bool result;
 
   if (P_UNLIKELY (tree == NULL))
     return;
@@ -127,17 +127,17 @@ p_tree_insert(PTree *tree,
     key,
     value);
 
-  if (result == TRUE)
+  if (result == true)
     ++tree->nnodes;
 }
 
-P_API pboolean
+P_API bool
 p_tree_remove(PTree *tree,
-  pconstpointer key) {
-  pboolean result;
+  const_ptr_t key) {
+  bool result;
 
   if (P_UNLIKELY (tree == NULL || tree->root == NULL))
-    return FALSE;
+    return false;
 
   result = tree->remove_node_func(&tree->root,
     tree->compare_func,
@@ -145,17 +145,17 @@ p_tree_remove(PTree *tree,
     tree->key_destroy_func,
     tree->value_destroy_func,
     key);
-  if (result == TRUE)
+  if (result == true)
     --tree->nnodes;
 
   return result;
 }
 
-P_API ppointer
+P_API ptr_t
 p_tree_lookup(PTree *tree,
-  pconstpointer key) {
+  const_ptr_t key) {
   PTreeBaseNode *cur_node;
-  pint cmp_result;
+  int_t cmp_result;
 
   if (P_UNLIKELY (tree == NULL))
     return NULL;
@@ -179,11 +179,11 @@ p_tree_lookup(PTree *tree,
 P_API void
 p_tree_foreach(PTree *tree,
   PTraverseFunc traverse_func,
-  ppointer user_data) {
+  ptr_t user_data) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
-  pint mod_counter;
-  pboolean need_stop;
+  int_t mod_counter;
+  bool need_stop;
 
   if (P_UNLIKELY (tree == NULL || traverse_func == NULL))
     return;
@@ -193,11 +193,11 @@ p_tree_foreach(PTree *tree,
 
   cur_node = tree->root;
   mod_counter = 0;
-  need_stop = FALSE;
+  need_stop = false;
 
   while (cur_node != NULL) {
     if (cur_node->left == NULL) {
-      if (need_stop == FALSE)
+      if (need_stop == false)
         need_stop = traverse_func(cur_node->key,
           cur_node->value,
           user_data);
@@ -215,7 +215,7 @@ p_tree_foreach(PTree *tree,
 
         ++mod_counter;
       } else {
-        if (need_stop == FALSE)
+        if (need_stop == false)
           need_stop = traverse_func(cur_node->key,
             cur_node->value,
             user_data);
@@ -225,7 +225,7 @@ p_tree_foreach(PTree *tree,
 
         --mod_counter;
 
-        if (need_stop == TRUE && mod_counter == 0)
+        if (need_stop == true && mod_counter == 0)
           return;
       }
     }
@@ -281,7 +281,7 @@ p_tree_get_type(const PTree *tree) {
   return tree->type;
 }
 
-P_API pint
+P_API int_t
 p_tree_get_nnodes(const PTree *tree) {
   if (P_UNLIKELY (tree == NULL))
     return 0;

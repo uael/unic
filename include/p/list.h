@@ -84,7 +84,7 @@ typedef struct PList_ PList;
 
 /** Node for a singly linked list. */
 struct PList_ {
-  ppointer data;  /**< Pointer to the node data.	*/
+  ptr_t data;  /**< Pointer to the node data.	*/
   PList *next;  /**< Next list node.		*/
 };
 
@@ -99,7 +99,7 @@ struct PList_ {
  * initialized with NULL. Otherwise behavior is unpredictable.
  */
 P_API PList *p_list_append(PList *list,
-  ppointer data) P_GNUC_WARN_UNUSED_RESULT;
+  ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
 /**
  * @brief Removes data from a list.
@@ -113,7 +113,7 @@ P_API PList *p_list_append(PList *list,
  * data it pointers to, so you need to free the data manually.
  */
 P_API PList *p_list_remove(PList *list,
-  ppointer data) P_GNUC_WARN_UNUSED_RESULT;
+  ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
 /**
  * @brief Calls a specified function for each list node.
@@ -132,7 +132,7 @@ P_API PList *p_list_remove(PList *list,
  */
 P_API void p_list_foreach(PList *list,
   PFunc func,
-  ppointer user_data);
+  ptr_t user_data);
 
 /**
  * @brief Frees list memory.
@@ -161,7 +161,7 @@ P_API PList *p_list_last(PList *list);
  * @note This function will iterate through the whole @a list, so don't use it
  * in condition of the for-loop or in the code which is repeated a lot of times.
  */
-P_API psize p_list_length(const PList *list);
+P_API size_t p_list_length(const PList *list);
 
 /**
  * @brief Prepends data to a list.
@@ -174,7 +174,7 @@ P_API psize p_list_length(const PList *list);
  * initialized with NULL. Otherwise behavior is unpredictable.
  */
 P_API PList *p_list_prepend(PList *list,
-  ppointer data) P_GNUC_WARN_UNUSED_RESULT;
+  ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
 /**
  * @brief Reverses the list order.

@@ -32,7 +32,7 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static P_GNUC_WARN_UNUSED_RESULT pint unused_result_test_func ()
+static P_GNUC_WARN_UNUSED_RESULT int_t unused_result_test_func ()
 {
 	return 0;
 }
@@ -578,10 +578,10 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 #endif
 
 	/* Test other macros */
-	pint unused = 8;
+	int_t unused = 8;
 	P_UNUSED (unused);
 
-	pint result = unused_result_test_func ();
+	int_t result = unused_result_test_func ();
 
 	BOOST_CHECK (internal_api_test () == 0);
 	BOOST_CHECK (global_api_test () == 0);
@@ -592,7 +592,7 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 
 	srand ((unsigned int) time (NULL));
 
-	pint rand_number = rand ();
+	int_t rand_number = rand ();
 
 	if (P_LIKELY (rand_number > 0))
 		P_DEBUG ("Likely condition triggered");

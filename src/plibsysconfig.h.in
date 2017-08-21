@@ -29,7 +29,7 @@
 #  include <windows.h>
 #endif
 
-#include "p/pmacros.h"
+#include "p/macros.h"
 
 #ifdef PLIBSYS_NEED_FLOAT_H
 #  include <float.h>

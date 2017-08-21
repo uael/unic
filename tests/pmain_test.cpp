@@ -32,23 +32,23 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pint alloc_counter   = 0;
-static pint realloc_counter = 0;
-static pint free_counter    = 0;
+static int_t alloc_counter   = 0;
+static int_t realloc_counter = 0;
+static int_t free_counter    = 0;
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	++alloc_counter;
-	return (ppointer) malloc (nbytes);
+	return (ptr_t) malloc (nbytes);
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	++realloc_counter;
-	return (ppointer) realloc (block, nbytes);
+	return (ptr_t) realloc (block, nbytes);
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	++free_counter;
 	free (block);
@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_CASE (pmain_vtable_test)
 	realloc_counter = 0;
 	free_counter    = 0;
 
-	pchar *buf = (pchar *) p_malloc0 (10);
-	pchar *new_buf = (pchar *) p_realloc ((ppointer) buf, 20);
+	byte_t *buf = (byte_t *) p_malloc0 (10);
+	byte_t *new_buf = (byte_t *) p_realloc ((ptr_t) buf, 20);
 
 	BOOST_REQUIRE (new_buf != NULL);
 

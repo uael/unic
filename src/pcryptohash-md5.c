@@ -23,24 +23,24 @@
 
 struct PHashMD5_ {
   union buf_ {
-    puchar buf[64];
-    puint32 buf_w[16];
+    ubyte_t buf[64];
+    uint32_t buf_w[16];
   } buf;
-  puint32 hash[4];
+  uint32_t hash[4];
 
-  puint32 len_high;
-  puint32 len_low;
+  uint32_t len_high;
+  uint32_t len_low;
 };
 
-static const puchar pp_crypto_hash_md5_pad[64] = {
+static const ubyte_t pp_crypto_hash_md5_pad[64] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static void pp_crypto_hash_md5_swap_bytes(puint32 *data, puint words);
-static void pp_crypto_hash_md5_process(PHashMD5 *ctx, const puint32 data[16]);
+static void pp_crypto_hash_md5_swap_bytes(uint32_t *data, uint_t words);
+static void pp_crypto_hash_md5_process(PHashMD5 *ctx, const uint32_t data[16]);
 
 #define P_MD5_ROTL(val, shift) ((val) << (shift) |  (val) >> (32 - (shift)))
 
@@ -62,8 +62,8 @@ static void pp_crypto_hash_md5_process(PHashMD5 *ctx, const puint32 data[16]);
   a += P_MD5_I (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
 
 static void
-pp_crypto_hash_md5_swap_bytes(puint32 *data,
-  puint words) {
+pp_crypto_hash_md5_swap_bytes(uint32_t *data,
+  uint_t words) {
 #ifndef PLIBSYS_IS_BIGENDIAN
   P_UNUSED (data);
   P_UNUSED (words);
@@ -77,8 +77,8 @@ pp_crypto_hash_md5_swap_bytes(puint32 *data,
 
 static void
 pp_crypto_hash_md5_process(PHashMD5 *ctx,
-  const puint32 data[16]) {
-  puint32 A, B, C, D;
+  const uint32_t data[16]) {
+  uint32_t A, B, C, D;
 
   A = ctx->hash[0];
   B = ctx->hash[1];
@@ -186,19 +186,19 @@ p_crypto_hash_md5_new(void) {
 
 void
 p_crypto_hash_md5_update(PHashMD5 *ctx,
-  const puchar *data,
-  psize len) {
-  puint32 left, to_fill;
+  const ubyte_t *data,
+  size_t len) {
+  uint32_t left, to_fill;
 
   left = ctx->len_low & 0x3F;
   to_fill = 64 - left;
 
-  ctx->len_low += (puint32) len;
+  ctx->len_low += (uint32_t) len;
 
-  if (ctx->len_low < (puint32) len)
+  if (ctx->len_low < (uint32_t) len)
     ++ctx->len_high;
 
-  if (left && (puint32) len >= to_fill) {
+  if (left && (uint32_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_md5_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_md5_process(ctx, ctx->buf.buf_w);
@@ -223,8 +223,8 @@ p_crypto_hash_md5_update(PHashMD5 *ctx,
 
 void
 p_crypto_hash_md5_finish(PHashMD5 *ctx) {
-  puint32 high, low;
-  pint left, last;
+  uint32_t high, low;
+  int_t left, last;
 
   left = ctx->len_low & 0x3F;
   last = (left < 56) ? (56 - left) : (120 - left);
@@ -234,7 +234,7 @@ p_crypto_hash_md5_finish(PHashMD5 *ctx) {
     | ctx->len_low >> 29;
 
   if (last > 0)
-    p_crypto_hash_md5_update(ctx, pp_crypto_hash_md5_pad, (psize) last);
+    p_crypto_hash_md5_update(ctx, pp_crypto_hash_md5_pad, (size_t) last);
 
   ctx->buf.buf_w[14] = low;
   ctx->buf.buf_w[15] = high;
@@ -245,9 +245,9 @@ p_crypto_hash_md5_finish(PHashMD5 *ctx) {
   pp_crypto_hash_md5_swap_bytes(ctx->hash, 4);
 }
 
-const puchar *
+const ubyte_t *
 p_crypto_hash_md5_digest(PHashMD5 *ctx) {
-  return (const puchar *) ctx->hash;
+  return (const ubyte_t *) ctx->hash;
 }
 
 void

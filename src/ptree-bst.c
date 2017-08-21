@@ -18,16 +18,16 @@
 #include "p/mem.h"
 #include "ptree-bst.h"
 
-pboolean
+bool
 p_tree_bst_insert(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  ppointer key,
-  ppointer value) {
+  ptr_t key,
+  ptr_t value) {
   PTreeBaseNode **cur_node;
-  pint cmp_result;
+  int_t cmp_result;
 
   cur_node = root_node;
 
@@ -44,12 +44,12 @@ p_tree_bst_insert(PTreeBaseNode **root_node,
 
   if ((*cur_node) == NULL) {
     if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeBaseNode))) == NULL))
-      return FALSE;
+      return false;
 
     (*cur_node)->key = key;
     (*cur_node)->value = value;
 
-    return TRUE;
+    return true;
   } else {
     if (key_destroy_func != NULL)
       key_destroy_func((*cur_node)->key);
@@ -60,21 +60,21 @@ p_tree_bst_insert(PTreeBaseNode **root_node,
     (*cur_node)->key = key;
     (*cur_node)->value = value;
 
-    return FALSE;
+    return false;
   }
 }
 
-pboolean
+bool
 p_tree_bst_remove(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  pconstpointer key) {
+  const_ptr_t key) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   PTreeBaseNode **node_pointer;
-  pint cmp_result;
+  int_t cmp_result;
 
   cur_node = *root_node;
   node_pointer = root_node;
@@ -93,7 +93,7 @@ p_tree_bst_remove(PTreeBaseNode **root_node,
   }
 
   if (P_UNLIKELY (cur_node == NULL))
-    return FALSE;
+    return false;
 
   if (cur_node->left != NULL && cur_node->right != NULL) {
     node_pointer = &cur_node->left;
@@ -120,7 +120,7 @@ p_tree_bst_remove(PTreeBaseNode **root_node,
 
   p_free(cur_node);
 
-  return TRUE;
+  return true;
 }
 
 void

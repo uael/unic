@@ -26,20 +26,20 @@
 #include "p/types.h"
 #include "ptree-private.h"
 
-pboolean p_tree_rb_insert(PTreeBaseNode **root_node,
+bool p_tree_rb_insert(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  ppointer key,
-  ppointer value);
+  ptr_t key,
+  ptr_t value);
 
-pboolean p_tree_rb_remove(PTreeBaseNode **root_node,
+bool p_tree_rb_remove(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  pconstpointer key);
+  const_ptr_t key);
 
 void p_tree_rb_node_free(PTreeBaseNode *node);
 

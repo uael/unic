@@ -187,6 +187,6 @@ P_API void p_libsys_shutdown(void);
  * against.
  * @sa #PLIBSYS_VERSION, #PLIBSYS_VERSION_STR, #PLIBSYS_VERSION_CHECK
  */
-P_API const pchar *p_libsys_version(void);
+P_API const byte_t *p_libsys_version(void);
 
 #endif /* P_MAIN_H__ */

@@ -30,6 +30,6 @@
  * @param fd File descriptor to close.
  * @return -1 in case of success, 0 otherwise.
  */
-pint p_sys_close(pint fd);
+int_t p_sys_close(int_t fd);
 
 #endif /* PLIBSYS_HEADER_PSYSCLOSE_PRIVATE_H */

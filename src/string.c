@@ -24,10 +24,10 @@
 
 #define P_STR_MAX_EXPON    308
 
-P_API pchar *
-p_strdup(const pchar *str) {
-  pchar *ret;
-  psize len;
+P_API byte_t *
+p_strdup(const byte_t *str) {
+  byte_t *ret;
+  size_t len;
 
   if (P_UNLIKELY (str == NULL))
     return NULL;
@@ -42,35 +42,35 @@ p_strdup(const pchar *str) {
   return ret;
 }
 
-P_API pchar *
-p_strchomp(const pchar *str) {
-  pssize pos_start, pos_end;
-  psize str_len;
-  pchar *ret;
-  const pchar *ptr;
+P_API byte_t *
+p_strchomp(const byte_t *str) {
+  ssize_t pos_start, pos_end;
+  size_t str_len;
+  byte_t *ret;
+  const byte_t *ptr;
 
   if (P_UNLIKELY (str == NULL))
     return NULL;
 
   ptr = str;
   pos_start = 0;
-  pos_end = ((pssize) strlen(str)) - 1;
+  pos_end = ((ssize_t) strlen(str)) - 1;
 
-  while (pos_start < pos_end && isspace (*((const puchar *) ptr++)))
+  while (pos_start < pos_end && isspace (*((const ubyte_t *) ptr++)))
     ++pos_start;
 
   ptr = str + pos_end;
 
-  while (pos_end > 0 && isspace (*((const puchar *) ptr--)))
+  while (pos_end > 0 && isspace (*((const ubyte_t *) ptr--)))
     --pos_end;
 
   if (pos_end < pos_start)
     return p_strdup("\0");
 
-  if (pos_end == pos_start && isspace (*((const puchar *) (str + pos_end))))
+  if (pos_end == pos_start && isspace (*((const ubyte_t *) (str + pos_end))))
     return p_strdup("\0");
 
-  str_len = (psize) (pos_end - pos_start + 2);
+  str_len = (size_t) (pos_end - pos_start + 2);
 
   if (P_UNLIKELY ((ret = p_malloc0(str_len)) == NULL))
     return NULL;
@@ -81,8 +81,8 @@ p_strchomp(const pchar *str) {
   return ret;
 }
 
-P_API pchar *
-p_strtok(pchar *str, const pchar *delim, pchar **buf) {
+P_API byte_t *
+p_strtok(byte_t *str, const byte_t *delim, byte_t **buf) {
   if (P_UNLIKELY (delim == NULL))
     return str;
 
@@ -109,14 +109,14 @@ p_strtok(pchar *str, const pchar *delim, pchar **buf) {
 }
 
 P_API double
-p_strtod(const pchar *str) {
+p_strtod(const byte_t *str) {
   double sign;
   double value;
   double scale;
   double pow10;
-  puint expon;
-  pint frac;
-  pchar *orig_str, *strp;
+  uint_t expon;
+  int_t frac;
+  byte_t *orig_str, *strp;
 
   orig_str = p_strchomp(str);
 
@@ -133,7 +133,7 @@ p_strtod(const pchar *str) {
     strp += 1;
 
   /* Get digits before decimal point or exponent, if any */
-  for (value = 0.0; isdigit ((pint) *strp); strp += 1)
+  for (value = 0.0; isdigit ((int_t) *strp); strp += 1)
     value = value * 10.0 + (*strp - '0');
 
   /* Get digits after decimal point, if any */
@@ -141,7 +141,7 @@ p_strtod(const pchar *str) {
     pow10 = 10.0;
     strp += 1;
 
-    while (isdigit ((pint) *strp)) {
+    while (isdigit ((int_t) *strp)) {
       value += (*strp - '0') / pow10;
       pow10 *= 10.0;
       strp += 1;
@@ -164,8 +164,8 @@ p_strtod(const pchar *str) {
       strp += 1;
 
     /* Get digits of exponent, if any */
-    for (expon = 0; isdigit ((pint) *strp); strp += 1)
-      expon = expon * 10 + (puint) ((*strp - '0'));
+    for (expon = 0; isdigit ((int_t) *strp); strp += 1)
+      expon = expon * 10 + (uint_t) ((*strp - '0'));
 
     if (P_UNLIKELY (expon > P_STR_MAX_EXPON))
       expon = P_STR_MAX_EXPON;

@@ -28,12 +28,12 @@
 
 /** Base thread structure */
 typedef struct PUThreadBase_ {
-  pint ref_count;  /**< Reference counter.	*/
-  pint ret_code;  /**< Return code.	*/
-  pboolean ours;    /**< Our thread flag.	*/
-  pboolean joinable;  /**< Joinable flag.	*/
+  int_t ref_count;  /**< Reference counter.	*/
+  int_t ret_code;  /**< Return code.	*/
+  bool ours;    /**< Our thread flag.	*/
+  bool joinable;  /**< Joinable flag.	*/
   PUThreadFunc func;    /**< Thread routine.	*/
-  ppointer data;    /**< Thread input data.	*/
+  ptr_t data;    /**< Thread input data.	*/
   PUThreadPriority prio;    /**< Thread priority.	*/
 } PUThreadBase;
 

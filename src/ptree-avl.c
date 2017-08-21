@@ -21,7 +21,7 @@
 typedef struct PTreeAVLNode_ {
   struct PTreeBaseNode_ base;
   struct PTreeAVLNode_ *parent;
-  pint balance_factor;
+  int_t balance_factor;
 } PTreeAVLNode;
 
 static void pp_tree_avl_rotate_left(PTreeAVLNode *node, PTreeBaseNode **root);
@@ -181,7 +181,7 @@ static void
 pp_tree_avl_balance_insert(PTreeAVLNode *node, PTreeBaseNode **root) {
   PTreeAVLNode *parent;
 
-  while (TRUE) {
+  while (true) {
     parent = node->parent;
 
     if (P_UNLIKELY (parent == NULL))
@@ -267,9 +267,9 @@ static void
 pp_tree_avl_balance_remove(PTreeAVLNode *node, PTreeBaseNode **root) {
   PTreeAVLNode *parent;
   PTreeAVLNode *sibling;
-  pint sibling_balance;
+  int_t sibling_balance;
 
-  while (TRUE) {
+  while (true) {
     parent = node->parent;
 
     if (P_UNLIKELY (parent == NULL))
@@ -327,17 +327,17 @@ pp_tree_avl_balance_remove(PTreeAVLNode *node, PTreeBaseNode **root) {
   }
 }
 
-pboolean
+bool
 p_tree_avl_insert(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  ppointer key,
-  ppointer value) {
+  ptr_t key,
+  ptr_t value) {
   PTreeBaseNode **cur_node;
   PTreeBaseNode *parent_node;
-  pint cmp_result;
+  int_t cmp_result;
 
   cur_node = root_node;
   parent_node = *root_node;
@@ -367,11 +367,11 @@ p_tree_avl_insert(PTreeBaseNode **root_node,
     (*cur_node)->key = key;
     (*cur_node)->value = value;
 
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeAVLNode))) == NULL))
-    return FALSE;
+    return false;
 
   (*cur_node)->key = key;
   (*cur_node)->value = value;
@@ -382,21 +382,21 @@ p_tree_avl_insert(PTreeBaseNode **root_node,
   /* Balance the tree */
   pp_tree_avl_balance_insert(((PTreeAVLNode *) *cur_node), root_node);
 
-  return TRUE;
+  return true;
 }
 
-pboolean
+bool
 p_tree_avl_remove(PTreeBaseNode **root_node,
   PCompareDataFunc compare_func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy_func,
   PDestroyFunc value_destroy_func,
-  pconstpointer key) {
+  const_ptr_t key) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   PTreeBaseNode *child_node;
   PTreeAVLNode *child_parent;
-  pint cmp_result;
+  int_t cmp_result;
 
   cur_node = *root_node;
 
@@ -412,7 +412,7 @@ p_tree_avl_remove(PTreeBaseNode **root_node,
   }
 
   if (P_UNLIKELY (cur_node == NULL))
-    return FALSE;
+    return false;
 
   if (cur_node->left != NULL && cur_node->right != NULL) {
     prev_node = cur_node->left;
@@ -461,7 +461,7 @@ p_tree_avl_remove(PTreeBaseNode **root_node,
 
   p_free(cur_node);
 
-  return TRUE;
+  return true;
 }
 
 void

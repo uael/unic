@@ -21,10 +21,10 @@
 #include <unistd.h>
 #include <errno.h>
 
-pint
-p_sys_close(pint fd) {
+int_t
+p_sys_close(int_t fd) {
 #if defined (EINTR) && defined (P_OS_HPUX)
-  pint res, err_code;
+  int_t res, err_code;
 
   for (;;) {
     res = close (fd);

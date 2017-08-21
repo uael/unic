@@ -19,7 +19,7 @@
 #include "p/dir.h"
 
 P_API void
-p_dir_entry_free(PDirEntry *entry) {
+p_dir_entry_free(p_dirent_t *entry) {
   if (P_UNLIKELY (entry == NULL))
     return;
 

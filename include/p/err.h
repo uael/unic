@@ -39,61 +39,61 @@
 #include "p/macros.h"
 
 /** Enum with error domains. */
-typedef enum PErrorDomain_ {
-  P_ERROR_DOMAIN_NONE = 0,  /**< No domain was specified.				*/
-  P_ERROR_DOMAIN_IO = 500,  /**< Input/output domain.				*/
-  P_ERROR_DOMAIN_IPC = 600  /**< Interprocess communication domain.			*/
-} PErrorDomain;
+typedef enum p_err_domain {
+  P_ERR_DOMAIN_NONE = 0,  /**< No domain was specified.				*/
+  P_ERR_DOMAIN_IO = 500,  /**< Input/output domain.				*/
+  P_ERR_DOMAIN_IPC = 600  /**< Interprocess communication domain.			*/
+} p_err_domain_t;
 
 /** Enum with IO errors. */
-typedef enum PErrorIO_ {
-  P_ERROR_IO_NONE = 500,  /**< No error.						*/
-  P_ERROR_IO_NO_RESOURCES =
+typedef enum p_err_io {
+  P_ERR_IO_NONE = 500,  /**< No error.						*/
+  P_ERR_IO_NO_RESOURCES =
   501,  /**< Operating system hasn't enough resources.		*/
-  P_ERROR_IO_NOT_AVAILABLE = 502,  /**< Resource isn't available.				*/
-  P_ERROR_IO_ACCESS_DENIED = 503,  /**< Access denied.					*/
-  P_ERROR_IO_CONNECTED = 504,  /**< Already connected.					*/
-  P_ERROR_IO_IN_PROGRESS = 505,  /**< Operation in progress.				*/
-  P_ERROR_IO_ABORTED = 506,  /**< Operation aborted.					*/
-  P_ERROR_IO_INVALID_ARGUMENT = 507,  /**< Invalid argument specified.			*/
-  P_ERROR_IO_NOT_SUPPORTED = 508,  /**< Operation not supported.				*/
-  P_ERROR_IO_TIMED_OUT = 509,  /**< Operation timed out.				*/
-  P_ERROR_IO_WOULD_BLOCK =
+  P_ERR_IO_NOT_AVAILABLE = 502,  /**< Resource isn't available.				*/
+  P_ERR_IO_ACCESS_DENIED = 503,  /**< Access denied.					*/
+  P_ERR_IO_CONNECTED = 504,  /**< Already connected.					*/
+  P_ERR_IO_IN_PROGRESS = 505,  /**< Operation in progress.				*/
+  P_ERR_IO_ABORTED = 506,  /**< Operation aborted.					*/
+  P_ERR_IO_INVALID_ARGUMENT = 507,  /**< Invalid argument specified.			*/
+  P_ERR_IO_NOT_SUPPORTED = 508,  /**< Operation not supported.				*/
+  P_ERR_IO_TIMED_OUT = 509,  /**< Operation timed out.				*/
+  P_ERR_IO_WOULD_BLOCK =
   510,  /**< Operation cannot be completed immediatly.		*/
-  P_ERROR_IO_ADDRESS_IN_USE = 511,  /**< Address is already under usage.			*/
-  P_ERROR_IO_CONNECTION_REFUSED = 512,  /**< Connection refused.				*/
-  P_ERROR_IO_NOT_CONNECTED = 513,  /**< Connection required first.				*/
-  P_ERROR_IO_QUOTA = 514,  /**< User quota exceeded.				*/
-  P_ERROR_IO_IS_DIRECTORY = 515,  /**< Trying to open directory for writing.		*/
-  P_ERROR_IO_NOT_DIRECTORY =
+  P_ERR_IO_ADDRESS_IN_USE = 511,  /**< Address is already under usage.			*/
+  P_ERR_IO_CONNECTION_REFUSED = 512,  /**< Connection refused.				*/
+  P_ERR_IO_NOT_CONNECTED = 513,  /**< Connection required first.				*/
+  P_ERR_IO_QUOTA = 514,  /**< User quota exceeded.				*/
+  P_ERR_IO_IS_DIRECTORY = 515,  /**< Trying to open directory for writing.		*/
+  P_ERR_IO_NOT_DIRECTORY =
   516,  /**< Component of the path prefix is not a directory.	*/
-  P_ERROR_IO_NAMETOOLONG = 517,  /**< Specified name is too long.			*/
-  P_ERROR_IO_EXISTS = 518,  /**< Specified entry already exists.			*/
-  P_ERROR_IO_NOT_EXISTS = 519,  /**< Specified entry doesn't exist.			*/
-  P_ERROR_IO_NO_MORE = 520,  /**< No more data left.					*/
-  P_ERROR_IO_NOT_IMPLEMENTED = 521,  /**< Operation is not implemented.			*/
-  P_ERROR_IO_FAILED = 522  /**< General error.					*/
-} PErrorIO;
+  P_ERR_IO_NAMETOOLONG = 517,  /**< Specified name is too long.			*/
+  P_ERR_IO_EXISTS = 518,  /**< Specified entry already exists.			*/
+  P_ERR_IO_NOT_EXISTS = 519,  /**< Specified entry doesn't exist.			*/
+  P_ERR_IO_NO_MORE = 520,  /**< No more data left.					*/
+  P_ERR_IO_NOT_IMPLEMENTED = 521,  /**< Operation is not implemented.			*/
+  P_ERR_IO_FAILED = 522  /**< General error.					*/
+} p_err_io_t;
 
 /** Enum with IPC errors */
-typedef enum PErrorIPC_ {
-  P_ERROR_IPC_NONE = 600,  /**< No error.						*/
-  P_ERROR_IPC_ACCESS =
+typedef enum p_err_ipc {
+  P_ERR_IPC_NONE = 600,  /**< No error.						*/
+  P_ERR_IPC_ACCESS =
   601,  /**< Not enough rights to access object or its key.	*/
-  P_ERROR_IPC_EXISTS = 602,  /**< Object already exists and no proper open flags
+  P_ERR_IPC_EXISTS = 602,  /**< Object already exists and no proper open flags
 						     were specified.					*/
-  P_ERROR_IPC_NOT_EXISTS = 603,  /**< Object doesn't exist or was removed before, and
+  P_ERR_IPC_NOT_EXISTS = 603,  /**< Object doesn't exist or was removed before, and
 						     no proper create flags were specified.		*/
-  P_ERROR_IPC_NO_RESOURCES = 604,  /**< Not enough system resources or memory to perform
+  P_ERR_IPC_NO_RESOURCES = 604,  /**< Not enough system resources or memory to perform
 						     operation.						*/
-  P_ERROR_IPC_OVERFLOW = 605,  /**< Semaphore value overflow.				*/
-  P_ERROR_IPC_NAMETOOLONG = 606,  /**< Object name is too long.				*/
-  P_ERROR_IPC_INVALID_ARGUMENT =
+  P_ERR_IPC_OVERFLOW = 605,  /**< Semaphore value overflow.				*/
+  P_ERR_IPC_NAMETOOLONG = 606,  /**< Object name is too long.				*/
+  P_ERR_IPC_INVALID_ARGUMENT =
   607,  /**< Invalid argument (parameter) specified.		*/
-  P_ERROR_IPC_NOT_IMPLEMENTED = 608,  /**< Operation is not implemented (for example when
+  P_ERR_IPC_NOT_IMPLEMENTED = 608,  /**< Operation is not implemented (for example when
 						     using some filesystems).				*/
-  P_ERROR_IPC_DEADLOCK = 609,  /**< Deadlock detected.					*/
-  P_ERROR_IPC_FAILED = 610  /**< General error.					*/
-} PErrorIPC;
+  P_ERR_IPC_DEADLOCK = 609,  /**< Deadlock detected.					*/
+  P_ERR_IPC_FAILED = 610  /**< General error.					*/
+} p_err_ipc_t;
 
 #endif /* P_ERR_H__ */

@@ -118,10 +118,10 @@ typedef struct PSemaphore_ PSemaphore;
  * other cases @a init_val is ignored. The @a name is system-wide, so any other
  * process can open that semaphore passing the same name.
  */
-P_API PSemaphore *p_semaphore_new(const pchar *name,
-  pint init_val,
+P_API PSemaphore *p_semaphore_new(const byte_t *name,
+  int_t init_val,
   PSemaphoreAccessMode mode,
-  PError **error);
+  p_err_t **error);
 
 /**
  * @brief Takes ownership of a semaphore.
@@ -152,8 +152,8 @@ P_API void p_semaphore_take_ownership(PSemaphore *sem);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_semaphore_acquire(PSemaphore *sem,
-  PError **error);
+P_API bool p_semaphore_acquire(PSemaphore *sem,
+  p_err_t **error);
 
 /**
  * @brief Releases (V operation) a semaphore.
@@ -162,8 +162,8 @@ P_API pboolean p_semaphore_acquire(PSemaphore *sem,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_semaphore_release(PSemaphore *sem,
-  PError **error);
+P_API bool p_semaphore_release(PSemaphore *sem,
+  p_err_t **error);
 
 /**
  * @brief Frees #PSemaphore object.

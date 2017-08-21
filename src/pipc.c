@@ -31,10 +31,10 @@
 #endif
 
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
-pchar *
+byte_t *
 p_ipc_unix_get_temp_dir(void) {
-  pchar *str, *ret;
-  psize len;
+  byte_t *str, *ret;
+  size_t len;
 
 #ifdef P_tmpdir
   if (strlen(P_tmpdir) > 0)
@@ -42,7 +42,7 @@ p_ipc_unix_get_temp_dir(void) {
   else
     return p_strdup("/tmp/");
 #else
-  const pchar *tmp_env;
+  const byte_t *tmp_env;
 
   tmp_env = getenv ("TMPDIR");
 
@@ -71,9 +71,9 @@ p_ipc_unix_get_temp_dir(void) {
 
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
-pint
-p_ipc_unix_create_key_file(const pchar *file_name) {
-  pint fd;
+int_t
+p_ipc_unix_create_key_file(const byte_t *file_name) {
+  int_t fd;
 
   if (P_UNLIKELY (file_name == NULL))
     return -1;
@@ -85,8 +85,8 @@ p_ipc_unix_create_key_file(const pchar *file_name) {
     return p_sys_close(fd);
 }
 
-pint
-p_ipc_unix_get_ftok_key(const pchar *file_name) {
+int_t
+p_ipc_unix_get_ftok_key(const byte_t *file_name) {
   struct stat st_info;
 
   if (P_UNLIKELY (file_name == NULL))
@@ -101,24 +101,24 @@ p_ipc_unix_get_ftok_key(const pchar *file_name) {
 
 /* Returns a platform-independent key for IPC usage, object name for Windows and
  * a file name to use with ftok () for UNIX-like systems */
-pchar *
-p_ipc_get_platform_key(const pchar *name, pboolean posix) {
+byte_t *
+p_ipc_get_platform_key(const byte_t *name, bool posix) {
   PCryptoHash *sha1;
-  pchar *hash_str;
+  byte_t *hash_str;
 
 #if defined (P_OS_WIN) || defined (P_OS_OS2)
   P_UNUSED (posix);
 #else
-  pchar *path_name, *tmp_path;
+  byte_t *path_name, *tmp_path;
 #endif
 
   if (P_UNLIKELY (name == NULL))
     return NULL;
 
-  if (P_UNLIKELY ((sha1 = p_crypto_hash_new(P_CRYPTO_HASH_TYPE_SHA1)) == NULL))
+  if (P_UNLIKELY ((sha1 = p_crypto_hash_new(P_HASH_TYPE_SHA1)) == NULL))
     return NULL;
 
-  p_crypto_hash_update(sha1, (const puchar *) name, strlen(name));
+  p_crypto_hash_update(sha1, (const ubyte_t *) name, strlen(name));
 
   hash_str = p_crypto_hash_get_string(sha1);
   p_crypto_hash_free(sha1);

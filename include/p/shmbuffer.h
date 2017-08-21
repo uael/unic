@@ -85,9 +85,9 @@ typedef struct PShmBuffer_ PShmBuffer;
  * If a buffer with the same name already exists then the @a size will be
  * ignored and the existing buffer will be returned.
  */
-P_API PShmBuffer *p_shm_buffer_new(const pchar *name,
-  psize size,
-  PError **error);
+P_API PShmBuffer *p_shm_buffer_new(const byte_t *name,
+  size_t size,
+  p_err_t **error);
 
 /**
  * @brief Frees #PShmBuffer structure.
@@ -127,10 +127,10 @@ P_API void p_shm_buffer_take_ownership(PShmBuffer *buf);
  * occured.
  * @since 0.0.1
  */
-P_API pint p_shm_buffer_read(PShmBuffer *buf,
-  ppointer storage,
-  psize len,
-  PError **error);
+P_API int_t p_shm_buffer_read(PShmBuffer *buf,
+  ptr_t storage,
+  size_t len,
+  p_err_t **error);
 
 /**
  * @brief Tries to write data into a shared memory buffer.
@@ -144,10 +144,10 @@ P_API pint p_shm_buffer_read(PShmBuffer *buf,
  * @note Write operation is performed only if the buffer has enough space for
  * the given data size.
  */
-P_API pssize p_shm_buffer_write(PShmBuffer *buf,
-  ppointer data,
-  psize len,
-  PError **error);
+P_API ssize_t p_shm_buffer_write(PShmBuffer *buf,
+  ptr_t data,
+  size_t len,
+  p_err_t **error);
 
 /**
  * @brief Gets free space in the shared memory buffer.
@@ -156,8 +156,8 @@ P_API pssize p_shm_buffer_write(PShmBuffer *buf,
  * @return Free space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_API pssize p_shm_buffer_get_free_space(PShmBuffer *buf,
-  PError **error);
+P_API ssize_t p_shm_buffer_get_free_space(PShmBuffer *buf,
+  p_err_t **error);
 
 /**
  * @brief Gets used space in the shared memory buffer.
@@ -166,8 +166,8 @@ P_API pssize p_shm_buffer_get_free_space(PShmBuffer *buf,
  * @return Used space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_API pssize p_shm_buffer_get_used_space(PShmBuffer *buf,
-  PError **error);
+P_API ssize_t p_shm_buffer_get_used_space(PShmBuffer *buf,
+  p_err_t **error);
 
 /**
  * @brief Clears all data in the buffer and fills it with zeros.

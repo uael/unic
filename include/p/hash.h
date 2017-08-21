@@ -76,25 +76,25 @@ typedef struct PCryptoHash_ PCryptoHash;
 
 /** Cryptographic hash function types for #PCryptoHash. */
 typedef enum PCryptoHashType_ {
-  P_CRYPTO_HASH_TYPE_MD5 = 0, /**< MD5 hash function.			@since 0.0.1	*/
-  P_CRYPTO_HASH_TYPE_SHA1 = 1, /**< SHA-1 hash function.			@since 0.0.1	*/
-  P_CRYPTO_HASH_TYPE_SHA2_224 =
+  P_HASH_TYPE_MD5 = 0, /**< MD5 hash function.			@since 0.0.1	*/
+  P_HASH_TYPE_SHA1 = 1, /**< SHA-1 hash function.			@since 0.0.1	*/
+  P_HASH_TYPE_SHA2_224 =
   2, /**< SHA-2/224 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA2_256 =
+  P_HASH_TYPE_SHA2_256 =
   3, /**< SHA-2/256 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA2_384 =
+  P_HASH_TYPE_SHA2_384 =
   4, /**< SHA-2/384 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA2_512 =
+  P_HASH_TYPE_SHA2_512 =
   5, /**< SHA-2/512 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA3_224 =
+  P_HASH_TYPE_SHA3_224 =
   6, /**< SHA-2/224 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA3_256 =
+  P_HASH_TYPE_SHA3_256 =
   7, /**< SHA-2/256 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA3_384 =
+  P_HASH_TYPE_SHA3_384 =
   8, /**< SHA-2/384 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_SHA3_512 =
+  P_HASH_TYPE_SHA3_512 =
   9, /**< SHA-3/512 hash function.		@since 0.0.2	*/
-  P_CRYPTO_HASH_TYPE_GOST =
+  P_HASH_TYPE_GOST =
   10 /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
 } PCryptoHashType;
 
@@ -117,8 +117,8 @@ P_API PCryptoHash *p_crypto_hash_new(PCryptoHashType type);
  * @since 0.0.1
  */
 P_API void p_crypto_hash_update(PCryptoHash *hash,
-  const puchar *data,
-  psize len);
+  const ubyte_t *data,
+  size_t len);
 
 /**
  * @brief Resets a hash state.
@@ -141,7 +141,7 @@ P_API void p_crypto_hash_reset(PCryptoHash *hash);
  * updates.
  * @since 0.0.1
  */
-P_API pchar *p_crypto_hash_get_string(PCryptoHash *hash);
+P_API byte_t *p_crypto_hash_get_string(PCryptoHash *hash);
 
 /**
  * @brief Gets a hash in a raw representation.
@@ -154,8 +154,8 @@ P_API pchar *p_crypto_hash_get_string(PCryptoHash *hash);
  * @since 0.0.1
  */
 P_API void p_crypto_hash_get_digest(PCryptoHash *hash,
-  puchar *buf,
-  psize *len);
+  ubyte_t *buf,
+  size_t *len);
 
 /**
  * @brief Gets a hash digest length depending on its type.
@@ -165,7 +165,7 @@ P_API void p_crypto_hash_get_digest(PCryptoHash *hash,
  * @note This length doesn't match a string hash representation.
  * @since 0.0.1
  */
-P_API pssize p_crypto_hash_get_length(const PCryptoHash *hash);
+P_API ssize_t p_crypto_hash_get_length(const PCryptoHash *hash);
 
 /**
  * @brief Gets a hash function type.

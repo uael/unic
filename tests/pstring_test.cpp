@@ -35,20 +35,20 @@
 
 #include <boost/test/floating_point_comparison.hpp>
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE (pstring_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_strdup ("test string") == NULL);
 
@@ -78,9 +78,9 @@ BOOST_AUTO_TEST_CASE (pstring_strdup_test)
 {
 	p_libsys_init ();
 
-	const pchar *test_str_1 = "Test string";
+	const byte_t *test_str_1 = "Test string";
 
-	pchar *new_string = p_strdup (test_str_1);
+	byte_t *new_string = p_strdup (test_str_1);
 	BOOST_CHECK (new_string != NULL);
 	p_free (new_string);
 
@@ -91,20 +91,20 @@ BOOST_AUTO_TEST_CASE (pstring_strchomp_test)
 {
 	p_libsys_init ();
 
-	const pchar *test_chomp_str_orig = "Test chomp string";
-	const pchar *test_chomp_str_1 = "Test chomp string  ";
-	const pchar *test_chomp_str_2 = "\n\nTest chomp string  ";
-	const pchar *test_chomp_str_3 = "\n\rTest chomp string  \n";
-	const pchar *test_chomp_str_4 = "Test chomp string\n\n";
-	const pchar *test_chomp_str_5 = "  \rTest chomp string \n\n  ";
-	const pchar *test_chomp_str_6 = "  \rI\n\n  ";
-	const pchar *test_chomp_str_7 = "\n";
-	const pchar *test_chomp_str_8 = "I";
-	const pchar *test_chomp_str_9 = "";
-	const pchar *test_chomp_str_10 = " ";
-	const pchar *test_chomp_str_11 = NULL;
+	const byte_t *test_chomp_str_orig = "Test chomp string";
+	const byte_t *test_chomp_str_1 = "Test chomp string  ";
+	const byte_t *test_chomp_str_2 = "\n\nTest chomp string  ";
+	const byte_t *test_chomp_str_3 = "\n\rTest chomp string  \n";
+	const byte_t *test_chomp_str_4 = "Test chomp string\n\n";
+	const byte_t *test_chomp_str_5 = "  \rTest chomp string \n\n  ";
+	const byte_t *test_chomp_str_6 = "  \rI\n\n  ";
+	const byte_t *test_chomp_str_7 = "\n";
+	const byte_t *test_chomp_str_8 = "I";
+	const byte_t *test_chomp_str_9 = "";
+	const byte_t *test_chomp_str_10 = " ";
+	const byte_t *test_chomp_str_11 = NULL;
 
-	pchar *new_string = p_strchomp (test_chomp_str_1);
+	byte_t *new_string = p_strchomp (test_chomp_str_1);
 	BOOST_REQUIRE (new_string != NULL);
 	BOOST_CHECK_EQUAL (strcmp (test_chomp_str_orig, new_string), 0);
 	p_free (new_string);
@@ -167,8 +167,8 @@ BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 	BOOST_CHECK (p_strtok (NULL, NULL, NULL) == NULL);
 
 	/* First string */
-	pchar test_string[] = "1,2,3";
-	pchar *token, *next_token;
+	byte_t test_string[] = "1,2,3";
+	byte_t *token, *next_token;
 
 	/* Check third parameter for possible NULL */
 	token = p_strtok (test_string, ",", NULL);
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 	BOOST_CHECK (token == NULL);
 
 	/* Second string */
-	pchar test_string_2[] = "Test string, to test";
+	byte_t test_string_2[] = "Test string, to test";
 
 	token = p_strtok (test_string_2, " ", &next_token);
 	BOOST_CHECK (token != NULL);
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 	BOOST_CHECK (token == NULL);
 
 	/* Third string */
-	pchar test_string_3[] = "compile\ttest\ndeploy";
+	byte_t test_string_3[] = "compile\ttest\ndeploy";
 
 	token = p_strtok (test_string_3, "\t\n", &next_token);
 	BOOST_CHECK (token != NULL);
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 	BOOST_CHECK (token == NULL);
 
 	/* Fourth string */
-	pchar test_string_4[] = "\t  \t\n  \t";
+	byte_t test_string_4[] = "\t  \t\n  \t";
 
 	token = p_strtok (test_string_4, "\t\n ", &next_token);
 	BOOST_CHECK (token == NULL);

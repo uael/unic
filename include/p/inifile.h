@@ -104,7 +104,7 @@ typedef struct PIniFile_ PIniFile;
  * @return Newly allocated #PIniFile in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API PIniFile *p_ini_file_new(const pchar *path);
+P_API PIniFile *p_ini_file_new(const byte_t *path);
 
 /**
  * @brief Frees memory and allocated resources of #PIniFile.
@@ -120,8 +120,8 @@ P_API void p_ini_file_free(PIniFile *file);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_ini_file_parse(PIniFile *file,
-  PError **error);
+P_API bool p_ini_file_parse(PIniFile *file,
+  p_err_t **error);
 
 /**
  * @brief Checks whether #PIniFile was already parsed or not.
@@ -129,7 +129,7 @@ P_API pboolean p_ini_file_parse(PIniFile *file,
  * @return TRUE if the file was already parsed, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_ini_file_is_parsed(const PIniFile *file);
+P_API bool p_ini_file_is_parsed(const PIniFile *file);
 
 /**
  * @brief Gets all the sections from a given file.
@@ -153,7 +153,7 @@ P_API PList *p_ini_file_sections(const PIniFile *file);
  * free the returned list with p_list_free().
  */
 P_API PList *p_ini_file_keys(const PIniFile *file,
-  const pchar *section);
+  const byte_t *section);
 
 /**
  * @brief Checks whether a key exists.
@@ -163,9 +163,9 @@ P_API PList *p_ini_file_keys(const PIniFile *file,
  * @return TRUE if @a key exists, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_ini_file_is_key_exists(const PIniFile *file,
-  const pchar *section,
-  const pchar *key);
+P_API bool p_ini_file_is_key_exists(const PIniFile *file,
+  const byte_t *section,
+  const byte_t *key);
 
 /**
  * @brief Gets specified parameter's value as a string.
@@ -179,10 +179,10 @@ P_API pboolean p_ini_file_is_key_exists(const PIniFile *file,
  * @note It's a caller responsibility to p_free() the returned string after
  * usage.
  */
-P_API pchar *p_ini_file_parameter_string(const PIniFile *file,
-  const pchar *section,
-  const pchar *key,
-  const pchar *default_val);
+P_API byte_t *p_ini_file_parameter_string(const PIniFile *file,
+  const byte_t *section,
+  const byte_t *key,
+  const byte_t *default_val);
 
 /**
  * @brief Gets specified parameter's value as an integer.
@@ -194,10 +194,10 @@ P_API pchar *p_ini_file_parameter_string(const PIniFile *file,
  * @return Key's value in case of success, @a default_value otherwise.
  * @since 0.0.1
  */
-P_API pint p_ini_file_parameter_int(const PIniFile *file,
-  const pchar *section,
-  const pchar *key,
-  pint default_val);
+P_API int_t p_ini_file_parameter_int(const PIniFile *file,
+  const byte_t *section,
+  const byte_t *key,
+  int_t default_val);
 
 /**
  * @brief Gets specified parameter's value as a floating point.
@@ -210,8 +210,8 @@ P_API pint p_ini_file_parameter_int(const PIniFile *file,
  * @since 0.0.1
  */
 P_API double p_ini_file_parameter_double(const PIniFile *file,
-  const pchar *section,
-  const pchar *key,
+  const byte_t *section,
+  const byte_t *key,
   double default_val);
 /**
  * @brief Gets specified parameter's value as a boolean.
@@ -224,10 +224,10 @@ P_API double p_ini_file_parameter_double(const PIniFile *file,
  * @since 0.0.1
  */
 
-P_API pboolean p_ini_file_parameter_boolean(const PIniFile *file,
-  const pchar *section,
-  const pchar *key,
-  pboolean default_val);
+P_API bool p_ini_file_parameter_boolean(const PIniFile *file,
+  const byte_t *section,
+  const byte_t *key,
+  bool default_val);
 
 /**
  * @brief Gets specified parameter's value as a list of strings separated with
@@ -243,7 +243,7 @@ P_API pboolean p_ini_file_parameter_boolean(const PIniFile *file,
  * free the returned list with p_list_free().
  */
 P_API PList *p_ini_file_parameter_list(const PIniFile *file,
-  const pchar *section,
-  const pchar *key);
+  const byte_t *section,
+  const byte_t *key);
 
 #endif /* P_INIFILE_H__ */

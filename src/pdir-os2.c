@@ -27,35 +27,35 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct PDir_ {
+struct p_dir {
   FILEFINDBUF3 find_data;
   HDIR search_handle;
-  pboolean cached;
-  pchar path[CCHMAXPATH];
-  pchar *orig_path;
+  bool cached;
+  byte_t path[CCHMAXPATH];
+  byte_t *orig_path;
 };
 
-P_API PDir *
-p_dir_new(const pchar *path,
-  PError **error) {
-  PDir *ret;
-  pchar *pathp;
-  pchar *adj_path;
-  pint path_len;
+P_API p_dir_t *
+p_dir_new(const byte_t *path,
+  p_err_t **error) {
+  p_dir_t *ret;
+  byte_t *pathp;
+  byte_t *adj_path;
+  int_t path_len;
   APIRET ulrc;
   ULONG find_count;
 
   if (P_UNLIKELY (path == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
     return NULL;
   }
 
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PDir))) == NULL)) {
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_dir_t))) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_NO_RESOURCES,
+      (int_t) P_ERR_IO_NO_RESOURCES,
       0,
       "Failed to allocate memory for directory structure");
     return NULL;
@@ -73,7 +73,7 @@ p_dir_new(const pchar *path,
     if (P_UNLIKELY ((adj_path = p_malloc0(path_len + 1)) == NULL)) {
       p_free(ret);
       p_error_set_error_p(error,
-        (pint) P_ERROR_IO_NO_RESOURCES,
+        (int_t) P_ERR_IO_NO_RESOURCES,
         0,
         "Failed to allocate memory for directory path");
       return NULL;
@@ -83,7 +83,7 @@ p_dir_new(const pchar *path,
 
     adj_path[path_len] = '\0';
     ret->orig_path = p_strdup(path);
-    path = (const pchar *) adj_path;
+    path = (const byte_t *) adj_path;
   }
 
   ret->search_handle = HDIR_CREATE;
@@ -93,8 +93,8 @@ p_dir_new(const pchar *path,
 
   if (P_UNLIKELY (ulrc != NO_ERROR)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_io_from_system((pint) ulrc),
-      (pint) ulrc,
+      (int_t) p_error_get_io_from_system((int_t) ulrc),
+      (int_t) ulrc,
       "Failed to call DosQueryPathInfo() to get directory path");
 
     if (P_UNLIKELY (adj_path != NULL)) {
@@ -128,8 +128,8 @@ p_dir_new(const pchar *path,
 
   if (P_UNLIKELY (ulrc != NO_ERROR && ulrc != ERROR_NO_MORE_FILES)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_io_from_system((pint) ulrc),
-      (pint) ulrc,
+      (int_t) p_error_get_io_from_system((int_t) ulrc),
+      (int_t) ulrc,
       "Failed to call DosFindFirst() to open directory stream");
 
     if (P_UNLIKELY (adj_path != NULL)) {
@@ -141,7 +141,7 @@ p_dir_new(const pchar *path,
     return NULL;
   }
 
-  ret->cached = TRUE;
+  ret->cached = true;
 
   if (P_UNLIKELY (adj_path != NULL))
     p_free(adj_path);
@@ -151,119 +151,119 @@ p_dir_new(const pchar *path,
   return ret;
 }
 
-P_API pboolean
-p_dir_create(const pchar *path,
-  pint mode,
-  PError **error) {
+P_API bool
+p_dir_create(const byte_t *path,
+  int_t mode,
+  p_err_t **error) {
   APIRET ulrc;
 
   P_UNUSED (mode);
 
   if (P_UNLIKELY (path == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   if (p_dir_is_exists(path))
-    return TRUE;
+    return true;
 
   if (P_UNLIKELY ((ulrc = DosCreateDir((PSZ) path, NULL)) != NO_ERROR)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_io_from_system((pint) ulrc),
-      (pint) ulrc,
+      (int_t) p_error_get_io_from_system((int_t) ulrc),
+      (int_t) ulrc,
       "Failed to call DosCreateDir() to create directory");
-    return FALSE;
+    return false;
   } else
-    return TRUE;
+    return true;
 }
 
-P_API pboolean
-p_dir_remove(const pchar *path,
-  PError **error) {
+P_API bool
+p_dir_remove(const byte_t *path,
+  p_err_t **error) {
   APIRET ulrc;
 
   if (P_UNLIKELY (path == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   if (!p_dir_is_exists(path)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_NOT_EXISTS,
+      (int_t) P_ERR_IO_NOT_EXISTS,
       0,
       "Specified directory doesn't exist");
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY ((ulrc = DosDeleteDir((PSZ) path)) != NO_ERROR)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_io_from_system((pint) ulrc),
-      (pint) ulrc,
+      (int_t) p_error_get_io_from_system((int_t) ulrc),
+      (int_t) ulrc,
       "Failed to call DosDeleteDir() to remove directory");
-    return FALSE;
+    return false;
   } else
-    return TRUE;
+    return true;
 }
 
-P_API pboolean
-p_dir_is_exists(const pchar *path) {
+P_API bool
+p_dir_is_exists(const byte_t *path) {
   FILESTATUS3 status;
 
   if (P_UNLIKELY (path == NULL))
-    return FALSE;
+    return false;
 
   if (
     DosQueryPathInfo((PSZ) path, FIL_STANDARD, (PVOID) & status, sizeof(status))
       != NO_ERROR)
-    return FALSE;
+    return false;
 
   return (status.attrFile & FILE_DIRECTORY) != 0;
 }
 
-P_API pchar *
-p_dir_get_path(const PDir *dir) {
+P_API byte_t *
+p_dir_get_path(const p_dir_t *dir) {
   if (P_UNLIKELY (dir == NULL))
     return NULL;
 
   return p_strdup(dir->orig_path);
 }
 
-P_API PDirEntry *
-p_dir_get_next_entry(PDir *dir,
-  PError **error) {
-  PDirEntry *ret;
+P_API p_dirent_t *
+p_dir_get_next_entry(p_dir_t *dir,
+  p_err_t **error) {
+  p_dirent_t *ret;
   APIRET ulrc;
   ULONG find_count;
 
   if (P_UNLIKELY (dir == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
     return NULL;
   }
 
-  if (dir->cached == TRUE) {
-    dir->cached = FALSE;
+  if (dir->cached == true) {
+    dir->cached = false;
 
     /* Opened directory is empty */
     if (P_UNLIKELY (dir->search_handle == HDIR_CREATE)) {
       p_error_set_error_p(error,
-        (pint) P_ERROR_IO_NO_MORE,
-        (pint) ERROR_NO_MORE_FILES,
+        (int_t) P_ERR_IO_NO_MORE,
+        (int_t) ERROR_NO_MORE_FILES,
         "Directory is empty to get the next entry");
       return NULL;
     }
   } else {
     if (P_UNLIKELY (dir->search_handle == HDIR_CREATE)) {
       p_error_set_error_p(error,
-        (pint) P_ERROR_IO_INVALID_ARGUMENT,
+        (int_t) P_ERR_IO_INVALID_ARGUMENT,
         0,
         "Not a valid (or closed) directory stream");
       return NULL;
@@ -278,8 +278,8 @@ p_dir_get_next_entry(PDir *dir,
 
     if (P_UNLIKELY (ulrc != NO_ERROR)) {
       p_error_set_error_p(error,
-        (pint) p_error_get_io_from_system((pint) ulrc),
-        (pint) ulrc,
+        (int_t) p_error_get_io_from_system((int_t) ulrc),
+        (int_t) ulrc,
         "Failed to call DosFindNext() to read directory stream");
       DosFindClose(dir->search_handle);
       dir->search_handle = HDIR_CREATE;
@@ -287,9 +287,9 @@ p_dir_get_next_entry(PDir *dir,
     }
   }
 
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PDirEntry))) == NULL)) {
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_dirent_t))) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_NO_RESOURCES,
+      (int_t) P_ERR_IO_NO_RESOURCES,
       0,
       "Failed to allocate memory for directory entry");
     return NULL;
@@ -305,27 +305,27 @@ p_dir_get_next_entry(PDir *dir,
   return ret;
 }
 
-P_API pboolean
-p_dir_rewind(PDir *dir,
-  PError **error) {
+P_API bool
+p_dir_rewind(p_dir_t *dir,
+  p_err_t **error) {
   APIRET ulrc;
   ULONG find_count;
 
   if (P_UNLIKELY (dir == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   if (dir->search_handle != HDIR_CREATE) {
     if (P_UNLIKELY ((ulrc = DosFindClose(dir->search_handle)) != NO_ERROR)) {
       p_error_set_error_p(error,
-        (pint) p_error_get_io_from_system((pint) ulrc),
-        (pint) ulrc,
+        (int_t) p_error_get_io_from_system((int_t) ulrc),
+        (int_t) ulrc,
         "Failed to call DosFindClose() to close directory stream");
-      return FALSE;
+      return false;
     }
 
     dir->search_handle = HDIR_CREATE;
@@ -343,25 +343,25 @@ p_dir_rewind(PDir *dir,
 
   if (P_UNLIKELY (ulrc != NO_ERROR && ulrc != ERROR_NO_MORE_FILES)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_io_from_system((pint) ulrc),
-      (pint) ulrc,
+      (int_t) p_error_get_io_from_system((int_t) ulrc),
+      (int_t) ulrc,
       "Failed to call DosFindFirst() to open directory stream");
-    dir->cached = FALSE;
-    return FALSE;
+    dir->cached = false;
+    return false;
   } else {
-    dir->cached = TRUE;
-    return TRUE;
+    dir->cached = true;
+    return true;
   }
 }
 
 P_API void
-p_dir_free(PDir *dir) {
+p_dir_free(p_dir_t *dir) {
   if (dir == NULL)
     return;
 
   if (P_LIKELY (dir->search_handle != HDIR_CREATE)) {
     if (P_UNLIKELY (DosFindClose(dir->search_handle) != NO_ERROR))
-      P_ERROR ("PDir::p_dir_free: DosFindClose() failed");
+      P_ERROR ("p_dir_t::p_dir_free: DosFindClose() failed");
   }
 
   p_free(dir->orig_path);

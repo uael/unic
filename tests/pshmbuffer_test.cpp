@@ -31,13 +31,13 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pchar test_str[]    = "This is a test string!";
-static pint is_thread_exit = 0;
-static pint read_count     = 0;
-static pint write_count    = 0;
+static byte_t test_str[]    = "This is a test string!";
+static int_t is_thread_exit = 0;
+static int_t read_count     = 0;
+static int_t write_count    = 0;
 
 #ifndef P_OS_HPUX
-volatile static pboolean is_working = FALSE;
+volatile static bool is_working = false;
 
 static void * shm_buffer_test_write_thread (void *)
 {
@@ -46,10 +46,10 @@ static void * shm_buffer_test_write_thread (void *)
 	if (buffer == NULL)
 		p_uthread_exit (1);
 
-	while (is_working == TRUE) {
+	while (is_working == true) {
 		p_uthread_sleep (3);
 
-		pssize op_result = p_shm_buffer_get_free_space (buffer, NULL);
+		ssize_t op_result = p_shm_buffer_get_free_space (buffer, NULL);
 
 		if (op_result < 0) {
 			if (is_thread_exit > 0)
@@ -61,10 +61,10 @@ static void * shm_buffer_test_write_thread (void *)
 			}
 		}
 
-		if ((psize) op_result < sizeof (test_str))
+		if ((size_t) op_result < sizeof (test_str))
 			continue;
 
-		op_result = p_shm_buffer_write (buffer, (ppointer) test_str, sizeof (test_str), NULL);
+		op_result = p_shm_buffer_write (buffer, (ptr_t) test_str, sizeof (test_str), NULL);
 
 		if (op_result < 0) {
 			if (is_thread_exit > 0)
@@ -96,15 +96,15 @@ static void * shm_buffer_test_write_thread (void *)
 static void * shm_buffer_test_read_thread (void *)
 {
 	PShmBuffer	*buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
-	pchar		test_buf[sizeof (test_str)];
+	byte_t		test_buf[sizeof (test_str)];
 
 	if (buffer == NULL)
 		p_uthread_exit (1);
 
-	while (is_working == TRUE) {
+	while (is_working == true) {
 		p_uthread_sleep (3);
 
-		pssize op_result = p_shm_buffer_get_used_space (buffer, NULL);
+		ssize_t op_result = p_shm_buffer_get_used_space (buffer, NULL);
 
 		if (op_result < 0) {
 			if (is_thread_exit > 0)
@@ -116,10 +116,10 @@ static void * shm_buffer_test_read_thread (void *)
 			}
 		}
 
-		if ((psize) op_result < sizeof (test_str))
+		if ((size_t) op_result < sizeof (test_str))
 			continue;
 
-		op_result = p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL);
+		op_result = p_shm_buffer_read (buffer, (ptr_t) test_buf, sizeof (test_buf), NULL);
 
 		if (op_result < 0) {
 			if (is_thread_exit > 0)
@@ -155,20 +155,20 @@ static void * shm_buffer_test_read_thread (void *)
 }
 #endif /* !P_OS_HPUX */
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_shm_buffer_new ("pshm_test_buffer", 1024, NULL) == NULL);
 
@@ -218,8 +218,8 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 {
 	p_libsys_init ();
 
-	pchar		test_buf[sizeof (test_str)];
-	pchar		*large_buf;
+	byte_t		test_buf[sizeof (test_str)];
+	byte_t		*large_buf;
 	PShmBuffer	*buffer = NULL;
 
 	/* Buffer may be from the previous test on UNIX systems */
@@ -238,11 +238,11 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 
 	memset (test_buf, 0, sizeof (test_buf));
 
-	BOOST_CHECK (p_shm_buffer_write (buffer, (ppointer) test_str, sizeof (test_str), NULL) == sizeof (test_str));
+	BOOST_CHECK (p_shm_buffer_write (buffer, (ptr_t) test_str, sizeof (test_str), NULL) == sizeof (test_str));
 	BOOST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == (1024 - sizeof (test_str)));
 	BOOST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == sizeof (test_str));
-	BOOST_CHECK (p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL) == sizeof (test_str));
-	BOOST_CHECK (p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL) == 0);
+	BOOST_CHECK (p_shm_buffer_read (buffer, (ptr_t) test_buf, sizeof (test_buf), NULL) == sizeof (test_str));
+	BOOST_CHECK (p_shm_buffer_read (buffer, (ptr_t) test_buf, sizeof (test_buf), NULL) == 0);
 
 	BOOST_CHECK (strncmp (test_buf, test_str, sizeof (test_str)) == 0);
 	BOOST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == 1024);
@@ -250,9 +250,9 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 
 	p_shm_buffer_clear (buffer);
 
-	large_buf = (pchar *) p_malloc0 (2048);
+	large_buf = (byte_t *) p_malloc0 (2048);
 	BOOST_REQUIRE (large_buf != NULL);
-	BOOST_CHECK (p_shm_buffer_write (buffer, (ppointer) large_buf, 2048, NULL) == 0);
+	BOOST_CHECK (p_shm_buffer_write (buffer, (ptr_t) large_buf, 2048, NULL) == 0);
 
 	p_free (large_buf);
 	p_shm_buffer_free (buffer);
@@ -277,20 +277,20 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	is_thread_exit = 0;
 	read_count     = 0;
 	write_count    = 0;
-	is_working     = TRUE;
+	is_working     = true;
 
 	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
 	BOOST_REQUIRE (buffer != NULL);
 
-	thr1 = p_uthread_create ((PUThreadFunc) shm_buffer_test_write_thread, NULL, TRUE);
+	thr1 = p_uthread_create ((PUThreadFunc) shm_buffer_test_write_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) shm_buffer_test_read_thread, NULL, TRUE);
+	thr2 = p_uthread_create ((PUThreadFunc) shm_buffer_test_read_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
 	p_uthread_sleep (5000);
 
-	is_working = FALSE;
+	is_working = false;
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);

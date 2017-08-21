@@ -27,18 +27,18 @@ struct PRWLock_ {
   rwlock_hdl hdl;
 };
 
-static pboolean pp_rwlock_unlock_any(PRWLock *lock);
+static bool pp_rwlock_unlock_any(PRWLock *lock);
 
-static pboolean
+static bool
 pp_rwlock_unlock_any(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   if (P_LIKELY (pthread_rwlock_unlock(&lock->hdl) == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PRWLock::pp_rwlock_unlock_any: pthread_rwlock_unlock() failed");
-    return FALSE;
+    return false;
   }
 }
 
@@ -60,54 +60,54 @@ p_rwlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_lock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   if (P_UNLIKELY (pthread_rwlock_rdlock(&lock->hdl) == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PRWLock::p_rwlock_reader_lock: pthread_rwlock_rdlock() failed");
-    return FALSE;
+    return false;
   }
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_trylock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  return (pthread_rwlock_tryrdlock(&lock->hdl) == 0) ? TRUE : FALSE;
+  return (pthread_rwlock_tryrdlock(&lock->hdl) == 0) ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_unlock(PRWLock *lock) {
   return pp_rwlock_unlock_any(lock);
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_lock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
   if (P_UNLIKELY (pthread_rwlock_wrlock(&lock->hdl) == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PRWLock::p_rwlock_writer_lock: pthread_rwlock_wrlock() failed");
-    return FALSE;
+    return false;
   }
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_trylock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  return (pthread_rwlock_trywrlock(&lock->hdl) == 0) ? TRUE : FALSE;
+  return (pthread_rwlock_trywrlock(&lock->hdl) == 0) ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_unlock(PRWLock *lock) {
   return pp_rwlock_unlock_any(lock);
 }

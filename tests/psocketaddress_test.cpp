@@ -31,20 +31,20 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -58,19 +58,19 @@ BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
 	PSocketAddress *sock_addr = p_socket_address_new ("192.168.0.1", 1058);
 	BOOST_CHECK (sock_addr != NULL);
 
-	psize native_size = p_socket_address_get_native_size (sock_addr);
+	size_t native_size = p_socket_address_get_native_size (sock_addr);
 	BOOST_CHECK (native_size > 0);
 
-	ppointer addr_buf = p_malloc0 (native_size);
+	ptr_t addr_buf = p_malloc0 (native_size);
 	BOOST_CHECK (addr_buf != NULL);
 
-	BOOST_CHECK (p_socket_address_to_native (sock_addr, addr_buf, native_size - 1) == FALSE);
-	BOOST_CHECK (p_socket_address_to_native (sock_addr, addr_buf, native_size) == TRUE);
+	BOOST_CHECK (p_socket_address_to_native (sock_addr, addr_buf, native_size - 1) == false);
+	BOOST_CHECK (p_socket_address_to_native (sock_addr, addr_buf, native_size) == true);
 	p_socket_address_free (sock_addr);
 
 	PSocketAddress *sock_addr6;
-	psize native_size6;
-	ppointer addr_buf6;
+	size_t native_size6;
+	ptr_t addr_buf6;
 
 	if (p_socket_address_is_ipv6_supported ()) {
 		sock_addr6 = p_socket_address_new ("2001:cdba:345f:24ab:fe45:5423:3257:9652", 1058);
@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
 		addr_buf6 = p_malloc0 (native_size6);
 		BOOST_CHECK (addr_buf6 != NULL);
 
-		BOOST_CHECK (p_socket_address_to_native (sock_addr6, addr_buf6, native_size6 - 1) == FALSE);
-		BOOST_CHECK (p_socket_address_to_native (sock_addr6, addr_buf6, native_size6) == TRUE);
+		BOOST_CHECK (p_socket_address_to_native (sock_addr6, addr_buf6, native_size6 - 1) == false);
+		BOOST_CHECK (p_socket_address_to_native (sock_addr6, addr_buf6, native_size6) == true);
 		p_socket_address_free (sock_addr6);
 	}
 
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_socket_address_new ("192.168.0.1", 1058) == NULL);
 	BOOST_CHECK (p_socket_address_new_any (P_SOCKET_FAMILY_INET, 1058) == NULL);
@@ -126,15 +126,15 @@ BOOST_AUTO_TEST_CASE (psocketaddress_bad_input_test)
 	BOOST_CHECK (p_socket_address_new ("bad_address", 0) == NULL);
 	BOOST_CHECK (p_socket_address_new_any (P_SOCKET_FAMILY_UNKNOWN, 0) == NULL);
 	BOOST_CHECK (p_socket_address_new_loopback (P_SOCKET_FAMILY_UNKNOWN, 0) == NULL);
-	BOOST_CHECK (p_socket_address_to_native (NULL, NULL, 0) == FALSE);
+	BOOST_CHECK (p_socket_address_to_native (NULL, NULL, 0) == false);
 	BOOST_CHECK (p_socket_address_get_native_size (NULL) == 0);
 	BOOST_CHECK (p_socket_address_get_family (NULL) == P_SOCKET_FAMILY_UNKNOWN);
 	BOOST_CHECK (p_socket_address_get_address (NULL) == NULL);
 	BOOST_CHECK (p_socket_address_get_port (NULL) == 0);
 	BOOST_CHECK (p_socket_address_get_flow_info (NULL) == 0);
 	BOOST_CHECK (p_socket_address_get_scope_id (NULL) == 0);
-	BOOST_CHECK (p_socket_address_is_any (NULL) == FALSE);
-	BOOST_CHECK (p_socket_address_is_loopback (NULL) == FALSE);
+	BOOST_CHECK (p_socket_address_is_any (NULL) == false);
+	BOOST_CHECK (p_socket_address_is_loopback (NULL) == false);
 
 	p_socket_address_set_flow_info (NULL, 0);
 	p_socket_address_set_scope_id (NULL, 0);
@@ -151,15 +151,15 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	PSocketAddress *addr = p_socket_address_new ("192.168.0.1", 2345);
 
 	BOOST_REQUIRE (addr != NULL);
-	BOOST_CHECK (p_socket_address_is_loopback (addr) == FALSE);
-	BOOST_CHECK (p_socket_address_is_any (addr) == FALSE);
+	BOOST_CHECK (p_socket_address_is_loopback (addr) == false);
+	BOOST_CHECK (p_socket_address_is_any (addr) == false);
 	BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET);
 	BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 	BOOST_CHECK (p_socket_address_get_native_size (addr) > 0);
 	BOOST_CHECK (p_socket_address_get_flow_info (addr) == 0);
 	BOOST_CHECK (p_socket_address_get_scope_id (addr) == 0);
 
-	pchar *addr_str = p_socket_address_get_address (addr);
+	byte_t *addr_str = p_socket_address_get_address (addr);
 
 	BOOST_REQUIRE (addr_str != NULL);
 	BOOST_CHECK (strcmp (addr_str, "192.168.0.1") == 0);
@@ -172,8 +172,8 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 		addr = p_socket_address_new ("2001:cdba:345f:24ab:fe45:5423:3257:9652", 2345);
 
 		BOOST_REQUIRE (addr != NULL);
-		BOOST_CHECK (p_socket_address_is_loopback (addr) == FALSE);
-		BOOST_CHECK (p_socket_address_is_any (addr) == FALSE);
+		BOOST_CHECK (p_socket_address_is_loopback (addr) == false);
+		BOOST_CHECK (p_socket_address_is_any (addr) == false);
 		BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET6);
 		BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 		BOOST_CHECK (p_socket_address_get_native_size (addr) > 0);
@@ -193,8 +193,8 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	addr = p_socket_address_new_loopback (P_SOCKET_FAMILY_INET, 2345);
 
 	BOOST_REQUIRE (addr != NULL);
-	BOOST_CHECK (p_socket_address_is_loopback (addr) == TRUE);
-	BOOST_CHECK (p_socket_address_is_any (addr) == FALSE);
+	BOOST_CHECK (p_socket_address_is_loopback (addr) == true);
+	BOOST_CHECK (p_socket_address_is_any (addr) == false);
 	BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET);
 	BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 	BOOST_CHECK (p_socket_address_get_native_size (addr) > 0);
@@ -208,8 +208,8 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 		addr = p_socket_address_new_loopback (P_SOCKET_FAMILY_INET6, 2345);
 
 		BOOST_REQUIRE (addr != NULL);
-		BOOST_CHECK (p_socket_address_is_loopback (addr) == TRUE);
-		BOOST_CHECK (p_socket_address_is_any (addr) == FALSE);
+		BOOST_CHECK (p_socket_address_is_loopback (addr) == true);
+		BOOST_CHECK (p_socket_address_is_any (addr) == false);
 		BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET6);
 		BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 		BOOST_CHECK (p_socket_address_get_native_size (addr) > 0);
@@ -223,20 +223,20 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	addr = p_socket_address_new_any (P_SOCKET_FAMILY_INET, 2345);
 
 	BOOST_REQUIRE (addr != NULL);
-	BOOST_CHECK (p_socket_address_is_loopback (addr) == FALSE);
-	BOOST_CHECK (p_socket_address_is_any (addr) == TRUE);
+	BOOST_CHECK (p_socket_address_is_loopback (addr) == false);
+	BOOST_CHECK (p_socket_address_is_any (addr) == true);
 	BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET);
 	BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 	BOOST_CHECK (p_socket_address_get_native_size (addr) > 0);
 	BOOST_CHECK (p_socket_address_get_flow_info (addr) == 0);
 	BOOST_CHECK (p_socket_address_get_scope_id (addr) == 0);
 
-	psize native_size = p_socket_address_get_native_size (addr);
+	size_t native_size = p_socket_address_get_native_size (addr);
 
 	p_socket_address_free (addr);
 
 	/* Test IPv4 native raw data */
-	ppointer native_buf = p_malloc0 (native_size);
+	ptr_t native_buf = p_malloc0 (native_size);
 	BOOST_CHECK (native_buf != NULL);
 	BOOST_CHECK (p_socket_address_new_from_native (native_buf, native_size) == NULL);
 	addr = p_socket_address_new ("192.168.0.2", 2345);
@@ -245,14 +245,14 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	p_socket_address_set_flow_info (addr, 1);
 	p_socket_address_set_scope_id (addr, 1);
 
-	BOOST_CHECK (p_socket_address_to_native (addr, native_buf, native_size) == TRUE);
+	BOOST_CHECK (p_socket_address_to_native (addr, native_buf, native_size) == true);
 	p_socket_address_free (addr);
 
 	addr = p_socket_address_new_from_native (native_buf, native_size);
 
 	BOOST_CHECK (addr != NULL);
-	BOOST_CHECK (p_socket_address_is_loopback (addr) == FALSE);
-	BOOST_CHECK (p_socket_address_is_any (addr) == FALSE);
+	BOOST_CHECK (p_socket_address_is_loopback (addr) == false);
+	BOOST_CHECK (p_socket_address_is_any (addr) == false);
 	BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET);
 	BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 	BOOST_CHECK (p_socket_address_get_native_size (addr) == native_size);
@@ -273,8 +273,8 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 		addr = p_socket_address_new_any (P_SOCKET_FAMILY_INET6, 2345);
 
 		BOOST_REQUIRE (addr != NULL);
-		BOOST_CHECK (p_socket_address_is_loopback (addr) == FALSE);
-		BOOST_CHECK (p_socket_address_is_any (addr) == TRUE);
+		BOOST_CHECK (p_socket_address_is_loopback (addr) == false);
+		BOOST_CHECK (p_socket_address_is_any (addr) == true);
 		BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET6);
 		BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 		BOOST_CHECK (p_socket_address_get_native_size (addr) > 0);
@@ -295,14 +295,14 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 		p_socket_address_set_flow_info (addr, 1);
 		p_socket_address_set_scope_id (addr, 1);
 
-		BOOST_CHECK (p_socket_address_to_native (addr, native_buf, native_size) == TRUE);
+		BOOST_CHECK (p_socket_address_to_native (addr, native_buf, native_size) == true);
 		p_socket_address_free (addr);
 
 		addr = p_socket_address_new_from_native (native_buf, native_size);
 
 		BOOST_CHECK (addr != NULL);
-		BOOST_CHECK (p_socket_address_is_loopback (addr) == FALSE);
-		BOOST_CHECK (p_socket_address_is_any (addr) == FALSE);
+		BOOST_CHECK (p_socket_address_is_loopback (addr) == false);
+		BOOST_CHECK (p_socket_address_is_any (addr) == false);
 		BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET6);
 		BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 		BOOST_CHECK (p_socket_address_get_native_size (addr) == native_size);
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	}
 
 	if (p_socket_address_is_flow_info_supported () || p_socket_address_is_scope_id_supported ())
-		BOOST_CHECK (p_socket_address_is_ipv6_supported () == TRUE);
+		BOOST_CHECK (p_socket_address_is_ipv6_supported () == true);
 
 	p_libsys_shutdown ();
 }

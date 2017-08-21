@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 P_API PList *
-p_list_append(PList *list, ppointer data) {
+p_list_append(PList *list, ptr_t data) {
   PList *item, *cur;
 
   if (P_UNLIKELY ((item = p_malloc0(sizeof(PList))) == NULL)) {
@@ -42,7 +42,7 @@ p_list_append(PList *list, ppointer data) {
 }
 
 P_API PList *
-p_list_remove(PList *list, ppointer data) {
+p_list_remove(PList *list, ptr_t data) {
   PList *cur, *prev, *head;
 
   if (P_UNLIKELY (list == NULL))
@@ -66,7 +66,7 @@ p_list_remove(PList *list, ppointer data) {
 }
 
 P_API void
-p_list_foreach(PList *list, PFunc func, ppointer user_data) {
+p_list_foreach(PList *list, PFunc func, ptr_t user_data) {
   PList *cur;
 
   if (P_UNLIKELY (list == NULL || func == NULL))
@@ -101,10 +101,10 @@ p_list_last(PList *list) {
   return cur;
 }
 
-P_API psize
+P_API size_t
 p_list_length(const PList *list) {
   const PList *cur;
-  psize ret;
+  size_t ret;
 
   if (P_UNLIKELY (list == NULL))
     return 0;
@@ -115,7 +115,7 @@ p_list_length(const PList *list) {
 }
 
 P_API PList *
-p_list_prepend(PList *list, ppointer data) {
+p_list_prepend(PList *list, ptr_t data) {
   PList *item;
 
   if (P_UNLIKELY ((item = p_malloc0(sizeof(PList))) == NULL)) {

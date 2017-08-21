@@ -79,7 +79,7 @@ P_API PSpinLock *p_spinlock_new(void);
  * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
-P_API pboolean p_spinlock_lock(PSpinLock *spinlock);
+P_API bool p_spinlock_lock(PSpinLock *spinlock);
 
 /**
  * @brief Tries to lock a spinlock immediately.
@@ -96,7 +96,7 @@ P_API pboolean p_spinlock_lock(PSpinLock *spinlock);
  * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
-P_API pboolean p_spinlock_trylock(PSpinLock *spinlock);
+P_API bool p_spinlock_trylock(PSpinLock *spinlock);
 
 /**
  * @brief Releases a locked spinlock.
@@ -112,7 +112,7 @@ P_API pboolean p_spinlock_trylock(PSpinLock *spinlock);
  * as p_mutex_unlock(), thus it is not safe to call this routine on an unlocked
  * spinlock.
  */
-P_API pboolean p_spinlock_unlock(PSpinLock *spinlock);
+P_API bool p_spinlock_unlock(PSpinLock *spinlock);
 
 /**
  * @brief Frees #PSpinLock object.

@@ -22,7 +22,7 @@
 
 #include "plibsysconfig.h"
 #include "p/atomic.h"
-#include "p/condvariable.h"
+#include "p/condvar.h"
 #include "p/hash.h"
 #include "p/dir.h"
 #include "p/error.h"
@@ -47,7 +47,7 @@
 #include "p/socketaddr.h"
 #include "p/spinlock.h"
 #include "p/string.h"
-#include "p/bench.h"
+#include "p/profiler.h"
 #include "p/tree.h"
 #include "p/types.h"
 #include "p/uthread.h"

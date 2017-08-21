@@ -39,19 +39,19 @@ BOOST_AUTO_TEST_CASE (pfile_general_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_file_remove (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_file_remove (NULL, NULL) == false);
 
-	BOOST_CHECK (p_file_is_exists (PFILE_TEST_FILE) == FALSE);
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR" pfile_test_file_remove.txt", NULL) == FALSE);
+	BOOST_CHECK (p_file_is_exists (PFILE_TEST_FILE) == false);
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR" pfile_test_file_remove.txt", NULL) == false);
 
 	FILE *file = fopen (PFILE_TEST_FILE, "w");
 	BOOST_REQUIRE (file != NULL);
-	BOOST_CHECK (p_file_is_exists (PFILE_TEST_FILE) == TRUE);
+	BOOST_CHECK (p_file_is_exists (PFILE_TEST_FILE) == true);
 
 	fprintf (file, "This is a test file string\n");
 
 	BOOST_CHECK (fclose (file) == 0);
-	BOOST_CHECK (p_file_remove (PFILE_TEST_FILE, NULL) == TRUE);
+	BOOST_CHECK (p_file_remove (PFILE_TEST_FILE, NULL) == true);
 
 	p_libsys_shutdown ();
 }

@@ -41,26 +41,26 @@ p_spinlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_lock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   return p_mutex_lock(spinlock->mutex);
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_trylock(PSpinLock *spinlock) {
   if (spinlock == NULL)
-    return FALSE;
+    return false;
 
   return p_mutex_trylock(spinlock->mutex);
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_unlock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   return p_mutex_unlock(spinlock->mutex);
 }

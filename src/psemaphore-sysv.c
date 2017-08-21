@@ -35,58 +35,58 @@ struct sembuf sem_lock = {0, -1, SEM_UNDO};
 struct sembuf sem_unlock = {0, 1, SEM_UNDO};
 
 typedef union p_semun_ {
-  pint val;
+  int_t val;
   struct semid_ds *buf;
-  pushort *array;
+  ushort_t *array;
 } p_semun;
 
 typedef int psem_hdl;
 
 struct PSemaphore_ {
-  pboolean file_created;
-  pboolean sem_created;
+  bool file_created;
+  bool sem_created;
   key_t unix_key;
-  pchar *platform_key;
+  byte_t *platform_key;
   psem_hdl sem_hdl;
   PSemaphoreAccessMode mode;
-  pint init_val;
+  int_t init_val;
 };
 
-static pboolean pp_semaphore_create_handle(PSemaphore *sem, PError **error);
+static bool pp_semaphore_create_handle(PSemaphore *sem, p_err_t **error);
 static void pp_semaphore_clean_handle(PSemaphore *sem);
 
-static pboolean
-pp_semaphore_create_handle(PSemaphore *sem, PError **error) {
-  pint built;
+static bool
+pp_semaphore_create_handle(PSemaphore *sem, p_err_t **error) {
+  int_t built;
   p_semun semun_op;
 
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY (
     (built = p_ipc_unix_create_key_file(sem->platform_key)) == -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to create key file");
     pp_semaphore_clean_handle(sem);
-    return FALSE;
+    return false;
   } else if (built == 0)
-    sem->file_created = TRUE;
+    sem->file_created = true;
 
   if (P_UNLIKELY (
     (sem->unix_key = p_ipc_unix_get_ftok_key(sem->platform_key)) == -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to get unique IPC key");
     pp_semaphore_clean_handle(sem);
-    return FALSE;
+    return false;
   }
 
   if ((sem->sem_hdl = semget(sem->unix_key,
@@ -95,7 +95,7 @@ pp_semaphore_create_handle(PSemaphore *sem, PError **error) {
     if (p_error_get_last_system() == EEXIST)
       sem->sem_hdl = semget(sem->unix_key, 1, 0660);
   } else {
-    sem->sem_created = TRUE;
+    sem->sem_created = true;
 
     /* Maybe key file left after the crash, so take it */
     sem->file_created = (built == 1);
@@ -103,59 +103,59 @@ pp_semaphore_create_handle(PSemaphore *sem, PError **error) {
 
   if (P_UNLIKELY (sem->sem_hdl == P_SEM_INVALID_HDL)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call semget() to create semaphore");
     pp_semaphore_clean_handle(sem);
-    return FALSE;
+    return false;
   }
 
-  if (sem->sem_created == TRUE || sem->mode == P_SEM_ACCESS_CREATE) {
+  if (sem->sem_created == true || sem->mode == P_SEM_ACCESS_CREATE) {
     semun_op.val = sem->init_val;
 
     if (P_UNLIKELY (semctl(sem->sem_hdl, 0, SETVAL, semun_op) == -1)) {
       p_error_set_error_p(error,
-        (pint) p_error_get_last_ipc(),
+        (int_t) p_error_get_last_ipc(),
         p_error_get_last_system(),
         "Failed to set semaphore initial value with semctl()");
       pp_semaphore_clean_handle(sem);
-      return FALSE;
+      return false;
     }
   }
 
-  return TRUE;
+  return true;
 }
 
 static void
 pp_semaphore_clean_handle(PSemaphore *sem) {
   if (sem->sem_hdl != P_SEM_INVALID_HDL &&
-    sem->sem_created == TRUE &&
+    sem->sem_created == true &&
     semctl(sem->sem_hdl, 0, IPC_RMID) == -1)
     P_ERROR (
       "PSemaphore::pp_semaphore_clean_handle: semctl() with IPC_RMID failed");
 
-  if (sem->file_created == TRUE &&
+  if (sem->file_created == true &&
     sem->platform_key != NULL &&
     unlink(sem->platform_key) == -1)
     P_ERROR ("PSemaphore::pp_semaphore_clean_handle: unlink() failed");
 
-  sem->file_created = FALSE;
-  sem->sem_created = FALSE;
+  sem->file_created = false;
+  sem->sem_created = false;
   sem->unix_key = -1;
   sem->sem_hdl = P_SEM_INVALID_HDL;
 }
 
 P_API PSemaphore *
-p_semaphore_new(const pchar *name,
-  pint init_val,
+p_semaphore_new(const byte_t *name,
+  int_t init_val,
   PSemaphoreAccessMode mode,
-  PError **error) {
+  p_err_t **error) {
   PSemaphore *ret;
-  pchar *new_name;
+  byte_t *new_name;
 
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
     return NULL;
@@ -163,7 +163,7 @@ p_semaphore_new(const pchar *name,
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSemaphore))) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_NO_RESOURCES,
+      (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for semaphore");
     return NULL;
@@ -172,7 +172,7 @@ p_semaphore_new(const pchar *name,
   if (P_UNLIKELY (
     (new_name = p_malloc0(strlen(name) + strlen(P_SEM_SUFFIX) + 1)) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_NO_RESOURCES,
+      (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for semaphore");
     p_free(ret);
@@ -182,13 +182,13 @@ p_semaphore_new(const pchar *name,
   strcpy(new_name, name);
   strcat(new_name, P_SEM_SUFFIX);
 
-  ret->platform_key = p_ipc_get_platform_key(new_name, FALSE);
+  ret->platform_key = p_ipc_get_platform_key(new_name, false);
   ret->init_val = init_val;
   ret->mode = mode;
 
   p_free(new_name);
 
-  if (P_UNLIKELY (pp_semaphore_create_handle(ret, error) == FALSE)) {
+  if (P_UNLIKELY (pp_semaphore_create_handle(ret, error) == false)) {
     p_semaphore_free(ret);
     return NULL;
   }
@@ -201,21 +201,21 @@ p_semaphore_take_ownership(PSemaphore *sem) {
   if (P_UNLIKELY (sem == NULL))
     return;
 
-  sem->sem_created = TRUE;
+  sem->sem_created = true;
 }
 
-P_API pboolean
+P_API bool
 p_semaphore_acquire(PSemaphore *sem,
-  PError **error) {
-  pboolean ret;
-  pint res;
+  p_err_t **error) {
+  bool ret;
+  int_t res;
 
   if (P_UNLIKELY (sem == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   while ((res = semop(sem->sem_hdl, &sem_lock, 1)) == -1 &&
@@ -223,14 +223,14 @@ p_semaphore_acquire(PSemaphore *sem,
 
   ret = (res == 0);
 
-  if (P_UNLIKELY (ret == FALSE &&
+  if (P_UNLIKELY (ret == false &&
     (p_error_get_last_system() == EIDRM ||
       p_error_get_last_system() == EINVAL))) {
     P_WARNING ("PSemaphore::p_semaphore_acquire: trying to recreate");
     pp_semaphore_clean_handle(sem);
 
-    if (P_UNLIKELY (pp_semaphore_create_handle(sem, error) == FALSE))
-      return FALSE;
+    if (P_UNLIKELY (pp_semaphore_create_handle(sem, error) == false))
+      return false;
 
     while ((res = semop(sem->sem_hdl, &sem_lock, 1)) == -1 &&
       p_error_get_last_system() == EINTR);
@@ -238,27 +238,27 @@ p_semaphore_acquire(PSemaphore *sem,
     ret = (res == 0);
   }
 
-  if (P_UNLIKELY (ret == FALSE))
+  if (P_UNLIKELY (ret == false))
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call semop() on semaphore");
 
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_semaphore_release(PSemaphore *sem,
-  PError **error) {
-  pboolean ret;
-  pint res;
+  p_err_t **error) {
+  bool ret;
+  int_t res;
 
   if (P_UNLIKELY (sem == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   while ((res = semop(sem->sem_hdl, &sem_unlock, 1)) == -1 &&
@@ -266,21 +266,21 @@ p_semaphore_release(PSemaphore *sem,
 
   ret = (res == 0);
 
-  if (P_UNLIKELY (ret == FALSE &&
+  if (P_UNLIKELY (ret == false &&
     (p_error_get_last_system() == EIDRM ||
       p_error_get_last_system() == EINVAL))) {
     P_WARNING ("PSemaphore::p_semaphore_release: trying to recreate");
     pp_semaphore_clean_handle(sem);
 
-    if (P_UNLIKELY (pp_semaphore_create_handle(sem, error) == FALSE))
-      return FALSE;
+    if (P_UNLIKELY (pp_semaphore_create_handle(sem, error) == false))
+      return false;
 
-    return TRUE;
+    return true;
   }
 
-  if (P_UNLIKELY (ret == FALSE))
+  if (P_UNLIKELY (ret == false))
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call semop() on semaphore");
 

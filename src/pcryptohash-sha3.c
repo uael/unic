@@ -22,16 +22,16 @@
 
 struct PHashSHA3_ {
   union buf_ {
-    puchar buf[200];
-    puint64 buf_w[25];
+    ubyte_t buf[200];
+    uint64_t buf_w[25];
   } buf;
-  puint64 hash[25];
+  uint64_t hash[25];
 
-  puint32 len;
-  puint32 block_size;
+  uint32_t len;
+  uint32_t block_size;
 };
 
-static const puint64 pp_crypto_hash_sha3_K[] = {
+static const uint64_t pp_crypto_hash_sha3_K[] = {
   0x0000000000000001ULL, 0x0000000000008082ULL,
   0x800000000000808AULL, 0x8000000080008000ULL,
   0x000000000000808BULL, 0x0000000080000001ULL,
@@ -46,20 +46,20 @@ static const puint64 pp_crypto_hash_sha3_K[] = {
   0x0000000080000001ULL, 0x8000000080008008ULL
 };
 
-static void pp_crypto_hash_sha3_swap_bytes(puint64 *data, puint words);
+static void pp_crypto_hash_sha3_swap_bytes(uint64_t *data, uint_t words);
 static void pp_crypto_hash_sha3_keccak_theta(PHashSHA3 *ctx);
 static void pp_crypto_hash_sha3_keccak_rho_pi(PHashSHA3 *ctx);
 static void pp_crypto_hash_sha3_keccak_chi(PHashSHA3 *ctx);
 static void pp_crypto_hash_sha3_keccak_permutate(PHashSHA3 *ctx);
-static void pp_crypto_hash_sha3_process(PHashSHA3 *ctx, const puint64 *data);
-static PHashSHA3 *pp_crypto_hash_sha3_new_internal(puint bits);
+static void pp_crypto_hash_sha3_process(PHashSHA3 *ctx, const uint64_t *data);
+static PHashSHA3 *pp_crypto_hash_sha3_new_internal(uint_t bits);
 
 #define P_SHA3_SHL(val, shift) ((val) << (shift))
 #define P_SHA3_ROTL(val, shift) (P_SHA3_SHL(val, shift) | ((val) >> (64 - (shift))))
 
 static void
-pp_crypto_hash_sha3_swap_bytes(puint64 *data,
-  puint words) {
+pp_crypto_hash_sha3_swap_bytes(uint64_t *data,
+  uint_t words) {
 #ifndef PLIBSYS_IS_BIGENDIAN
   P_UNUSED (data);
   P_UNUSED (words);
@@ -74,8 +74,8 @@ pp_crypto_hash_sha3_swap_bytes(puint64 *data,
 /* Theta step (see [Keccak Reference, Section 2.3.2]) */
 static void
 pp_crypto_hash_sha3_keccak_theta(PHashSHA3 *ctx) {
-  puint i;
-  puint64 C[5], D[5];
+  uint_t i;
+  uint64_t C[5], D[5];
 
   /* Compute the parity of the columns */
   for (i = 0; i < 5; ++i)
@@ -103,7 +103,7 @@ pp_crypto_hash_sha3_keccak_theta(PHashSHA3 *ctx) {
 /* Rho and pi steps (see [Keccak Reference, Sections 2.3.3 and 2.3.4]) */
 static void
 pp_crypto_hash_sha3_keccak_rho_pi(PHashSHA3 *ctx) {
-  puint64 tmp_A;
+  uint64_t tmp_A;
 
   /* Unroll the loop over ((0 1)(2 3))^t * (1 0) for 0 ≤ t ≤ 23 */
   tmp_A = ctx->hash[1];
@@ -136,8 +136,8 @@ pp_crypto_hash_sha3_keccak_rho_pi(PHashSHA3 *ctx) {
 /* Chi step (see [Keccak Reference, Section 2.3.1]) */
 static void
 pp_crypto_hash_sha3_keccak_chi(PHashSHA3 *ctx) {
-  puint i;
-  puint64 tmp_A1, tmp_A2;
+  uint_t i;
+  uint64_t tmp_A1, tmp_A2;
 
   for (i = 0; i < 25; i += 5) {
     tmp_A1 = ctx->hash[i + 0];
@@ -153,7 +153,7 @@ pp_crypto_hash_sha3_keccak_chi(PHashSHA3 *ctx) {
 
 static void
 pp_crypto_hash_sha3_keccak_permutate(PHashSHA3 *ctx) {
-  puint i;
+  uint_t i;
 
   for (i = 0; i < 24; ++i) {
     pp_crypto_hash_sha3_keccak_theta(ctx);
@@ -167,9 +167,9 @@ pp_crypto_hash_sha3_keccak_permutate(PHashSHA3 *ctx) {
 
 static void
 pp_crypto_hash_sha3_process(PHashSHA3 *ctx,
-  const puint64 *data) {
-  puint i;
-  puint qwords = ctx->block_size / 8;
+  const uint64_t *data) {
+  uint_t i;
+  uint_t qwords = ctx->block_size / 8;
 
   for (i = 0; i < qwords; ++i)
     ctx->hash[i] ^= data[i];
@@ -179,7 +179,7 @@ pp_crypto_hash_sha3_process(PHashSHA3 *ctx,
 }
 
 static PHashSHA3 *
-pp_crypto_hash_sha3_new_internal(puint bits) {
+pp_crypto_hash_sha3_new_internal(uint_t bits) {
   PHashSHA3 *ret;
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashSHA3))) == NULL))
@@ -220,15 +220,15 @@ p_crypto_hash_sha3_512_new(void) {
 
 void
 p_crypto_hash_sha3_update(PHashSHA3 *ctx,
-  const puchar *data,
-  psize len) {
-  puint32 left, to_fill;
+  const ubyte_t *data,
+  size_t len) {
+  uint32_t left, to_fill;
 
   left = ctx->len;
   to_fill = ctx->block_size - left;
-  ctx->len = (puint32) (((psize) ctx->len + len) % (psize) ctx->block_size);
+  ctx->len = (uint32_t) (((size_t) ctx->len + len) % (size_t) ctx->block_size);
 
-  if (left && (puint64) len >= to_fill) {
+  if (left && (uint64_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_sha3_swap_bytes(ctx->buf.buf_w, ctx->block_size >> 3);
     pp_crypto_hash_sha3_process(ctx, ctx->buf.buf_w);
@@ -264,9 +264,9 @@ p_crypto_hash_sha3_finish(PHashSHA3 *ctx) {
     (100 - (ctx->block_size >> 2)) >> 3);
 }
 
-const puchar *
+const ubyte_t *
 p_crypto_hash_sha3_digest(PHashSHA3 *ctx) {
-  return (const puchar *) ctx->hash;
+  return (const ubyte_t *) ctx->hash;
 }
 
 void

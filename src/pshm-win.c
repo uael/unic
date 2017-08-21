@@ -31,33 +31,33 @@
 typedef HANDLE pshm_hdl;
 
 struct PShm_ {
-  pchar *platform_key;
+  byte_t *platform_key;
   pshm_hdl shm_hdl;
-  ppointer addr;
-  psize size;
+  ptr_t addr;
+  size_t size;
   PSemaphore *sem;
   PShmAccessPerms perms;
 };
 
-static pboolean pp_shm_create_handle(PShm *shm, PError **error);
+static bool pp_shm_create_handle(PShm *shm, p_err_t **error);
 static void pp_shm_clean_handle(PShm *shm);
 
-static pboolean
+static bool
 pp_shm_create_handle(PShm *shm,
-  PError **error) {
-  pboolean is_exists;
+  p_err_t **error) {
+  bool is_exists;
   MEMORY_BASIC_INFORMATION mem_stat;
   DWORD protect;
 
   if (P_UNLIKELY (shm == NULL || shm->platform_key == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
-  is_exists = FALSE;
+  is_exists = false;
 
   protect =
     (shm->perms == P_SHM_ACCESS_READONLY) ? PAGE_READONLY : PAGE_READWRITE;
@@ -70,11 +70,11 @@ pp_shm_create_handle(PShm *shm,
     (DWORD) shm->size,
     shm->platform_key)) == NULL)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call CreateFileMapping() to create file mapping");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   protect = (protect == PAGE_READONLY) ? FILE_MAP_READ : FILE_MAP_ALL_ACCESS;
@@ -82,23 +82,23 @@ pp_shm_create_handle(PShm *shm,
   if (P_UNLIKELY (
     (shm->addr = MapViewOfFile(shm->shm_hdl, protect, 0, 0, 0)) == NULL)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call MapViewOfFile() to map file to memory");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   if (p_error_get_last_system() == ERROR_ALREADY_EXISTS)
-    is_exists = TRUE;
+    is_exists = true;
 
   if (P_UNLIKELY (VirtualQuery(shm->addr, &mem_stat, sizeof(mem_stat)) == 0)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call VirtualQuery() to get memory map info");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   shm->size = mem_stat.RegionSize;
@@ -107,10 +107,10 @@ pp_shm_create_handle(PShm *shm,
     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
     error)) == NULL)) {
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 static void
@@ -134,16 +134,16 @@ pp_shm_clean_handle(PShm *shm) {
 }
 
 P_API PShm *
-p_shm_new(const pchar *name,
-  psize size,
+p_shm_new(const byte_t *name,
+  size_t size,
   PShmAccessPerms perms,
-  PError **error) {
+  p_err_t **error) {
   PShm *ret;
-  pchar *new_name;
+  byte_t *new_name;
 
   if (P_UNLIKELY (name == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
     return NULL;
@@ -151,7 +151,7 @@ p_shm_new(const pchar *name,
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PShm))) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_NO_RESOURCES,
+      (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for shared segment");
     return NULL;
@@ -160,7 +160,7 @@ p_shm_new(const pchar *name,
   if (P_UNLIKELY (
     (new_name = p_malloc0(strlen(name) + strlen(P_SHM_SUFFIX) + 1)) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_NO_RESOURCES,
+      (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for segment name");
     p_shm_free(ret);
@@ -170,13 +170,13 @@ p_shm_new(const pchar *name,
   strcpy(new_name, name);
   strcat(new_name, P_SHM_SUFFIX);
 
-  ret->platform_key = p_ipc_get_platform_key(new_name, FALSE);
+  ret->platform_key = p_ipc_get_platform_key(new_name, false);
   ret->perms = perms;
   ret->size = size;
 
   p_free(new_name);
 
-  if (P_UNLIKELY (pp_shm_create_handle(ret, error) == FALSE)) {
+  if (P_UNLIKELY (pp_shm_create_handle(ret, error) == false)) {
     p_shm_free(ret);
     return NULL;
   }
@@ -205,35 +205,35 @@ p_shm_free(PShm *shm) {
   p_free(shm);
 }
 
-P_API pboolean
+P_API bool
 p_shm_lock(PShm *shm,
-  PError **error) {
+  p_err_t **error) {
   if (P_UNLIKELY (shm == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   return p_semaphore_acquire(shm->sem, error);
 }
 
-P_API pboolean
+P_API bool
 p_shm_unlock(PShm *shm,
-  PError **error) {
+  p_err_t **error) {
   if (P_UNLIKELY (shm == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   return p_semaphore_release(shm->sem, error);
 }
 
-P_API ppointer
+P_API ptr_t
 p_shm_get_address(const PShm *shm) {
   if (P_UNLIKELY (shm == NULL))
     return NULL;
@@ -241,7 +241,7 @@ p_shm_get_address(const PShm *shm) {
   return shm->addr;
 }
 
-P_API psize
+P_API size_t
 p_shm_get_size(const PShm *shm) {
   if (P_UNLIKELY (shm == NULL))
     return 0;

@@ -105,10 +105,10 @@ typedef struct PShm_ PShm;
  * otherwise.
  * @since 0.0.1
  */
-P_API PShm *p_shm_new(const pchar *name,
-  psize size,
+P_API PShm *p_shm_new(const byte_t *name,
+  size_t size,
   PShmAccessPerms perms,
-  PError **error);
+  p_err_t **error);
 
 /**
  * @brief Takes ownership of a shared memory segment.
@@ -148,8 +148,8 @@ P_API void p_shm_free(PShm *shm);
  * If the object is already locked then the thread will be suspended until the
  * object becomes unlocked.
  */
-P_API pboolean p_shm_lock(PShm *shm,
-  PError **error);
+P_API bool p_shm_lock(PShm *shm,
+  p_err_t **error);
 
 /**
  * @brief Unlocks #PShm object.
@@ -158,8 +158,8 @@ P_API pboolean p_shm_lock(PShm *shm,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_shm_unlock(PShm *shm,
-  PError **error);
+P_API bool p_shm_unlock(PShm *shm,
+  p_err_t **error);
 
 /**
  * @brief Gets a starting address of a #PShm memory segment.
@@ -167,7 +167,7 @@ P_API pboolean p_shm_unlock(PShm *shm,
  * @return Pointer to the starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ppointer p_shm_get_address(const PShm *shm);
+P_API ptr_t p_shm_get_address(const PShm *shm);
 
 /**
  * @brief Gets the size of a #PShm memory segment.
@@ -178,6 +178,6 @@ P_API ppointer p_shm_get_address(const PShm *shm);
  * Note that the returned size would be a slightly larger than specified during
  * the p_shm_new() call due to service information stored inside.
  */
-P_API psize p_shm_get_size(const PShm *shm);
+P_API size_t p_shm_get_size(const PShm *shm);
 
 #endif /* P_SHM_H__ */

@@ -31,20 +31,20 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 {
 	p_libsys_init ();
 
-	if (P_UNLIKELY (p_library_loader_is_ref_counted () == FALSE)) {
+	if (P_UNLIKELY (p_library_loader_is_ref_counted () == false)) {
 		p_libsys_shutdown ();
 		return;
 	}
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 #ifdef P_OS_WIN
 	SetErrorMode (SEM_FAILCRITICALERRORS);
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 
 	p_mem_restore_vtable ();
 
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL) == TRUE);
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL) == true);
 
 	p_libsys_shutdown ();
 }
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 {
 	PLibraryLoader	*loader;
-	pchar		*err_msg;
+	byte_t		*err_msg;
 	void		(*shutdown_func) (void);
 
 	p_libsys_init ();
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	/* At least not on HP-UX it should be true */
 #if !defined (P_OS_HPUX)
-	BOOST_CHECK (p_library_loader_is_ref_counted () == TRUE);
+	BOOST_CHECK (p_library_loader_is_ref_counted () == true);
 #else
 	p_library_loader_is_ref_counted ();
 #endif
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	err_msg = p_library_loader_get_last_error (NULL);
 	p_free (err_msg);
 
-	if (P_UNLIKELY (p_library_loader_is_ref_counted () == FALSE)) {
+	if (P_UNLIKELY (p_library_loader_is_ref_counted () == false)) {
 		p_libsys_shutdown ();
 		return;
 	}

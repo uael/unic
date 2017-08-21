@@ -88,16 +88,16 @@ extern void p_uthread_exit_internal(void);
 extern void p_uthread_wait_internal(PUThread *thread);
 extern void p_uthread_free_internal(PUThread *thread);
 extern PUThread *p_uthread_create_internal(PUThreadFunc func,
-  pboolean joinable,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size);
+  size_t stack_size);
 
-static void pp_uthread_cleanup(ppointer data);
-static ppointer pp_uthread_proxy(ppointer data);
+static void pp_uthread_cleanup(ptr_t data);
+static ptr_t pp_uthread_proxy(ptr_t data);
 
 #ifndef P_OS_WIN
 #  if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
-static pint pp_uthread_nanosleep (puint32 msec);
+static int_t pp_uthread_nanosleep (uint32_t msec);
 #  endif
 #endif
 
@@ -105,12 +105,12 @@ static PUThreadKey *pp_uthread_specific_data = NULL;
 static PSpinLock *pp_uthread_new_spin = NULL;
 
 static void
-pp_uthread_cleanup(ppointer data) {
+pp_uthread_cleanup(ptr_t data) {
   p_uthread_unref(data);
 }
 
-static ppointer
-pp_uthread_proxy(ppointer data) {
+static ptr_t
+pp_uthread_proxy(ptr_t data) {
   PUThreadBase *base_thread = data;
 
   p_uthread_set_local(pp_uthread_specific_data, data);
@@ -161,10 +161,10 @@ p_uthread_shutdown(void) {
 
 P_API PUThread *
 p_uthread_create_full(PUThreadFunc func,
-  ppointer data,
-  pboolean joinable,
+  ptr_t data,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size) {
+  size_t stack_size) {
   PUThreadBase *base_thread;
 
   if (P_UNLIKELY (func == NULL))
@@ -179,7 +179,7 @@ p_uthread_create_full(PUThreadFunc func,
 
   if (P_LIKELY (base_thread != NULL)) {
     base_thread->ref_count = 2;
-    base_thread->ours = TRUE;
+    base_thread->ours = true;
     base_thread->joinable = joinable;
     base_thread->func = func;
     base_thread->data = data;
@@ -192,21 +192,21 @@ p_uthread_create_full(PUThreadFunc func,
 
 P_API PUThread *
 p_uthread_create(PUThreadFunc func,
-  ppointer data,
-  pboolean joinable) {
+  ptr_t data,
+  bool joinable) {
   /* All checks will be inside */
   return p_uthread_create_full(func, data, joinable, P_UTHREAD_PRIORITY_INHERIT,
     0);
 }
 
 P_API void
-p_uthread_exit(pint code) {
+p_uthread_exit(int_t code) {
   PUThreadBase *base_thread = (PUThreadBase *) p_uthread_current();
 
   if (P_UNLIKELY (base_thread == NULL))
     return;
 
-  if (P_UNLIKELY (base_thread->ours == FALSE)) {
+  if (P_UNLIKELY (base_thread->ours == false)) {
     P_WARNING (
       "PUThread::p_uthread_exit: p_uthread_exit() cannot be called from an unknown thread");
     return;
@@ -217,7 +217,7 @@ p_uthread_exit(pint code) {
   p_uthread_exit_internal();
 }
 
-P_API pint
+P_API int_t
 p_uthread_join(PUThread *thread) {
   PUThreadBase *base_thread;
 
@@ -226,7 +226,7 @@ p_uthread_join(PUThread *thread) {
 
   base_thread = (PUThreadBase *) thread;
 
-  if (base_thread->joinable == FALSE)
+  if (base_thread->joinable == false)
     return -1;
 
   p_uthread_wait_internal(thread);
@@ -252,7 +252,7 @@ p_uthread_current(void) {
   return (PUThread *) base_thread;
 }
 
-P_API pint
+P_API int_t
 p_uthread_ideal_count(void) {
 #if defined (P_OS_WIN)
   SYSTEM_INFO	sys_info;
@@ -272,18 +272,18 @@ p_uthread_ideal_count(void) {
 
   sys_info_func (&sys_info);
 
-  return (pint) sys_info.dwNumberOfProcessors;
+  return (int_t) sys_info.dwNumberOfProcessors;
 #elif defined (P_OS_HPUX)
   struct pst_dynamic psd;
 
   if (P_LIKELY (pstat_getdynamic (&psd, sizeof (psd), 1, 0) != -1))
-    return (pint) psd.psd_proc_cnt;
+    return (int_t) psd.psd_proc_cnt;
   else {
     P_WARNING ("PUThread::p_uthread_ideal_count: failed to call pstat_getdynamic()");
     return 1;
   }
 #elif defined (P_OS_IRIX)
-  pint cores;
+  int_t cores;
 
   cores = sysconf (_SC_NPROC_ONLN);
 
@@ -294,8 +294,8 @@ p_uthread_ideal_count(void) {
 
   return cores;
 #elif defined (P_OS_BSD4)
-  pint	cores;
-  pint	mib[2];
+  int_t	cores;
+  int_t	mib[2];
   size_t	len = sizeof (cores);
 
   mib[0] = CTL_HW;
@@ -306,11 +306,11 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (pint) cores;
+  return (int_t) cores;
 #elif defined (P_OS_VMS)
-  pint	cores;
-  pint	status;
-  puint	efn;
+  int_t	cores;
+  int_t	status;
+  uint_t	efn;
   IOSB	iosb;
 #  if (PLIBSYS_SIZEOF_VOID_P == 4)
   ILE3	itmlst[] = { { sizeof (cores), SYI$_AVAILCPU_CNT, &cores, NULL},
@@ -366,15 +366,15 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (pint) cores;
+  return (int_t) cores;
 #elif defined (P_OS_QNX6)
-  return (pint) _syspage_ptr->num_cpu;
+  return (int_t) _syspage_ptr->num_cpu;
 #elif defined (P_OS_BEOS)
   system_info sys_info;
 
   get_system_info (&sys_info);
 
-  return (pint) sys_info.cpu_count;
+  return (int_t) sys_info.cpu_count;
 #elif defined (P_OS_SYLLABLE)
   system_info sys_info;
 
@@ -383,7 +383,7 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (pint) sys_info.nCPUCount;
+  return (int_t) sys_info.nCPUCount;
 #elif defined (P_OS_SCO) && !defined (_SC_NPROCESSORS_ONLN)
   struct scoutsname utsn;
 
@@ -392,11 +392,11 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (pint) utsn.numcpu;
+  return (int_t) utsn.numcpu;
 #elif defined (_SC_NPROCESSORS_ONLN)
-  pint cores;
+  int_t cores;
 
-  cores = (pint) sysconf(_SC_NPROCESSORS_ONLN);
+  cores = (int_t) sysconf(_SC_NPROCESSORS_ONLN);
 
   if (P_UNLIKELY (cores == -1)) {
     P_WARNING (
@@ -427,8 +427,8 @@ p_uthread_unref(PUThread *thread) {
 
   base_thread = (PUThreadBase *) thread;
 
-  if (p_atomic_int_dec_and_test(&base_thread->ref_count) == TRUE) {
-    if (base_thread->ours == TRUE)
+  if (p_atomic_int_dec_and_test(&base_thread->ref_count) == true) {
+    if (base_thread->ours == true)
       p_uthread_free_internal(thread);
     else
       p_free(thread);
@@ -440,9 +440,9 @@ p_uthread_unref(PUThread *thread) {
 #  if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
 #    include <sys/select.h>
 #    include <sys/time.h>
-static pint pp_uthread_nanosleep (puint32 msec)
+static int_t pp_uthread_nanosleep (uint32_t msec)
 {
-  pint		rc;
+  int_t		rc;
   struct timeval	tstart, tstop, tremain, time2wait;
 
   time2wait.tv_sec  = msec / 1000;
@@ -475,15 +475,15 @@ static pint pp_uthread_nanosleep (puint32 msec)
 #  endif
 #endif
 
-P_API pint
-p_uthread_sleep(puint32 msec) {
+P_API int_t
+p_uthread_sleep(uint32_t msec) {
 #if defined (P_OS_WIN)
   Sleep (msec);
   return 0;
 #elif defined (P_OS_OS2)
   return (DosSleep (msec) == NO_ERROR) ? 0 : -1;
 #elif defined (PLIBSYS_HAS_CLOCKNANOSLEEP) || defined (PLIBSYS_HAS_NANOSLEEP)
-  pint result;
+  int_t result;
   struct timespec time_req;
   struct timespec time_rem;
 

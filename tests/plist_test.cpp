@@ -32,29 +32,29 @@
 #endif
 
 typedef struct _TestData {
-	pint test_array[3];
-	pint index;
+	int_t test_array[3];
+	int_t index;
 } TestData;
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
 
-static void foreach_test_func (ppointer data, ppointer user_data)
+static void foreach_test_func (ptr_t data, ptr_t user_data)
 {
 	if (user_data == NULL)
 		return;
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE (plist_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_list_append (NULL, PINT_TO_POINTER (10)) == NULL);
 	BOOST_CHECK (p_list_prepend (NULL, PINT_TO_POINTER (10)) == NULL);
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	BOOST_REQUIRE (test_data.test_array[2] == 0);
 	BOOST_REQUIRE (test_data.index == 0);
 
-	p_list_foreach (list, (PFunc) foreach_test_func, (ppointer) &test_data);
+	p_list_foreach (list, (PFunc) foreach_test_func, (ptr_t) &test_data);
 
 	BOOST_CHECK (test_data.index == 3);
 	BOOST_CHECK (test_data.test_array[0] == 128);
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	BOOST_REQUIRE (test_data.test_array[2] == 0);
 	BOOST_REQUIRE (test_data.index == 0);
 
-	p_list_foreach (list, (PFunc) foreach_test_func, (ppointer) &test_data);
+	p_list_foreach (list, (PFunc) foreach_test_func, (ptr_t) &test_data);
 
 	BOOST_CHECK (test_data.index == 3);
 	BOOST_CHECK (test_data.test_array[0] == 64);

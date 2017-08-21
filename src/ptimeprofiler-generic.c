@@ -15,33 +15,33 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/bench.h"
+#include "p/profiler.h"
 #include "ptimeprofiler-private.h"
 
 #include <time.h>
 
-puint64
-p_time_profiler_get_ticks_internal() {
-  pint64 val;
+uint64_t
+p_profiler_get_ticks_internal() {
+  int64_t val;
 
-  if (P_UNLIKELY ((val = (pint64) time(NULL)) == -1)) {
+  if (P_UNLIKELY ((val = (int64_t) time(NULL)) == -1)) {
     P_ERROR (
-      "PTimeProfiler::p_time_profiler_get_ticks_internal: time() failed");
+      "p_profiler_t::p_profiler_get_ticks_internal: time() failed");
     return 0;
   }
 
-  return (puint64) (val * 1000000);
+  return (uint64_t) (val * 1000000);
 }
 
-puint64
-p_time_profiler_elapsed_usecs_internal(const PTimeProfiler *profiler) {
-  return p_time_profiler_get_ticks_internal() - profiler->counter;
-}
-
-void
-p_time_profiler_init(void) {
+uint64_t
+p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+  return p_profiler_get_ticks_internal() - profiler->counter;
 }
 
 void
-p_time_profiler_shutdown(void) {
+p_profiler_init(void) {
+}
+
+void
+p_profiler_shutdown(void) {
 }

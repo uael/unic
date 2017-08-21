@@ -48,20 +48,20 @@
 #include "p/error.h"
 
 /** Directory opaque data structure. */
-typedef struct PDir_ PDir;
+typedef struct p_dir p_dir_t;
 
 /** Directory entry types. */
-typedef enum PDirEntryType_ {
+typedef enum p_dirent_kind {
   P_DIR_ENTRY_TYPE_DIR = 1,  /**< Directory.	*/
   P_DIR_ENTRY_TYPE_FILE = 2,  /**< File.	*/
   P_DIR_ENTRY_TYPE_OTHER = 3  /**< Other.	*/
-} PDirEntryType;
+} p_dirent_kind_t;
 
 /** Structure with directory entry information. */
-typedef struct PDirEntry_ {
+typedef struct p_dirent {
   char *name;  /**< Name.	*/
-  PDirEntryType type;  /**< Type.	*/
-} PDirEntry;
+  p_dirent_kind_t type;  /**< Type.	*/
+} p_dirent_t;
 
 /**
  * @brief Creates a new #PDir object.
@@ -73,8 +73,8 @@ typedef struct PDirEntry_ {
  * @note If you want to create a new directory on a filesystem, use
  * p_dir_create() instead.
  */
-P_API PDir *p_dir_new(const pchar *path,
-  PError **error);
+P_API p_dir_t *p_dir_new(const byte_t *path,
+  p_err_t **error);
 
 /**
  * @brief Creates a new directory on a filesystem.
@@ -87,9 +87,9 @@ P_API PDir *p_dir_new(const pchar *path,
  * @note On OpenVMS operating system it creates intermediate directories as
  * well.
  */
-P_API pboolean p_dir_create(const pchar *path,
-  pint mode,
-  PError **error);
+P_API bool p_dir_create(const byte_t *path,
+  int_t mode,
+  p_err_t **error);
 
 /**
  * @brief Removes an empty directory.
@@ -100,8 +100,8 @@ P_API pboolean p_dir_create(const pchar *path,
  *
  * The directory @a path should be empty to be removed successfully.
  */
-P_API pboolean p_dir_remove(const pchar *path,
-  PError **error);
+P_API bool p_dir_remove(const byte_t *path,
+  p_err_t **error);
 
 /**
  * @brief Checks whether a directory exists or not.
@@ -109,7 +109,7 @@ P_API pboolean p_dir_remove(const pchar *path,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_dir_is_exists(const pchar *path);
+P_API bool p_dir_is_exists(const byte_t *path);
 
 /**
  * @brief Gets the original directory path used to create a #PDir object.
@@ -120,7 +120,7 @@ P_API pboolean p_dir_is_exists(const pchar *path);
  * Caller takes ownership of the returned string. Use p_free() to free memory
  * after usage.
  */
-P_API pchar *p_dir_get_path(const PDir *dir);
+P_API byte_t *p_dir_get_path(const p_dir_t *dir);
 
 /**
  * @brief Gets the next directory entry info.
@@ -133,10 +133,10 @@ P_API pchar *p_dir_get_path(const PDir *dir);
  * memory of the directory entry after usage.
  *
  * An error is set only if it is occurred. You should check the @a error object
- * for #P_ERROR_IO_NO_MORE code.
+ * for #P_ERR_IO_NO_MORE code.
  */
-P_API PDirEntry *p_dir_get_next_entry(PDir *dir,
-  PError **error);
+P_API p_dirent_t *p_dir_get_next_entry(p_dir_t *dir,
+  p_err_t **error);
 
 /**
  * @brief Resets a directory entry pointer.
@@ -145,21 +145,21 @@ P_API PDirEntry *p_dir_get_next_entry(PDir *dir,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_dir_rewind(PDir *dir,
-  PError **error);
+P_API bool p_dir_rewind(p_dir_t *dir,
+  p_err_t **error);
 
 /**
  * @brief Frees #PDirEntry object.
  * @param entry #PDirEntry to free.
  * @since 0.0.1
  */
-P_API void p_dir_entry_free(PDirEntry *entry);
+P_API void p_dir_entry_free(p_dirent_t *entry);
 
 /**
  * @brief Frees #PDir object.
  * @param dir #PDir to free.
  * @since 0.0.1
  */
-P_API void p_dir_free(PDir *dir);
+P_API void p_dir_free(p_dir_t *dir);
 
 #endif /* P_DIR_H__ */

@@ -20,20 +20,20 @@
 #include <stdlib.h>
 
 struct PSemaphore_ {
-  pint hdl;
+  int_t hdl;
 };
 
 P_API PSemaphore *
-p_semaphore_new(const pchar *name,
-  pint init_val,
+p_semaphore_new(const byte_t *name,
+  int_t init_val,
   PSemaphoreAccessMode mode,
-  PError **error) {
+  p_err_t **error) {
   P_UNUSED (name);
   P_UNUSED (init_val);
   P_UNUSED (mode);
 
   p_error_set_error_p(error,
-    (pint) P_ERROR_IPC_NOT_IMPLEMENTED,
+    (int_t) P_ERR_IPC_NOT_IMPLEMENTED,
     0,
     "No semaphore implementation");
 
@@ -45,30 +45,30 @@ p_semaphore_take_ownership(PSemaphore *sem) {
   P_UNUSED (sem);
 }
 
-P_API pboolean
+P_API bool
 p_semaphore_acquire(PSemaphore *sem,
-  PError **error) {
+  p_err_t **error) {
   P_UNUSED (sem);
 
   p_error_set_error_p(error,
-    (pint) P_ERROR_IPC_NOT_IMPLEMENTED,
+    (int_t) P_ERR_IPC_NOT_IMPLEMENTED,
     0,
     "No semaphore implementation");
 
-  return FALSE;
+  return false;
 }
 
-P_API pboolean
+P_API bool
 p_semaphore_release(PSemaphore *sem,
-  PError **error) {
+  p_err_t **error) {
   P_UNUSED (sem);
 
   p_error_set_error_p(error,
-    (pint) P_ERROR_IPC_NOT_IMPLEMENTED,
+    (int_t) P_ERR_IPC_NOT_IMPLEMENTED,
     0,
     "No semaphore implementation");
 
-  return FALSE;
+  return false;
 }
 
 P_API void

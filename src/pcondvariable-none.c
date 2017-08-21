@@ -15,51 +15,51 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/condvariable.h"
+#include "p/condvar.h"
 
 #include <stdlib.h>
 
-struct PCondVariable_ {
-  pint hdl;
+struct p_condvar {
+  int_t hdl;
 };
 
-P_API PCondVariable *
-p_cond_variable_new(void) {
+P_API p_condvar_t *
+p_condvar_new(void) {
   return NULL;
 }
 
 P_API void
-p_cond_variable_free(PCondVariable *cond) {
+p_condvar_free(p_condvar_t *cond) {
   P_UNUSED (cond);
 }
 
-P_API pboolean
-p_cond_variable_wait(PCondVariable *cond,
+P_API bool
+p_condvar_wait(p_condvar_t *cond,
   PMutex *mutex) {
   P_UNUSED (cond);
   P_UNUSED (mutex);
 
-  return FALSE;
+  return false;
 }
 
-P_API pboolean
-p_cond_variable_signal(PCondVariable *cond) {
+P_API bool
+p_condvar_signal(p_condvar_t *cond) {
   P_UNUSED (cond);
 
-  return FALSE;
+  return false;
 }
 
-P_API pboolean
-p_cond_variable_broadcast(PCondVariable *cond) {
+P_API bool
+p_condvar_broadcast(p_condvar_t *cond) {
   P_UNUSED (cond);
 
-  return FALSE;
+  return false;
 }
 
 void
-p_cond_variable_init(void) {
+p_condvar_init(void) {
 }
 
 void
-p_cond_variable_shutdown(void) {
+p_condvar_shutdown(void) {
 }

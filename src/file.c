@@ -23,14 +23,14 @@
 #  include <unistd.h>
 #endif
 
-P_API pboolean
-p_file_is_exists(const pchar *file) {
+P_API bool
+p_file_is_exists(const byte_t *file) {
 #ifdef P_OS_WIN
   DWORD attrs;
 #endif
 
   if (P_UNLIKELY (file == NULL))
-    return FALSE;
+    return false;
 
 #ifdef P_OS_WIN
   attrs = GetFileAttributesA ((LPCSTR) file);
@@ -41,17 +41,17 @@ p_file_is_exists(const pchar *file) {
 #endif
 }
 
-P_API pboolean
-p_file_remove(const pchar *file,
-  PError **error) {
-  pboolean result;
+P_API bool
+p_file_remove(const byte_t *file,
+  p_err_t **error) {
+  bool result;
 
   if (P_UNLIKELY (file == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
 #ifdef P_OS_WIN
@@ -62,7 +62,7 @@ p_file_remove(const pchar *file,
 
   if (P_UNLIKELY (!result))
     p_error_set_error_p(error,
-      (pint) p_error_get_last_io(),
+      (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
       "Failed to remove file");
 

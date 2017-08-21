@@ -40,32 +40,32 @@ p_mutex_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_lock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   EnterCriticalSection(&mutex->hdl);
 
-  return TRUE;
+  return true;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_trylock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
-  return TryEnterCriticalSection(&mutex->hdl) != 0 ? TRUE : FALSE;
+  return TryEnterCriticalSection(&mutex->hdl) != 0 ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_unlock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   LeaveCriticalSection(&mutex->hdl);
 
-  return TRUE;
+  return true;
 }
 
 P_API void

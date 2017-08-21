@@ -17,111 +17,111 @@
 
 #include "p/atomic.h"
 
-P_API pint
-p_atomic_int_get(const volatile pint *atomic) {
+P_API int_t
+p_atomic_int_get(const volatile int_t *atomic) {
   __sync_synchronize();
   return *atomic;
 }
 
 P_API void
-p_atomic_int_set(volatile pint *atomic,
-  pint val) {
+p_atomic_int_set(volatile int_t *atomic,
+  int_t val) {
   *atomic = val;
   __sync_synchronize();
 }
 
 P_API void
-p_atomic_int_inc(volatile pint *atomic) {
+p_atomic_int_inc(volatile int_t *atomic) {
   (void) __sync_fetch_and_add(atomic, 1);
 }
 
-P_API pboolean
-p_atomic_int_dec_and_test(volatile pint *atomic) {
-  return __sync_fetch_and_sub(atomic, 1) == 1 ? TRUE : FALSE;
+P_API bool
+p_atomic_int_dec_and_test(volatile int_t *atomic) {
+  return __sync_fetch_and_sub(atomic, 1) == 1 ? true : false;
 }
 
-P_API pboolean
-p_atomic_int_compare_and_exchange(volatile pint *atomic,
-  pint oldval,
-  pint newval) {
-  return (pboolean) __sync_bool_compare_and_swap(atomic, oldval, newval);
+P_API bool
+p_atomic_int_compare_and_exchange(volatile int_t *atomic,
+  int_t oldval,
+  int_t newval) {
+  return (bool) __sync_bool_compare_and_swap(atomic, oldval, newval);
 }
 
-P_API pint
-p_atomic_int_add(volatile pint *atomic,
-  pint val) {
-  return (pint) __sync_fetch_and_add(atomic, val);
+P_API int_t
+p_atomic_int_add(volatile int_t *atomic,
+  int_t val) {
+  return (int_t) __sync_fetch_and_add(atomic, val);
 }
 
-P_API puint
-p_atomic_int_and(volatile puint *atomic,
-  puint val) {
-  return (puint) __sync_fetch_and_and(atomic, val);
+P_API uint_t
+p_atomic_int_and(volatile uint_t *atomic,
+  uint_t val) {
+  return (uint_t) __sync_fetch_and_and(atomic, val);
 }
 
-P_API puint
-p_atomic_int_or(volatile puint *atomic,
-  puint val) {
-  return (puint) __sync_fetch_and_or(atomic, val);
+P_API uint_t
+p_atomic_int_or(volatile uint_t *atomic,
+  uint_t val) {
+  return (uint_t) __sync_fetch_and_or(atomic, val);
 }
 
-P_API puint
-p_atomic_int_xor(volatile puint *atomic,
-  puint val) {
-  return (puint) __sync_fetch_and_xor(atomic, val);
+P_API uint_t
+p_atomic_int_xor(volatile uint_t *atomic,
+  uint_t val) {
+  return (uint_t) __sync_fetch_and_xor(atomic, val);
 }
 
-P_API ppointer
+P_API ptr_t
 p_atomic_pointer_get(const volatile void *atomic) {
   __sync_synchronize();
-  return (ppointer) *((const volatile psize *) atomic);
+  return (ptr_t) *((const volatile size_t *) atomic);
 }
 
 P_API void
 p_atomic_pointer_set(volatile void *atomic,
-  ppointer val) {
-  volatile psize *cur_val = (volatile psize *) atomic;
+  ptr_t val) {
+  volatile size_t *cur_val = (volatile size_t *) atomic;
 
-  *cur_val = (psize) val;
+  *cur_val = (size_t) val;
   __sync_synchronize();
 }
 
-P_API pboolean
+P_API bool
 p_atomic_pointer_compare_and_exchange(volatile void *atomic,
-  ppointer oldval,
-  ppointer newval) {
-  return (pboolean) __sync_bool_compare_and_swap((volatile psize *) atomic,
-    (psize) oldval,
-    (psize) newval);
+  ptr_t oldval,
+  ptr_t newval) {
+  return (bool) __sync_bool_compare_and_swap((volatile size_t *) atomic,
+    (size_t) oldval,
+    (size_t) newval);
 }
 
-P_API pssize
+P_API ssize_t
 p_atomic_pointer_add(volatile void *atomic,
-  pssize val) {
-  return (pssize) __sync_fetch_and_add((volatile pssize *) atomic, val);
+  ssize_t val) {
+  return (ssize_t) __sync_fetch_and_add((volatile ssize_t *) atomic, val);
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_and(volatile void *atomic,
-  psize val) {
-  return (psize) __sync_fetch_and_and((volatile psize *) atomic, val);
+  size_t val) {
+  return (size_t) __sync_fetch_and_and((volatile size_t *) atomic, val);
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_or(volatile void *atomic,
-  psize val) {
-  return (psize) __sync_fetch_and_or((volatile psize *) atomic, val);
+  size_t val) {
+  return (size_t) __sync_fetch_and_or((volatile size_t *) atomic, val);
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_xor(volatile void *atomic,
-  psize val) {
-  return (psize) __sync_fetch_and_xor((volatile psize *) atomic, val);
+  size_t val) {
+  return (size_t) __sync_fetch_and_xor((volatile size_t *) atomic, val);
 }
 
-P_API pboolean
+P_API bool
 p_atomic_is_lock_free(void) {
-  return TRUE;
+  return true;
 }
 
 void

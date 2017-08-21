@@ -86,7 +86,7 @@
 #include "p/types.h"
 
 /** Typedef for a #PUThread running method. */
-typedef ppointer (*PUThreadFunc)(ppointer arg);
+typedef ptr_t (*PUThreadFunc)(ptr_t arg);
 
 /** Thread opaque data type. */
 typedef struct PUThread_ PUThread;
@@ -127,10 +127,10 @@ typedef enum PUThreadPriority_ {
  * not need to call p_uthread_ref() explicitly on the returned value.
  */
 P_API PUThread *p_uthread_create_full(PUThreadFunc func,
-  ppointer data,
-  pboolean joinable,
+  ptr_t data,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size);
+  size_t stack_size);
 
 /**
  * @brief Creates a #PUThread and starts it. A short version of
@@ -144,15 +144,15 @@ P_API PUThread *p_uthread_create_full(PUThreadFunc func,
  * not need to call p_uthread_ref() explicitly on the returned value.
  */
 P_API PUThread *p_uthread_create(PUThreadFunc func,
-  ppointer data,
-  pboolean joinable);
+  ptr_t data,
+  bool joinable);
 
 /**
  * @brief Exits from the currently running (caller) thread.
  * @param code Exit code.
  * @since 0.0.1
  */
-P_API void p_uthread_exit(pint code);
+P_API void p_uthread_exit(int_t code);
 
 /**
  * @brief Waits for the selected thread to become finished.
@@ -161,7 +161,7 @@ P_API void p_uthread_exit(pint code);
  * @since 0.0.1
  * @note Thread must be joinable to return the non-negative result.
  */
-P_API pint p_uthread_join(PUThread *thread);
+P_API int_t p_uthread_join(PUThread *thread);
 
 /**
  * @brief Sleeps the current thread (caller) for a specified amount of time.
@@ -169,7 +169,7 @@ P_API pint p_uthread_join(PUThread *thread);
  * @return 0 in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_API pint p_uthread_sleep(puint32 msec);
+P_API int_t p_uthread_sleep(uint32_t msec);
 
 /**
  * @brief Sets a thread priority.
@@ -178,7 +178,7 @@ P_API pint p_uthread_sleep(puint32 msec);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API pboolean p_uthread_set_priority(PUThread *thread,
+P_API bool p_uthread_set_priority(PUThread *thread,
   PUThreadPriority prio);
 
 /**
@@ -220,7 +220,7 @@ P_API PUThread *p_uthread_current(void);
  * @return Ideal number of threads, 1 in case of failed detection.
  * @since 0.0.3
  */
-P_API pint p_uthread_ideal_count(void);
+P_API int_t p_uthread_ideal_count(void);
 
 /**
  * @brief Increments a thread reference counter
@@ -266,7 +266,7 @@ P_API void p_uthread_local_free(PUThreadKey *key);
  * @note This call may fail only in case of abnormal use or program behavior,
  * the NULL value will be returned to tolerance the failure.
  */
-P_API ppointer p_uthread_get_local(PUThreadKey *key);
+P_API ptr_t p_uthread_get_local(PUThreadKey *key);
 
 /**
  * @brief Sets a TLS value.
@@ -279,7 +279,7 @@ P_API ppointer p_uthread_get_local(PUThreadKey *key);
  * p_uthread_local_new().
  */
 P_API void p_uthread_set_local(PUThreadKey *key,
-  ppointer value);
+  ptr_t value);
 
 /**
  * @brief Replaces a TLS value.
@@ -293,6 +293,6 @@ P_API void p_uthread_set_local(PUThreadKey *key,
  * p_uthread_set_local().
  */
 P_API void p_uthread_replace_local(PUThreadKey *key,
-  ppointer value);
+  ptr_t value);
 
 #endif /* P_UTHREAD_H__ */

@@ -27,31 +27,31 @@ typedef struct PHashTableNode_ PHashTableNode;
 
 struct PHashTableNode_ {
   PHashTableNode *next;
-  ppointer key;
-  ppointer value;
+  ptr_t key;
+  ptr_t value;
 };
 
 struct PHashTable_ {
   PHashTableNode **table;
-  psize size;
+  size_t size;
 };
 
 /* Size of unique hash keys in hash table */
 #define P_HASH_TABLE_SIZE 101
 
-static puint pp_hash_table_calc_hash(pconstpointer pointer, psize modulo);
+static uint_t pp_hash_table_calc_hash(const_ptr_t pointer, size_t modulo);
 static PHashTableNode *pp_hash_table_find_node(const PHashTable *table,
-  pconstpointer key);
+  const_ptr_t key);
 
-static puint
-pp_hash_table_calc_hash(pconstpointer pointer, psize modulo) {
+static uint_t
+pp_hash_table_calc_hash(const_ptr_t pointer, size_t modulo) {
   /* As simple as we can :) */
-  return (puint) (((psize) (P_POINTER_TO_INT (pointer) + 37)) % modulo);
+  return (uint_t) (((size_t) (P_POINTER_TO_INT (pointer) + 37)) % modulo);
 }
 
 static PHashTableNode *
-pp_hash_table_find_node(const PHashTable *table, pconstpointer key) {
-  puint hash;
+pp_hash_table_find_node(const PHashTable *table, const_ptr_t key) {
+  uint_t hash;
   PHashTableNode *ret;
 
   hash = pp_hash_table_calc_hash(key, table->size);
@@ -86,9 +86,9 @@ p_hash_table_new(void) {
 }
 
 P_API void
-p_hash_table_insert(PHashTable *table, ppointer key, ppointer value) {
+p_hash_table_insert(PHashTable *table, ptr_t key, ptr_t value) {
   PHashTableNode *node;
-  puint hash;
+  uint_t hash;
 
   if (P_UNLIKELY (table == NULL))
     return;
@@ -111,22 +111,22 @@ p_hash_table_insert(PHashTable *table, ppointer key, ppointer value) {
     node->value = value;
 }
 
-P_API ppointer
-p_hash_table_lookup(const PHashTable *table, pconstpointer key) {
+P_API ptr_t
+p_hash_table_lookup(const PHashTable *table, const_ptr_t key) {
   PHashTableNode *node;
 
   if (P_UNLIKELY (table == NULL))
     return NULL;
 
   return ((node = pp_hash_table_find_node(table, key)) == NULL)
-    ? (ppointer) (-1) : node->value;
+    ? (ptr_t) (-1) : node->value;
 }
 
 P_API PList *
 p_hash_table_keys(const PHashTable *table) {
   PList *ret = NULL;
   PHashTableNode *node;
-  puint i;
+  uint_t i;
 
   if (P_UNLIKELY (table == NULL))
     return NULL;
@@ -142,7 +142,7 @@ P_API PList *
 p_hash_table_values(const PHashTable *table) {
   PList *ret = NULL;
   PHashTableNode *node;
-  puint i;
+  uint_t i;
 
   if (P_UNLIKELY (table == NULL))
     return NULL;
@@ -157,7 +157,7 @@ p_hash_table_values(const PHashTable *table) {
 P_API void
 p_hash_table_free(PHashTable *table) {
   PHashTableNode *node, *next_node;
-  puint i;
+  uint_t i;
 
   if (P_UNLIKELY (table == NULL))
     return;
@@ -174,9 +174,9 @@ p_hash_table_free(PHashTable *table) {
 }
 
 P_API void
-p_hash_table_remove(PHashTable *table, pconstpointer key) {
+p_hash_table_remove(PHashTable *table, const_ptr_t key) {
   PHashTableNode *node, *prev_node;
-  puint hash;
+  uint_t hash;
 
   if (P_UNLIKELY (table == NULL))
     return;
@@ -204,12 +204,12 @@ p_hash_table_remove(PHashTable *table, pconstpointer key) {
 }
 
 P_API PList *
-p_hash_table_lookup_by_value(const PHashTable *table, pconstpointer val,
+p_hash_table_lookup_by_value(const PHashTable *table, const_ptr_t val,
   PCompareFunc func) {
   PList *ret = NULL;
   PHashTableNode *node;
-  puint i;
-  pboolean res;
+  uint_t i;
+  bool res;
 
   if (P_UNLIKELY (table == NULL))
     return NULL;

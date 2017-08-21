@@ -46,42 +46,42 @@ p_mutex_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_lock(PMutex *mutex) {
   status_t ret_status;
 
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   while ((ret_status = acquire_sem(mutex->hdl)) == B_INTERRUPTED);
 
   if (P_LIKELY (ret_status == B_NO_ERROR))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_lock: acquire_sem() failed");
-    return FALSE;
+    return false;
   }
 }
 
-P_API pboolean
+P_API bool
 p_mutex_trylock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   return (acquire_sem_etc(mutex->hdl, 1, B_RELATIVE_TIMEOUT, 0)) == B_NO_ERROR
-    ? TRUE : FALSE;
+    ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_unlock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   if (P_LIKELY (release_sem(mutex->hdl) == B_NO_ERROR))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_unlock: release_sem() failed");
-    return FALSE;
+    return false;
   }
 }
 

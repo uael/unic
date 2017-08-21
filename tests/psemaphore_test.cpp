@@ -31,10 +31,10 @@
 
 #define PSEMAPHORE_MAX_VAL 10
 
-static pint semaphore_test_val = 0;
-static pint is_thread_exit     = 0;
+static int_t semaphore_test_val = 0;
+static int_t is_thread_exit     = 0;
 
-static void clean_error (PError **error)
+static void clean_error (p_err_t **error)
 {
 	if (error == NULL || *error == NULL)
 		return;
@@ -46,7 +46,7 @@ static void clean_error (PError **error)
 static void * semaphore_test_thread (void *)
 {
 	PSemaphore	*sem;
-	pint		i;
+	int_t		i;
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN, NULL);
 
@@ -88,20 +88,20 @@ static void * semaphore_test_thread (void *)
 	return NULL;
 }
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_CREATE, NULL) == NULL);
 
@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
 	PSemaphore	*sem = NULL;
-	PError		*error = NULL;
-	pint		i;
+	p_err_t		*error = NULL;
+	int_t		i;
 
 	p_libsys_init ();
 
@@ -139,11 +139,11 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 	BOOST_CHECK (error != NULL);
 	clean_error (&error);
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem, &error) == FALSE);
+	BOOST_REQUIRE (p_semaphore_acquire (sem, &error) == false);
 	BOOST_CHECK (error != NULL);
 	clean_error (&error);
 
-	BOOST_REQUIRE (p_semaphore_release (sem, &error) == FALSE);
+	BOOST_REQUIRE (p_semaphore_release (sem, &error) == false);
 	BOOST_CHECK (error != NULL);
 	clean_error (&error);
 
@@ -201,8 +201,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 
 	BOOST_REQUIRE (semaphore_test_val == PSEMAPHORE_MAX_VAL);
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
-	BOOST_REQUIRE (p_semaphore_release (sem, NULL) == FALSE);
+	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == false);
+	BOOST_REQUIRE (p_semaphore_release (sem, NULL) == false);
 	p_semaphore_free (sem);
 	p_semaphore_take_ownership (sem);
 

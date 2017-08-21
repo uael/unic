@@ -94,7 +94,7 @@ P_API PTree *p_tree_new(PTreeType type,
  */
 P_API PTree *p_tree_new_with_data(PTreeType type,
   PCompareDataFunc func,
-  ppointer data);
+  ptr_t data);
 
 /**
  * @brief Initializes new #PTree with additional data and memory management.
@@ -113,7 +113,7 @@ P_API PTree *p_tree_new_with_data(PTreeType type,
  */
 P_API PTree *p_tree_new_full(PTreeType type,
   PCompareDataFunc func,
-  ppointer data,
+  ptr_t data,
   PDestroyFunc key_destroy,
   PDestroyFunc value_destroy);
 
@@ -130,8 +130,8 @@ P_API PTree *p_tree_new_full(PTreeType type,
  * value.
  */
 P_API void p_tree_insert(PTree *tree,
-  ppointer key,
-  ppointer value);
+  ptr_t key,
+  ptr_t value);
 
 /**
  * @brief Removes a key from a tree.
@@ -143,8 +143,8 @@ P_API void p_tree_insert(PTree *tree,
  * If a key destroy function was provided it would be called on the key. If a
  * value destroy function was provided it would be called on the old value.
  */
-P_API pboolean p_tree_remove(PTree *tree,
-  pconstpointer key);
+P_API bool p_tree_remove(PTree *tree,
+  const_ptr_t key);
 
 /**
  * @brief Lookups a value by a given key.
@@ -153,8 +153,8 @@ P_API pboolean p_tree_remove(PTree *tree,
  * @return Value for the given @a key in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ppointer p_tree_lookup(PTree *tree,
-  pconstpointer key);
+P_API ptr_t p_tree_lookup(PTree *tree,
+  const_ptr_t key);
 
 /**
  * @brief Iterates in-order through the tree nodes.
@@ -171,7 +171,7 @@ P_API ppointer p_tree_lookup(PTree *tree,
  */
 P_API void p_tree_foreach(PTree *tree,
   PTraverseFunc traverse_func,
-  ppointer user_data);
+  ptr_t user_data);
 
 /**
  * @brief Clears a tree.
@@ -201,7 +201,7 @@ P_API PTreeType p_tree_get_type(const PTree *tree);
  *
  * If the tree is empty or an invalid pointer is given it returns 0.
  */
-P_API pint p_tree_get_nnodes(const PTree *tree);
+P_API int_t p_tree_get_nnodes(const PTree *tree);
 
 /**
  * @brief Frees a previously initialized tree object.

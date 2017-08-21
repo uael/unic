@@ -61,7 +61,8 @@
  * This call acts as a full compiler and hardware memory barrier (before the
  * get).
  */
-P_API pint p_atomic_int_get(const volatile pint *atomic);
+P_API int_t
+p_atomic_int_get(const volatile int_t *atomic);
 
 /**
  * @brief Sets #pint value to @a atomic.
@@ -72,8 +73,8 @@ P_API pint p_atomic_int_get(const volatile pint *atomic);
  * This call acts as a full compiler and hardware memory barrier (after the
  * set).
  */
-P_API void p_atomic_int_set(volatile pint *atomic,
-  pint val);
+P_API void
+p_atomic_int_set(volatile int_t *atomic, int_t val);
 
 /**
  * @brief Increments #pint value from @a atomic by 1.
@@ -84,7 +85,8 @@ P_API void p_atomic_int_set(volatile pint *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API void p_atomic_int_inc(volatile pint *atomic);
+P_API void
+p_atomic_int_inc(volatile int_t *atomic);
 
 /**
  * @brief Decrements #pint value from @a atomic by 1 and tests the result for
@@ -98,7 +100,8 @@ P_API void p_atomic_int_inc(volatile pint *atomic);
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API pboolean p_atomic_int_dec_and_test(volatile pint *atomic);
+P_API bool
+p_atomic_int_dec_and_test(volatile int_t *atomic);
 
 /**
  * @brief Compares @a oldval with the value pointed to by @a atomic and if
@@ -116,9 +119,9 @@ P_API pboolean p_atomic_int_dec_and_test(volatile pint *atomic);
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API pboolean p_atomic_int_compare_and_exchange(volatile pint *atomic,
-  pint oldval,
-  pint newval);
+P_API bool
+p_atomic_int_compare_and_exchange(volatile int_t *atomic, int_t oldval,
+  int_t newval);
 
 /**
  * @brief Atomically adds #pint value to @a atomic value.
@@ -132,7 +135,8 @@ P_API pboolean p_atomic_int_compare_and_exchange(volatile pint *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API pint p_atomic_int_add(volatile pint *atomic, pint val);
+P_API int_t
+p_atomic_int_add(volatile int_t *atomic, int_t val);
 
 /**
  * @brief Atomically performs the bitwise 'and' operation of @a atomic value
@@ -147,7 +151,8 @@ P_API pint p_atomic_int_add(volatile pint *atomic, pint val);
  * Think of this operation as an atomic version of
  * `{ tmp = *atomic; *atomic &= val; return tmp; }`.
  */
-P_API puint p_atomic_int_and(volatile puint *atomic, puint val);
+P_API uint_t
+p_atomic_int_and(volatile uint_t *atomic, uint_t val);
 
 /**
  * @brief Atomically performs the bitwise 'or' operation of @a atomic value
@@ -162,7 +167,8 @@ P_API puint p_atomic_int_and(volatile puint *atomic, puint val);
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API puint p_atomic_int_or(volatile puint *atomic, puint val);
+P_API uint_t
+p_atomic_int_or(volatile uint_t *atomic, uint_t val);
 
 /**
  * @brief Atomically performs the bitwise 'xor' operation of @a atomic value
@@ -177,8 +183,8 @@ P_API puint p_atomic_int_or(volatile puint *atomic, puint val);
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API puint p_atomic_int_xor(volatile puint *atomic,
-  puint val);
+P_API uint_t
+p_atomic_int_xor(volatile uint_t *atomic, uint_t val);
 
 /**
  * @brief Gets #ppointer-sized value from @a atomic.
@@ -188,7 +194,8 @@ P_API puint p_atomic_int_xor(volatile puint *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier (before the get).
  */
-P_API ppointer p_atomic_pointer_get(const volatile void *atomic);
+P_API ptr_t
+p_atomic_pointer_get(const volatile void *atomic);
 
 /**
  * @brief Sets @a val to #ppointer-sized @a atomic.
@@ -198,8 +205,8 @@ P_API ppointer p_atomic_pointer_get(const volatile void *atomic);
  *
  * This call acts as a full compiler and hardware memory barrier (after the set).
  */
-P_API void p_atomic_pointer_set(volatile void *atomic,
-  ppointer val);
+P_API void
+p_atomic_pointer_set(volatile void *atomic, ptr_t val);
 
 /**
  * @brief Compares @a oldval with the value pointed to by @a atomic and if
@@ -217,9 +224,9 @@ P_API void p_atomic_pointer_set(volatile void *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API pboolean p_atomic_pointer_compare_and_exchange(volatile void *atomic,
-  ppointer oldval,
-  ppointer newval);
+P_API bool
+p_atomic_pointer_compare_and_exchange(volatile void *atomic, ptr_t oldval,
+  ptr_t newval);
 
 /**
  * @brief Atomically adds #ppointer-sized value to @a atomic value.
@@ -233,8 +240,8 @@ P_API pboolean p_atomic_pointer_compare_and_exchange(volatile void *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API pssize p_atomic_pointer_add(volatile void *atomic,
-  pssize val);
+P_API ssize_t
+p_atomic_pointer_add(volatile void *atomic, ssize_t val);
 
 /**
  * @brief Atomically performs the bitwise 'and' operation of #ppointer-sized
@@ -249,8 +256,8 @@ P_API pssize p_atomic_pointer_add(volatile void *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API psize p_atomic_pointer_and(volatile void *atomic,
-  psize val);
+P_API size_t
+p_atomic_pointer_and(volatile void *atomic, size_t val);
 
 /**
  * @brief Atomically performs the bitwise 'or' operation of #ppointer-sized
@@ -265,8 +272,8 @@ P_API psize p_atomic_pointer_and(volatile void *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API psize p_atomic_pointer_or(volatile void *atomic,
-  psize val);
+P_API size_t
+p_atomic_pointer_or(volatile void *atomic, size_t val);
 
 /**
  * @brief Atomically performs the bitwise 'xor' operation of #ppointer-sized
@@ -281,8 +288,8 @@ P_API psize p_atomic_pointer_or(volatile void *atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API psize p_atomic_pointer_xor(volatile void *atomic,
-  psize val);
+P_API size_t
+p_atomic_pointer_xor(volatile void *atomic, size_t val);
 
 /**
  * @brief Checks whether atomic operations are lock-free.
@@ -292,6 +299,7 @@ P_API psize p_atomic_pointer_xor(volatile void *atomic,
  * Some underlying atomic model implementations may not support lock-free
  * operations depending on hardware or software.
  */
-P_API pboolean p_atomic_is_lock_free(void);
+P_API bool
+p_atomic_is_lock_free(void);
 
 #endif /* P_ATOMIC_H__ */

@@ -45,37 +45,37 @@ p_mutex_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_lock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   if (P_LIKELY (pthread_mutex_lock(&mutex->hdl) == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_lock: pthread_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 }
 
-P_API pboolean
+P_API bool
 p_mutex_trylock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
-  return (pthread_mutex_trylock(&mutex->hdl) == 0) ? TRUE : FALSE;
+  return (pthread_mutex_trylock(&mutex->hdl) == 0) ? true : false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_unlock(PMutex *mutex) {
   if (P_UNLIKELY (mutex == NULL))
-    return FALSE;
+    return false;
 
   if (P_LIKELY (pthread_mutex_unlock(&mutex->hdl) == 0))
-    return TRUE;
+    return true;
   else {
     P_ERROR ("PMutex::p_mutex_unlock: pthread_mutex_unlock() failed");
-    return FALSE;
+    return false;
   }
 }
 

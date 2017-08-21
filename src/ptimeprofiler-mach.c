@@ -15,48 +15,48 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/bench.h"
+#include "p/profiler.h"
 #include "ptimeprofiler-private.h"
 
 #include <mach/mach_time.h>
 
-static puint64 pp_time_profiler_freq_num = 0;
-static puint64 pp_time_profiler_freq_denom = 0;
+static uint64_t pp_profiler_freq_num = 0;
+static uint64_t pp_profiler_freq_denom = 0;
 
-puint64
-p_time_profiler_get_ticks_internal() {
-  puint64 val = mach_absolute_time();
+uint64_t
+p_profiler_get_ticks_internal() {
+  uint64_t val = mach_absolute_time();
 
   /* To prevent overflow */
   val /= 1000;
 
-  val *= pp_time_profiler_freq_num;
-  val /= pp_time_profiler_freq_denom;
+  val *= pp_profiler_freq_num;
+  val /= pp_profiler_freq_denom;
 
   return val;
 }
 
-puint64
-p_time_profiler_elapsed_usecs_internal(const PTimeProfiler *profiler) {
-  return p_time_profiler_get_ticks_internal() - profiler->counter;
+uint64_t
+p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+  return p_profiler_get_ticks_internal() - profiler->counter;
 }
 
 void
-p_time_profiler_init(void) {
+p_profiler_init(void) {
   mach_timebase_info_data_t tb;
 
   if (P_UNLIKELY (mach_timebase_info(&tb) != KERN_SUCCESS || tb.denom == 0)) {
     P_ERROR (
-      "PTimeProfiler::p_time_profiler_init: mach_timebase_info() failed");
+      "p_profiler_t::p_profiler_init: mach_timebase_info() failed");
     return;
   }
 
-  pp_time_profiler_freq_num = (puint64) tb.numer;
-  pp_time_profiler_freq_denom = (puint64) tb.denom;
+  pp_profiler_freq_num = (uint64_t) tb.numer;
+  pp_profiler_freq_denom = (uint64_t) tb.denom;
 }
 
 void
-p_time_profiler_shutdown(void) {
-  pp_time_profiler_freq_num = 0;
-  pp_time_profiler_freq_denom = 0;
+p_profiler_shutdown(void) {
+  pp_profiler_freq_num = 0;
+  pp_profiler_freq_denom = 0;
 }

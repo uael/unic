@@ -34,23 +34,23 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-static pint alloc_counter   = 0;
-static pint realloc_counter = 0;
-static pint free_counter    = 0;
+static int_t alloc_counter   = 0;
+static int_t realloc_counter = 0;
+static int_t free_counter    = 0;
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	++alloc_counter;
-	return (ppointer) malloc (nbytes);
+	return (ptr_t) malloc (nbytes);
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	++realloc_counter;
-	return (ppointer) realloc (block, nbytes);
+	return (ptr_t) realloc (block, nbytes);
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	++free_counter;
 	free (block);
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE (pmem_bad_input_test)
 	BOOST_CHECK (p_malloc (0) == NULL);
 	BOOST_CHECK (p_malloc0 (0) == NULL);
 	BOOST_CHECK (p_realloc (NULL, 0) == NULL);
-	BOOST_CHECK (p_mem_set_vtable (NULL) == FALSE);
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == FALSE);
+	BOOST_CHECK (p_mem_set_vtable (NULL) == false);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == false);
 	p_free (NULL);
 
 	p_libsys_shutdown ();
@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE (pmem_bad_input_test)
 BOOST_AUTO_TEST_CASE (pmem_general_test)
 {
 	PMemVTable	vtable;
-	ppointer	ptr = NULL;
-	pint		i;
+	ptr_t	ptr = NULL;
+	int_t		i;
 
 	p_libsys_init ();
 
@@ -92,17 +92,17 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	/* Test memory allocation using system functions */
 	ptr = p_malloc (1024);
 	BOOST_REQUIRE (ptr != NULL);
 
 	for (int i = 0; i < 1024; ++i)
-		*(((pchar *) ptr) + i) = (pchar) (i % 127);
+		*(((byte_t *) ptr) + i) = (byte_t) (i % 127);
 
 	for (int i = 0; i < 1024; ++i)
-		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) (i % 127));
+		BOOST_CHECK (*(((byte_t *) ptr) + i) == (byte_t) (i % 127));
 
 	p_free (ptr);
 
@@ -110,13 +110,13 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	BOOST_REQUIRE (ptr != NULL);
 
 	for (int i = 0; i < 2048; ++i)
-		BOOST_CHECK (*(((pchar *) ptr) + i) == 0);
+		BOOST_CHECK (*(((byte_t *) ptr) + i) == 0);
 
 	for (int i = 0; i < 2048; ++i)
-		*(((pchar *) ptr) + i) = (pchar) (i % 127);
+		*(((byte_t *) ptr) + i) = (byte_t) (i % 127);
 
 	for (int i = 0; i < 2048; ++i)
-		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) (i % 127));
+		BOOST_CHECK (*(((byte_t *) ptr) + i) == (byte_t) (i % 127));
 
 	p_free (ptr);
 
@@ -124,18 +124,18 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	BOOST_REQUIRE (ptr != NULL);
 
 	for (int i = 0; i < 1024; ++i)
-		*(((pchar *) ptr) + i) = (pchar) (i % 127);
+		*(((byte_t *) ptr) + i) = (byte_t) (i % 127);
 
 	ptr = p_realloc (ptr, 2048);
 
 	for (int i = 1024; i < 2048; ++i)
-		*(((pchar *) ptr) + i) = (pchar) ((i - 1) % 127);
+		*(((byte_t *) ptr) + i) = (byte_t) ((i - 1) % 127);
 
 	for (int i = 0; i < 1024; ++i)
-		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) (i % 127));
+		BOOST_CHECK (*(((byte_t *) ptr) + i) == (byte_t) (i % 127));
 
 	for (int i = 1024; i < 2048; ++i)
-		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) ((i - 1) % 127));
+		BOOST_CHECK (*(((byte_t *) ptr) + i) == (byte_t) ((i - 1) % 127));
 
 	p_free (ptr);
 
@@ -153,13 +153,13 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	BOOST_REQUIRE (ptr != NULL);
 
 	for (i = 0; i < 1024; ++i)
-		*(((pchar *) ptr) + i) = i % 127;
+		*(((byte_t *) ptr) + i) = i % 127;
 
 	for (i = 0; i < 1024; ++i)
-		BOOST_CHECK (*(((pchar *) ptr) + i) == i % 127);
+		BOOST_CHECK (*(((byte_t *) ptr) + i) == i % 127);
 
-	BOOST_CHECK (p_mem_munmap (NULL, 1024, NULL) == FALSE);
-	BOOST_CHECK (p_mem_munmap (ptr, 1024, NULL) == TRUE);
+	BOOST_CHECK (p_mem_munmap (NULL, 1024, NULL) == false);
+	BOOST_CHECK (p_mem_munmap (ptr, 1024, NULL) == true);
 
 	p_libsys_shutdown ();
 }

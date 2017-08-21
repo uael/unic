@@ -42,38 +42,38 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 #define PTREE_STRESS_TRAVS	30
 
 typedef struct _TreeData {
-	pint	cmp_counter;
-	pint	key_destroy_counter;
-	pint	value_destroy_counter;
-	pint	traverse_counter;
-	pint	traverse_thres;
-	pint	key_sum;
-	pint	value_sum;
-	pint	last_key;
-	pint	key_order_errors;
+	int_t	cmp_counter;
+	int_t	key_destroy_counter;
+	int_t	value_destroy_counter;
+	int_t	traverse_counter;
+	int_t	traverse_thres;
+	int_t	key_sum;
+	int_t	value_sum;
+	int_t	last_key;
+	int_t	key_order_errors;
 } TreeData;
 
 static TreeData tree_data = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
 
-static pint
+static int_t
 tree_complexity (PTree *tree)
 {
 	if (tree == NULL || p_tree_get_nnodes (tree) == 0)
@@ -83,19 +83,19 @@ tree_complexity (PTree *tree)
 	case P_TREE_TYPE_BINARY:
 		return p_tree_get_nnodes (tree);
 	case P_TREE_TYPE_RB:
-		return 2 * ((pint) (log ((double) p_tree_get_nnodes (tree) + 1) / log (2.0)));
+		return 2 * ((int_t) (log ((double) p_tree_get_nnodes (tree) + 1) / log (2.0)));
 	case P_TREE_TYPE_AVL:
 	{
 		double phi = (1 + sqrt (5.0)) / 2.0;
-		return (pint) (log (sqrt (5.0) * (p_tree_get_nnodes (tree) + 2)) / log (phi) - 2);
+		return (int_t) (log (sqrt (5.0) * (p_tree_get_nnodes (tree) + 2)) / log (phi) - 2);
 	}
 	default:
 		return p_tree_get_nnodes (tree);
 	}
 }
 
-static pint
-compare_keys (pconstpointer a, pconstpointer b)
+static int_t
+compare_keys (const_ptr_t a, const_ptr_t b)
 {
 	int p1 = PPOINTER_TO_INT (a);
 	int p2 = PPOINTER_TO_INT (b);
@@ -108,8 +108,8 @@ compare_keys (pconstpointer a, pconstpointer b)
 		return 0;
 }
 
-static pint
-compare_keys_data (pconstpointer a, pconstpointer b, ppointer data)
+static int_t
+compare_keys_data (const_ptr_t a, const_ptr_t b, ptr_t data)
 {
 	int p1 = PPOINTER_TO_INT (a);
 	int p2 = PPOINTER_TO_INT (b);
@@ -126,21 +126,21 @@ compare_keys_data (pconstpointer a, pconstpointer b, ppointer data)
 }
 
 static void
-key_destroy_notify (ppointer data)
+key_destroy_notify (ptr_t data)
 {
 	tree_data.key_destroy_counter++;
 	tree_data.key_sum += PPOINTER_TO_INT (data);
 }
 
 static void
-value_destroy_notify (ppointer data)
+value_destroy_notify (ptr_t data)
 {
 	tree_data.value_destroy_counter++;
 	tree_data.value_sum += PPOINTER_TO_INT (data);
 }
 
-static pboolean
-tree_traverse (ppointer key, ppointer value, ppointer data)
+static bool
+tree_traverse (ptr_t key, ptr_t value, ptr_t data)
 {
 	TreeData* tdata = ((TreeData *) data);
 
@@ -153,17 +153,17 @@ tree_traverse (ppointer key, ppointer value, ppointer data)
 
 	tdata->last_key = PPOINTER_TO_INT (key);
 
-	return FALSE;
+	return false;
 }
 
-static pboolean
-tree_traverse_thres (ppointer key, ppointer value, ppointer data)
+static bool
+tree_traverse_thres (ptr_t key, ptr_t value, ptr_t data)
 {
 	TreeData* tdata = ((TreeData *) data);
 
 	tree_traverse (key, value, data);
 
-	return tdata->traverse_counter >= tdata->traverse_thres ? TRUE : FALSE;
+	return tdata->traverse_counter >= tdata->traverse_thres ? true : false;
 }
 
 static bool
@@ -189,13 +189,13 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 0);
 	BOOST_CHECK (p_tree_get_type (tree) == type);
 	BOOST_CHECK (p_tree_lookup (tree, NULL) == NULL);
-	BOOST_CHECK (p_tree_remove (tree, NULL) == FALSE);
+	BOOST_CHECK (p_tree_remove (tree, NULL) == false);
 
 	p_tree_insert (tree, NULL, PINT_TO_POINTER (10));
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 1);
 	BOOST_CHECK (p_tree_lookup (tree, NULL) == PINT_TO_POINTER (10));
 	BOOST_CHECK (p_tree_lookup (tree, PINT_TO_POINTER (2)) == NULL);
-	BOOST_CHECK (p_tree_remove (tree, NULL) == TRUE);
+	BOOST_CHECK (p_tree_remove (tree, NULL) == true);
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 0);
 
 	p_tree_foreach (tree, (PTraverseFunc) tree_traverse, &tree_data);
@@ -274,7 +274,7 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 
 	tree_data.cmp_counter = 0;
 
-	BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (7)) == FALSE);
+	BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (7)) == false);
 
 	if (check_cmp)
 		BOOST_CHECK (tree_data.cmp_counter > 0 &&
@@ -329,8 +329,8 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 
 	memset (&tree_data, 0, sizeof (tree_data));
 
-	BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (1)) == TRUE);
-	BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (6)) == TRUE);
+	BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (1)) == true);
+	BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (6)) == true);
 	BOOST_CHECK (p_tree_lookup (tree, PINT_TO_POINTER (1)) == NULL);
 	BOOST_CHECK (p_tree_lookup (tree, PINT_TO_POINTER (6)) == NULL);
 
@@ -405,14 +405,14 @@ stress_tree_test (PTree *tree, int node_count)
 
 	memset (&tree_data, 0, sizeof (tree_data));
 
-	pint *keys   = (pint *) p_malloc0 ((psize) node_count * sizeof (pint));
-	pint *values = (pint *) p_malloc0 ((psize) node_count * sizeof (pint));
+	int_t *keys   = (int_t *) p_malloc0 ((size_t) node_count * sizeof (int_t));
+	int_t *values = (int_t *) p_malloc0 ((size_t) node_count * sizeof (int_t));
 
 	BOOST_REQUIRE (keys != NULL);
 	BOOST_REQUIRE (values != NULL);
 
 	while (counter != node_count) {
-		pint rand_number = rand ();
+		int_t rand_number = rand ();
 
 		if (counter == 0 && rand_number < PTREE_STRESS_ROOT_MIN)
 			continue;
@@ -461,7 +461,7 @@ stress_tree_test (PTree *tree, int node_count)
 		BOOST_CHECK (tree_data.cmp_counter > 0 &&
 			     tree_data.cmp_counter <= tree_complexity (tree));
 
-		BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (keys[i])) == TRUE);
+		BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (keys[i])) == true);
 		BOOST_CHECK (p_tree_lookup (tree, PINT_TO_POINTER (keys[i])) == NULL);
 	}
 
@@ -496,7 +496,7 @@ BOOST_AUTO_TEST_CASE (ptree_nomem_test)
 		vtable.malloc  = pmem_alloc;
 		vtable.realloc = pmem_realloc;
 
-		BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+		BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 		BOOST_CHECK (p_tree_new ((PTreeType) i, (PCompareFunc) compare_keys) == NULL);
 		p_tree_insert (tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
@@ -540,7 +540,7 @@ BOOST_AUTO_TEST_CASE (ptree_invalid_test)
 					      NULL,
 					      NULL) == NULL);
 
-		BOOST_CHECK (p_tree_remove (NULL, NULL) == FALSE);
+		BOOST_CHECK (p_tree_remove (NULL, NULL) == false);
 		BOOST_CHECK (p_tree_lookup (NULL, NULL) == NULL);
 		BOOST_CHECK (p_tree_get_type (NULL) == (PTreeType) -1);
 		BOOST_CHECK (p_tree_get_nnodes (NULL) == 0);

@@ -22,9 +22,9 @@
 /* We have to use the slow, but safe locking method. */
 static PMutex *pp_atomic_mutex = NULL;
 
-P_API pint
-p_atomic_int_get(const volatile pint *atomic) {
-  pint value;
+P_API int_t
+p_atomic_int_get(const volatile int_t *atomic) {
+  int_t value;
 
   p_mutex_lock(pp_atomic_mutex);
   value = *atomic;
@@ -34,23 +34,23 @@ p_atomic_int_get(const volatile pint *atomic) {
 }
 
 P_API void
-p_atomic_int_set(volatile pint *atomic,
-  pint val) {
+p_atomic_int_set(volatile int_t *atomic,
+  int_t val) {
   p_mutex_lock(pp_atomic_mutex);
   *atomic = val;
   p_mutex_unlock(pp_atomic_mutex);
 }
 
 P_API void
-p_atomic_int_inc(volatile pint *atomic) {
+p_atomic_int_inc(volatile int_t *atomic) {
   p_mutex_lock(pp_atomic_mutex);
   (*atomic)++;
   p_mutex_unlock(pp_atomic_mutex);
 }
 
-P_API pboolean
-p_atomic_int_dec_and_test(volatile pint *atomic) {
-  pboolean is_zero;
+P_API bool
+p_atomic_int_dec_and_test(volatile int_t *atomic) {
+  bool is_zero;
 
   p_mutex_lock(pp_atomic_mutex);
   is_zero = --(*atomic) == 0;
@@ -59,11 +59,11 @@ p_atomic_int_dec_and_test(volatile pint *atomic) {
   return is_zero;
 }
 
-P_API pboolean
-p_atomic_int_compare_and_exchange(volatile pint *atomic,
-  pint oldval,
-  pint newval) {
-  pboolean success;
+P_API bool
+p_atomic_int_compare_and_exchange(volatile int_t *atomic,
+  int_t oldval,
+  int_t newval) {
+  bool success;
 
   p_mutex_lock(pp_atomic_mutex);
 
@@ -75,10 +75,10 @@ p_atomic_int_compare_and_exchange(volatile pint *atomic,
   return success;
 }
 
-P_API pint
-p_atomic_int_add(volatile pint *atomic,
-  pint val) {
-  pint oldval;
+P_API int_t
+p_atomic_int_add(volatile int_t *atomic,
+  int_t val) {
+  int_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *atomic;
@@ -88,10 +88,10 @@ p_atomic_int_add(volatile pint *atomic,
   return oldval;
 }
 
-P_API puint
-p_atomic_int_and(volatile puint *atomic,
-  puint val) {
-  puint oldval;
+P_API uint_t
+p_atomic_int_and(volatile uint_t *atomic,
+  uint_t val) {
+  uint_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *atomic;
@@ -101,10 +101,10 @@ p_atomic_int_and(volatile puint *atomic,
   return oldval;
 }
 
-P_API puint
-p_atomic_int_or(volatile puint *atomic,
-  puint val) {
-  puint oldval;
+P_API uint_t
+p_atomic_int_or(volatile uint_t *atomic,
+  uint_t val) {
+  uint_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *atomic;
@@ -114,10 +114,10 @@ p_atomic_int_or(volatile puint *atomic,
   return oldval;
 }
 
-P_API puint
-p_atomic_int_xor(volatile puint *atomic,
-  puint val) {
-  puint oldval;
+P_API uint_t
+p_atomic_int_xor(volatile uint_t *atomic,
+  uint_t val) {
+  uint_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *atomic;
@@ -127,10 +127,10 @@ p_atomic_int_xor(volatile puint *atomic,
   return oldval;
 }
 
-P_API ppointer
+P_API ptr_t
 p_atomic_pointer_get(const volatile void *atomic) {
-  const volatile ppointer *ptr = atomic;
-  ppointer value;
+  const volatile ptr_t *ptr = atomic;
+  ptr_t value;
 
   p_mutex_lock(pp_atomic_mutex);
   value = *ptr;
@@ -141,20 +141,20 @@ p_atomic_pointer_get(const volatile void *atomic) {
 
 P_API void
 p_atomic_pointer_set(volatile void *atomic,
-  ppointer val) {
-  volatile ppointer *ptr = atomic;
+  ptr_t val) {
+  volatile ptr_t *ptr = atomic;
 
   p_mutex_lock(pp_atomic_mutex);
   *ptr = val;
   p_mutex_unlock(pp_atomic_mutex);
 }
 
-P_API pboolean
+P_API bool
 p_atomic_pointer_compare_and_exchange(volatile void *atomic,
-  ppointer oldval,
-  ppointer newval) {
-  volatile ppointer *ptr = atomic;
-  pboolean success;
+  ptr_t oldval,
+  ptr_t newval) {
+  volatile ptr_t *ptr = atomic;
+  bool success;
 
   p_mutex_lock(pp_atomic_mutex);
 
@@ -166,11 +166,11 @@ p_atomic_pointer_compare_and_exchange(volatile void *atomic,
   return success;
 }
 
-P_API pssize
+P_API ssize_t
 p_atomic_pointer_add(volatile void *atomic,
-  pssize val) {
-  volatile pssize *ptr = atomic;
-  pssize oldval;
+  ssize_t val) {
+  volatile ssize_t *ptr = atomic;
+  ssize_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *ptr;
@@ -180,11 +180,11 @@ p_atomic_pointer_add(volatile void *atomic,
   return oldval;
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_and(volatile void *atomic,
-  psize val) {
-  volatile psize *ptr = atomic;
-  psize oldval;
+  size_t val) {
+  volatile size_t *ptr = atomic;
+  size_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *ptr;
@@ -194,11 +194,11 @@ p_atomic_pointer_and(volatile void *atomic,
   return oldval;
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_or(volatile void *atomic,
-  psize val) {
-  volatile psize *ptr = atomic;
-  psize oldval;
+  size_t val) {
+  volatile size_t *ptr = atomic;
+  size_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *ptr;
@@ -208,11 +208,11 @@ p_atomic_pointer_or(volatile void *atomic,
   return oldval;
 }
 
-P_API psize
+P_API size_t
 p_atomic_pointer_xor(volatile void *atomic,
-  psize val) {
-  volatile psize *ptr = atomic;
-  psize oldval;
+  size_t val) {
+  volatile size_t *ptr = atomic;
+  size_t oldval;
 
   p_mutex_lock(pp_atomic_mutex);
   oldval = *ptr;
@@ -222,9 +222,9 @@ p_atomic_pointer_xor(volatile void *atomic,
   return oldval;
 }
 
-P_API pboolean
+P_API bool
 p_atomic_is_lock_free(void) {
-  return FALSE;
+  return false;
 }
 
 void

@@ -31,58 +31,58 @@
 #define P_SHM_SUFFIX    "_p_shm_object"
 #define P_SHM_INVALID_HDL  -1
 
-typedef pint pshm_hdl;
+typedef int_t pshm_hdl;
 
 struct PShm_ {
-  pboolean file_created;
+  bool file_created;
   key_t unix_key;
-  pchar *platform_key;
+  byte_t *platform_key;
   pshm_hdl shm_hdl;
-  ppointer addr;
-  psize size;
+  ptr_t addr;
+  size_t size;
   PSemaphore *sem;
   PShmAccessPerms perms;
 };
 
-static pboolean pp_shm_create_handle(PShm *shm, PError **error);
+static bool pp_shm_create_handle(PShm *shm, p_err_t **error);
 static void pp_shm_clean_handle(PShm *shm);
 
-static pboolean
+static bool
 pp_shm_create_handle(PShm *shm,
-  PError **error) {
-  pboolean is_exists;
-  pint flags, built;
+  p_err_t **error) {
+  bool is_exists;
+  int_t flags, built;
   struct shmid_ds shm_stat;
 
   if (P_UNLIKELY (shm == NULL || shm->platform_key == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
-  is_exists = FALSE;
+  is_exists = false;
 
   if (P_UNLIKELY (
     (built = p_ipc_unix_create_key_file(shm->platform_key)) == -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to create key file");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   } else if (built == 0)
-    shm->file_created = TRUE;
+    shm->file_created = true;
 
   if (P_UNLIKELY (
     (shm->unix_key = p_ipc_unix_get_ftok_key(shm->platform_key)) == -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to get unique IPC key");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   flags = (shm->perms == P_SHM_ACCESS_READONLY) ? 0444 : 0660;
@@ -91,7 +91,7 @@ pp_shm_create_handle(PShm *shm,
     shm->size,
     IPC_CREAT | IPC_EXCL | flags)) == P_SHM_INVALID_HDL) {
     if (p_error_get_last_system() == EEXIST) {
-      is_exists = TRUE;
+      is_exists = true;
 
       shm->shm_hdl = shmget(shm->unix_key, 0, flags);
     }
@@ -100,20 +100,20 @@ pp_shm_create_handle(PShm *shm,
 
   if (P_UNLIKELY (shm->shm_hdl == P_SHM_INVALID_HDL)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call shmget() to create memory segment");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY (shmctl(shm->shm_hdl, IPC_STAT, &shm_stat) == -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call shmctl() to get memory segment size");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   shm->size = shm_stat.shm_segsz;
@@ -122,21 +122,21 @@ pp_shm_create_handle(PShm *shm,
 
   if (P_UNLIKELY ((shm->addr = shmat(shm->shm_hdl, 0, flags)) == (void *) -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_ipc(),
+      (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
       "Failed to call shmat() to attach to the memory segment");
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY ((shm->sem = p_semaphore_new(shm->platform_key, 1,
     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
     error)) == NULL)) {
     pp_shm_clean_handle(shm);
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 static void
@@ -155,7 +155,7 @@ pp_shm_clean_handle(PShm *shm) {
       P_ERROR ("PShm::pp_shm_clean_handle: shmctl() with IPC_RMID failed");
   }
 
-  if (shm->file_created == TRUE && unlink(shm->platform_key) == -1)
+  if (shm->file_created == true && unlink(shm->platform_key) == -1)
     P_ERROR ("PShm::pp_shm_clean_handle: unlink() failed");
 
   if (P_LIKELY (shm->sem != NULL)) {
@@ -163,7 +163,7 @@ pp_shm_clean_handle(PShm *shm) {
     shm->sem = NULL;
   }
 
-  shm->file_created = FALSE;
+  shm->file_created = false;
   shm->unix_key = -1;
   shm->shm_hdl = P_SHM_INVALID_HDL;
   shm->addr = NULL;
@@ -171,16 +171,16 @@ pp_shm_clean_handle(PShm *shm) {
 }
 
 P_API PShm *
-p_shm_new(const pchar *name,
-  psize size,
+p_shm_new(const byte_t *name,
+  size_t size,
   PShmAccessPerms perms,
-  PError **error) {
+  p_err_t **error) {
   PShm *ret;
-  pchar *new_name;
+  byte_t *new_name;
 
   if (P_UNLIKELY (name == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
     return NULL;
@@ -188,7 +188,7 @@ p_shm_new(const pchar *name,
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PShm))) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_NO_RESOURCES,
+      (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for shared segment");
     return NULL;
@@ -197,7 +197,7 @@ p_shm_new(const pchar *name,
   if (P_UNLIKELY (
     (new_name = p_malloc0(strlen(name) + strlen(P_SHM_SUFFIX) + 1)) == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_NO_RESOURCES,
+      (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for segment name");
     p_shm_free(ret);
@@ -207,13 +207,13 @@ p_shm_new(const pchar *name,
   strcpy(new_name, name);
   strcat(new_name, P_SHM_SUFFIX);
 
-  ret->platform_key = p_ipc_get_platform_key(new_name, FALSE);
+  ret->platform_key = p_ipc_get_platform_key(new_name, false);
   ret->perms = perms;
   ret->size = size;
 
   p_free(new_name);
 
-  if (P_UNLIKELY (pp_shm_create_handle(ret, error) == FALSE)) {
+  if (P_UNLIKELY (pp_shm_create_handle(ret, error) == false)) {
     p_shm_free(ret);
     return NULL;
   }
@@ -229,7 +229,7 @@ p_shm_take_ownership(PShm *shm) {
   if (P_UNLIKELY (shm == NULL))
     return;
 
-  shm->file_created = TRUE;
+  shm->file_created = true;
   p_semaphore_take_ownership(shm->sem);
 }
 
@@ -246,35 +246,35 @@ p_shm_free(PShm *shm) {
   p_free(shm);
 }
 
-P_API pboolean
+P_API bool
 p_shm_lock(PShm *shm,
-  PError **error) {
+  p_err_t **error) {
   if (P_UNLIKELY (shm == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   return p_semaphore_acquire(shm->sem, error);
 }
 
-P_API pboolean
+P_API bool
 p_shm_unlock(PShm *shm,
-  PError **error) {
+  p_err_t **error) {
   if (P_UNLIKELY (shm == NULL)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+      (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
   return p_semaphore_release(shm->sem, error);
 }
 
-P_API ppointer
+P_API ptr_t
 p_shm_get_address(const PShm *shm) {
   if (P_UNLIKELY (shm == NULL))
     return NULL;
@@ -282,7 +282,7 @@ p_shm_get_address(const PShm *shm) {
   return shm->addr;
 }
 
-P_API psize
+P_API size_t
 p_shm_get_size(const PShm *shm) {
   if (P_UNLIKELY (shm == NULL))
     return 0;

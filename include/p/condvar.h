@@ -16,7 +16,7 @@
  */
 
 /**
- * @file p/condvariable.h
+ * @file p/condvar.h
  * @brief Condition variable
  * @author Alexander Saprykin
  *
@@ -41,13 +41,13 @@
  * should be locked prior calling the condition waiting routine.
  *
  * The waiting thread behavior: create a new condition variable with
- * p_cond_variable_new(), create and lock a mutex before a critical section and
+ * p_condvar_new(), create and lock a mutex before a critical section and
  * wait for a signal from another thread on this condition variable
- * using p_cond_variable_wait().
+ * using p_condvar_wait().
  *
  * The signaling thread behavior: upon reaching event time emit a signal with
- * p_cond_variable_signal() to wake up a single waiting thread or
- * p_cond_variable_broadcast() to wake up all the waiting threads.
+ * p_condvar_signal() to wake up a single waiting thread or
+ * p_condvar_broadcast() to wake up all the waiting threads.
  *
  * After emitting the signal only the one thread will get the locked mutex back
  * to continue executing the critical section.
@@ -61,15 +61,15 @@
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef P_CONDVARIABLE_H__
-#define P_CONDVARIABLE_H__
+#ifndef P_CONDVAR_H__
+#define P_CONDVAR_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 #include "p/mutex.h"
 
 /** Condition variable opaque data structure. */
-typedef struct PCondVariable_ PCondVariable;
+typedef struct p_condvar p_condvar_t;
 
 /**
  * @brief Creates a new #PCondVariable.
@@ -77,14 +77,14 @@ typedef struct PCondVariable_ PCondVariable;
  * failed.
  * @since 0.0.1
  */
-P_API PCondVariable *p_cond_variable_new(void);
+P_API p_condvar_t *p_condvar_new(void);
 
 /**
  * @brief Frees #PCondVariable structure.
  * @param cond Condtion variable to free.
  * @since 0.0.1
  */
-P_API void p_cond_variable_free(PCondVariable *cond);
+P_API void p_condvar_free(p_condvar_t *cond);
 
 /**
  * @brief Waits for a signal on a given condition variable.
@@ -95,7 +95,7 @@ P_API void p_cond_variable_free(PCondVariable *cond);
  *
  * The calling thread will sleep until the signal on @a cond arrived.
  */
-P_API pboolean p_cond_variable_wait(PCondVariable *cond,
+P_API bool p_condvar_wait(p_condvar_t *cond,
   PMutex *mutex);
 
 /**
@@ -108,9 +108,9 @@ P_API pboolean p_cond_variable_wait(PCondVariable *cond,
  * up. Do not rely on a queue concept for waiting threads. Though the
  * implementation is intended to be much close to a queue, it's not fairly
  * enough. Due that any thread can be waken up, even if it has just called
- * p_cond_variable_wait() while there are other waiting threads.
+ * p_condvar_wait() while there are other waiting threads.
  */
-P_API pboolean p_cond_variable_signal(PCondVariable *cond);
+P_API bool p_condvar_signal(p_condvar_t *cond);
 
 /**
  * @brief Emitts a signal on a given condition variable for all the waiting
@@ -121,6 +121,6 @@ P_API pboolean p_cond_variable_signal(PCondVariable *cond);
  *
  * After emitting the signal all the threads waiting for it will be waken up.
  */
-P_API pboolean p_cond_variable_broadcast(PCondVariable *cond);
+P_API bool p_condvar_broadcast(p_condvar_t *cond);
 
-#endif /* P_CONDVARIABLE_H__ */
+#endif /* P_CONDVAR_H__ */

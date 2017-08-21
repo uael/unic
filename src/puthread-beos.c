@@ -37,14 +37,14 @@ struct PUThread_ {
 };
 
 struct PUThreadKey_ {
-  pint key;
+  int_t key;
   PDestroyFunc free_func;
 };
 
 typedef struct PUThreadDestructor_ PUThreadDestructor;
 
 struct PUThreadDestructor_ {
-  pint key_idx;
+  int_t key_idx;
   PDestroyFunc free_func;
   PUThreadDestructor *next;
 };
@@ -53,12 +53,12 @@ static PUThreadDestructor *volatile pp_uthread_tls_destructors = NULL;
 
 static PMutex *pp_uthread_tls_mutex = NULL;
 
-static pint pp_uthread_get_beos_priority(PUThreadPriority prio);
-static pint pp_uthread_get_tls_key(PUThreadKey *key);
+static int_t pp_uthread_get_beos_priority(PUThreadPriority prio);
+static int_t pp_uthread_get_tls_key(PUThreadKey *key);
 static void pp_uthread_clean_destructors(void);
-static pint pp_uthread_beos_proxy(ppointer data);
+static int_t pp_uthread_beos_proxy(ptr_t data);
 
-static pint
+static int_t
 pp_uthread_get_beos_priority(PUThreadPriority prio) {
   switch (prio) {
     case P_UTHREAD_PRIORITY_INHERIT: {
@@ -91,11 +91,11 @@ pp_uthread_get_beos_priority(PUThreadPriority prio) {
   }
 }
 
-static pint
+static int_t
 pp_uthread_get_tls_key(PUThreadKey *key) {
-  pint thread_key;
+  int_t thread_key;
 
-  thread_key = p_atomic_int_get((const volatile pint *) &key->key);
+  thread_key = p_atomic_int_get((const volatile int_t *) &key->key);
 
   if (P_LIKELY (thread_key >= 0))
     return thread_key;
@@ -133,7 +133,7 @@ pp_uthread_get_tls_key(PUThreadKey *key) {
       if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange(
         (void *volatile *) &pp_uthread_tls_destructors,
         (void *) destr->next,
-        (void *) destr) == FALSE)) {
+        (void *) destr) == false)) {
         P_ERROR (
           "PUThread::pp_uthread_get_tls_key: p_atomic_pointer_compare_and_exchange() failed");
         p_free(destr);
@@ -152,25 +152,25 @@ pp_uthread_get_tls_key(PUThreadKey *key) {
 
 static void
 pp_uthread_clean_destructors(void) {
-  pboolean was_called;
+  bool was_called;
 
   do {
     PUThreadDestructor *destr;
 
-    was_called = FALSE;
+    was_called = false;
 
     destr = (PUThreadDestructor *) p_atomic_pointer_get(
       (const void *volatile *) &pp_uthread_tls_destructors);
 
     while (destr != NULL) {
-      ppointer value;
+      ptr_t value;
 
       value = tls_get(destr->key_idx);
 
       if (value != NULL && destr->free_func != NULL) {
         tls_set(destr->key_idx, NULL);
         destr->free_func(value);
-        was_called = TRUE;
+        was_called = true;
       }
 
       destr = destr->next;
@@ -178,8 +178,8 @@ pp_uthread_clean_destructors(void) {
   } while (was_called);
 }
 
-static pint
-pp_uthread_beos_proxy(ppointer data) {
+static int_t
+pp_uthread_beos_proxy(ptr_t data) {
   PUThread *thread = data;
 
   thread->proxy(thread);
@@ -224,9 +224,9 @@ p_uthread_win32_thread_detach(void) {
 
 PUThread *
 p_uthread_create_internal(PUThreadFunc func,
-  pboolean joinable,
+  bool joinable,
   PUThreadPriority prio,
-  psize stack_size) {
+  size_t stack_size) {
   PUThread *ret;
 
   P_UNUSED (stack_size);
@@ -282,27 +282,27 @@ p_uthread_yield(void) {
   snooze((bigtime_t) 0);
 }
 
-P_API pboolean
+P_API bool
 p_uthread_set_priority(PUThread *thread,
   PUThreadPriority prio) {
   if (P_UNLIKELY (thread == NULL))
-    return FALSE;
+    return false;
 
   if (set_thread_priority(thread->hdl, pp_uthread_get_beos_priority(prio))
     < B_OK) {
     P_ERROR (
       "PUThread::p_uthread_create_internal: set_thread_priority() failed");
-    return FALSE;
+    return false;
   }
 
   thread->base.prio = prio;
 
-  return TRUE;
+  return true;
 }
 
 P_API P_HANDLE
 p_uthread_current_id(void) {
-  return (P_HANDLE) ((psize) find_thread(NULL));
+  return (P_HANDLE) ((size_t) find_thread(NULL));
 }
 
 P_API PUThreadKey *
@@ -328,9 +328,9 @@ p_uthread_local_free(PUThreadKey *key) {
   p_free(key);
 }
 
-P_API ppointer
+P_API ptr_t
 p_uthread_get_local(PUThreadKey *key) {
-  pint tls_key;
+  int_t tls_key;
 
   if (P_UNLIKELY (key == NULL))
     return NULL;
@@ -345,8 +345,8 @@ p_uthread_get_local(PUThreadKey *key) {
 
 P_API void
 p_uthread_set_local(PUThreadKey *key,
-  ppointer value) {
-  pint tls_key;
+  ptr_t value) {
+  int_t tls_key;
 
   if (P_UNLIKELY (key == NULL))
     return;
@@ -359,9 +359,9 @@ p_uthread_set_local(PUThreadKey *key,
 
 P_API void
 p_uthread_replace_local(PUThreadKey *key,
-  ppointer value) {
-  pint tls_key;
-  ppointer old_value;
+  ptr_t value) {
+  int_t tls_key;
+  ptr_t old_value;
 
   if (P_UNLIKELY (key == NULL))
     return;

@@ -20,7 +20,7 @@
 #include "p/spinlock.h"
 
 struct PSpinLock_ {
-  volatile pint spin;
+  volatile int_t spin;
 };
 
 P_API PSpinLock *
@@ -35,32 +35,32 @@ p_spinlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_lock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
-  while (p_atomic_int_compare_and_exchange(&(spinlock->spin), 0, 1) == FALSE);
+  while (p_atomic_int_compare_and_exchange(&(spinlock->spin), 0, 1) == false);
 
-  return TRUE;
+  return true;
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_trylock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   return p_atomic_int_compare_and_exchange(&(spinlock->spin), 0, 1);
 }
 
-P_API pboolean
+P_API bool
 p_spinlock_unlock(PSpinLock *spinlock) {
   if (P_UNLIKELY (spinlock == NULL))
-    return FALSE;
+    return false;
 
   p_atomic_int_set(&(spinlock->spin), 0);
 
-  return TRUE;
+  return true;
 }
 
 P_API void

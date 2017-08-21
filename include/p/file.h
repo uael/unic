@@ -57,7 +57,7 @@
  * On Windows this call doesn't resolve symbolic links, while on UNIX systems
  * does.
  */
-P_API pboolean p_file_is_exists(const pchar *file);
+P_API bool p_file_is_exists(const byte_t *file);
 
 /**
  * @brief Removes a file from the disk.
@@ -69,7 +69,7 @@ P_API pboolean p_file_is_exists(const pchar *file);
  * This call doesn't resolve symbolic links and remove a symbolic link if the
  * given path points to it.
  */
-P_API pboolean p_file_remove(const pchar *file,
-  PError **error);
+P_API bool p_file_remove(const byte_t *file,
+  p_err_t **error);
 
 #endif /* P_FILE_H__ */

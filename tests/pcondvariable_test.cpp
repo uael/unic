@@ -31,44 +31,44 @@
 
 #define PCONDTEST_MAX_QUEUE 10
 
-static pint              thread_wakeups   = 0;
-static pint              thread_queue     = 0;
-static PCondVariable *   queue_empty_cond = NULL;
-static PCondVariable *   queue_full_cond  = NULL;
+static int_t              thread_wakeups   = 0;
+static int_t              thread_queue     = 0;
+static p_condvar_t *   queue_empty_cond = NULL;
+static p_condvar_t *   queue_full_cond  = NULL;
 static PMutex *          cond_mutex       = NULL;
-volatile static pboolean is_working       = TRUE;
+volatile static bool is_working       = true;
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
 
 static void * producer_test_thread (void *)
 {
-	while (is_working == TRUE) {
+	while (is_working == true) {
 		if (!p_mutex_lock (cond_mutex)) {
-			is_working = FALSE;
-			p_cond_variable_broadcast (queue_full_cond);
+			is_working = false;
+			p_condvar_broadcast (queue_full_cond);
 			p_uthread_exit (1);
 		}
 
-		while (thread_queue >= PCONDTEST_MAX_QUEUE && is_working == TRUE) {
-			if (!p_cond_variable_wait (queue_empty_cond, cond_mutex)) {
-				is_working = FALSE;
-				p_cond_variable_broadcast (queue_full_cond);
+		while (thread_queue >= PCONDTEST_MAX_QUEUE && is_working == true) {
+			if (!p_condvar_wait (queue_empty_cond, cond_mutex)) {
+				is_working = false;
+				p_condvar_broadcast (queue_full_cond);
 				p_mutex_unlock (cond_mutex);
 				p_uthread_exit (1);
 			}
@@ -79,20 +79,20 @@ static void * producer_test_thread (void *)
 			++thread_wakeups;
 		}
 
-		if (!p_cond_variable_broadcast (queue_full_cond)) {
-			is_working = FALSE;
+		if (!p_condvar_broadcast (queue_full_cond)) {
+			is_working = false;
 			p_mutex_unlock (cond_mutex);
 			p_uthread_exit (1);
 		}
 
 		if (!p_mutex_unlock (cond_mutex)) {
-			is_working = FALSE;
-			p_cond_variable_broadcast (queue_full_cond);
+			is_working = false;
+			p_condvar_broadcast (queue_full_cond);
 			p_uthread_exit (1);
 		}
 	}
 
-	p_cond_variable_broadcast (queue_full_cond);
+	p_condvar_broadcast (queue_full_cond);
 	p_uthread_exit (0);
 
 	return NULL;
@@ -100,17 +100,17 @@ static void * producer_test_thread (void *)
 
 static void * consumer_test_thread (void *)
 {
-	while (is_working == TRUE) {
+	while (is_working == true) {
 		if (!p_mutex_lock (cond_mutex)) {
-			is_working = FALSE;
-			p_cond_variable_signal (queue_empty_cond);
+			is_working = false;
+			p_condvar_signal (queue_empty_cond);
 			p_uthread_exit (1);
 		}
 
-		while (thread_queue <= 0 && is_working == TRUE) {
-			if (!p_cond_variable_wait (queue_full_cond, cond_mutex)) {
-				is_working = FALSE;
-				p_cond_variable_signal (queue_empty_cond);
+		while (thread_queue <= 0 && is_working == true) {
+			if (!p_condvar_wait (queue_full_cond, cond_mutex)) {
+				is_working = false;
+				p_condvar_signal (queue_empty_cond);
 				p_mutex_unlock (cond_mutex);
 				p_uthread_exit (1);
 			}
@@ -121,20 +121,20 @@ static void * consumer_test_thread (void *)
 			++thread_wakeups;
 		}
 
-		if (!p_cond_variable_signal (queue_empty_cond)) {
-			is_working = FALSE;
+		if (!p_condvar_signal (queue_empty_cond)) {
+			is_working = false;
 			p_mutex_unlock (cond_mutex);
 			p_uthread_exit (1);
 		}
 
 		if (!p_mutex_unlock (cond_mutex)) {
-			is_working = FALSE;
-			p_cond_variable_signal (queue_empty_cond);
+			is_working = false;
+			p_condvar_signal (queue_empty_cond);
 			p_uthread_exit (1);
 		}
 	}
 
-	p_cond_variable_signal (queue_empty_cond);
+	p_condvar_signal (queue_empty_cond);
 	p_uthread_exit (0);
 
 	return NULL;
@@ -152,8 +152,8 @@ BOOST_AUTO_TEST_CASE (pcondvariable_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
-	BOOST_CHECK (p_cond_variable_new () == NULL);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
+	BOOST_CHECK (p_condvar_new () == NULL);
 
 	p_mem_restore_vtable ();
 
@@ -164,10 +164,10 @@ BOOST_AUTO_TEST_CASE (pcondvariable_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_cond_variable_broadcast (NULL) == FALSE);
-	BOOST_REQUIRE (p_cond_variable_signal (NULL) == FALSE);
-	BOOST_REQUIRE (p_cond_variable_wait (NULL, NULL) == FALSE);
-	p_cond_variable_free (NULL);
+	BOOST_REQUIRE (p_condvar_broadcast (NULL) == false);
+	BOOST_REQUIRE (p_condvar_signal (NULL) == false);
+	BOOST_REQUIRE (p_condvar_wait (NULL, NULL) == false);
+	p_condvar_free (NULL);
 
 	p_libsys_shutdown ();
 }
@@ -178,32 +178,32 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 
 	p_libsys_init ();
 
-	queue_empty_cond = p_cond_variable_new ();
+	queue_empty_cond = p_condvar_new ();
 	BOOST_REQUIRE (queue_empty_cond != NULL);
-	queue_full_cond = p_cond_variable_new ();
+	queue_full_cond = p_condvar_new ();
 	BOOST_REQUIRE (queue_full_cond != NULL);
 	cond_mutex = p_mutex_new ();
 	BOOST_REQUIRE (cond_mutex != NULL);
 
-	is_working     = TRUE;
+	is_working     = true;
 	thread_wakeups = 0;
 	thread_queue   = 0;
 
-	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, TRUE);
+	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
+	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
-	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
+	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr3 != NULL);
 
-	BOOST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == TRUE);
-	BOOST_REQUIRE (p_cond_variable_broadcast (queue_full_cond) == TRUE);
+	BOOST_REQUIRE (p_condvar_broadcast (queue_empty_cond) == true);
+	BOOST_REQUIRE (p_condvar_broadcast (queue_full_cond) == true);
 
 	p_uthread_sleep (4000);
 
-	is_working = FALSE;
+	is_working = false;
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);
@@ -214,8 +214,8 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
 	p_uthread_unref (thr3);
-	p_cond_variable_free (queue_empty_cond);
-	p_cond_variable_free (queue_full_cond);
+	p_condvar_free (queue_empty_cond);
+	p_condvar_free (queue_full_cond);
 	p_mutex_free (cond_mutex);
 
 	p_libsys_shutdown ();

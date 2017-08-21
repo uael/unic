@@ -29,8 +29,8 @@
 typedef struct PTreeBaseNode_ {
   struct PTreeBaseNode_ *left;  /**< Left child.	*/
   struct PTreeBaseNode_ *right;  /**< Right child.	*/
-  ppointer key;  /**< Node key.		*/
-  ppointer value;  /**< Node value.	*/
+  ptr_t key;  /**< Node key.		*/
+  ptr_t value;  /**< Node value.	*/
 } PTreeBaseNode;
 
 #endif /* PLIBSYS_HEADER_PTREE_PRIVATE_H */

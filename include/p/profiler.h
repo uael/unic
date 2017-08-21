@@ -27,31 +27,31 @@
  * This profiler is useful to gather information about execution time for calls
  * or parts of the code. It can help to leverage bottle-necks in your code.
  *
- * To start using a profiler create a new one with p_time_profiler_new() call
- * and p_time_profiler_elapsed_usecs() to get elapsed time since the creation.
- * If you need to reset a profiler use p_time_profiler_reset(). Remove a
- * profiler with p_time_profiler_free().
+ * To start using a profiler create a new one with p_profiler_new() call
+ * and p_profiler_elapsed_usecs() to get elapsed time since the creation.
+ * If you need to reset a profiler use p_profiler_reset(). Remove a
+ * profiler with p_profiler_free().
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef P_BENCH_H__
-#define P_BENCH_H__
+#ifndef P_PROFILER_H__
+#define P_PROFILER_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
 /** Time profiler opaque data structure. */
-typedef struct PTimeProfiler_ PTimeProfiler;
+typedef struct p_profiler p_profiler_t;
 
 /**
  * @brief Creates a new #PTimeProfiler object.
  * @return Pointer to a newly created #PTimeProfiler object.
  * @since 0.0.1
  */
-P_API PTimeProfiler *p_time_profiler_new(void);
+P_API p_profiler_t *p_profiler_new(void);
 
 /**
  * @brief Resets the #PTimeProfiler's internal counter to zero.
@@ -61,7 +61,7 @@ P_API PTimeProfiler *p_time_profiler_new(void);
  * After a reset the time profiler begins to count elapsed time from that moment
  * of time.
  */
-P_API void p_time_profiler_reset(PTimeProfiler *profiler);
+P_API void p_profiler_reset(p_profiler_t *profiler);
 
 /**
  * @brief Calculates elapsed time since the last reset or creation.
@@ -69,13 +69,13 @@ P_API void p_time_profiler_reset(PTimeProfiler *profiler);
  * @return Microseconds elapsed since the last reset or creation.
  * @since 0.0.1
  */
-P_API puint64 p_time_profiler_elapsed_usecs(const PTimeProfiler *profiler);
+P_API uint64_t p_profiler_elapsed_usecs(const p_profiler_t *profiler);
 
 /**
  * @brief Frees #PTimeProfiler object.
  * @param profiler #PTimeProfiler to free.
  * @since 0.0.1
  */
-P_API void p_time_profiler_free(PTimeProfiler *profiler);
+P_API void p_profiler_free(p_profiler_t *profiler);
 
-#endif /* P_BENCH_H__ */
+#endif /* P_PROFILER_H__ */

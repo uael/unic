@@ -34,12 +34,12 @@
 #  endif
 #endif
 
-static pboolean p_mem_table_inited = FALSE;
+static bool p_mem_table_inited = false;
 static PMemVTable p_mem_table;
 
 void
 p_mem_init(void) {
-  if (P_UNLIKELY (p_mem_table_inited == TRUE))
+  if (P_UNLIKELY (p_mem_table_inited == true))
     return;
 
   p_mem_restore_vtable();
@@ -54,20 +54,20 @@ p_mem_shutdown(void) {
   p_mem_table.realloc = NULL;
   p_mem_table.free = NULL;
 
-  p_mem_table_inited = FALSE;
+  p_mem_table_inited = false;
 }
 
-P_API ppointer
-p_malloc(psize n_bytes) {
+P_API ptr_t
+p_malloc(size_t n_bytes) {
   if (P_LIKELY (n_bytes > 0))
     return p_mem_table.malloc(n_bytes);
   else
     return NULL;
 }
 
-P_API ppointer
-p_malloc0(psize n_bytes) {
-  ppointer ret;
+P_API ptr_t
+p_malloc0(size_t n_bytes) {
+  ptr_t ret;
 
   if (P_LIKELY (n_bytes > 0)) {
     if (P_UNLIKELY ((ret = p_mem_table.malloc(n_bytes)) == NULL))
@@ -79,8 +79,8 @@ p_malloc0(psize n_bytes) {
     return NULL;
 }
 
-P_API ppointer
-p_realloc(ppointer mem, psize n_bytes) {
+P_API ptr_t
+p_realloc(ptr_t mem, size_t n_bytes) {
   if (P_UNLIKELY (n_bytes == 0))
     return NULL;
 
@@ -91,42 +91,42 @@ p_realloc(ppointer mem, psize n_bytes) {
 }
 
 P_API void
-p_free(ppointer mem) {
+p_free(ptr_t mem) {
   if (P_LIKELY (mem != NULL))
     p_mem_table.free(mem);
 }
 
-P_API pboolean
+P_API bool
 p_mem_set_vtable(const PMemVTable *table) {
   if (P_UNLIKELY (table == NULL))
-    return FALSE;
+    return false;
 
   if (P_UNLIKELY (
     table->free == NULL || table->malloc == NULL || table->realloc == NULL))
-    return FALSE;
+    return false;
 
   p_mem_table.malloc = table->malloc;
   p_mem_table.realloc = table->realloc;
   p_mem_table.free = table->free;
 
-  p_mem_table_inited = TRUE;
+  p_mem_table_inited = true;
 
-  return TRUE;
+  return true;
 }
 
 P_API void
 p_mem_restore_vtable(void) {
-  p_mem_table.malloc = (ppointer (*)(psize)) malloc;
-  p_mem_table.realloc = (ppointer (*)(ppointer, psize)) realloc;
-  p_mem_table.free = (void (*)(ppointer)) free;
+  p_mem_table.malloc = (ptr_t (*)(size_t)) malloc;
+  p_mem_table.realloc = (ptr_t (*)(ptr_t, size_t)) realloc;
+  p_mem_table.free = (void (*)(ptr_t)) free;
 
-  p_mem_table_inited = TRUE;
+  p_mem_table_inited = true;
 }
 
-P_API ppointer
-p_mem_mmap(psize n_bytes,
-  PError **error) {
-  ppointer addr;
+P_API ptr_t
+p_mem_mmap(size_t n_bytes,
+  p_err_t **error) {
+  ptr_t addr;
 #if defined (P_OS_WIN)
   HANDLE		hdl;
 #elif defined (P_OS_BEOS)
@@ -140,7 +140,7 @@ p_mem_mmap(psize n_bytes,
 
   if (P_UNLIKELY (n_bytes == 0)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
     return NULL;
@@ -154,7 +154,7 @@ p_mem_mmap(psize n_bytes,
                (DWORD) n_bytes,
                NULL)) == NULL)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call CreateFileMapping() to create file mapping");
     return NULL;
@@ -166,7 +166,7 @@ p_mem_mmap(psize n_bytes,
                  0,
                  n_bytes)) == NULL)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call MapViewOfFile() to map file view");
     CloseHandle (hdl);
@@ -175,7 +175,7 @@ p_mem_mmap(psize n_bytes,
 
   if (P_UNLIKELY (!CloseHandle (hdl))) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call CloseHandle() to close file mapping");
     UnmapViewOfFile (addr);
@@ -189,7 +189,7 @@ p_mem_mmap(psize n_bytes,
 
   if (P_UNLIKELY (area < B_NO_ERROR)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call create_area() to create memory area");
     return NULL;
@@ -204,7 +204,7 @@ p_mem_mmap(psize n_bytes,
                  (ULONG) n_bytes,
                  PAG_READ | PAG_WRITE)) != NO_ERROR)) {
       p_error_set_error_p (error,
-               (pint) p_error_get_io_from_system ((pint) ulrc),
+               (int_t) p_error_get_io_from_system ((int_t) ulrc),
                ulrc,
                "Failed to call DosAllocMemory() to alocate memory");
       return NULL;
@@ -214,7 +214,7 @@ p_mem_mmap(psize n_bytes,
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
   if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to open /dev/zero for file mapping");
     return NULL;
@@ -236,7 +236,7 @@ p_mem_mmap(psize n_bytes,
     fd,
     0)) == (void *) -1)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_io(),
+      (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
       "Failed to call mmap() to create file mapping");
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
@@ -249,7 +249,7 @@ p_mem_mmap(psize n_bytes,
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
   if (P_UNLIKELY (p_sys_close (fd) != 0)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to close /dev/zero handle");
     munmap (addr, n_bytes);
@@ -261,10 +261,10 @@ p_mem_mmap(psize n_bytes,
   return addr;
 }
 
-P_API pboolean
-p_mem_munmap(ppointer mem,
-  psize n_bytes,
-  PError **error) {
+P_API bool
+p_mem_munmap(ptr_t mem,
+  size_t n_bytes,
+  p_err_t **error) {
 #if defined (P_OS_BEOS)
   area_id	area;
 #elif defined (P_OS_OS2)
@@ -273,46 +273,46 @@ p_mem_munmap(ppointer mem,
 
   if (P_UNLIKELY (mem == NULL || n_bytes == 0)) {
     p_error_set_error_p(error,
-      (pint) P_ERROR_IO_INVALID_ARGUMENT,
+      (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument");
-    return FALSE;
+    return false;
   }
 
 #if defined (P_OS_WIN)
   if (P_UNLIKELY (UnmapViewOfFile (mem) == 0)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call UnmapViewOfFile() to remove file mapping");
 #elif defined (P_OS_BEOS)
   if (P_UNLIKELY ((area = area_for (mem)) == B_ERROR)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call area_for() to find allocated memory area");
-    return FALSE;
+    return false;
   }
 
   if (P_UNLIKELY ((delete_area (area)) != B_OK)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_last_io (),
+             (int_t) p_error_get_last_io (),
              p_error_get_last_system (),
              "Failed to call delete_area() to remove memory area");
 #elif defined (P_OS_OS2)
   if (P_UNLIKELY ((ulrc = DosFreeMem ((PVOID) mem)) != NO_ERROR)) {
     p_error_set_error_p (error,
-             (pint) p_error_get_io_from_system ((pint) ulrc),
+             (int_t) p_error_get_io_from_system ((int_t) ulrc),
              ulrc,
              "Failed to call DosFreeMem() to free memory");
 #else
   if (P_UNLIKELY (munmap(mem, n_bytes) != 0)) {
     p_error_set_error_p(error,
-      (pint) p_error_get_last_io(),
+      (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
       "Failed to call munmap() to remove file mapping");
 #endif
-    return FALSE;
+    return false;
   } else
-    return TRUE;
+    return true;
 }

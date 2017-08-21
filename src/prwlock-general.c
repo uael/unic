@@ -17,7 +17,7 @@
 
 #include "p/mem.h"
 #include "p/mutex.h"
-#include "p/condvariable.h"
+#include "p/condvar.h"
 #include "p/rwlock.h"
 
 #include <stdlib.h>
@@ -29,10 +29,10 @@
 
 struct PRWLock_ {
   PMutex *mutex;
-  PCondVariable *read_cv;
-  PCondVariable *write_cv;
-  puint32 active_threads;
-  puint32 waiting_threads;
+  p_condvar_t *read_cv;
+  p_condvar_t *write_cv;
+  uint32_t active_threads;
+  uint32_t waiting_threads;
 };
 
 P_API PRWLock *
@@ -49,17 +49,17 @@ p_rwlock_new(void) {
     p_free(ret);
   }
 
-  if (P_UNLIKELY ((ret->read_cv = p_cond_variable_new()) == NULL)) {
+  if (P_UNLIKELY ((ret->read_cv = p_condvar_new()) == NULL)) {
     P_ERROR (
       "PRWLock::p_rwlock_new: failed to allocate condition variable for read");
     p_mutex_free(ret->mutex);
     p_free(ret);
   }
 
-  if (P_UNLIKELY ((ret->write_cv = p_cond_variable_new()) == NULL)) {
+  if (P_UNLIKELY ((ret->write_cv = p_condvar_new()) == NULL)) {
     P_ERROR (
       "PRWLock::p_rwlock_new: failed to allocate condition variable for write");
-    p_cond_variable_free(ret->read_cv);
+    p_condvar_free(ret->read_cv);
     p_mutex_free(ret->mutex);
     p_free(ret);
   }
@@ -67,30 +67,30 @@ p_rwlock_new(void) {
   return ret;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_lock(PRWLock *lock) {
-  pboolean wait_ok;
+  bool wait_ok;
 
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_reader_lock: p_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 
-  wait_ok = TRUE;
+  wait_ok = true;
 
   if (P_RWLOCK_WRITER_COUNT (lock->active_threads)) {
     lock->waiting_threads = P_RWLOCK_SET_READERS (lock->waiting_threads,
       P_RWLOCK_READER_COUNT(lock->waiting_threads) + 1);
 
     while (P_RWLOCK_WRITER_COUNT (lock->active_threads)) {
-      wait_ok = p_cond_variable_wait(lock->read_cv, lock->mutex);
+      wait_ok = p_condvar_wait(lock->read_cv, lock->mutex);
 
-      if (P_UNLIKELY (wait_ok == FALSE)) {
+      if (P_UNLIKELY (wait_ok == false)) {
         P_ERROR (
-          "PRWLock::p_rwlock_reader_lock: p_cond_variable_wait() failed");
+          "PRWLock::p_rwlock_reader_lock: p_condvar_wait() failed");
         break;
       }
     }
@@ -99,112 +99,112 @@ p_rwlock_reader_lock(PRWLock *lock) {
       P_RWLOCK_READER_COUNT(lock->waiting_threads) - 1);
   }
 
-  if (P_LIKELY (wait_ok == TRUE))
+  if (P_LIKELY (wait_ok == true))
     lock->active_threads = P_RWLOCK_SET_READERS (lock->active_threads,
       P_RWLOCK_READER_COUNT(lock->active_threads) + 1);
 
-  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_reader_lock: p_mutex_unlock() failed");
-    return FALSE;
+    return false;
   }
 
   return wait_ok;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_trylock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_reader_trylock: p_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 
   if (P_RWLOCK_WRITER_COUNT (lock->active_threads)) {
-    if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE))
+    if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false))
       P_ERROR ("PRWLock::p_rwlock_reader_trylock: p_mutex_unlock() failed(1)");
 
-    return FALSE;
+    return false;
   }
 
   lock->active_threads = P_RWLOCK_SET_READERS (lock->active_threads,
     P_RWLOCK_READER_COUNT(lock->active_threads) + 1);
 
-  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_reader_trylock: p_mutex_unlock() failed(2)");
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_reader_unlock(PRWLock *lock) {
-  puint32 reader_count;
-  pboolean signal_ok;
+  uint32_t reader_count;
+  bool signal_ok;
 
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 
   reader_count = P_RWLOCK_READER_COUNT (lock->active_threads);
 
   if (P_UNLIKELY (reader_count == 0)) {
-    if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE))
+    if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false))
       P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_mutex_unlock() failed(1)");
 
-    return TRUE;
+    return true;
   }
 
   lock->active_threads =
     P_RWLOCK_SET_READERS (lock->active_threads, reader_count - 1);
 
-  signal_ok = TRUE;
+  signal_ok = true;
 
   if (reader_count == 1 && P_RWLOCK_WRITER_COUNT (lock->waiting_threads))
-    signal_ok = p_cond_variable_signal(lock->write_cv);
+    signal_ok = p_condvar_signal(lock->write_cv);
 
-  if (P_UNLIKELY (signal_ok == FALSE))
+  if (P_UNLIKELY (signal_ok == false))
     P_ERROR (
-      "PRWLock::p_rwlock_reader_unlock: p_cond_variable_signal() failed");
+      "PRWLock::p_rwlock_reader_unlock: p_condvar_signal() failed");
 
-  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_mutex_unlock() failed(2)");
-    return FALSE;
+    return false;
   }
 
   return signal_ok;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_lock(PRWLock *lock) {
-  pboolean wait_ok;
+  bool wait_ok;
 
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_writer_lock: p_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 
-  wait_ok = TRUE;
+  wait_ok = true;
 
   if (lock->active_threads) {
     lock->waiting_threads = P_RWLOCK_SET_WRITERS (lock->waiting_threads,
       P_RWLOCK_WRITER_COUNT(lock->waiting_threads) + 1);
 
     while (lock->active_threads) {
-      wait_ok = p_cond_variable_wait(lock->write_cv, lock->mutex);
+      wait_ok = p_condvar_wait(lock->write_cv, lock->mutex);
 
-      if (P_UNLIKELY (wait_ok == FALSE)) {
+      if (P_UNLIKELY (wait_ok == false)) {
         P_ERROR (
-          "PRWLock::p_rwlock_writer_lock: p_cond_variable_wait() failed");
+          "PRWLock::p_rwlock_writer_lock: p_condvar_wait() failed");
         break;
       }
     }
@@ -213,77 +213,77 @@ p_rwlock_writer_lock(PRWLock *lock) {
       P_RWLOCK_WRITER_COUNT(lock->waiting_threads) - 1);
   }
 
-  if (P_LIKELY (wait_ok == TRUE))
+  if (P_LIKELY (wait_ok == true))
     lock->active_threads = P_RWLOCK_SET_WRITERS (lock->active_threads, 1);
 
-  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_writer_lock: p_mutex_unlock() failed");
-    return FALSE;
+    return false;
   }
 
   return wait_ok;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_trylock(PRWLock *lock) {
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_writer_trylock: p_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 
   if (lock->active_threads) {
-    if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE))
+    if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false))
       P_ERROR ("PRWLock::p_rwlock_writer_trylock: p_mutex_unlock() failed(1)");
 
-    return FALSE;
+    return false;
   }
 
   lock->active_threads = P_RWLOCK_SET_WRITERS (lock->active_threads, 1);
 
-  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_writer_trylock: p_mutex_unlock() failed(2)");
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-P_API pboolean
+P_API bool
 p_rwlock_writer_unlock(PRWLock *lock) {
-  pboolean signal_ok;
+  bool signal_ok;
 
   if (P_UNLIKELY (lock == NULL))
-    return FALSE;
+    return false;
 
-  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_lock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_writer_unlock: p_mutex_lock() failed");
-    return FALSE;
+    return false;
   }
 
   lock->active_threads = P_RWLOCK_SET_WRITERS (lock->active_threads, 0);
 
-  signal_ok = TRUE;
+  signal_ok = true;
 
   if (P_RWLOCK_WRITER_COUNT (lock->waiting_threads)) {
-    if (P_UNLIKELY (p_cond_variable_signal(lock->write_cv) == FALSE)) {
+    if (P_UNLIKELY (p_condvar_signal(lock->write_cv) == false)) {
       P_ERROR (
-        "PRWLock::p_rwlock_writer_unlock: p_cond_variable_signal() failed");
-      signal_ok = FALSE;
+        "PRWLock::p_rwlock_writer_unlock: p_condvar_signal() failed");
+      signal_ok = false;
     }
   } else if (P_RWLOCK_READER_COUNT (lock->waiting_threads)) {
-    if (P_UNLIKELY (p_cond_variable_broadcast(lock->read_cv) == FALSE)) {
+    if (P_UNLIKELY (p_condvar_broadcast(lock->read_cv) == false)) {
       P_ERROR (
-        "PRWLock::p_rwlock_writer_unlock: p_cond_variable_broadcast() failed");
-      signal_ok = FALSE;
+        "PRWLock::p_rwlock_writer_unlock: p_condvar_broadcast() failed");
+      signal_ok = false;
     }
   }
 
-  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == FALSE)) {
+  if (P_UNLIKELY (p_mutex_unlock(lock->mutex) == false)) {
     P_ERROR ("PRWLock::p_rwlock_writer_unlock: p_mutex_unlock() failed");
-    return FALSE;
+    return false;
   }
 
   return signal_ok;
@@ -303,8 +303,8 @@ p_rwlock_free(PRWLock *lock) {
       "PRWLock::p_rwlock_free: destroying while waiting threads are present");
 
   p_mutex_free(lock->mutex);
-  p_cond_variable_free(lock->read_cv);
-  p_cond_variable_free(lock->write_cv);
+  p_condvar_free(lock->read_cv);
+  p_condvar_free(lock->write_cv);
 
   p_free(lock);
 }

@@ -83,7 +83,7 @@ typedef void (*PFuncAddr)(void);
  * #PLibraryLoader, thus the shared library would be unloaded from the address
  * space only when the counter becomes zero.
  */
-P_API PLibraryLoader *p_library_loader_new(const pchar *path);
+P_API PLibraryLoader *p_library_loader_new(const byte_t *path);
 
 /**
  * @brief Gets a pointer to a symbol in the loaded shared library.
@@ -97,7 +97,7 @@ P_API PLibraryLoader *p_library_loader_new(const pchar *path);
  * error result using p_library_loader_get_last_error().
  */
 P_API PFuncAddr p_library_loader_get_symbol(PLibraryLoader *loader,
-  const pchar *sym);
+  const byte_t *sym);
 
 /**
  * @brief Frees memory and allocated resources of #PLibraryLoader.
@@ -124,7 +124,7 @@ P_API void p_library_loader_free(PLibraryLoader *loader);
  * Some operating systems may return last error even if library handler was not
  * created. In that case try to pass NULL value as a parameter.
  */
-P_API pchar *p_library_loader_get_last_error(PLibraryLoader *loader);
+P_API byte_t *p_library_loader_get_last_error(PLibraryLoader *loader);
 
 /**
  * @brief Checks whether library loading subsystem uses reference counting.
@@ -138,6 +138,6 @@ P_API pchar *p_library_loader_get_last_error(PLibraryLoader *loader);
  * @note For now, only HP-UX on 32-bit PA-RISC systems with shl_* model doesn't
  * support reference counting.
  */
-P_API pboolean p_library_loader_is_ref_counted(void);
+P_API bool p_library_loader_is_ref_counted(void);
 
 #endif /* P_LIBLOADER_H__ */

@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 struct PMutex_ {
-  pint hdl;
+  int_t hdl;
 };
 
 P_API PMutex *
@@ -28,23 +28,23 @@ p_mutex_new(void) {
   return NULL;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_lock(PMutex *mutex) {
-  return FALSE;
+  return false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_trylock(PMutex *mutex) {
   P_UNUSED (mutex);
 
-  return FALSE;
+  return false;
 }
 
-P_API pboolean
+P_API bool
 p_mutex_unlock(PMutex *mutex) {
   P_UNUSED (mutex);
 
-  return FALSE;
+  return false;
 }
 
 P_API void

@@ -17,7 +17,7 @@
 
 #include "p/atomic.h"
 #include "p/mem.h"
-#include "p/condvariable.h"
+#include "p/condvar.h"
 
 #include <stdlib.h>
 
@@ -25,26 +25,26 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
-struct PCondVariable_ {
+struct p_condvar {
   HEV waiters_sema;
-  pint waiters_count;
-  pint signaled;
+  int_t waiters_count;
+  int_t signaled;
 };
 
-P_API PCondVariable *
-p_cond_variable_new(void) {
-  PCondVariable *ret;
+P_API p_condvar_t *
+p_condvar_new(void) {
+  p_condvar_t *ret;
 
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PCondVariable))) == NULL)) {
-    P_ERROR ("PCondVariable::p_cond_variable_new: failed to allocate memory");
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_condvar_t))) == NULL)) {
+    P_ERROR ("p_condvar_t::p_condvar_new: failed to allocate memory");
     return NULL;
   }
 
   if (P_UNLIKELY (DosCreateEventSem(NULL,
     (PHEV) & ret->waiters_sema,
     0,
-    FALSE) != NO_ERROR)) {
-    P_ERROR ("PCondVariable::p_cond_variable_new: failed to initialize");
+    false) != NO_ERROR)) {
+    P_ERROR ("p_condvar_t::p_condvar_new: failed to initialize");
     p_free(ret);
     return NULL;
   }
@@ -53,25 +53,25 @@ p_cond_variable_new(void) {
 }
 
 P_API void
-p_cond_variable_free(PCondVariable *cond) {
+p_condvar_free(p_condvar_t *cond) {
   if (P_UNLIKELY (cond == NULL))
     return;
 
   if (P_UNLIKELY (DosCloseEventSem(cond->waiters_sema) != NO_ERROR))
     P_WARNING (
-      "PCondVariable::p_cond_variable_free: DosCloseEventSem() failed");
+      "p_condvar_t::p_condvar_free: DosCloseEventSem() failed");
 
   p_free(cond);
 }
 
-P_API pboolean
-p_cond_variable_wait(PCondVariable *cond,
+P_API bool
+p_condvar_wait(p_condvar_t *cond,
   PMutex *mutex) {
   APIRET ulrc;
   APIRET reset_ulrc;
 
   if (P_UNLIKELY (cond == NULL || mutex == NULL))
-    return FALSE;
+    return false;
 
   do {
     p_atomic_int_inc(&cond->waiters_count);
@@ -88,24 +88,24 @@ p_cond_variable_wait(PCondVariable *cond,
         if (P_UNLIKELY (reset_ulrc != NO_ERROR &&
           reset_ulrc != ERROR_ALREADY_RESET))
           P_WARNING (
-            "PCondVariable::p_cond_variable_wait: DosResetEventSem() failed");
+            "p_condvar_t::p_condvar_wait: DosResetEventSem() failed");
       }
     } while (ulrc == NO_ERROR &&
-      p_atomic_int_compare_and_exchange(&cond->signaled, 1, 0) == FALSE);
+      p_atomic_int_compare_and_exchange(&cond->signaled, 1, 0) == false);
 
     p_atomic_int_add(&cond->waiters_count, -1);
     p_mutex_lock(mutex);
   } while (ulrc == ERROR_INTERRUPT);
 
-  return (ulrc == NO_ERROR) ? TRUE : FALSE;
+  return (ulrc == NO_ERROR) ? true : false;
 }
 
-P_API pboolean
-p_cond_variable_signal(PCondVariable *cond) {
-  pboolean result = TRUE;
+P_API bool
+p_condvar_signal(p_condvar_t *cond) {
+  bool result = true;
 
   if (P_UNLIKELY (cond == NULL))
-    return FALSE;
+    return false;
 
   if (p_atomic_int_get(&cond->waiters_count) > 0) {
     ULONG post_count;
@@ -119,33 +119,33 @@ p_cond_variable_signal(PCondVariable *cond) {
       ulrc != ERROR_ALREADY_POSTED &&
       ulrc != ERROR_TOO_MANY_POSTS)) {
       P_WARNING (
-        "PCondVariable::p_cond_variable_signal: DosPostEventSem() failed");
-      result = FALSE;
+        "p_condvar_t::p_condvar_signal: DosPostEventSem() failed");
+      result = false;
     }
   }
 
   return result;
 }
 
-P_API pboolean
-p_cond_variable_broadcast(PCondVariable *cond) {
+P_API bool
+p_condvar_broadcast(p_condvar_t *cond) {
   if (P_UNLIKELY (cond == NULL))
-    return FALSE;
+    return false;
 
-  pboolean result = TRUE;
+  bool result = true;
 
   while (p_atomic_int_get(&cond->waiters_count) != 0) {
-    if (P_UNLIKELY (p_cond_variable_signal(cond) == FALSE))
-      result = FALSE;
+    if (P_UNLIKELY (p_condvar_signal(cond) == false))
+      result = false;
   }
 
   return result;
 }
 
 void
-p_cond_variable_init(void) {
+p_condvar_init(void) {
 }
 
 void
-p_cond_variable_shutdown(void) {
+p_condvar_shutdown(void) {
 }

@@ -42,7 +42,7 @@ pp_library_loader_clean_handle(plibrary_handle handle) {
 }
 
 P_API PLibraryLoader *
-p_library_loader_new(const pchar *path) {
+p_library_loader_new(const byte_t *path) {
   PLibraryLoader *loader = NULL;
   plibrary_handle handle;
 
@@ -69,14 +69,14 @@ p_library_loader_new(const pchar *path) {
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
   PFuncAddr func_addr = NULL;
 
   if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
     return NULL;
 
   if (P_UNLIKELY (
-    shl_findsym(&loader->handle, sym, TYPE_UNDEFINED, (ppointer) &func_addr)
+    shl_findsym(&loader->handle, sym, TYPE_UNDEFINED, (ptr_t) &func_addr)
       != 0)) {
     P_ERROR (
       "PLibraryLoader::p_library_loader_get_symbol: shl_findsym() failed");
@@ -99,7 +99,7 @@ p_library_loader_free(PLibraryLoader *loader) {
   p_free(loader);
 }
 
-P_API pchar *
+P_API byte_t *
 p_library_loader_get_last_error(PLibraryLoader *loader) {
   if (loader == NULL)
     return NULL;
@@ -112,11 +112,11 @@ p_library_loader_get_last_error(PLibraryLoader *loader) {
     return p_strdup(strerror(loader->last_error));
 }
 
-P_API pboolean
+P_API bool
 p_library_loader_is_ref_counted(void) {
 #if defined (P_OS_HPUX) && defined (P_CPU_HPPA) && (PLIBSYS_SIZEOF_VOID_P == 4)
-  return FALSE;
+  return false;
 #else
-  return TRUE;
+  return true;
 #endif
 }

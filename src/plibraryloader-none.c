@@ -18,13 +18,13 @@
 #include "p/libloader.h"
 
 P_API PLibraryLoader *
-p_library_loader_new(const pchar *path) {
+p_library_loader_new(const byte_t *path) {
   P_ERROR ("PLibraryLoader::p_library_loader_new: not implemented");
   return NULL;
 }
 
 P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const pchar *sym) {
+p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
   P_UNUSED (loader);
   P_UNUSED (sym);
 
@@ -38,7 +38,7 @@ p_library_loader_free(PLibraryLoader *loader) {
   P_ERROR ("PLibraryLoader::p_library_loader_free: not implemented");
 }
 
-P_API pchar *
+P_API byte_t *
 p_library_loader_get_last_error(PLibraryLoader *loader) {
   P_UNUSED (loader);
 
@@ -46,7 +46,7 @@ p_library_loader_get_last_error(PLibraryLoader *loader) {
   return NULL;
 }
 
-P_API pboolean
+P_API bool
 p_library_loader_is_ref_counted(void) {
-  return FALSE;
+  return false;
 }

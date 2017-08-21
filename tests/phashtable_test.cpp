@@ -34,25 +34,25 @@
 
 #define PHASHTABLE_STRESS_COUNT	10000
 
-extern "C" ppointer pmem_alloc (psize nbytes)
+extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
 {
 	P_UNUSED (block);
 	P_UNUSED (nbytes);
-	return (ppointer) NULL;
+	return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ppointer block)
+extern "C" void pmem_free (ptr_t block)
 {
 	P_UNUSED (block);
 }
 
-static int test_hash_table_values (pconstpointer a, pconstpointer b)
+static int test_hash_table_values (const_ptr_t a, const_ptr_t b)
 {
 	return a > b ? 0 : (a < b ? -1 : 1);
 }
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE (phashtable_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
 	BOOST_CHECK (p_hash_table_new () == NULL);
 	p_hash_table_insert (table, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 	BOOST_CHECK (PPOINTER_TO_INT (p_hash_table_lookup (table, PINT_TO_POINTER (1))) == 15);
 	BOOST_CHECK (PPOINTER_TO_INT (p_hash_table_lookup (table, PINT_TO_POINTER (2))) == 20);
 	BOOST_CHECK (PPOINTER_TO_INT (p_hash_table_lookup (table, PINT_TO_POINTER (3))) == 30);
-	BOOST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (4)) == (ppointer) -1);
+	BOOST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (4)) == (ptr_t) -1);
 	p_hash_table_insert (table, PINT_TO_POINTER (22), PINT_TO_POINTER (20));
 
 	list = p_hash_table_lookup_by_value (table,
@@ -250,16 +250,16 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 
 	int counter = 0;
 
-	pint *keys   = (pint *) p_malloc0 (PHASHTABLE_STRESS_COUNT * sizeof (pint));
-	pint *values = (pint *) p_malloc0 (PHASHTABLE_STRESS_COUNT * sizeof (pint));
+	int_t *keys   = (int_t *) p_malloc0 (PHASHTABLE_STRESS_COUNT * sizeof (int_t));
+	int_t *values = (int_t *) p_malloc0 (PHASHTABLE_STRESS_COUNT * sizeof (int_t));
 
 	BOOST_REQUIRE (keys != NULL);
 	BOOST_REQUIRE (values != NULL);
 
 	while (counter != PHASHTABLE_STRESS_COUNT) {
-		pint rand_number = rand ();
+		int_t rand_number = rand ();
 
-		if (p_hash_table_lookup (table, PINT_TO_POINTER (rand_number)) != (ppointer) (-1))
+		if (p_hash_table_lookup (table, PINT_TO_POINTER (rand_number)) != (ptr_t) (-1))
 			continue;
 
 		keys[counter]   = rand_number;
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 			     PINT_TO_POINTER (values[i]));
 
 		p_hash_table_remove (table, PINT_TO_POINTER (keys[i]));
-		BOOST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (keys[i])) == (ppointer) (-1));
+		BOOST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (keys[i])) == (ptr_t) (-1));
 	}
 
 	BOOST_CHECK (p_hash_table_keys (table) == NULL);
@@ -294,9 +294,9 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 	counter = 0;
 
 	while (counter != PHASHTABLE_STRESS_COUNT) {
-		pint rand_number = rand ();
+		int_t rand_number = rand ();
 
-		if (p_hash_table_lookup (table, PINT_TO_POINTER (rand_number)) != (ppointer) (-1))
+		if (p_hash_table_lookup (table, PINT_TO_POINTER (rand_number)) != (ptr_t) (-1))
 			continue;
 
 		p_hash_table_insert (table, PINT_TO_POINTER (rand_number), PINT_TO_POINTER (rand () + 1));
