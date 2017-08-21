@@ -61,8 +61,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Mutex opaque data structure. */
 typedef struct PMutex_ PMutex;
 
@@ -122,7 +120,5 @@ P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
  * it manually.
  */
 P_LIB_API void		p_mutex_free	(PMutex *mutex);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PMUTEX_H */

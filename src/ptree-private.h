@@ -25,8 +25,6 @@
 #include "pmacros.h"
 #include "ptypes.h"
 
-P_BEGIN_DECLS
-
 /** Base tree leaf structure. */
 typedef struct PTreeBaseNode_ {
 	struct PTreeBaseNode_	*left;	/**< Left child.	*/
@@ -34,7 +32,5 @@ typedef struct PTreeBaseNode_ {
 	ppointer		key;	/**< Node key.		*/
 	ppointer		value;	/**< Node value.	*/
 } PTreeBaseNode;
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PTREE_PRIVATE_H */

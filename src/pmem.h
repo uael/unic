@@ -67,8 +67,6 @@
 #include <pmacros.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** Memory management table. */
 typedef struct PMemVTable_ {
 	ppointer	(*malloc)	(psize		n_bytes);	/**< malloc() implementation.	*/
@@ -177,7 +175,5 @@ P_LIB_API ppointer	p_mem_mmap		(psize			n_bytes,
 P_LIB_API pboolean	p_mem_munmap		(ppointer		mem,
 						 psize			n_bytes,
 						 PError			**error);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PMEM_H */

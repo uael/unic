@@ -51,8 +51,6 @@
 #include <ptypes.h>
 #include <pmacros.h>
 
-P_BEGIN_DECLS
-
 /**
  * @brief Gets #pint value from @a atomic.
  * @param atomic Pointer to #pint to get the value from.
@@ -297,7 +295,5 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
  * operations depending on hardware or software.
  */
 P_LIB_API pboolean	p_atomic_is_lock_free			(void);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PATOMIC_H */

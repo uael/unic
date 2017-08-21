@@ -48,8 +48,6 @@
 #  define P_DIR_SEPARATOR "/"
 #endif
 
-P_BEGIN_DECLS
-
 /**
  * @brief Checks whether a file exists or not.
  * @param file File name to check.
@@ -73,7 +71,5 @@ P_LIB_API pboolean p_file_is_exists	(const pchar	*file);
  */
 P_LIB_API pboolean p_file_remove	(const pchar	*file,
 					 PError		**error);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PFILE_H */

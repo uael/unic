@@ -43,8 +43,6 @@
 #  include <values.h>
 #endif
 
-P_BEGIN_DECLS
-
 #define P_MINFLOAT    @PLIBSYS_FLOAT_MIN@
 #define P_MAXFLOAT    @PLIBSYS_FLOAT_MAX@
 #define P_MINDOUBLE   @PLIBSYS_DOUBLE_MIN@
@@ -68,7 +66,5 @@ P_BEGIN_DECLS
 #else
 #  define P_BYTE_ORDER P_LITTLE_ENDIAN
 #endif
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PLIBSYSCONFIG_H */

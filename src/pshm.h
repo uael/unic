@@ -86,8 +86,6 @@
 #include <ptypes.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** Enum with shared memory access permissions. */
 typedef enum PShmAccessPerms_ {
 	P_SHM_ACCESS_READONLY	= 0,	/**< Read-only access.	*/
@@ -181,7 +179,5 @@ P_LIB_API ppointer	p_shm_get_address	(const PShm		*shm);
  * the p_shm_new() call due to service information stored inside.
  */
 P_LIB_API psize		p_shm_get_size		(const PShm		*shm);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSHM_H */

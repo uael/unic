@@ -148,8 +148,6 @@
 #include <psocketaddress.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** Socket protocols specified by the IANA.  */
 typedef enum PSocketProtocol_ {
 	P_SOCKET_PROTOCOL_UNKNOWN	= -1,	/**< Unknown protocol.	*/
@@ -765,7 +763,5 @@ P_LIB_API pboolean		p_socket_set_buffer_size	(const PSocket		*socket,
 P_LIB_API pboolean		p_socket_io_condition_wait	(const PSocket		*socket,
 								 PSocketIOCondition	condition,
 								 PError			**error);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSOCKET_H */

@@ -27,8 +27,6 @@
 #include "ptypes.h"
 #include "pmacros.h"
 
-P_BEGIN_DECLS
-
 typedef struct PHashSHA2_512_ PHashSHA2_512;
 
 PHashSHA2_512 *	p_crypto_hash_sha2_512_new	(void);
@@ -45,7 +43,5 @@ PHashSHA2_512 *	p_crypto_hash_sha2_384_new	(void);
 #define p_crypto_hash_sha2_384_digest p_crypto_hash_sha2_512_digest
 #define p_crypto_hash_sha2_384_reset  p_crypto_hash_sha2_512_reset
 #define p_crypto_hash_sha2_384_free   p_crypto_hash_sha2_512_free
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H */

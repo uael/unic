@@ -38,8 +38,6 @@
 
 #include <pmacros.h>
 
-P_BEGIN_DECLS
-
 /** Enum with error domains. */
 typedef enum PErrorDomain_ {
 	P_ERROR_DOMAIN_NONE		= 0,	/**< No domain was specified.				*/
@@ -92,7 +90,5 @@ typedef enum PErrorIPC_ {
 	P_ERROR_IPC_DEADLOCK		= 609,	/**< Deadlock detected.					*/
 	P_ERROR_IPC_FAILED		= 610	/**< General error.					*/
 } PErrorIPC;
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PERRORTYPES_H */

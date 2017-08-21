@@ -26,8 +26,6 @@
 #include "ptypes.h"
 #include "perrortypes.h"
 
-P_BEGIN_DECLS
-
 /**
  * @brief Gets an IO error code from a system error code.
  * @param err_code System error code.
@@ -53,7 +51,5 @@ PErrorIPC	p_error_get_ipc_from_system	(pint	err_code);
  * @return IPC error code.
  */
 PErrorIPC	p_error_get_last_ipc		(void);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */

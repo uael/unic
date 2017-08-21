@@ -25,13 +25,9 @@
 #include "pmacros.h"
 #include "ptypes.h"
 
-P_BEGIN_DECLS
-
 /** Time profiler opaque data structure. */
 struct PTimeProfiler_ {
 	puint64 counter; /**< Ticks counter. */
 };
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H */

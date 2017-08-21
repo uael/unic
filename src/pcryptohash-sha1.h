@@ -27,8 +27,6 @@
 #include "ptypes.h"
 #include "pmacros.h"
 
-P_BEGIN_DECLS
-
 typedef struct PHashSHA1_ PHashSHA1;
 
 PHashSHA1 *	p_crypto_hash_sha1_new		(void);
@@ -37,7 +35,5 @@ void		p_crypto_hash_sha1_finish	(PHashSHA1 *ctx);
 const puchar *	p_crypto_hash_sha1_digest	(PHashSHA1 *ctx);
 void		p_crypto_hash_sha1_reset	(PHashSHA1 *ctx);
 void		p_crypto_hash_sha1_free		(PHashSHA1 *ctx);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA1_H */

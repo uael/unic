@@ -159,8 +159,6 @@
 #include <pmacros.h>
 #include <pmem.h>
 
-P_BEGIN_DECLS
-
 /**
  * @brief Initializes library resources.
  * @since 0.0.1
@@ -190,7 +188,5 @@ P_LIB_API void		p_libsys_shutdown	(void);
  * @sa #PLIBSYS_VERSION, #PLIBSYS_VERSION_STR, #PLIBSYS_VERSION_CHECK
  */
 P_LIB_API const pchar *	p_libsys_version	(void);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PMAIN_H */

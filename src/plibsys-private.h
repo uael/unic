@@ -25,8 +25,6 @@
 #include "pmacros.h"
 #include "ptypes.h"
 
-P_BEGIN_DECLS
-
 #ifndef PLIBSYS_HAS_SOCKLEN_T
 #  ifdef P_OS_VMS
 typedef unsigned int socklen_t;
@@ -72,7 +70,5 @@ struct sockaddr_storage {
 	pchar		__ss_pad2[_PLIBSYS_SS_PAD2SIZE];
 };
 #endif
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PLIBSYS_PRIVATE_H */

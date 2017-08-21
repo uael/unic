@@ -70,8 +70,6 @@
 #include <pmacros.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** Shared memory buffer opaque data structure. */
 typedef struct PShmBuffer_ PShmBuffer;
 
@@ -177,7 +175,5 @@ P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
  * @since 0.0.1
  */
 P_LIB_API void		p_shm_buffer_clear		(PShmBuffer	*buf);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSHMBUFFER_H */

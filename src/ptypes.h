@@ -59,8 +59,6 @@
 #include <plibsysconfig.h>
 #include <pmacros.h>
 
-P_BEGIN_DECLS
-
 /** Type for signed 8 bit.	*/
 typedef signed char		pint8;
 /** Type for unsigned 8 bit.	*/
@@ -1108,7 +1106,5 @@ typedef pint (*PCompareFunc) (pconstpointer a, pconstpointer b);
  * @since 0.0.1
  */
 typedef pint (*PCompareDataFunc) (pconstpointer a, pconstpointer b, ppointer data);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PTYPES_H */

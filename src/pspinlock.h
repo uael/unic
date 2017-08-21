@@ -54,8 +54,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Spinlock opaque data structure. */
 typedef struct PSpinLock_ PSpinLock;
 
@@ -128,7 +126,5 @@ P_LIB_API pboolean	p_spinlock_unlock	(PSpinLock *spinlock);
  * as p_mutex_free().
  */
 P_LIB_API void		p_spinlock_free		(PSpinLock *spinlock);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSPINLOCK_H */

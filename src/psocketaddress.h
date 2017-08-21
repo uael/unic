@@ -60,8 +60,6 @@
 #  include <netinet/in.h>
 #endif
 
-P_BEGIN_DECLS
-
 /** Socket address family. */
 typedef enum PSocketFamily_ {
 	P_SOCKET_FAMILY_UNKNOWN = 0,		/**< Unknown family.	*/
@@ -270,7 +268,5 @@ P_LIB_API pboolean		p_socket_address_is_loopback		(const PSocketAddress	*addr);
  * @since 0.0.1
  */
 P_LIB_API void			p_socket_address_free			(PSocketAddress		*addr);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSOCKETADDRESS_H */

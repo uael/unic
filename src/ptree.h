@@ -60,8 +60,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Tree opaque data structure. */
 typedef struct PTree_ PTree;
 
@@ -216,7 +214,5 @@ P_LIB_API pint		p_tree_get_nnodes	(const PTree		*tree);
  * on every node if any of them was provided.
  */
 P_LIB_API void		p_tree_free		(PTree			*tree);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PTREE_H */

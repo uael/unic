@@ -27,8 +27,6 @@
 #include "ptypes.h"
 #include "pmacros.h"
 
-P_BEGIN_DECLS
-
 typedef struct PHashSHA3_ PHashSHA3;
 
 void		p_crypto_hash_sha3_update	(PHashSHA3 *ctx, const puchar *data, psize len);
@@ -65,7 +63,5 @@ PHashSHA3 *	p_crypto_hash_sha3_512_new	(void);
 #define p_crypto_hash_sha3_512_digest p_crypto_hash_sha3_digest
 #define p_crypto_hash_sha3_512_reset  p_crypto_hash_sha3_reset
 #define p_crypto_hash_sha3_512_free   p_crypto_hash_sha3_free
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA3_H */

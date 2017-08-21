@@ -95,8 +95,6 @@
 #include <plist.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** INI file opaque data structure. */
 typedef struct PIniFile_ PIniFile;
 
@@ -247,7 +245,5 @@ P_LIB_API pboolean	p_ini_file_parameter_boolean	(const PIniFile	*file,
 P_LIB_API PList *	p_ini_file_parameter_list	(const PIniFile	*file,
 							 const pchar	*section,
 							 const pchar	*key);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PINIFILE_H */

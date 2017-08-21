@@ -68,8 +68,6 @@
 #include <ptypes.h>
 #include <pmutex.h>
 
-P_BEGIN_DECLS
-
 /** Condition variable opaque data structure. */
 typedef struct PCondVariable_ PCondVariable;
 
@@ -124,7 +122,5 @@ P_LIB_API pboolean		p_cond_variable_signal		(PCondVariable	*cond);
  * After emitting the signal all the threads waiting for it will be waken up.
  */
 P_LIB_API pboolean		p_cond_variable_broadcast	(PCondVariable	*cond);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PCONDVARIABLE_H */

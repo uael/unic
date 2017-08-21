@@ -85,8 +85,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Typedef for a #PUThread running method. */
 typedef ppointer (*PUThreadFunc) (ppointer arg);
 
@@ -289,7 +287,5 @@ P_LIB_API void		p_uthread_set_local	(PUThreadKey		*key,
  */
 P_LIB_API void		p_uthread_replace_local	(PUThreadKey		*key,
 						 ppointer		value);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PUTHREAD_H */

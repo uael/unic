@@ -54,8 +54,6 @@
 #include <ptypes.h>
 #include <perrortypes.h>
 
-P_BEGIN_DECLS
-
 /** Opaque data structure for an error object. */
 typedef struct PError_ PError;
 
@@ -235,7 +233,5 @@ P_LIB_API void		p_error_set_last_system	(pint code);
  * p_error_get_last_system()
  */
 P_LIB_API void		p_error_set_last_net	(pint code);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PERROR_H */

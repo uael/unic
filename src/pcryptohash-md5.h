@@ -27,8 +27,6 @@
 #include "ptypes.h"
 #include "pmacros.h"
 
-P_BEGIN_DECLS
-
 typedef struct PHashMD5_ PHashMD5;
 
 PHashMD5 *	p_crypto_hash_md5_new		(void);
@@ -37,7 +35,5 @@ void		p_crypto_hash_md5_finish	(PHashMD5 *ctx);
 const puchar *	p_crypto_hash_md5_digest	(PHashMD5 *ctx);
 void		p_crypto_hash_md5_reset		(PHashMD5 *ctx);
 void		p_crypto_hash_md5_free		(PHashMD5 *ctx);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHMD5_H */

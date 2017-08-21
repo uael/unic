@@ -37,8 +37,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /**
  * @brief Gets a PID of the calling process.
  * @return PID of the calling process.
@@ -54,8 +52,6 @@ P_LIB_API puint32	p_process_get_current_pid	(void);
  * @since 0.0.1
  */
 P_LIB_API pboolean	p_process_is_running		(puint32 pid);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PPROCESS_H */
 

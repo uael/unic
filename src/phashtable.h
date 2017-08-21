@@ -57,8 +57,6 @@
 #include <ptypes.h>
 #include <plist.h>
 
-P_BEGIN_DECLS
-
 /** Opaque data structure for a hash table. */
 typedef struct PHashTable_ PHashTable;
 
@@ -153,7 +151,5 @@ P_LIB_API void		p_hash_table_remove		(PHashTable		*table,
 P_LIB_API PList *	p_hash_table_lookup_by_value	(const PHashTable	*table,
 							 pconstpointer		val,
 							 PCompareFunc		func);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PHASHTABLE_H */

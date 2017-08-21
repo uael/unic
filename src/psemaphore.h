@@ -91,8 +91,6 @@
 #include <ptypes.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** Enum with semaphore creation modes. */
 typedef enum PSemaphoreAccessMode_ {
 	P_SEM_ACCESS_OPEN	= 0,	/**< Opens an existing semaphore or creates one with a given value.	*/
@@ -174,7 +172,5 @@ P_LIB_API pboolean	p_semaphore_release		(PSemaphore		*sem,
  * deadlock while removing the acquired semaphore.
  */
 P_LIB_API void		p_semaphore_free		(PSemaphore		*sem);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSEMAPHORE_H */

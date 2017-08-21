@@ -36,8 +36,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /**
  * @brief Copies a string.
  * @param str String with the trailing zero to copy.
@@ -103,7 +101,5 @@ P_LIB_API pchar *	p_strtok	(pchar		*str,
  * the 'C' locale.
  */
 P_LIB_API double	p_strtod	(const pchar	*str);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PSTRING_H */

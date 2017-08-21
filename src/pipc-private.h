@@ -25,8 +25,6 @@
 #include "pmacros.h"
 #include "ptypes.h"
 
-P_BEGIN_DECLS
-
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 /**
  * @brief Gets a temporary directory on UNIX systems.
@@ -62,7 +60,5 @@ pint		p_ipc_unix_get_ftok_key		(const pchar	*file_name);
  */
 pchar *		p_ipc_get_platform_key		(const pchar	*name,
 						 pboolean	posix);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PIPC_PRIVATE_H */

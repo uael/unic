@@ -79,8 +79,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Typedef for a list node. */
 typedef struct PList_ PList;
 
@@ -185,7 +183,5 @@ P_LIB_API PList *	p_list_prepend	(PList		*list,
  * @since 0.0.1
  */
 P_LIB_API PList *	p_list_reverse	(PList		*list) P_GNUC_WARN_UNUSED_RESULT;
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PLIST_H */

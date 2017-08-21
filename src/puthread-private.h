@@ -26,8 +26,6 @@
 #include "ptypes.h"
 #include "puthread.h"
 
-P_BEGIN_DECLS
-
 /** Base thread structure */
 typedef struct PUThreadBase_ {
 	pint			ref_count;	/**< Reference counter.	*/
@@ -38,7 +36,5 @@ typedef struct PUThreadBase_ {
 	ppointer		data;		/**< Thread input data.	*/
 	PUThreadPriority	prio;		/**< Thread priority.	*/
 } PUThreadBase;
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PUTHREAD_PRIVATE_H */

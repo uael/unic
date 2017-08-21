@@ -71,8 +71,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Opaque data structure for handling a cryptographic hash context. */
 typedef struct PCryptoHash_ PCryptoHash;
 
@@ -174,7 +172,5 @@ P_LIB_API PCryptoHashType	p_crypto_hash_get_type		(const PCryptoHash	*hash);
  * @since 0.0.1
  */
 P_LIB_API void			p_crypto_hash_free		(PCryptoHash		*hash);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASH_H */

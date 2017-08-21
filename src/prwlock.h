@@ -65,8 +65,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Read-write lock opaque data structure. */
 typedef struct PRWLock_ PRWLock;
 
@@ -171,7 +169,5 @@ P_LIB_API pboolean	p_rwlock_writer_unlock	(PRWLock *lock);
  * do it manually.
  */
 P_LIB_API void		p_rwlock_free		(PRWLock *lock);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PRWLOCK_H */

@@ -26,8 +26,6 @@
 #include "ptypes.h"
 #include "ptree-private.h"
 
-P_BEGIN_DECLS
-
 pboolean	p_tree_rb_insert	(PTreeBaseNode		**root_node,
 					 PCompareDataFunc	compare_func,
 					 ppointer		data,
@@ -44,7 +42,5 @@ pboolean	p_tree_rb_remove	(PTreeBaseNode		**root_node,
 					 pconstpointer		key);
 
 void		p_tree_rb_node_free	(PTreeBaseNode	*node);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PTREERB_H */

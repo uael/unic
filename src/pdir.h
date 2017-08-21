@@ -47,8 +47,6 @@
 #include <ptypes.h>
 #include <perror.h>
 
-P_BEGIN_DECLS
-
 /** Directory opaque data structure. */
 typedef struct PDir_ PDir;
 
@@ -163,7 +161,5 @@ P_LIB_API void		p_dir_entry_free	(PDirEntry	*entry);
  * @since 0.0.1
  */
 P_LIB_API void		p_dir_free		(PDir		*dir);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PDIR_H */

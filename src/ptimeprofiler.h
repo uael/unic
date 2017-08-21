@@ -43,8 +43,6 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-P_BEGIN_DECLS
-
 /** Time profiler opaque data structure. */
 typedef struct PTimeProfiler_ PTimeProfiler;
 
@@ -79,7 +77,5 @@ P_LIB_API puint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler
  * @since 0.0.1
  */
 P_LIB_API void			p_time_profiler_free		(PTimeProfiler *	profiler);
-
-P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PTIMEPROFILER_H */
