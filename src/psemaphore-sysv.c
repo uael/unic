@@ -224,8 +224,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	}
 
 	while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 &&
-		p_error_get_last_system () == EINTR)
-		;
+		p_error_get_last_system () == EINTR);
 
 	ret = (res == 0);
 
@@ -239,8 +238,7 @@ p_semaphore_acquire (PSemaphore *sem,
 			return FALSE;
 
 		while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 &&
-			p_error_get_last_system () == EINTR)
-			;
+			p_error_get_last_system () == EINTR);
 
 		ret = (res == 0);
 	}
@@ -270,8 +268,7 @@ p_semaphore_release (PSemaphore *sem,
 	}
 
 	while ((res = semop (sem->sem_hdl, &sem_unlock, 1)) == -1 &&
-		p_error_get_last_system () == EINTR)
-		;
+		p_error_get_last_system () == EINTR);
 
 	ret = (res == 0);
 

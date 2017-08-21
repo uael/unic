@@ -111,8 +111,7 @@ DllMain (HINSTANCE	hinstDLL,
 	case DLL_PROCESS_DETACH:
 		break;
 
-	default:
-		;
+	default:;
 	}
 
 	return TRUE;

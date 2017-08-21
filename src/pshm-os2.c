@@ -81,8 +81,7 @@ pp_shm_create_handle (PShm	*shm,
 	while ((ulrc = DosAllocSharedMem ((PPVOID) &shm->addr,
 					  (PSZ) mem_name,
 					  shm->size,
-					  flags)) == ERROR_INTERRUPT)
-		;
+					  flags)) == ERROR_INTERRUPT);
 
 	if (P_UNLIKELY (ulrc != NO_ERROR && ulrc != ERROR_ALREADY_EXISTS)) {
 		p_error_set_error_p (error,
@@ -102,8 +101,7 @@ pp_shm_create_handle (PShm	*shm,
 
 		while ((ulrc = DosGetNamedSharedMem ((PPVOID) &shm->addr,
 						     (PSZ) mem_name,
-						     flags)) == ERROR_INTERRUPT)
-			;
+						     flags)) == ERROR_INTERRUPT);
 
 		p_free (mem_name);
 
@@ -120,8 +118,7 @@ pp_shm_create_handle (PShm	*shm,
 
 		while ((ulrc = DosQueryMem ((PVOID) shm->addr,
 					    &real_size,
-					    &real_flags)) == ERROR_INTERRUPT)
-			;
+					    &real_flags)) == ERROR_INTERRUPT);
 
 		if (P_UNLIKELY (ulrc != NO_ERROR)) {
 			p_error_set_error_p (error,
@@ -174,8 +171,7 @@ pp_shm_clean_handle (PShm *shm)
 	APIRET ulrc;
 
 	if (P_UNLIKELY (shm->addr != NULL)) {
-		while ((ulrc = DosFreeMem ((PVOID) shm->addr)) == ERROR_INTERRUPT)
-			;
+		while ((ulrc = DosFreeMem ((PVOID) shm->addr)) == ERROR_INTERRUPT);
 
 		if (P_UNLIKELY (ulrc != NO_ERROR))
 			P_ERROR ("PShm::pp_shm_clean_handle: DosFreeMem() failed");
@@ -282,8 +278,7 @@ p_shm_lock (PShm	*shm,
 	}
 
 	while ((ulrc = DosRequestMutexSem (shm->sem,
-					   (ULONG) SEM_INDEFINITE_WAIT)) == ERROR_INTERRUPT)
-		;
+					   (ULONG) SEM_INDEFINITE_WAIT)) == ERROR_INTERRUPT);
 
 	if (P_UNLIKELY (ulrc != NO_ERROR)) {
 		p_error_set_error_p (error,

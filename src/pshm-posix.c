@@ -67,8 +67,7 @@ pp_shm_create_handle (PShm	*shm,
 	while ((fd = shm_open (shm->platform_key,
 			       O_CREAT | O_EXCL | O_RDWR,
 			       0660)) == P_SHM_INVALID_HDL &&
-	       p_error_get_last_system () == EINTR)
-	;
+	       p_error_get_last_system () == EINTR);
 
 	if (fd == P_SHM_INVALID_HDL) {
 		if (p_error_get_last_system () == EEXIST) {
@@ -77,8 +76,7 @@ pp_shm_create_handle (PShm	*shm,
 			while ((fd = shm_open (shm->platform_key,
 					       O_RDWR,
 					       0660)) == P_SHM_INVALID_HDL &&
-			       p_error_get_last_system () == EINTR)
-			;
+			       p_error_get_last_system () == EINTR);
 		}
 	} else
 		shm->shm_created = TRUE;

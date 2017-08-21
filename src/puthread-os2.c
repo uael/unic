@@ -311,8 +311,7 @@ p_uthread_wait_internal (PUThread *thread)
 {
 	APIRET ulrc;
 
-	while ((ulrc = DosWaitThread (&thread->hdl, DCWW_WAIT)) == ERROR_INTERRUPT)
-		;
+	while ((ulrc = DosWaitThread (&thread->hdl, DCWW_WAIT)) == ERROR_INTERRUPT);
 
 	if (P_UNLIKELY (ulrc != NO_ERROR && ulrc != ERROR_INVALID_THREADID))
 		P_ERROR ("PUThread::p_uthread_wait_internal: DosWaitThread() failed");

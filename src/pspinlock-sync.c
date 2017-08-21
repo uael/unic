@@ -41,8 +41,7 @@ p_spinlock_lock (PSpinLock *spinlock)
 	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
-	while ((pboolean) __sync_bool_compare_and_swap (&(spinlock->spin), 0, 1) == FALSE)
-		;
+	while ((pboolean) __sync_bool_compare_and_swap (&(spinlock->spin), 0, 1) == FALSE);
 
 	return TRUE;
 }

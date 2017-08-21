@@ -55,8 +55,7 @@ p_mutex_lock (PMutex *mutex)
 	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;
 
-	while ((ret_status = acquire_sem (mutex->hdl)) == B_INTERRUPTED)
-		;
+	while ((ret_status = acquire_sem (mutex->hdl)) == B_INTERRUPTED);
 
 	if (P_LIKELY (ret_status == B_NO_ERROR))
 		return TRUE;

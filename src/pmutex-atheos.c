@@ -56,8 +56,7 @@ p_mutex_lock (PMutex *mutex)
 	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;
 
-	while ((ret_status = lock_semaphore (mutex->hdl)) == EINTR)
-		;
+	while ((ret_status = lock_semaphore (mutex->hdl)) == EINTR);
 
 	if (P_LIKELY (ret_status == 0))
 		return TRUE;

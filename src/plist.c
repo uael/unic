@@ -36,8 +36,7 @@ p_list_append (PList *list, ppointer data)
 	if (P_UNLIKELY (list == NULL))
 		return item;
 
-	for (cur = list; cur->next != NULL; cur = cur->next)
-		;
+	for (cur = list; cur->next != NULL; cur = cur->next);
 	cur->next = item;
 
 	return list;
@@ -101,8 +100,7 @@ p_list_last (PList *list)
 	if (P_UNLIKELY (list == NULL))
 		return NULL;
 
-	for (cur = list; cur->next != NULL; cur = cur->next)
-		;
+	for (cur = list; cur->next != NULL; cur = cur->next);
 
 	return cur;
 }
@@ -116,8 +114,7 @@ p_list_length (const PList *list)
 	if (P_UNLIKELY (list == NULL))
 		return 0;
 
-	for (cur = list, ret = 1; cur->next != NULL; cur = cur->next, ++ret)
-		;
+	for (cur = list, ret = 1; cur->next != NULL; cur = cur->next, ++ret);
 
 	return ret;
 }

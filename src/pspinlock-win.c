@@ -42,8 +42,7 @@ p_spinlock_lock (PSpinLock *spinlock)
 	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
-	while (p_atomic_int_compare_and_exchange (&(spinlock->spin), 0, 1) == FALSE)
-		;
+	while (p_atomic_int_compare_and_exchange (&(spinlock->spin), 0, 1) == FALSE);
 
 	return TRUE;
 }

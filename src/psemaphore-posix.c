@@ -78,8 +78,7 @@ pp_semaphore_create_handle (PSemaphore *sem,
 					 O_CREAT | O_EXCL,
 					 0660,
 					 sem->init_val)) == P_SEM_INVALID_HDL &&
-		p_error_get_last_system () == EINTR)
-	;
+		p_error_get_last_system () == EINTR);
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		if (p_error_get_last_system () == EEXIST) {
@@ -90,8 +89,7 @@ pp_semaphore_create_handle (PSemaphore *sem,
 							 0,
 							 0,
 							 0)) == P_SEM_INVALID_HDL &&
-				p_error_get_last_system () == EINTR)
-			;
+				p_error_get_last_system () == EINTR);
 		}
 	} else
 		sem->sem_created = TRUE;
@@ -204,8 +202,7 @@ p_semaphore_acquire (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = sem_wait (sem->sem_hdl)) == -1 && p_error_get_last_system () == EINTR)
-		;
+	while ((res = sem_wait (sem->sem_hdl)) == -1 && p_error_get_last_system () == EINTR);
 
 	ret = (res == 0);
 

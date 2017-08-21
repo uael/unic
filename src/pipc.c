@@ -57,8 +57,7 @@ p_ipc_unix_get_temp_dir (void)
 
 	/* Now we need to ensure that we have only the one trailing slash */
 	len = strlen (str);
-	while (*(str + --len) == '/')
-		;
+	while (*(str + --len) == '/');
 	*(str + ++len) = '\0';
 
 	/* len + / + zero symbol */

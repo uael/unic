@@ -39,8 +39,7 @@ pp_library_loader_clean_handle (plibrary_handle handle)
 {
 	APIRET ulrc;
 
-	while ((ulrc = DosFreeModule (handle)) == ERROR_INTERRUPT)
-		;
+	while ((ulrc = DosFreeModule (handle)) == ERROR_INTERRUPT);
 
 	if (P_UNLIKELY (ulrc != NO_ERROR))
 		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: DosFreeModule() failed");
@@ -61,8 +60,7 @@ p_library_loader_new (const pchar *path)
 	while ((ulrc = DosLoadModule ((PSZ) load_err,
 				      sizeof (load_err),
 				      (PSZ) path,
-				      (PHMODULE) &handle)) == ERROR_INTERRUPT)
-		;
+				      (PHMODULE) &handle)) == ERROR_INTERRUPT);
 
 	if (P_UNLIKELY (ulrc != NO_ERROR)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: DosLoadModule() failed");

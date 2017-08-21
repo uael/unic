@@ -57,8 +57,7 @@ p_mutex_lock (PMutex *mutex)
 	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;
 
-	while ((ulrc = DosRequestMutexSem (mutex->hdl, SEM_INDEFINITE_WAIT)) == ERROR_INTERRUPT)
-		;
+	while ((ulrc = DosRequestMutexSem (mutex->hdl, SEM_INDEFINITE_WAIT)) == ERROR_INTERRUPT);
 
 	if (P_LIKELY (ulrc == NO_ERROR))
 		return TRUE;
