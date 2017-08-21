@@ -31,7 +31,7 @@ struct PCondVariable_ {
 	pint	signaled;
 };
 
-P_LIB_API PCondVariable *
+P_API PCondVariable *
 p_cond_variable_new (void)
 {
 	PCondVariable *ret;
@@ -53,7 +53,7 @@ p_cond_variable_new (void)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_cond_variable_free (PCondVariable *cond)
 {
 	if (P_UNLIKELY (cond == NULL))
@@ -65,7 +65,7 @@ p_cond_variable_free (PCondVariable *cond)
 	p_free (cond);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
@@ -101,7 +101,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 	return (ulrc == NO_ERROR) ? TRUE : FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
 	pboolean result = TRUE;
@@ -128,7 +128,7 @@ p_cond_variable_signal (PCondVariable *cond)
 	return result;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
 	if (P_UNLIKELY (cond == NULL))

@@ -36,7 +36,7 @@ extern void p_time_profiler_shutdown	(void);
 static pboolean pp_plibsys_inited = FALSE;
 static pchar pp_plibsys_version[] = PLIBSYS_VERSION_STR;
 
-P_LIB_API void
+P_API void
 p_libsys_init (void)
 {
 	if (P_UNLIKELY (pp_plibsys_inited == TRUE))
@@ -53,7 +53,7 @@ p_libsys_init (void)
 	p_time_profiler_init ();
 }
 
-P_LIB_API void
+P_API void
 p_libsys_init_full (const PMemVTable *vtable)
 {
 	if (p_mem_set_vtable (vtable) == FALSE)
@@ -62,7 +62,7 @@ p_libsys_init_full (const PMemVTable *vtable)
 	p_libsys_init ();
 }
 
-P_LIB_API void
+P_API void
 p_libsys_shutdown (void)
 {
 	if (P_UNLIKELY (pp_plibsys_inited == FALSE))
@@ -79,7 +79,7 @@ p_libsys_shutdown (void)
 	p_mem_shutdown ();
 }
 
-P_LIB_API const pchar *
+P_API const pchar *
 p_libsys_version (void)
 {
 	return (const pchar *) pp_plibsys_version;

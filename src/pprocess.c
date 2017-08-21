@@ -23,7 +23,7 @@
 #  include <unistd.h>
 #endif
 
-P_LIB_API puint32
+P_API puint32
 p_process_get_current_pid (void)
 {
 #ifdef P_OS_WIN
@@ -33,7 +33,7 @@ p_process_get_current_pid (void)
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_process_is_running (puint32 pid)
 {
 #ifdef P_OS_WIN

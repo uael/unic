@@ -73,7 +73,7 @@ pp_shm_buffer_get_used_space (PShmBuffer *buf)
 		return 0;
 }
 
-P_LIB_API PShmBuffer *
+P_API PShmBuffer *
 p_shm_buffer_new (const pchar	*name,
 		  psize		size,
 		  PError	**error)
@@ -119,7 +119,7 @@ p_shm_buffer_new (const pchar	*name,
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_shm_buffer_free (PShmBuffer *buf)
 {
 	if (P_UNLIKELY (buf == NULL))
@@ -129,7 +129,7 @@ p_shm_buffer_free (PShmBuffer *buf)
 	p_free (buf);
 }
 
-P_LIB_API void
+P_API void
 p_shm_buffer_take_ownership (PShmBuffer *buf)
 {
 	if (P_UNLIKELY (buf == NULL))
@@ -138,7 +138,7 @@ p_shm_buffer_take_ownership (PShmBuffer *buf)
 	p_shm_take_ownership (buf->shm);
 }
 
-P_LIB_API pint
+P_API pint
 p_shm_buffer_read (PShmBuffer	*buf,
 		   ppointer	storage,
 		   psize	len,
@@ -195,7 +195,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	return (pint) to_copy;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_shm_buffer_write (PShmBuffer	*buf,
 		    ppointer	data,
 		    psize	len,
@@ -248,7 +248,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	return (pssize) len;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_shm_buffer_get_free_space (PShmBuffer	*buf,
 			     PError	**error)
 {
@@ -273,7 +273,7 @@ p_shm_buffer_get_free_space (PShmBuffer	*buf,
 	return (pssize) space;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_shm_buffer_get_used_space (PShmBuffer	*buf,
 			     PError	**error)
 {
@@ -298,7 +298,7 @@ p_shm_buffer_get_used_space (PShmBuffer	*buf,
 	return (pssize) space;
 }
 
-P_LIB_API void
+P_API void
 p_shm_buffer_clear (PShmBuffer *buf)
 {
 	ppointer	addr;

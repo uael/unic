@@ -32,7 +32,7 @@ struct PDir_ {
 	pchar			*orig_path;
 };
 
-P_LIB_API PDir *
+P_API PDir *
 p_dir_new (const pchar	*path,
 	   PError	**error)
 {
@@ -91,7 +91,7 @@ p_dir_new (const pchar	*path,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_create (const pchar	*path,
 	      pint		mode,
 	      PError		**error)
@@ -119,7 +119,7 @@ p_dir_create (const pchar	*path,
 		return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_remove (const pchar	*path,
 	      PError		**error)
 {
@@ -149,7 +149,7 @@ p_dir_remove (const pchar	*path,
 		return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_is_exists (const pchar *path)
 {
 	DWORD	dwAttrs;
@@ -162,7 +162,7 @@ p_dir_is_exists (const pchar *path)
 	return (dwAttrs != INVALID_FILE_ATTRIBUTES) && (dwAttrs & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_dir_get_path (const PDir *dir)
 {
 	if (P_UNLIKELY (dir == NULL))
@@ -171,7 +171,7 @@ p_dir_get_path (const PDir *dir)
 	return p_strdup (dir->orig_path);
 }
 
-P_LIB_API PDirEntry *
+P_API PDirEntry *
 p_dir_get_next_entry (PDir	*dir,
 		      PError	**error)
 {
@@ -230,7 +230,7 @@ p_dir_get_next_entry (PDir	*dir,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_rewind (PDir	*dir,
 	      PError	**error)
 {
@@ -267,7 +267,7 @@ p_dir_rewind (PDir	*dir,
 	}
 }
 
-P_LIB_API void
+P_API void
 p_dir_free (PDir *dir)
 {
 	if (dir == NULL)

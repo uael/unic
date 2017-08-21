@@ -24,7 +24,7 @@
 
 #define P_STR_MAX_EXPON		308
 
-P_LIB_API pchar *
+P_API pchar *
 p_strdup (const pchar *str)
 {
 	pchar	*ret;
@@ -43,7 +43,7 @@ p_strdup (const pchar *str)
 	return ret;
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_strchomp (const pchar *str)
 {
 	pssize		pos_start, pos_end;
@@ -83,7 +83,7 @@ p_strchomp (const pchar *str)
 	return ret;
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_strtok (pchar *str, const pchar *delim, pchar **buf)
 {
 	if (P_UNLIKELY (delim == NULL))
@@ -111,7 +111,7 @@ p_strtok (pchar *str, const pchar *delim, pchar **buf)
 #endif
 }
 
-P_LIB_API double
+P_API double
 p_strtod (const pchar *str)
 {
 	double	sign;

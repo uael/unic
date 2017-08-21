@@ -64,7 +64,7 @@ p_mem_shutdown (void)
 	p_mem_table_inited = FALSE;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_malloc (psize n_bytes)
 {
 	if (P_LIKELY (n_bytes > 0))
@@ -73,7 +73,7 @@ p_malloc (psize n_bytes)
 		return NULL;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_malloc0 (psize n_bytes)
 {
 	ppointer ret;
@@ -88,7 +88,7 @@ p_malloc0 (psize n_bytes)
 		return NULL;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_realloc (ppointer mem, psize n_bytes)
 {
 	if (P_UNLIKELY (n_bytes == 0))
@@ -100,14 +100,14 @@ p_realloc (ppointer mem, psize n_bytes)
 		return p_mem_table.realloc (mem, n_bytes);
 }
 
-P_LIB_API void
+P_API void
 p_free (ppointer mem)
 {
 	if (P_LIKELY (mem != NULL))
 		p_mem_table.free (mem);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mem_set_vtable (const PMemVTable *table)
 {
 	if (P_UNLIKELY (table == NULL))
@@ -125,7 +125,7 @@ p_mem_set_vtable (const PMemVTable *table)
 	return TRUE;
 }
 
-P_LIB_API void
+P_API void
 p_mem_restore_vtable (void)
 {
 	p_mem_table.malloc  = (ppointer (*)(psize)) malloc;
@@ -135,7 +135,7 @@ p_mem_restore_vtable (void)
 	p_mem_table_inited = TRUE;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_mem_mmap (psize	n_bytes,
 	    PError	**error)
 {
@@ -274,7 +274,7 @@ p_mem_mmap (psize	n_bytes,
 	return addr;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mem_munmap (ppointer	mem,
 	      psize	n_bytes,
 	      PError	**error)

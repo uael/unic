@@ -105,7 +105,7 @@ typedef struct PShm_ PShm;
  * otherwise.
  * @since 0.0.1
  */
-P_LIB_API PShm *	p_shm_new		(const pchar		*name,
+P_API PShm *	p_shm_new		(const pchar		*name,
 						 psize			size,
 						 PShmAccessPerms	perms,
 						 PError			**error);
@@ -126,7 +126,7 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
  * size, the data). If not, take ownership of the shared memory object and
  * remove it with the p_shm_free() call. After that, create it again.
  */
-P_LIB_API void		p_shm_take_ownership	(PShm			*shm);
+P_API void		p_shm_take_ownership	(PShm			*shm);
 
 /**
  * @brief Frees #PShm object.
@@ -136,7 +136,7 @@ P_LIB_API void		p_shm_take_ownership	(PShm			*shm);
  * It doesn't unlock a given shared memory segment, be careful to not to make a
  * deadlock or a segfault while freeing the memory segment which is under usage.
  */
-P_LIB_API void		p_shm_free		(PShm			*shm);
+P_API void		p_shm_free		(PShm			*shm);
 
 /**
  * @brief Locks #PShm object for usage.
@@ -148,7 +148,7 @@ P_LIB_API void		p_shm_free		(PShm			*shm);
  * If the object is already locked then the thread will be suspended until the
  * object becomes unlocked.
  */
-P_LIB_API pboolean	p_shm_lock		(PShm			*shm,
+P_API pboolean	p_shm_lock		(PShm			*shm,
 						 PError			**error);
 
 /**
@@ -158,7 +158,7 @@ P_LIB_API pboolean	p_shm_lock		(PShm			*shm,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_shm_unlock		(PShm			*shm,
+P_API pboolean	p_shm_unlock		(PShm			*shm,
 						 PError			**error);
 
 /**
@@ -167,7 +167,7 @@ P_LIB_API pboolean	p_shm_unlock		(PShm			*shm,
  * @return Pointer to the starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_shm_get_address	(const PShm		*shm);
+P_API ppointer	p_shm_get_address	(const PShm		*shm);
 
 /**
  * @brief Gets the size of a #PShm memory segment.
@@ -178,6 +178,6 @@ P_LIB_API ppointer	p_shm_get_address	(const PShm		*shm);
  * Note that the returned size would be a slightly larger than specified during
  * the p_shm_new() call due to service information stored inside.
  */
-P_LIB_API psize		p_shm_get_size		(const PShm		*shm);
+P_API psize		p_shm_get_size		(const PShm		*shm);
 
 #endif /* PLIBSYS_HEADER_PSHM_H */

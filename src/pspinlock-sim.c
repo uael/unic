@@ -23,7 +23,7 @@ struct PSpinLock_ {
 	PMutex *mutex;
 };
 
-P_LIB_API PSpinLock *
+P_API PSpinLock *
 p_spinlock_new (void)
 {
 	PSpinLock *ret;
@@ -42,7 +42,7 @@ p_spinlock_new (void)
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_spinlock_lock (PSpinLock *spinlock)
 {
 	if (P_UNLIKELY (spinlock == NULL))
@@ -51,7 +51,7 @@ p_spinlock_lock (PSpinLock *spinlock)
 	return p_mutex_lock (spinlock->mutex);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_spinlock_trylock (PSpinLock *spinlock)
 {
 	if (spinlock == NULL)
@@ -60,7 +60,7 @@ p_spinlock_trylock (PSpinLock *spinlock)
 	return p_mutex_trylock (spinlock->mutex);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_spinlock_unlock (PSpinLock *spinlock)
 {
 	if (P_UNLIKELY (spinlock == NULL))
@@ -69,7 +69,7 @@ p_spinlock_unlock (PSpinLock *spinlock)
 	return p_mutex_unlock (spinlock->mutex);
 }
 
-P_LIB_API void
+P_API void
 p_spinlock_free (PSpinLock *spinlock)
 {
 	if (P_UNLIKELY (spinlock == NULL))

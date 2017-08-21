@@ -23,7 +23,7 @@ struct PDir_ {
 	pint	hdl;
 };
 
-P_LIB_API PDir *
+P_API PDir *
 p_dir_new (const pchar	*path,
 	   PError	**error)
 {
@@ -37,7 +37,7 @@ p_dir_new (const pchar	*path,
 	return NULL;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_create (const pchar	*path,
 	      pint		mode,
 	      PError		**error)
@@ -53,7 +53,7 @@ p_dir_create (const pchar	*path,
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_remove (const pchar	*path,
 	      PError		**error)
 {
@@ -67,21 +67,21 @@ p_dir_remove (const pchar	*path,
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_is_exists (const pchar *path)
 {
 	P_UNUSED (path);
 	return FALSE;
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_dir_get_path (const PDir *dir)
 {
 	P_UNUSED (dir);
 	return NULL;
 }
 
-P_LIB_API PDirEntry *
+P_API PDirEntry *
 p_dir_get_next_entry (PDir	*dir,
 		      PError	**error)
 {
@@ -95,7 +95,7 @@ p_dir_get_next_entry (PDir	*dir,
 	return NULL;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_dir_rewind (PDir	*dir,
 	      PError	**error)
 {
@@ -109,7 +109,7 @@ p_dir_rewind (PDir	*dir,
 	return FALSE;
 }
 
-P_LIB_API void
+P_API void
 p_dir_free (PDir *dir)
 {
 	P_UNUSED (dir);

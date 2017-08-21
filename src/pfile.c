@@ -23,7 +23,7 @@
 #  include <unistd.h>
 #endif
 
-P_LIB_API pboolean
+P_API pboolean
 p_file_is_exists (const pchar *file)
 {
 #ifdef P_OS_WIN
@@ -42,7 +42,7 @@ p_file_is_exists (const pchar *file)
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_file_remove (const pchar	*file,
 	       PError		**error)
 {

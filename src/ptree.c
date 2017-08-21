@@ -51,14 +51,14 @@ struct PTree_ {
 	pint			nnodes;
 };
 
-P_LIB_API PTree *
+P_API PTree *
 p_tree_new (PTreeType		type,
 	    PCompareFunc	func)
 {
 	return p_tree_new_full (type, (PCompareDataFunc) func, NULL, NULL, NULL);
 }
 
-P_LIB_API PTree *
+P_API PTree *
 p_tree_new_with_data (PTreeType		type,
 		      PCompareDataFunc	func,
 		      ppointer		data)
@@ -66,7 +66,7 @@ p_tree_new_with_data (PTreeType		type,
 	return p_tree_new_full (type, func, data, NULL, NULL);
 }
 
-P_LIB_API PTree *
+P_API PTree *
 p_tree_new_full (PTreeType		type,
 		 PCompareDataFunc	func,
 		 ppointer		data,
@@ -113,7 +113,7 @@ p_tree_new_full (PTreeType		type,
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_tree_insert (PTree	*tree,
 	       ppointer	key,
 	       ppointer	value)
@@ -135,7 +135,7 @@ p_tree_insert (PTree	*tree,
 		++tree->nnodes;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_tree_remove (PTree		*tree,
 	       pconstpointer	key)
 {
@@ -156,7 +156,7 @@ p_tree_remove (PTree		*tree,
 	return result;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_tree_lookup (PTree		*tree,
 	       pconstpointer	key)
 {
@@ -182,7 +182,7 @@ p_tree_lookup (PTree		*tree,
 	return NULL;
 }
 
-P_LIB_API void
+P_API void
 p_tree_foreach (PTree		*tree,
 		PTraverseFunc	traverse_func,
 		ppointer	user_data)
@@ -239,7 +239,7 @@ p_tree_foreach (PTree		*tree,
 	}
 }
 
-P_LIB_API void
+P_API void
 p_tree_clear (PTree *tree)
 {
 	PTreeBaseNode	*cur_node;
@@ -281,7 +281,7 @@ p_tree_clear (PTree *tree)
 	tree->root = NULL;
 }
 
-P_LIB_API PTreeType
+P_API PTreeType
 p_tree_get_type (const PTree *tree)
 {
 	if (P_UNLIKELY (tree == NULL))
@@ -290,7 +290,7 @@ p_tree_get_type (const PTree *tree)
 	return tree->type;
 }
 
-P_LIB_API pint
+P_API pint
 p_tree_get_nnodes (const PTree *tree)
 {
 	if (P_UNLIKELY (tree == NULL))
@@ -299,7 +299,7 @@ p_tree_get_nnodes (const PTree *tree)
 	return tree->nnodes;
 }
 
-P_LIB_API void
+P_API void
 p_tree_free (PTree *tree)
 {
 	p_tree_clear (tree);

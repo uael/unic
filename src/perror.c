@@ -643,7 +643,7 @@ p_error_get_last_ipc (void)
 	return p_error_get_ipc_from_system (p_error_get_last_system ());
 }
 
-P_LIB_API PError *
+P_API PError *
 p_error_new (void)
 {
 	PError *ret;
@@ -654,7 +654,7 @@ p_error_new (void)
 	return ret;
 }
 
-P_LIB_API PError *
+P_API PError *
 p_error_new_literal (pint		code,
 		     pint		native_code,
 		     const pchar	*message)
@@ -671,7 +671,7 @@ p_error_new_literal (pint		code,
 	return ret;
 }
 
-P_LIB_API const pchar *
+P_API const pchar *
 p_error_get_message (PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
@@ -680,7 +680,7 @@ p_error_get_message (PError *error)
 	return error->message;
 }
 
-P_LIB_API pint
+P_API pint
 p_error_get_code (PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
@@ -689,7 +689,7 @@ p_error_get_code (PError *error)
 	return error->code;
 }
 
-P_LIB_API pint
+P_API pint
 p_error_get_native_code	(PError	*error)
 {
 	if (P_UNLIKELY (error == NULL))
@@ -698,7 +698,7 @@ p_error_get_native_code	(PError	*error)
 	return error->native_code;
 }
 
-P_LIB_API PErrorDomain
+P_API PErrorDomain
 p_error_get_domain (PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
@@ -712,7 +712,7 @@ p_error_get_domain (PError *error)
 		return P_ERROR_DOMAIN_NONE;
 }
 
-P_LIB_API PError *
+P_API PError *
 p_error_copy (PError *error)
 {
 	PError *ret;
@@ -728,7 +728,7 @@ p_error_copy (PError *error)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_error_set_error (PError	*error,
 		   pint		code,
 		   pint		native_code,
@@ -745,7 +745,7 @@ p_error_set_error (PError	*error,
 	error->message     = p_strdup (message);
 }
 
-P_LIB_API void
+P_API void
 p_error_set_error_p (PError		**error,
 		     pint		code,
 		     pint		native_code,
@@ -757,7 +757,7 @@ p_error_set_error_p (PError		**error,
 	*error = p_error_new_literal (code, native_code, message);
 }
 
-P_LIB_API void
+P_API void
 p_error_set_code (PError	*error,
 		  pint		code)
 {
@@ -767,7 +767,7 @@ p_error_set_code (PError	*error,
 	error->code = code;
 }
 
-P_LIB_API void
+P_API void
 p_error_set_native_code	(PError	*error,
 			 pint	native_code)
 {
@@ -777,7 +777,7 @@ p_error_set_native_code	(PError	*error,
 	error->native_code = native_code;
 }
 
-P_LIB_API void
+P_API void
 p_error_set_message (PError		*error,
 		     const pchar	*message)
 {
@@ -790,7 +790,7 @@ p_error_set_message (PError		*error,
 	error->message = p_strdup (message);
 }
 
-P_LIB_API void
+P_API void
 p_error_clear (PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
@@ -804,7 +804,7 @@ p_error_clear (PError *error)
 	error->native_code = 0;
 }
 
-P_LIB_API void
+P_API void
 p_error_free (PError	*error)
 {
 	if (P_UNLIKELY (error == NULL))
@@ -816,7 +816,7 @@ p_error_free (PError	*error)
 	p_free (error);
 }
 
-P_LIB_API pint
+P_API pint
 p_error_get_last_system (void)
 {
 #ifdef P_OS_WIN
@@ -835,7 +835,7 @@ p_error_get_last_system (void)
 #endif
 }
 
-P_LIB_API pint
+P_API pint
 p_error_get_last_net (void)
 {
 #if defined (P_OS_WIN)
@@ -847,7 +847,7 @@ p_error_get_last_net (void)
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_error_set_last_system (pint code)
 {
 #ifdef P_OS_WIN
@@ -857,7 +857,7 @@ p_error_set_last_system (pint code)
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_error_set_last_net (pint code)
 {
 #if defined (P_OS_WIN)

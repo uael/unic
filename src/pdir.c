@@ -18,7 +18,7 @@
 #include "pmem.h"
 #include "pdir.h"
 
-P_LIB_API void
+P_API void
 p_dir_entry_free (PDirEntry *entry)
 {
 	if (P_UNLIKELY (entry == NULL))

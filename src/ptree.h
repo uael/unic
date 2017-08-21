@@ -79,7 +79,7 @@ typedef enum PTreeType_ {
  *
  * The caller takes ownership of all the keys and the values passed to the tree.
  */
-P_LIB_API PTree *	p_tree_new		(PTreeType		type,
+P_API PTree *	p_tree_new		(PTreeType		type,
 						 PCompareFunc		func);
 
 /**
@@ -92,7 +92,7 @@ P_LIB_API PTree *	p_tree_new		(PTreeType		type,
  *
  * The caller takes ownership of all the keys and the values passed to the tree.
  */
-P_LIB_API PTree *	p_tree_new_with_data	(PTreeType		type,
+P_API PTree *	p_tree_new_with_data	(PTreeType		type,
 						 PCompareDataFunc	func,
 						 ppointer		data);
 
@@ -111,7 +111,7 @@ P_LIB_API PTree *	p_tree_new_with_data	(PTreeType		type,
  * Upon every node destruction the corresponding key and value functions would
  * be called.
  */
-P_LIB_API PTree *	p_tree_new_full		(PTreeType		type,
+P_API PTree *	p_tree_new_full		(PTreeType		type,
 						 PCompareDataFunc	func,
 						 ppointer		data,
 						 PDestroyFunc		key_destroy,
@@ -129,7 +129,7 @@ P_LIB_API PTree *	p_tree_new_full		(PTreeType		type,
  * key. If a value destroy function was provided it would be called on the old
  * value.
  */
-P_LIB_API void		p_tree_insert		(PTree			*tree,
+P_API void		p_tree_insert		(PTree			*tree,
 						 ppointer		key,
 						 ppointer		value);
 
@@ -143,7 +143,7 @@ P_LIB_API void		p_tree_insert		(PTree			*tree,
  * If a key destroy function was provided it would be called on the key. If a
  * value destroy function was provided it would be called on the old value.
  */
-P_LIB_API pboolean	p_tree_remove		(PTree			*tree,
+P_API pboolean	p_tree_remove		(PTree			*tree,
 						 pconstpointer		key);
 
 /**
@@ -153,7 +153,7 @@ P_LIB_API pboolean	p_tree_remove		(PTree			*tree,
  * @return Value for the given @a key in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_tree_lookup		(PTree			*tree,
+P_API ppointer	p_tree_lookup		(PTree			*tree,
 						 pconstpointer		key);
 
 /**
@@ -169,7 +169,7 @@ P_LIB_API ppointer	p_tree_lookup		(PTree			*tree,
  * can be modified along the traversing process, so keep it in mind for
  * concurrent access.
  */
-P_LIB_API void		p_tree_foreach		(PTree			*tree,
+P_API void		p_tree_foreach		(PTree			*tree,
 						 PTraverseFunc		traverse_func,
 						 ppointer		user_data);
 
@@ -183,7 +183,7 @@ P_LIB_API void		p_tree_foreach		(PTree			*tree,
  * All the keys will be deleted. Key and value destroy functions would be called
  * on every node if any of them was provided.
  */
-P_LIB_API void		p_tree_clear		(PTree			*tree);
+P_API void		p_tree_clear		(PTree			*tree);
 
 /**
  * @brief Gets a tree algorithm type.
@@ -191,7 +191,7 @@ P_LIB_API void		p_tree_clear		(PTree			*tree);
  * @return Tree internal organization algorithm used for a given object.
  * @since 0.0.1
  */
-P_LIB_API PTreeType	p_tree_get_type		(const PTree		*tree);
+P_API PTreeType	p_tree_get_type		(const PTree		*tree);
 
 /**
  * @brief Gets node count.
@@ -201,7 +201,7 @@ P_LIB_API PTreeType	p_tree_get_type		(const PTree		*tree);
  *
  * If the tree is empty or an invalid pointer is given it returns 0.
  */
-P_LIB_API pint		p_tree_get_nnodes	(const PTree		*tree);
+P_API pint		p_tree_get_nnodes	(const PTree		*tree);
 
 /**
  * @brief Frees a previously initialized tree object.
@@ -213,6 +213,6 @@ P_LIB_API pint		p_tree_get_nnodes	(const PTree		*tree);
  * All the keys will be deleted. Key and value destroy functions would be called
  * on every node if any of them was provided.
  */
-P_LIB_API void		p_tree_free		(PTree			*tree);
+P_API void		p_tree_free		(PTree			*tree);
 
 #endif /* PLIBSYS_HEADER_PTREE_H */

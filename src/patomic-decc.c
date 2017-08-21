@@ -45,14 +45,14 @@
 			    (volatile void *) (atomic_dst))
 #endif
 
-P_LIB_API pint
+P_API pint
 p_atomic_int_get (const volatile pint *atomic)
 {
 	__MB ();
 	return (pint) *atomic;
 }
 
-P_LIB_API void
+P_API void
 p_atomic_int_set (volatile pint	*atomic,
 		  pint		val)
 {
@@ -60,7 +60,7 @@ p_atomic_int_set (volatile pint	*atomic,
 	__MB ();
 }
 
-P_LIB_API void
+P_API void
 p_atomic_int_inc (volatile pint *atomic)
 {
 	__MB ();
@@ -68,7 +68,7 @@ p_atomic_int_inc (volatile pint *atomic)
 	__MB ();
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_int_dec_and_test (volatile pint *atomic)
 {
 	pboolean result;
@@ -80,7 +80,7 @@ p_atomic_int_dec_and_test (volatile pint *atomic)
 	return result;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 				   pint			oldval,
 				   pint			newval)
@@ -94,7 +94,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 	return result;
 }
 
-P_LIB_API pint
+P_API pint
 p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
@@ -107,7 +107,7 @@ p_atomic_int_add (volatile pint	*atomic,
 	return result;
 }
 
-P_LIB_API puint
+P_API puint
 p_atomic_int_and (volatile puint	*atomic,
 		  puint			val)
 {
@@ -120,7 +120,7 @@ p_atomic_int_and (volatile puint	*atomic,
 	return result;
 }
 
-P_LIB_API puint
+P_API puint
 p_atomic_int_or (volatile puint	*atomic,
 		 puint		val)
 {
@@ -133,7 +133,7 @@ p_atomic_int_or (volatile puint	*atomic,
 	return result;
 }
 
-P_LIB_API puint
+P_API puint
 p_atomic_int_xor (volatile puint	*atomic,
 		  puint			val)
 {
@@ -149,14 +149,14 @@ p_atomic_int_xor (volatile puint	*atomic,
 	return i;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_atomic_pointer_get (const volatile void *atomic)
 {
 	__MB ();
 	return (ppointer) (* ((const volatile psize *) atomic));
 }
 
-P_LIB_API void
+P_API void
 p_atomic_pointer_set (volatile void	*atomic,
 		      ppointer		val)
 {
@@ -168,7 +168,7 @@ p_atomic_pointer_set (volatile void	*atomic,
 	__MB ();
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 				       ppointer		oldval,
 				       ppointer		newval)
@@ -186,7 +186,7 @@ p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 	return result;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_atomic_pointer_add (volatile void	*atomic,
 		      pssize		val)
 {
@@ -203,7 +203,7 @@ p_atomic_pointer_add (volatile void	*atomic,
 	return result;
 }
 
-P_LIB_API psize
+P_API psize
 p_atomic_pointer_and (volatile void	*atomic,
 		      psize		val)
 {
@@ -220,7 +220,7 @@ p_atomic_pointer_and (volatile void	*atomic,
 	return result;
 }
 
-P_LIB_API psize
+P_API psize
 p_atomic_pointer_or (volatile void	*atomic,
 		     psize		val)
 {
@@ -237,7 +237,7 @@ p_atomic_pointer_or (volatile void	*atomic,
 	return result;
 }
 
-P_LIB_API psize
+P_API psize
 p_atomic_pointer_xor (volatile void	*atomic,
 		      psize		val)
 {
@@ -261,7 +261,7 @@ p_atomic_pointer_xor (volatile void	*atomic,
 	return (psize) i;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_is_lock_free (void)
 {
 	return TRUE;

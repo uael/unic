@@ -96,7 +96,7 @@ typedef enum PCryptoHashType_ {
  * otherwise.
  * @since 0.0.1
  */
-P_LIB_API PCryptoHash *		p_crypto_hash_new		(PCryptoHashType	type);
+P_API PCryptoHash *		p_crypto_hash_new		(PCryptoHashType	type);
 
 /**
  * @brief Adds a new chunk of data for hashing.
@@ -107,7 +107,7 @@ P_LIB_API PCryptoHash *		p_crypto_hash_new		(PCryptoHashType	type);
  * the hash couldn't be updated anymore as it becomes close.
  * @since 0.0.1
  */
-P_LIB_API void			p_crypto_hash_update		(PCryptoHash		*hash,
+P_API void			p_crypto_hash_update		(PCryptoHash		*hash,
 								 const puchar		*data,
 								 psize			len);
 
@@ -120,7 +120,7 @@ P_LIB_API void			p_crypto_hash_update		(PCryptoHash		*hash,
  * added data will be lost. A hash function type couldn't be changed during or
  * after the resets.
  */
-P_LIB_API void			p_crypto_hash_reset		(PCryptoHash		*hash);
+P_API void			p_crypto_hash_reset		(PCryptoHash		*hash);
 
 /**
  * @brief Gets a hash in a hexidemical representation.
@@ -132,7 +132,7 @@ P_LIB_API void			p_crypto_hash_reset		(PCryptoHash		*hash);
  * updates.
  * @since 0.0.1
  */
-P_LIB_API pchar *		p_crypto_hash_get_string	(PCryptoHash		*hash);
+P_API pchar *		p_crypto_hash_get_string	(PCryptoHash		*hash);
 
 /**
  * @brief Gets a hash in a raw representation.
@@ -144,7 +144,7 @@ P_LIB_API pchar *		p_crypto_hash_get_string	(PCryptoHash		*hash);
  * further updates.
  * @since 0.0.1
  */
-P_LIB_API void			p_crypto_hash_get_digest	(PCryptoHash		*hash,
+P_API void			p_crypto_hash_get_digest	(PCryptoHash		*hash,
 								 puchar			*buf,
 								 psize			*len);
 
@@ -156,7 +156,7 @@ P_LIB_API void			p_crypto_hash_get_digest	(PCryptoHash		*hash,
  * @note This length doesn't match a string hash representation.
  * @since 0.0.1
  */
-P_LIB_API pssize		p_crypto_hash_get_length	(const PCryptoHash	*hash);
+P_API pssize		p_crypto_hash_get_length	(const PCryptoHash	*hash);
 
 /**
  * @brief Gets a hash function type.
@@ -164,13 +164,13 @@ P_LIB_API pssize		p_crypto_hash_get_length	(const PCryptoHash	*hash);
  * @return Hash function type used in the given context.
  * @since 0.0.1
  */
-P_LIB_API PCryptoHashType	p_crypto_hash_get_type		(const PCryptoHash	*hash);
+P_API PCryptoHashType	p_crypto_hash_get_type		(const PCryptoHash	*hash);
 
 /**
  * @brief Frees a previously initialized hash context.
  * @param hash #PCryptoHash context to free.
  * @since 0.0.1
  */
-P_LIB_API void			p_crypto_hash_free		(PCryptoHash		*hash);
+P_API void			p_crypto_hash_free		(PCryptoHash		*hash);
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASH_H */

@@ -73,7 +73,7 @@ pp_semaphore_clean_handle (PSemaphore *sem)
 	sem->sem_hdl = P_SEM_INVALID_HDL;
 }
 
-P_LIB_API PSemaphore *
+P_API PSemaphore *
 p_semaphore_new (const pchar		*name,
 		 pint			init_val,
 		 PSemaphoreAccessMode	mode,
@@ -125,13 +125,13 @@ p_semaphore_new (const pchar		*name,
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_semaphore_take_ownership (PSemaphore *sem)
 {
 	P_UNUSED (sem);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_semaphore_acquire (PSemaphore *sem,
 		     PError	**error)
 {
@@ -156,7 +156,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_semaphore_release (PSemaphore *sem,
 		     PError	**error)
 {
@@ -181,7 +181,7 @@ p_semaphore_release (PSemaphore *sem,
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_semaphore_free (PSemaphore *sem)
 {
 	if (P_UNLIKELY (sem == NULL))

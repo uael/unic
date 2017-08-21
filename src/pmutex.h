@@ -69,7 +69,7 @@ typedef struct PMutex_ PMutex;
  * @return Pointer to a newly created #PMutex object.
  * @since 0.0.1
  */
-P_LIB_API PMutex *	p_mutex_new	(void);
+P_API PMutex *	p_mutex_new	(void);
 
 /**
  * @brief Locks a mutex.
@@ -82,7 +82,7 @@ P_LIB_API PMutex *	p_mutex_new	(void);
  * Forces the calling thread to sleep until @a mutex becomes available for
  * locking.
  */
-P_LIB_API pboolean	p_mutex_lock	(PMutex *mutex);
+P_API pboolean	p_mutex_lock	(PMutex *mutex);
 
 /**
  * @brief Tries to lock a mutex immediately.
@@ -95,7 +95,7 @@ P_LIB_API pboolean	p_mutex_lock	(PMutex *mutex);
  * Tries to lock @a mutex and returns immediately if it is not available for
  * locking.
  */
-P_LIB_API pboolean	p_mutex_trylock	(PMutex *mutex);
+P_API pboolean	p_mutex_trylock	(PMutex *mutex);
 
 /**
  * @brief Releases a locked mutex.
@@ -110,7 +110,7 @@ P_LIB_API pboolean	p_mutex_trylock	(PMutex *mutex);
  * It's implementation dependent whether only the same thread can lock and
  * unlock the same mutex.
  */
-P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
+P_API pboolean	p_mutex_unlock	(PMutex *mutex);
 
 /**
  * @brief Frees #PMutex object.
@@ -119,6 +119,6 @@ P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
  * @warning It doesn't unlock @a mutex before freeing memory, so you should do
  * it manually.
  */
-P_LIB_API void		p_mutex_free	(PMutex *mutex);
+P_API void		p_mutex_free	(PMutex *mutex);
 
 #endif /* PLIBSYS_HEADER_PMUTEX_H */

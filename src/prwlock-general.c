@@ -35,7 +35,7 @@ struct PRWLock_ {
 	puint32		waiting_threads;
 };
 
-P_LIB_API PRWLock *
+P_API PRWLock *
 p_rwlock_new (void)
 {
 	PRWLock *ret;
@@ -66,7 +66,7 @@ p_rwlock_new (void)
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_reader_lock (PRWLock *lock)
 {
 	pboolean wait_ok;
@@ -110,7 +110,7 @@ p_rwlock_reader_lock (PRWLock *lock)
 	return wait_ok;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_reader_trylock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -139,7 +139,7 @@ p_rwlock_reader_trylock (PRWLock *lock)
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_reader_unlock (PRWLock *lock)
 {
 	puint32		reader_count;
@@ -180,7 +180,7 @@ p_rwlock_reader_unlock (PRWLock *lock)
 	return signal_ok;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_writer_lock (PRWLock *lock)
 {
 	pboolean wait_ok;
@@ -223,7 +223,7 @@ p_rwlock_writer_lock (PRWLock *lock)
 	return wait_ok;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_writer_trylock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -251,7 +251,7 @@ p_rwlock_writer_trylock (PRWLock *lock)
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_writer_unlock (PRWLock *lock)
 {
 	pboolean signal_ok;
@@ -288,7 +288,7 @@ p_rwlock_writer_unlock (PRWLock *lock)
 	return signal_ok;
 }
 
-P_LIB_API void
+P_API void
 p_rwlock_free (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))

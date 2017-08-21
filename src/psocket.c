@@ -334,7 +334,7 @@ p_socket_close_once (void)
 #endif
 }
 
-P_LIB_API PSocket *
+P_API PSocket *
 p_socket_new_from_fd (pint	fd,
 		      PError	**error)
 {
@@ -408,7 +408,7 @@ p_socket_new_from_fd (pint	fd,
 	return ret;
 }
 
-P_LIB_API PSocket *
+P_API PSocket *
 p_socket_new (PSocketFamily	family,
 	      PSocketType	type,
 	      PSocketProtocol	protocol,
@@ -538,7 +538,7 @@ p_socket_new (PSocketFamily	family,
 	return ret;
 }
 
-P_LIB_API pint
+P_API pint
 p_socket_get_fd (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -547,7 +547,7 @@ p_socket_get_fd (const PSocket *socket)
 	return socket->fd;
 }
 
-P_LIB_API PSocketFamily
+P_API PSocketFamily
 p_socket_get_family (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -556,7 +556,7 @@ p_socket_get_family (const PSocket *socket)
 	return socket->family;
 }
 
-P_LIB_API PSocketType
+P_API PSocketType
 p_socket_get_type (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -565,7 +565,7 @@ p_socket_get_type (const PSocket *socket)
 	return socket->type;
 }
 
-P_LIB_API PSocketProtocol
+P_API PSocketProtocol
 p_socket_get_protocol (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -574,7 +574,7 @@ p_socket_get_protocol (const PSocket *socket)
 	return socket->protocol;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_get_keepalive (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -583,7 +583,7 @@ p_socket_get_keepalive (const PSocket *socket)
 	return socket->keepalive;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_get_blocking (PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -592,7 +592,7 @@ p_socket_get_blocking (PSocket *socket)
 	return socket->blocking;
 }
 
-P_LIB_API int
+P_API int
 p_socket_get_listen_backlog (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -601,7 +601,7 @@ p_socket_get_listen_backlog (const PSocket *socket)
 	return socket->listen_backlog;
 }
 
-P_LIB_API pint
+P_API pint
 p_socket_get_timeout (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -610,7 +610,7 @@ p_socket_get_timeout (const PSocket *socket)
 	return socket->timeout;
 }
 
-P_LIB_API PSocketAddress *
+P_API PSocketAddress *
 p_socket_get_local_address (const PSocket	*socket,
 			    PError		**error)
 {
@@ -647,7 +647,7 @@ p_socket_get_local_address (const PSocket	*socket,
 	return ret;
 }
 
-P_LIB_API PSocketAddress *
+P_API PSocketAddress *
 p_socket_get_remote_address (const PSocket	*socket,
 			     PError		**error)
 {
@@ -691,7 +691,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_is_connected (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -700,7 +700,7 @@ p_socket_is_connected (const PSocket *socket)
 	return socket->connected;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_is_closed (const PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -709,7 +709,7 @@ p_socket_is_closed (const PSocket *socket)
 	return socket->closed;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_check_connect_result (PSocket  *socket,
 			       PError	**error)
 {
@@ -745,7 +745,7 @@ p_socket_check_connect_result (PSocket  *socket,
 	return (val == 0);
 }
 
-P_LIB_API void
+P_API void
 p_socket_set_keepalive (PSocket		*socket,
 			pboolean	keepalive)
 {
@@ -774,7 +774,7 @@ p_socket_set_keepalive (PSocket		*socket,
 	socket->keepalive = !! (pint) keepalive;
 }
 
-P_LIB_API void
+P_API void
 p_socket_set_blocking (PSocket	*socket,
 		       pboolean	blocking)
 {
@@ -784,7 +784,7 @@ p_socket_set_blocking (PSocket	*socket,
 	socket->blocking = !! blocking;
 }
 
-P_LIB_API void
+P_API void
 p_socket_set_listen_backlog (PSocket	*socket,
 			     pint	backlog)
 {
@@ -794,7 +794,7 @@ p_socket_set_listen_backlog (PSocket	*socket,
 	socket->listen_backlog = backlog;
 }
 
-P_LIB_API void
+P_API void
 p_socket_set_timeout (PSocket	*socket,
 		      pint	timeout)
 {
@@ -807,7 +807,7 @@ p_socket_set_timeout (PSocket	*socket,
 	socket->timeout = timeout;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_bind (const PSocket	*socket,
 	       PSocketAddress	*address,
 	       pboolean		allow_reuse,
@@ -886,7 +886,7 @@ p_socket_bind (const PSocket	*socket,
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_connect (PSocket		*socket,
 		  PSocketAddress	*address,
 		  PError		**error)
@@ -968,7 +968,7 @@ p_socket_connect (PSocket		*socket,
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_listen (PSocket	*socket,
 		 PError		**error)
 {
@@ -995,7 +995,7 @@ p_socket_listen (PSocket	*socket,
 	return TRUE;
 }
 
-P_LIB_API PSocket *
+P_API PSocket *
 p_socket_accept (const PSocket	*socket,
 		 PError		**error)
 {
@@ -1071,7 +1071,7 @@ p_socket_accept (const PSocket	*socket,
 	return ret;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_socket_receive (const PSocket	*socket,
 		  pchar		*buffer,
 		  psize		buflen,
@@ -1125,7 +1125,7 @@ p_socket_receive (const PSocket	*socket,
 	return ret;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_socket_receive_from (const PSocket	*socket,
 		       PSocketAddress	**address,
 		       pchar		*buffer,
@@ -1192,7 +1192,7 @@ p_socket_receive_from (const PSocket	*socket,
 	return ret;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_socket_send (const PSocket	*socket,
 	       const pchar	*buffer,
 	       psize		buflen,
@@ -1249,7 +1249,7 @@ p_socket_send (const PSocket	*socket,
 	return ret;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_socket_send_to (const PSocket		*socket,
 		  PSocketAddress	*address,
 		  const pchar		*buffer,
@@ -1319,7 +1319,7 @@ p_socket_send_to (const PSocket		*socket,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_close (PSocket	*socket,
 		PError	**error)
 {
@@ -1355,7 +1355,7 @@ p_socket_close (PSocket	*socket,
 	}
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_shutdown (PSocket	*socket,
 		   pboolean	shutdown_read,
 		   pboolean	shutdown_write,
@@ -1407,7 +1407,7 @@ p_socket_shutdown (PSocket	*socket,
 	return TRUE;
 }
 
-P_LIB_API void
+P_API void
 p_socket_free (PSocket *socket)
 {
 	if (P_UNLIKELY (socket == NULL))
@@ -1428,7 +1428,7 @@ p_socket_free (PSocket *socket)
 	p_free (socket);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_set_buffer_size (const PSocket		*socket,
 			  PSocketDirection	dir,
 			  psize			size,
@@ -1466,7 +1466,7 @@ p_socket_set_buffer_size (const PSocket		*socket,
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_io_condition_wait (const PSocket	*socket,
 			    PSocketIOCondition	condition,
 			    PError		**error)

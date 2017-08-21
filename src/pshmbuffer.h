@@ -85,7 +85,7 @@ typedef struct PShmBuffer_ PShmBuffer;
  * If a buffer with the same name already exists then the @a size will be
  * ignored and the existing buffer will be returned.
  */
-P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar	*name,
+P_API PShmBuffer *	p_shm_buffer_new		(const pchar	*name,
 							 psize		size,
 							 PError		**error);
 
@@ -97,7 +97,7 @@ P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar	*name,
  * Note that a buffer will be completely removed from the system only after the
  * last instance of the buffer with the same name is closed.
  */
-P_LIB_API void		p_shm_buffer_free		(PShmBuffer	*buf);
+P_API void		p_shm_buffer_free		(PShmBuffer	*buf);
 
 /**
  * @brief Takes ownership of a shared memory buffer.
@@ -115,7 +115,7 @@ P_LIB_API void		p_shm_buffer_free		(PShmBuffer	*buf);
  * space, free space). If not, take ownership of the shared memory buffer object
  * and remove it with the p_shm_buffer_free() call. After that, create it again.
  */
-P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer	*buf);
+P_API void		p_shm_buffer_take_ownership	(PShmBuffer	*buf);
 
 /**
  * @brief Tries to read data from a shared memory buffer.
@@ -127,7 +127,7 @@ P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer	*buf);
  * occured.
  * @since 0.0.1
  */
-P_LIB_API pint		p_shm_buffer_read		(PShmBuffer	*buf,
+P_API pint		p_shm_buffer_read		(PShmBuffer	*buf,
 							 ppointer	storage,
 							 psize		len,
 							 PError		**error);
@@ -144,7 +144,7 @@ P_LIB_API pint		p_shm_buffer_read		(PShmBuffer	*buf,
  * @note Write operation is performed only if the buffer has enough space for
  * the given data size.
  */
-P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
+P_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
 							 ppointer	data,
 							 psize		len,
 							 PError		**error);
@@ -156,7 +156,7 @@ P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
  * @return Free space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer	*buf,
+P_API pssize	p_shm_buffer_get_free_space	(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
@@ -166,7 +166,7 @@ P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer	*buf,
  * @return Used space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
+P_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
@@ -174,6 +174,6 @@ P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
  * @param buf #PShmBuffer to clear.
  * @since 0.0.1
  */
-P_LIB_API void		p_shm_buffer_clear		(PShmBuffer	*buf);
+P_API void		p_shm_buffer_clear		(PShmBuffer	*buf);
 
 #endif /* PLIBSYS_HEADER_PSHMBUFFER_H */

@@ -163,21 +163,21 @@
  * @brief Initializes library resources.
  * @since 0.0.1
  */
-P_LIB_API void		p_libsys_init		(void);
+P_API void		p_libsys_init		(void);
 
 /**
  * @brief Initializes library resources along with the memory table.
  * @param vtable Memory management table.
  * @since 0.0.1
  */
-P_LIB_API void		p_libsys_init_full	(const PMemVTable *vtable);
+P_API void		p_libsys_init_full	(const PMemVTable *vtable);
 
 /**
  * @brief Frees library resources. You should stop using any of the library
  * routines after calling this one.
  * @since 0.0.1
  */
-P_LIB_API void		p_libsys_shutdown	(void);
+P_API void		p_libsys_shutdown	(void);
 
 /**
  * @brief Gets the library version against which it was compiled at run-time.
@@ -187,6 +187,6 @@ P_LIB_API void		p_libsys_shutdown	(void);
  * against.
  * @sa #PLIBSYS_VERSION, #PLIBSYS_VERSION_STR, #PLIBSYS_VERSION_CHECK
  */
-P_LIB_API const pchar *	p_libsys_version	(void);
+P_API const pchar *	p_libsys_version	(void);
 
 #endif /* PLIBSYS_HEADER_PMAIN_H */

@@ -285,13 +285,13 @@ p_uthread_free_internal (PUThread *thread)
 	p_free (thread);
 }
 
-P_LIB_API void
+P_API void
 p_uthread_yield (void)
 {
 	snooze ((bigtime_t) 0);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
@@ -308,13 +308,13 @@ p_uthread_set_priority (PUThread		*thread,
 	return TRUE;
 }
 
-P_LIB_API P_HANDLE
+P_API P_HANDLE
 p_uthread_current_id (void)
 {
 	return (P_HANDLE) ((psize) find_thread (NULL));
 }
 
-P_LIB_API PUThreadKey *
+P_API PUThreadKey *
 p_uthread_local_new (PDestroyFunc free_func)
 {
 	PUThreadKey *ret;
@@ -330,7 +330,7 @@ p_uthread_local_new (PDestroyFunc free_func)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_uthread_local_free (PUThreadKey *key)
 {
 	if (P_UNLIKELY (key == NULL))
@@ -339,7 +339,7 @@ p_uthread_local_free (PUThreadKey *key)
 	p_free (key);
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_uthread_get_local (PUThreadKey *key)
 {
 	pint tls_key;
@@ -355,7 +355,7 @@ p_uthread_get_local (PUThreadKey *key)
 	return NULL;
 }
 
-P_LIB_API void
+P_API void
 p_uthread_set_local (PUThreadKey	*key,
 		     ppointer		value)
 {
@@ -370,7 +370,7 @@ p_uthread_set_local (PUThreadKey	*key,
 		tls_set (tls_key, value);
 }
 
-P_LIB_API void
+P_API void
 p_uthread_replace_local	(PUThreadKey	*key,
 			 ppointer	value)
 {

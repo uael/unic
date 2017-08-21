@@ -22,7 +22,7 @@ struct PSpinLock_ {
 	volatile pint spin;
 };
 
-P_LIB_API PSpinLock *
+P_API PSpinLock *
 p_spinlock_new (void)
 {
 	PSpinLock *ret;
@@ -35,7 +35,7 @@ p_spinlock_new (void)
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_spinlock_lock (PSpinLock *spinlock)
 {
 	if (P_UNLIKELY (spinlock == NULL))
@@ -46,7 +46,7 @@ p_spinlock_lock (PSpinLock *spinlock)
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_spinlock_trylock (PSpinLock *spinlock)
 {
 	if (P_UNLIKELY (spinlock == NULL))
@@ -55,7 +55,7 @@ p_spinlock_trylock (PSpinLock *spinlock)
 	return (pboolean) __sync_bool_compare_and_swap (&(spinlock->spin), 0, 1);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_spinlock_unlock (PSpinLock *spinlock)
 {
 	if (P_UNLIKELY (spinlock == NULL))
@@ -67,7 +67,7 @@ p_spinlock_unlock (PSpinLock *spinlock)
 	return TRUE;
 }
 
-P_LIB_API void
+P_API void
 p_spinlock_free (PSpinLock *spinlock)
 {
 	p_free (spinlock);

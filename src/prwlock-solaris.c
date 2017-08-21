@@ -43,7 +43,7 @@ pp_rwlock_unlock_any (PRWLock *lock)
 	}
 }
 
-P_LIB_API PRWLock *
+P_API PRWLock *
 p_rwlock_new (void)
 {
 	PRWLock *ret;
@@ -62,7 +62,7 @@ p_rwlock_new (void)
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_reader_lock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -76,7 +76,7 @@ p_rwlock_reader_lock (PRWLock *lock)
 	}
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_reader_trylock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -85,13 +85,13 @@ p_rwlock_reader_trylock (PRWLock *lock)
 	return (rw_tryrdlock (&lock->hdl) == 0) ? TRUE : FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_reader_unlock (PRWLock *lock)
 {
 	return pp_rwlock_unlock_any (lock);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_writer_lock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -105,7 +105,7 @@ p_rwlock_writer_lock (PRWLock *lock)
 	}
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_writer_trylock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -114,13 +114,13 @@ p_rwlock_writer_trylock (PRWLock *lock)
 	return (rw_trywrlock (&lock->hdl) == 0) ? TRUE : FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_rwlock_writer_unlock (PRWLock *lock)
 {
 	return pp_rwlock_unlock_any (lock);
 }
 
-P_LIB_API void
+P_API void
 p_rwlock_free (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))

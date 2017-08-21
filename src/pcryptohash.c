@@ -63,7 +63,7 @@ pp_crypto_hash_digest_to_hex (const puchar *digest, puint len, pchar *out)
 	}
 }
 
-P_LIB_API PCryptoHash *
+P_API PCryptoHash *
 p_crypto_hash_new (PCryptoHashType type)
 {
 	PCryptoHash *ret;
@@ -134,7 +134,7 @@ p_crypto_hash_new (PCryptoHashType type)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 {
 	if (P_UNLIKELY (hash == NULL || data == NULL || len == 0))
@@ -146,7 +146,7 @@ p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 	hash->update (hash->context, data, len);
 }
 
-P_LIB_API void
+P_API void
 p_crypto_hash_reset (PCryptoHash *hash)
 {
 	if (P_UNLIKELY (hash == NULL))
@@ -156,7 +156,7 @@ p_crypto_hash_reset (PCryptoHash *hash)
 	hash->closed = FALSE;
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_crypto_hash_get_string (PCryptoHash *hash)
 {
 	pchar		*ret;
@@ -181,7 +181,7 @@ p_crypto_hash_get_string (PCryptoHash *hash)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 {
 	const puchar *digest;
@@ -213,7 +213,7 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 	*len = hash->hash_len;
 }
 
-P_LIB_API pssize
+P_API pssize
 p_crypto_hash_get_length (const PCryptoHash *hash)
 {
 	if (P_UNLIKELY (hash == NULL))
@@ -222,7 +222,7 @@ p_crypto_hash_get_length (const PCryptoHash *hash)
 	return hash->hash_len;
 }
 
-P_LIB_API PCryptoHashType
+P_API PCryptoHashType
 p_crypto_hash_get_type (const PCryptoHash *hash)
 {
 	if (P_UNLIKELY (hash == NULL))
@@ -231,7 +231,7 @@ p_crypto_hash_get_type (const PCryptoHash *hash)
 	return hash->type;
 }
 
-P_LIB_API void
+P_API void
 p_crypto_hash_free (PCryptoHash *hash)
 {
 	if (P_UNLIKELY (hash == NULL))

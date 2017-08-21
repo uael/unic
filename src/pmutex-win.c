@@ -26,7 +26,7 @@ struct PMutex_ {
 	mutex_hdl hdl;
 };
 
-P_LIB_API PMutex *
+P_API PMutex *
 p_mutex_new (void)
 {
 	PMutex *ret;
@@ -41,7 +41,7 @@ p_mutex_new (void)
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mutex_lock (PMutex *mutex)
 {
 	if (P_UNLIKELY (mutex == NULL))
@@ -52,7 +52,7 @@ p_mutex_lock (PMutex *mutex)
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mutex_trylock (PMutex *mutex)
 {
 	if (P_UNLIKELY (mutex == NULL))
@@ -61,7 +61,7 @@ p_mutex_trylock (PMutex *mutex)
 	return TryEnterCriticalSection (&mutex->hdl) != 0 ? TRUE : FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mutex_unlock (PMutex *mutex)
 {
 	if (P_UNLIKELY (mutex == NULL))
@@ -72,7 +72,7 @@ p_mutex_unlock (PMutex *mutex)
 	return TRUE;
 }
 
-P_LIB_API void
+P_API void
 p_mutex_free (PMutex *mutex)
 {
 	if (P_UNLIKELY (mutex == NULL))

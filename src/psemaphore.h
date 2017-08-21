@@ -116,7 +116,7 @@ typedef struct PSemaphore_ PSemaphore;
  * other cases @a init_val is ignored. The @a name is system-wide, so any other
  * process can open that semaphore passing the same name.
  */
-P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
+P_API PSemaphore *	p_semaphore_new			(const pchar		*name,
 							 pint			init_val,
 							 PSemaphoreAccessMode	mode,
 							 PError			**error);
@@ -141,7 +141,7 @@ P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
  * should already know whether this semaphore object is from the previous crash
  * or not.
  */
-P_LIB_API void		p_semaphore_take_ownership	(PSemaphore		*sem);
+P_API void		p_semaphore_take_ownership	(PSemaphore		*sem);
 
 /**
  * @brief Acquires (P operation) a semaphore.
@@ -150,7 +150,7 @@ P_LIB_API void		p_semaphore_take_ownership	(PSemaphore		*sem);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_semaphore_acquire		(PSemaphore		*sem,
+P_API pboolean	p_semaphore_acquire		(PSemaphore		*sem,
 							 PError			**error);
 
 /**
@@ -160,7 +160,7 @@ P_LIB_API pboolean	p_semaphore_acquire		(PSemaphore		*sem,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_semaphore_release		(PSemaphore		*sem,
+P_API pboolean	p_semaphore_release		(PSemaphore		*sem,
 							 PError			**error);
 
 /**
@@ -171,6 +171,6 @@ P_LIB_API pboolean	p_semaphore_release		(PSemaphore		*sem,
  * It doesn't release an acquired semaphore, be careful to not to make a
  * deadlock while removing the acquired semaphore.
  */
-P_LIB_API void		p_semaphore_free		(PSemaphore		*sem);
+P_API void		p_semaphore_free		(PSemaphore		*sem);
 
 #endif /* PLIBSYS_HEADER_PSEMAPHORE_H */

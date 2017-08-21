@@ -81,7 +81,7 @@ struct PSocketAddress_ {
 	puint32		scope_id;
 };
 
-P_LIB_API PSocketAddress *
+P_API PSocketAddress *
 p_socket_address_new_from_native (pconstpointer	native,
 				  psize		len)
 {
@@ -137,7 +137,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 	}
 }
 
-P_LIB_API PSocketAddress *
+P_API PSocketAddress *
 p_socket_address_new (const pchar	*address,
 		      puint16		port)
 {
@@ -231,7 +231,7 @@ p_socket_address_new (const pchar	*address,
 	return NULL;
 }
 
-P_LIB_API PSocketAddress *
+P_API PSocketAddress *
 p_socket_address_new_any (PSocketFamily	family,
 			  puint16	port)
 {
@@ -263,7 +263,7 @@ p_socket_address_new_any (PSocketFamily	family,
 	return ret;
 }
 
-P_LIB_API PSocketAddress *
+P_API PSocketAddress *
 p_socket_address_new_loopback (PSocketFamily	family,
 			       puint16		port)
 {
@@ -295,7 +295,7 @@ p_socket_address_new_loopback (PSocketFamily	family,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_address_to_native (const PSocketAddress	*addr,
 			    ppointer			dest,
 			    psize			destlen)
@@ -350,7 +350,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 	}
 }
 
-P_LIB_API psize
+P_API psize
 p_socket_address_get_native_size (const PSocketAddress *addr)
 {
 	if (P_UNLIKELY (addr == NULL))
@@ -368,7 +368,7 @@ p_socket_address_get_native_size (const PSocketAddress *addr)
 	}
 }
 
-P_LIB_API PSocketFamily
+P_API PSocketFamily
 p_socket_address_get_family (const PSocketAddress *addr)
 {
 	if (P_UNLIKELY (addr == NULL))
@@ -377,7 +377,7 @@ p_socket_address_get_family (const PSocketAddress *addr)
 	return addr->family;
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_socket_address_get_address (const PSocketAddress *addr)
 {
 #ifdef AF_INET6
@@ -441,7 +441,7 @@ p_socket_address_get_address (const PSocketAddress *addr)
 	return p_strdup (buffer);
 }
 
-P_LIB_API puint16
+P_API puint16
 p_socket_address_get_port (const PSocketAddress *addr)
 {
 	if (P_UNLIKELY (addr == NULL))
@@ -450,7 +450,7 @@ p_socket_address_get_port (const PSocketAddress *addr)
 	return addr->port;
 }
 
-P_LIB_API puint32
+P_API puint32
 p_socket_address_get_flow_info (const PSocketAddress *addr)
 {
 	if (P_UNLIKELY (addr == NULL))
@@ -466,7 +466,7 @@ p_socket_address_get_flow_info (const PSocketAddress *addr)
 #endif
 }
 
-P_LIB_API puint32
+P_API puint32
 p_socket_address_get_scope_id (const PSocketAddress *addr)
 {
 	if (P_UNLIKELY (addr == NULL))
@@ -482,7 +482,7 @@ p_socket_address_get_scope_id (const PSocketAddress *addr)
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_socket_address_set_flow_info (PSocketAddress	*addr,
 				puint32		flowinfo)
 {
@@ -500,7 +500,7 @@ p_socket_address_set_flow_info (PSocketAddress	*addr,
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_socket_address_set_scope_id (PSocketAddress	*addr,
 			       puint32		scope_id)
 {
@@ -518,7 +518,7 @@ p_socket_address_set_scope_id (PSocketAddress	*addr,
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_address_is_flow_info_supported (void)
 {
 #ifdef AF_INET6
@@ -532,7 +532,7 @@ p_socket_address_is_flow_info_supported (void)
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_address_is_scope_id_supported (void)
 {
 #ifdef AF_INET6
@@ -546,7 +546,7 @@ p_socket_address_is_scope_id_supported (void)
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_address_is_ipv6_supported (void)
 {
 #ifdef AF_INET6
@@ -556,7 +556,7 @@ p_socket_address_is_ipv6_supported (void)
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_address_is_any (const PSocketAddress *addr)
 {
 	puint32 addr4;
@@ -578,7 +578,7 @@ p_socket_address_is_any (const PSocketAddress *addr)
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_socket_address_is_loopback (const PSocketAddress *addr)
 {
 	puint32 addr4;
@@ -601,7 +601,7 @@ p_socket_address_is_loopback (const PSocketAddress *addr)
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_socket_address_free (PSocketAddress *addr)
 {
 	if (P_UNLIKELY (addr == NULL))

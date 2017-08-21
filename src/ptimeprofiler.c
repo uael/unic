@@ -22,7 +22,7 @@
 extern puint64 p_time_profiler_get_ticks_internal (void);
 extern puint64 p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler);
 
-P_LIB_API PTimeProfiler *
+P_API PTimeProfiler *
 p_time_profiler_new ()
 {
 	PTimeProfiler *ret;
@@ -37,7 +37,7 @@ p_time_profiler_new ()
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_time_profiler_reset (PTimeProfiler *profiler)
 {
 	if (P_UNLIKELY (profiler == NULL))
@@ -46,7 +46,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 	profiler->counter = p_time_profiler_get_ticks_internal ();
 }
 
-P_LIB_API puint64
+P_API puint64
 p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 {
 	if (P_UNLIKELY (profiler == NULL))
@@ -55,7 +55,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 	return p_time_profiler_elapsed_usecs_internal (profiler);
 }
 
-P_LIB_API void
+P_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
 	p_free (profiler);

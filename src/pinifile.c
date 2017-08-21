@@ -129,7 +129,7 @@ pp_ini_file_find_parameter (const PIniFile *file, const pchar *section, const pc
 	return NULL;
 }
 
-P_LIB_API PIniFile *
+P_API PIniFile *
 p_ini_file_new (const pchar *path)
 {
 	PIniFile	*ret;
@@ -150,7 +150,7 @@ p_ini_file_new (const pchar *path)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_ini_file_free (PIniFile *file)
 {
 	if (P_UNLIKELY (file == NULL))
@@ -162,7 +162,7 @@ p_ini_file_free (PIniFile *file)
 	p_free (file);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_ini_file_parse (PIniFile	*file,
 		  PError	**error)
 {
@@ -293,7 +293,7 @@ p_ini_file_parse (PIniFile	*file,
 	return TRUE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_ini_file_is_parsed (const PIniFile *file)
 {
 	if (P_UNLIKELY (file == NULL))
@@ -302,7 +302,7 @@ p_ini_file_is_parsed (const PIniFile *file)
 	return file->is_parsed;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_ini_file_sections (const PIniFile *file)
 {
 	PList	*ret;
@@ -319,7 +319,7 @@ p_ini_file_sections (const PIniFile *file)
 	return ret;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_ini_file_keys (const PIniFile	*file,
 		 const pchar	*section)
 {
@@ -344,7 +344,7 @@ p_ini_file_keys (const PIniFile	*file,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_ini_file_is_key_exists (const PIniFile	*file,
 			  const pchar		*section,
 			  const pchar		*key)
@@ -368,7 +368,7 @@ p_ini_file_is_key_exists (const PIniFile	*file,
 	return FALSE;
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_ini_file_parameter_string (const PIniFile	*file,
 			     const pchar	*section,
 			     const pchar	*key,
@@ -382,7 +382,7 @@ p_ini_file_parameter_string (const PIniFile	*file,
 	return val;
 }
 
-P_LIB_API pint
+P_API pint
 p_ini_file_parameter_int (const PIniFile	*file,
 			  const pchar		*section,
 			  const pchar		*key,
@@ -400,7 +400,7 @@ p_ini_file_parameter_int (const PIniFile	*file,
 	return ret;
 }
 
-P_LIB_API double
+P_API double
 p_ini_file_parameter_double (const PIniFile	*file,
 			     const pchar	*section,
 			     const pchar	*key,
@@ -418,7 +418,7 @@ p_ini_file_parameter_double (const PIniFile	*file,
 	return ret;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_ini_file_parameter_boolean (const PIniFile	*file,
 			      const pchar	*section,
 			      const pchar	*key,
@@ -444,7 +444,7 @@ p_ini_file_parameter_boolean (const PIniFile	*file,
 	return ret;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_ini_file_parameter_list (const PIniFile	*file,
 			   const pchar		*section,
 			   const pchar		*key)

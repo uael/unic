@@ -81,7 +81,7 @@ typedef struct PSocketAddress_ PSocketAddress;
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API PSocketAddress *	p_socket_address_new_from_native	(pconstpointer		native,
+P_API PSocketAddress *	p_socket_address_new_from_native	(pconstpointer		native,
 									 psize			len);
 
 /**
@@ -97,7 +97,7 @@ P_LIB_API PSocketAddress *	p_socket_address_new_from_native	(pconstpointer		nati
  * correctly parse such an address though some old operating systems may fail in
  * case of lack of the getaddrinfo() call.
  */
-P_LIB_API PSocketAddress *	p_socket_address_new			(const pchar		*address,
+P_API PSocketAddress *	p_socket_address_new			(const pchar		*address,
 									 puint16		port);
 
 /**
@@ -111,7 +111,7 @@ P_LIB_API PSocketAddress *	p_socket_address_new			(const pchar		*address,
  * network address. If you need to bind a socket to the specific address
  * (i.e. 127.0.0.1) use p_socket_address_new() instead.
  */
-P_LIB_API PSocketAddress *	p_socket_address_new_any		(PSocketFamily		family,
+P_API PSocketAddress *	p_socket_address_new_any		(PSocketFamily		family,
 									 puint16		port);
 
 /**
@@ -125,7 +125,7 @@ P_LIB_API PSocketAddress *	p_socket_address_new_any		(PSocketFamily		family,
  * network address. If you need to bind a socket to the specific address
  * (i.e. 127.0.0.1) use p_socket_address_new() instead.
  */
-P_LIB_API PSocketAddress *	p_socket_address_new_loopback		(PSocketFamily		family,
+P_API PSocketAddress *	p_socket_address_new_loopback		(PSocketFamily		family,
 									 puint16		port);
 
 /**
@@ -136,7 +136,7 @@ P_LIB_API PSocketAddress *	p_socket_address_new_loopback		(PSocketFamily		family
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean		p_socket_address_to_native		(const PSocketAddress	*addr,
+P_API pboolean		p_socket_address_to_native		(const PSocketAddress	*addr,
 									 ppointer		dest,
 									 psize			destlen);
 
@@ -147,7 +147,7 @@ P_LIB_API pboolean		p_socket_address_to_native		(const PSocketAddress	*addr,
  * otherwise.
  * @since 0.0.1
  */
-P_LIB_API psize			p_socket_address_get_native_size	(const PSocketAddress	*addr);
+P_API psize			p_socket_address_get_native_size	(const PSocketAddress	*addr);
 
 /**
  * @brief Gets a family of a socket address.
@@ -155,7 +155,7 @@ P_LIB_API psize			p_socket_address_get_native_size	(const PSocketAddress	*addr);
  * @return #PSocketFamily of the socket address.
  * @since 0.0.1
  */
-P_LIB_API PSocketFamily		p_socket_address_get_family		(const PSocketAddress	*addr);
+P_API PSocketFamily		p_socket_address_get_family		(const PSocketAddress	*addr);
 
 /**
  * @brief Gets a socket address in a string representation, i.e. "172.146.45.5".
@@ -164,7 +164,7 @@ P_LIB_API PSocketFamily		p_socket_address_get_family		(const PSocketAddress	*add
  * success, NULL otherwise. The caller takes ownership of the returned pointer.
  * @since 0.0.1
  */
-P_LIB_API pchar *		p_socket_address_get_address		(const PSocketAddress	*addr);
+P_API pchar *		p_socket_address_get_address		(const PSocketAddress	*addr);
 
 /**
  * @brief Gets a port number of a socket address.
@@ -172,7 +172,7 @@ P_LIB_API pchar *		p_socket_address_get_address		(const PSocketAddress	*addr);
  * @return Port number in case of success, 0 otherwise.
  * @since 0.0.1
  */
-P_LIB_API puint16		p_socket_address_get_port		(const PSocketAddress	*addr);
+P_API puint16		p_socket_address_get_port		(const PSocketAddress	*addr);
 
 /**
  * @brief Gets IPv6 traffic class and flow information.
@@ -183,7 +183,7 @@ P_LIB_API puint16		p_socket_address_get_port		(const PSocketAddress	*addr);
  * @note Some operating systems may not support this property.
  * @sa p_socket_address_is_flow_info_supported()
  */
-P_LIB_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
+P_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
 
 /**
  * @brief Gets an IPv6 set of interfaces for a scope.
@@ -194,7 +194,7 @@ P_LIB_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
  * @note Some operating systems may not support this property.
  * @sa p_socket_address_is_scope_id_supported()
  */
-P_LIB_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
+P_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
 
 /**
  * @brief Sets IPv6 traffic class and flow information.
@@ -205,7 +205,7 @@ P_LIB_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
  * @note Some operating systems may not support this property.
  * @sa p_socket_address_is_flow_info_supported()
  */
-P_LIB_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
+P_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
 									 puint32		flowinfo);
 
 /**
@@ -217,7 +217,7 @@ P_LIB_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
  * @note Some operating systems may not support this property.
  * @sa p_socket_address_is_scope_id_supported()
  */
-P_LIB_API void			p_socket_address_set_scope_id		(PSocketAddress		*addr,
+P_API void			p_socket_address_set_scope_id		(PSocketAddress		*addr,
 									 puint32		scope_id);
 
 /**
@@ -225,21 +225,21 @@ P_LIB_API void			p_socket_address_set_scope_id		(PSocketAddress		*addr,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean		p_socket_address_is_flow_info_supported	(void);
+P_API pboolean		p_socket_address_is_flow_info_supported	(void);
 
 /**
  * @brief Checks whether a set of interfaces for a scope is supported in IPv6.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean		p_socket_address_is_scope_id_supported	(void);
+P_API pboolean		p_socket_address_is_scope_id_supported	(void);
 
 /**
  * @brief Checks whether IPv6 protocol is supported.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.3
  */
-P_LIB_API pboolean		p_socket_address_is_ipv6_supported	(void);
+P_API pboolean		p_socket_address_is_ipv6_supported	(void);
 
 /**
  * @brief Checks whether a given socket address is an any-address
@@ -250,7 +250,7 @@ P_LIB_API pboolean		p_socket_address_is_ipv6_supported	(void);
  * @since 0.0.1
  * @sa p_socket_address_new_any()
  */
-P_LIB_API pboolean		p_socket_address_is_any			(const PSocketAddress	*addr);
+P_API pboolean		p_socket_address_is_any			(const PSocketAddress	*addr);
 
 /**
  * @brief Checks whether a given socket address is for the loopback interface.
@@ -260,13 +260,13 @@ P_LIB_API pboolean		p_socket_address_is_any			(const PSocketAddress	*addr);
  * @since 0.0.1
  * @sa p_socket_address_new_loopback()
  */
-P_LIB_API pboolean		p_socket_address_is_loopback		(const PSocketAddress	*addr);
+P_API pboolean		p_socket_address_is_loopback		(const PSocketAddress	*addr);
 
 /**
  * @brief Frees a socket address structure and its resources.
  * @param addr #PSocketAddress to free.
  * @since 0.0.1
  */
-P_LIB_API void			p_socket_address_free			(PSocketAddress		*addr);
+P_API void			p_socket_address_free			(PSocketAddress		*addr);
 
 #endif /* PLIBSYS_HEADER_PSOCKETADDRESS_H */

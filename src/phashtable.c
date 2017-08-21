@@ -64,7 +64,7 @@ pp_hash_table_find_node (const PHashTable *table, pconstpointer key)
 	return NULL;
 }
 
-P_LIB_API PHashTable *
+P_API PHashTable *
 p_hash_table_new (void)
 {
 	PHashTable *ret;
@@ -85,7 +85,7 @@ p_hash_table_new (void)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 {
 	PHashTableNode	*node;
@@ -112,7 +112,7 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 		node->value = value;
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_hash_table_lookup (const PHashTable *table, pconstpointer key)
 {
 	PHashTableNode *node;
@@ -123,7 +123,7 @@ p_hash_table_lookup (const PHashTable *table, pconstpointer key)
 	return ((node = pp_hash_table_find_node (table, key)) == NULL) ? (ppointer) (-1) : node->value;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_hash_table_keys (const PHashTable *table)
 {
 	PList		*ret = NULL;
@@ -140,7 +140,7 @@ p_hash_table_keys (const PHashTable *table)
 	return ret;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_hash_table_values (const PHashTable *table)
 {
 	PList		*ret = NULL;
@@ -157,7 +157,7 @@ p_hash_table_values (const PHashTable *table)
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_hash_table_free (PHashTable *table)
 {
 	PHashTableNode	*node, *next_node;
@@ -177,7 +177,7 @@ p_hash_table_free (PHashTable *table)
 	p_free (table);
 }
 
-P_LIB_API void
+P_API void
 p_hash_table_remove (PHashTable *table, pconstpointer key)
 {
 	PHashTableNode	*node, *prev_node;
@@ -208,7 +208,7 @@ p_hash_table_remove (PHashTable *table, pconstpointer key)
 	}
 }
 
-P_LIB_API PList *
+P_API PList *
 p_hash_table_lookup_by_value (const PHashTable *table, pconstpointer val, PCompareFunc func)
 {
 	PList		*ret = NULL;

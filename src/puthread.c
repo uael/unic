@@ -162,7 +162,7 @@ p_uthread_shutdown (void)
 	p_uthread_shutdown_internal ();
 }
 
-P_LIB_API PUThread *
+P_API PUThread *
 p_uthread_create_full (PUThreadFunc	func,
 		       ppointer		data,
 		       pboolean		joinable,
@@ -194,7 +194,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	return (PUThread *) base_thread;
 }
 
-P_LIB_API PUThread *
+P_API PUThread *
 p_uthread_create (PUThreadFunc	func,
 		  ppointer	data,
 		  pboolean	joinable)
@@ -203,7 +203,7 @@ p_uthread_create (PUThreadFunc	func,
 	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT, 0);
 }
 
-P_LIB_API void
+P_API void
 p_uthread_exit (pint code)
 {
 	PUThreadBase *base_thread = (PUThreadBase *) p_uthread_current ();
@@ -221,7 +221,7 @@ p_uthread_exit (pint code)
 	p_uthread_exit_internal ();
 }
 
-P_LIB_API pint
+P_API pint
 p_uthread_join (PUThread *thread)
 {
 	PUThreadBase *base_thread;
@@ -239,7 +239,7 @@ p_uthread_join (PUThread *thread)
 	return base_thread->ret_code;
 }
 
-P_LIB_API PUThread *
+P_API PUThread *
 p_uthread_current (void)
 {
 	PUThreadBase *base_thread = p_uthread_get_local (pp_uthread_specific_data);
@@ -258,7 +258,7 @@ p_uthread_current (void)
 	return (PUThread *) base_thread;
 }
 
-P_LIB_API pint
+P_API pint
 p_uthread_ideal_count (void)
 {
 #if defined (P_OS_WIN)
@@ -416,7 +416,7 @@ p_uthread_ideal_count (void)
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_uthread_ref (PUThread *thread)
 {
 	if (P_UNLIKELY (thread == NULL))
@@ -425,7 +425,7 @@ p_uthread_ref (PUThread *thread)
 	p_atomic_int_inc (&((PUThreadBase *) thread)->ref_count);
 }
 
-P_LIB_API void
+P_API void
 p_uthread_unref (PUThread *thread)
 {
 	PUThreadBase *base_thread;
@@ -483,7 +483,7 @@ static pint pp_uthread_nanosleep (puint32 msec)
 #  endif
 #endif
 
-P_LIB_API pint
+P_API pint
 p_uthread_sleep (puint32 msec)
 {
 #if defined (P_OS_WIN)

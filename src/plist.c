@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-P_LIB_API PList *
+P_API PList *
 p_list_append (PList *list, ppointer data)
 {
 	PList *item, *cur;
@@ -42,7 +42,7 @@ p_list_append (PList *list, ppointer data)
 	return list;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_list_remove (PList *list, ppointer data)
 {
 	PList *cur, *prev, *head;
@@ -66,7 +66,7 @@ p_list_remove (PList *list, ppointer data)
 	return head;
 }
 
-P_LIB_API void
+P_API void
 p_list_foreach (PList *list, PFunc func, ppointer user_data)
 {
 	PList *cur;
@@ -78,7 +78,7 @@ p_list_foreach (PList *list, PFunc func, ppointer user_data)
 		func (cur->data, user_data);
 }
 
-P_LIB_API void
+P_API void
 p_list_free (PList *list)
 {
 	PList *cur, *next;
@@ -92,7 +92,7 @@ p_list_free (PList *list)
 	}
 }
 
-P_LIB_API PList *
+P_API PList *
 p_list_last (PList *list)
 {
 	PList *cur;
@@ -105,7 +105,7 @@ p_list_last (PList *list)
 	return cur;
 }
 
-P_LIB_API psize
+P_API psize
 p_list_length (const PList *list)
 {
 	const PList	*cur;
@@ -119,7 +119,7 @@ p_list_length (const PList *list)
 	return ret;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_list_prepend	(PList *list, ppointer data)
 {
 	PList *item;
@@ -140,7 +140,7 @@ p_list_prepend	(PList *list, ppointer data)
 	return item;
 }
 
-P_LIB_API PList *
+P_API PList *
 p_list_reverse	(PList *list)
 {
 	PList *prev, *cur, *tmp;

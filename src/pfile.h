@@ -57,7 +57,7 @@
  * On Windows this call doesn't resolve symbolic links, while on UNIX systems
  * does.
  */
-P_LIB_API pboolean p_file_is_exists	(const pchar	*file);
+P_API pboolean p_file_is_exists	(const pchar	*file);
 
 /**
  * @brief Removes a file from the disk.
@@ -69,7 +69,7 @@ P_LIB_API pboolean p_file_is_exists	(const pchar	*file);
  * This call doesn't resolve symbolic links and remove a symbolic link if the
  * given path points to it.
  */
-P_LIB_API pboolean p_file_remove	(const pchar	*file,
+P_API pboolean p_file_remove	(const pchar	*file,
 					 PError		**error);
 
 #endif /* PLIBSYS_HEADER_PFILE_H */

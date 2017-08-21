@@ -23,19 +23,19 @@ struct PMutex_ {
 	pint	hdl;
 };
 
-P_LIB_API PMutex *
+P_API PMutex *
 p_mutex_new (void)
 {
 	return NULL;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mutex_lock (PMutex *mutex)
 {
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mutex_trylock (PMutex *mutex)
 {
 	P_UNUSED (mutex);
@@ -43,7 +43,7 @@ p_mutex_trylock (PMutex *mutex)
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_mutex_unlock (PMutex *mutex)
 {
 	P_UNUSED (mutex);
@@ -51,7 +51,7 @@ p_mutex_unlock (PMutex *mutex)
 	return FALSE;
 }
 
-P_LIB_API void
+P_API void
 p_mutex_free (PMutex *mutex)
 {
 	P_UNUSED (mutex);

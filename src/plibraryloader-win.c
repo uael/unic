@@ -36,7 +36,7 @@ pp_library_loader_clean_handle (plibrary_handle handle)
 		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: FreeLibrary() failed");
 }
 
-P_LIB_API PLibraryLoader *
+P_API PLibraryLoader *
 p_library_loader_new (const pchar *path)
 {
 	PLibraryLoader	*loader = NULL;
@@ -61,7 +61,7 @@ p_library_loader_new (const pchar *path)
 	return loader;
 }
 
-P_LIB_API PFuncAddr
+P_API PFuncAddr
 p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
 	PFuncAddr ret_sym = NULL;
@@ -74,7 +74,7 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 	return ret_sym;
 }
 
-P_LIB_API void
+P_API void
 p_library_loader_free (PLibraryLoader *loader)
 {
 	if (P_UNLIKELY (loader == NULL))
@@ -85,7 +85,7 @@ p_library_loader_free (PLibraryLoader *loader)
 	p_free (loader);
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_library_loader_get_last_error (PLibraryLoader *loader)
 {
 	pchar	*res = NULL;
@@ -115,7 +115,7 @@ p_library_loader_get_last_error (PLibraryLoader *loader)
 	return res;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_library_loader_is_ref_counted (void)
 {
 	return TRUE;

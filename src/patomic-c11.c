@@ -25,32 +25,32 @@
 #  define PATOMIC_SIZE_CAST(x) x
 #endif
 
-P_LIB_API pint
+P_API pint
 p_atomic_int_get (const volatile pint *atomic)
 {
 	return (pint) __atomic_load_4 (PATOMIC_INT_CAST (atomic), __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API void
+P_API void
 p_atomic_int_set (volatile pint	*atomic,
 		  pint		val)
 {
 	__atomic_store_4 (PATOMIC_INT_CAST (atomic), val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API void
+P_API void
 p_atomic_int_inc (volatile pint *atomic)
 {
 	(void) __atomic_fetch_add (atomic, 1, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_int_dec_and_test (volatile pint *atomic)
 {
 	return (__atomic_fetch_sub (atomic, 1, __ATOMIC_SEQ_CST) == 1) ? TRUE : FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 				   pint			oldval,
 				   pint			newval)
@@ -65,35 +65,35 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 						       __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API pint
+P_API pint
 p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
 	return (pint) __atomic_fetch_add (atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API puint
+P_API puint
 p_atomic_int_and (volatile puint	*atomic,
 		  puint			val)
 {
 	return (puint) __atomic_fetch_and (atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API puint
+P_API puint
 p_atomic_int_or (volatile puint	*atomic,
 		 puint		val)
 {
 	return (puint) __atomic_fetch_or (atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API puint
+P_API puint
 p_atomic_int_xor (volatile puint	*atomic,
 		  puint			val)
 {
 	return (puint) __atomic_fetch_xor (atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_atomic_pointer_get (const volatile void *atomic)
 {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
@@ -103,7 +103,7 @@ p_atomic_pointer_get (const volatile void *atomic)
 #endif
 }
 
-P_LIB_API void
+P_API void
 p_atomic_pointer_set (volatile void	*atomic,
 		      ppointer		val)
 {
@@ -114,7 +114,7 @@ p_atomic_pointer_set (volatile void	*atomic,
 #endif
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 				       ppointer		oldval,
 				       ppointer		newval)
@@ -129,35 +129,35 @@ p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 						       __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API pssize
+P_API pssize
 p_atomic_pointer_add (volatile void	*atomic,
 		      pssize		val)
 {
 	return (pssize) __atomic_fetch_add ((volatile pssize *) atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API psize
+P_API psize
 p_atomic_pointer_and (volatile void	*atomic,
 		      psize		val)
 {
 	return (psize) __atomic_fetch_and ((volatile psize *) atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API psize
+P_API psize
 p_atomic_pointer_or (volatile void	*atomic,
 		     psize		val)
 {
 	return (psize) __atomic_fetch_or ((volatile pssize *) atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API psize
+P_API psize
 p_atomic_pointer_xor (volatile void	*atomic,
 		      psize		val)
 {
 	return (psize) __atomic_fetch_xor ((volatile pssize *) atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_atomic_is_lock_free (void)
 {
 	return TRUE;

@@ -51,7 +51,7 @@ typedef struct PTimeProfiler_ PTimeProfiler;
  * @return Pointer to a newly created #PTimeProfiler object.
  * @since 0.0.1
  */
-P_LIB_API PTimeProfiler *	p_time_profiler_new		(void);
+P_API PTimeProfiler *	p_time_profiler_new		(void);
 
 /**
  * @brief Resets the #PTimeProfiler's internal counter to zero.
@@ -61,7 +61,7 @@ P_LIB_API PTimeProfiler *	p_time_profiler_new		(void);
  * After a reset the time profiler begins to count elapsed time from that moment
  * of time.
  */
-P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *	profiler);
+P_API void			p_time_profiler_reset		(PTimeProfiler *	profiler);
 
 /**
  * @brief Calculates elapsed time since the last reset or creation.
@@ -69,13 +69,13 @@ P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *	profiler);
  * @return Microseconds elapsed since the last reset or creation.
  * @since 0.0.1
  */
-P_LIB_API puint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler);
+P_API puint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler);
 
 /**
  * @brief Frees #PTimeProfiler object.
  * @param profiler #PTimeProfiler to free.
  * @since 0.0.1
  */
-P_LIB_API void			p_time_profiler_free		(PTimeProfiler *	profiler);
+P_API void			p_time_profiler_free		(PTimeProfiler *	profiler);
 
 #endif /* PLIBSYS_HEADER_PTIMEPROFILER_H */

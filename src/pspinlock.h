@@ -62,7 +62,7 @@ typedef struct PSpinLock_ PSpinLock;
  * @return Pointer to a newly created #PSpinLock object.
  * @since 0.0.1
  */
-P_LIB_API PSpinLock *	p_spinlock_new		(void);
+P_API PSpinLock *	p_spinlock_new		(void);
 
 /**
  * @brief Locks a spinlock.
@@ -79,7 +79,7 @@ P_LIB_API PSpinLock *	p_spinlock_new		(void);
  * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
-P_LIB_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
+P_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
 
 /**
  * @brief Tries to lock a spinlock immediately.
@@ -96,7 +96,7 @@ P_LIB_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
  * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
-P_LIB_API pboolean	p_spinlock_trylock	(PSpinLock *spinlock);
+P_API pboolean	p_spinlock_trylock	(PSpinLock *spinlock);
 
 /**
  * @brief Releases a locked spinlock.
@@ -112,7 +112,7 @@ P_LIB_API pboolean	p_spinlock_trylock	(PSpinLock *spinlock);
  * as p_mutex_unlock(), thus it is not safe to call this routine on an unlocked
  * spinlock.
  */
-P_LIB_API pboolean	p_spinlock_unlock	(PSpinLock *spinlock);
+P_API pboolean	p_spinlock_unlock	(PSpinLock *spinlock);
 
 /**
  * @brief Frees #PSpinLock object.
@@ -125,6 +125,6 @@ P_LIB_API pboolean	p_spinlock_unlock	(PSpinLock *spinlock);
  * If the atomic model is not lock-free this call will have the same effect
  * as p_mutex_free().
  */
-P_LIB_API void		p_spinlock_free		(PSpinLock *spinlock);
+P_API void		p_spinlock_free		(PSpinLock *spinlock);
 
 #endif /* PLIBSYS_HEADER_PSPINLOCK_H */

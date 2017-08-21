@@ -41,7 +41,7 @@ pp_library_loader_clean_handle (plibrary_handle handle)
 		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: shl_unload() failed");
 }
 
-P_LIB_API PLibraryLoader *
+P_API PLibraryLoader *
 p_library_loader_new (const pchar *path)
 {
 	PLibraryLoader	*loader = NULL;
@@ -67,7 +67,7 @@ p_library_loader_new (const pchar *path)
 	return loader;
 }
 
-P_LIB_API PFuncAddr
+P_API PFuncAddr
 p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
 	PFuncAddr func_addr = NULL;
@@ -86,7 +86,7 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 	return func_addr;
 }
 
-P_LIB_API void
+P_API void
 p_library_loader_free (PLibraryLoader *loader)
 {
 	if (P_UNLIKELY (loader == NULL))
@@ -97,7 +97,7 @@ p_library_loader_free (PLibraryLoader *loader)
 	p_free (loader);
 }
 
-P_LIB_API pchar *
+P_API pchar *
 p_library_loader_get_last_error (PLibraryLoader *loader)
 {
 	if (loader == NULL)
@@ -111,7 +111,7 @@ p_library_loader_get_last_error (PLibraryLoader *loader)
 		return p_strdup (strerror (loader->last_error));
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_library_loader_is_ref_counted (void)
 {
 #if defined (P_OS_HPUX) && defined (P_CPU_HPPA) && (PLIBSYS_SIZEOF_VOID_P == 4)

@@ -65,7 +65,7 @@
 #endif
 
 /**
- * @def P_LIB_INTERNAL_API
+ * @def P_INTERNAL_API
  * @brief Marks a symbol (variable, function) as local.
  * @since 0.0.4
  *
@@ -78,7 +78,7 @@
  */
 
 /**
- * @def P_LIB_GLOBAL_API
+ * @def P_GLOBAL_API
  * @brief Marks a symbol (variable, function) as global.
  * @since 0.0.4
  *
@@ -99,17 +99,17 @@
  */
 
 #ifdef __cplusplus
-#  define P_LIB_EXTERN_LANG extern "C"
+#  define P_EXTERN_LANG extern "C"
 #else
-#  define P_LIB_EXTERN_LANG
+#  define P_EXTERN_LANG
 #endif
 
 #if defined(P_CC_MSVC) || defined(P_CC_BORLAND) || defined(P_CC_WATCOM) || \
     defined(P_OS_OS2)  || (defined(P_OS_BEOS)  && !defined(P_CC_GNU))   || \
     (defined(P_OS_WIN) && defined(P_CC_PGI)) || \
     ((defined(P_OS_WIN) || defined(P_OS_CYGWIN) || defined(P_OS_MSYS)) && defined(P_CC_GNU))
-#  define P_LIB_GLOBAL_API P_LIB_EXTERN_LANG __declspec(dllexport)
-#  define P_LIB_INTERNAL_API P_LIB_EXTERN_LANG
+#  define P_GLOBAL_API P_EXTERN_LANG __declspec(dllexport)
+#  define P_INTERNAL_API P_EXTERN_LANG
 #elif ((__GNUC__ >= 4) && !defined(P_OS_SOLARIS) && !defined(P_OS_HPUX) && !defined(P_OS_AIX)) || \
       (defined(P_CC_SUN) && __SUNPRO_C  >= 0x590)  || \
       (defined(P_CC_SUN) && __SUNPRO_CC >= 0x5110) || \
@@ -117,23 +117,23 @@
       (defined(P_CC_HP)  && __HP_aCC >= 0x061500)  || \
       (defined(P_CC_HP)  && __HP_cc >= 0x061500)   || \
       __has_attribute(visibility)
-#  define P_LIB_GLOBAL_API P_LIB_EXTERN_LANG __attribute__ ((visibility ("default")))
-#  define P_LIB_INTERNAL_API P_LIB_EXTERN_LANG __attribute__ ((visibility ("hidden")))
+#  define P_GLOBAL_API P_EXTERN_LANG __attribute__ ((visibility ("default")))
+#  define P_INTERNAL_API P_EXTERN_LANG __attribute__ ((visibility ("hidden")))
 #elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x550)
-#  define P_LIB_GLOBAL_API P_LIB_EXTERN_LANG __global
-#  define P_LIB_INTERNAL_API P_LIB_EXTERN_LANG __hidden
+#  define P_GLOBAL_API P_EXTERN_LANG __global
+#  define P_INTERNAL_API P_EXTERN_LANG __hidden
 #else
-#  define P_LIB_GLOBAL_API P_LIB_EXTERN_LANG
-#  define P_LIB_INTERNAL_API P_LIB_EXTERN_LANG
+#  define P_GLOBAL_API P_EXTERN_LANG
+#  define P_INTERNAL_API P_EXTERN_LANG
 #endif
 
 /**
- * @def P_LIB_API
+ * @def P_API
  * @brief Exports a symbol from a shared library.
  * @since 0.0.1
  */
 
-#define P_LIB_API P_LIB_GLOBAL_API
+#define P_API P_GLOBAL_API
 
 /* Oracle Solaris Studio at least since 12.2 has ((noreturn)) attribute */
 

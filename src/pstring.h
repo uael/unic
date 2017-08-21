@@ -43,7 +43,7 @@
  * takes ownership of the returned string.
  * @since 0.0.1
  */
-P_LIB_API pchar *	p_strdup	(const pchar	*str);
+P_API pchar *	p_strdup	(const pchar	*str);
 
 /**
  * @brief Removes trailing and leading whitespaces.
@@ -52,7 +52,7 @@ P_LIB_API pchar *	p_strdup	(const pchar	*str);
  * caller takes ownership of the returned string.
  * @since 0.0.1
  */
-P_LIB_API pchar *	p_strchomp	(const pchar	*str);
+P_API pchar *	p_strchomp	(const pchar	*str);
 
 /**
  * @brief Tokenizes a string by given delimiters.
@@ -86,7 +86,7 @@ P_LIB_API pchar *	p_strchomp	(const pchar	*str);
  * Some platforms do not support the third parameter and it can be remained
  * unused. In that case this call wouldn't be thread-safe.
  */
-P_LIB_API pchar *	p_strtok	(pchar		*str,
+P_API pchar *	p_strtok	(pchar		*str,
 					 const pchar	*delim,
 					 pchar		**buf);
 
@@ -100,6 +100,6 @@ P_LIB_API pchar *	p_strtok	(pchar		*str,
  * convert string variables to @a double values. The decimal point is '.' as in
  * the 'C' locale.
  */
-P_LIB_API double	p_strtod	(const pchar	*str);
+P_API double	p_strtod	(const pchar	*str);
 
 #endif /* PLIBSYS_HEADER_PSTRING_H */

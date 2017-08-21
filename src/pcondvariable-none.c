@@ -23,19 +23,19 @@ struct PCondVariable_ {
 	pint hdl;
 };
 
-P_LIB_API PCondVariable *
+P_API PCondVariable *
 p_cond_variable_new (void)
 {
 	return NULL;
 }
 
-P_LIB_API void
+P_API void
 p_cond_variable_free (PCondVariable *cond)
 {
 	P_UNUSED (cond);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
@@ -45,7 +45,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
 	P_UNUSED (cond);
@@ -53,7 +53,7 @@ p_cond_variable_signal (PCondVariable *cond)
 	return FALSE;
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
 	P_UNUSED (cond);

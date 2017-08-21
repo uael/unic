@@ -169,7 +169,7 @@ pp_shm_clean_handle (PShm *shm)
 	shm->size        = 0;
 }
 
-P_LIB_API PShm *
+P_API PShm *
 p_shm_new (const pchar		*name,
 	   psize		size,
 	   PShmAccessPerms	perms,
@@ -228,7 +228,7 @@ p_shm_new (const pchar		*name,
 	return ret;
 }
 
-P_LIB_API void
+P_API void
 p_shm_take_ownership (PShm *shm)
 {
 	if (P_UNLIKELY (shm == NULL))
@@ -238,7 +238,7 @@ p_shm_take_ownership (PShm *shm)
 	p_semaphore_take_ownership (shm->sem);
 }
 
-P_LIB_API void
+P_API void
 p_shm_free (PShm *shm)
 {
 	if (P_UNLIKELY (shm == NULL))
@@ -252,7 +252,7 @@ p_shm_free (PShm *shm)
 	p_free (shm);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_shm_lock (PShm	*shm,
 	    PError	**error)
 {
@@ -267,7 +267,7 @@ p_shm_lock (PShm	*shm,
 	return p_semaphore_acquire (shm->sem, error);
 }
 
-P_LIB_API pboolean
+P_API pboolean
 p_shm_unlock (PShm	*shm,
 	      PError	**error)
 {
@@ -282,7 +282,7 @@ p_shm_unlock (PShm	*shm,
 	return p_semaphore_release (shm->sem, error);
 }
 
-P_LIB_API ppointer
+P_API ppointer
 p_shm_get_address (const PShm *shm)
 {
 	if (P_UNLIKELY (shm == NULL))
@@ -291,7 +291,7 @@ p_shm_get_address (const PShm *shm)
 	return shm->addr;
 }
 
-P_LIB_API psize
+P_API psize
 p_shm_get_size (const PShm *shm)
 {
 	if (P_UNLIKELY (shm == NULL))
