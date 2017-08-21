@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pcondvariable.h"
+#include "p/pcondvariable.h"
 
 #include <stdlib.h>
 

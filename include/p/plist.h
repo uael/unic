@@ -76,8 +76,8 @@
 #ifndef PLIBSYS_HEADER_PLIST_H
 #define PLIBSYS_HEADER_PLIST_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Typedef for a list node. */
 typedef struct PList_ PList;

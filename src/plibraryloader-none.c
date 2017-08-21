@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibraryloader.h"
+#include "p/plibraryloader.h"
 
 P_API PLibraryLoader *
 p_library_loader_new(const pchar *path) {

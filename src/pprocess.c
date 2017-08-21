@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pprocess.h"
+#include "p/pprocess.h"
 
 #ifndef P_OS_WIN
 #  include <sys/types.h>

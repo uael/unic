@@ -15,9 +15,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "patomic.h"
-#include "pmem.h"
-#include "pcondvariable.h"
+#include "p/patomic.h"
+#include "p/pmem.h"
+#include "p/pcondvariable.h"
 
 #include <stdlib.h>
 

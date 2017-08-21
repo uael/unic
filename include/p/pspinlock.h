@@ -51,8 +51,8 @@
 #ifndef PLIBSYS_HEADER_PSPINLOCK_H
 #define PLIBSYS_HEADER_PSPINLOCK_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Spinlock opaque data structure. */
 typedef struct PSpinLock_ PSpinLock;

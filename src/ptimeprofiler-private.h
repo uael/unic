@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
 #define PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
 
-#include "pmacros.h"
-#include "ptypes.h"
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Time profiler opaque data structure. */
 struct PTimeProfiler_ {

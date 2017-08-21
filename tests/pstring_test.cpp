@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE pstring_test
 
-#include "plibsys.h"
+#include "p/plibsys.h"
 
 #include <string.h>
 #include <float.h>

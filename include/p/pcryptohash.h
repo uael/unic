@@ -68,8 +68,8 @@
 #ifndef PLIBSYS_HEADER_PCRYPTOHASH_H
 #define PLIBSYS_HEADER_PCRYPTOHASH_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Opaque data structure for handling a cryptographic hash context. */
 typedef struct PCryptoHash_ PCryptoHash;

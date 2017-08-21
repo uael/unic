@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PIPC_PRIVATE_H
 #define PLIBSYS_HEADER_PIPC_PRIVATE_H
 
-#include "pmacros.h"
-#include "ptypes.h"
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 /**

@@ -18,8 +18,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "perror.h"
-#include "pmem.h"
+#include "p/perror.h"
+#include "p/pmem.h"
 #include "perror-private.h"
 
 #ifndef P_OS_WIN

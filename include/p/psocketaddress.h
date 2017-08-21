@@ -51,8 +51,8 @@
 #ifndef PLIBSYS_HEADER_PSOCKETADDRESS_H
 #define PLIBSYS_HEADER_PSOCKETADDRESS_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 #ifndef P_OS_WIN
 #  include <sys/types.h>

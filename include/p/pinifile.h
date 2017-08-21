@@ -90,10 +90,10 @@
 #ifndef PLIBSYS_HEADER_PINIFILE_H
 #define PLIBSYS_HEADER_PINIFILE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <plist.h>
-#include <perror.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/plist.h"
+#include "p/perror.h"
 
 /** INI file opaque data structure. */
 typedef struct PIniFile_ PIniFile;

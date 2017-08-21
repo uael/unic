@@ -82,9 +82,9 @@
 #ifndef PLIBSYS_HEADER_PSHM_H
 #define PLIBSYS_HEADER_PSHM_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <perror.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/perror.h"
 
 /** Enum with shared memory access permissions. */
 typedef enum PShmAccessPerms_ {

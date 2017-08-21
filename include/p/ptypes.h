@@ -56,8 +56,8 @@
 #ifndef PLIBSYS_HEADER_PTYPES_H
 #define PLIBSYS_HEADER_PTYPES_H
 
-#include <plibsysconfig.h>
-#include <pmacros.h>
+#include "plibsysconfig.h"
+#include "p/pmacros.h"
 
 /** Type for signed 8 bit.	*/
 typedef signed char pint8;

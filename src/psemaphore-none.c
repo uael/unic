@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "psemaphore.h"
+#include "p/psemaphore.h"
 
 #include <stdlib.h>
 

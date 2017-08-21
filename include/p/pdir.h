@@ -43,9 +43,9 @@
 #ifndef PLIBSYS_HEADER_PDIR_H
 #define PLIBSYS_HEADER_PDIR_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <perror.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/perror.h"
 
 /** Directory opaque data structure. */
 typedef struct PDir_ PDir;

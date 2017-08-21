@@ -49,8 +49,8 @@
 #ifndef PLIBSYS_HEADER_PATOMIC_H
 #define PLIBSYS_HEADER_PATOMIC_H
 
-#include <ptypes.h>
-#include <pmacros.h>
+#include "p/ptypes.h"
+#include "p/pmacros.h"
 
 /**
  * @brief Gets #pint value from @a atomic.

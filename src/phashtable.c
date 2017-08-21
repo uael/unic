@@ -18,8 +18,8 @@
 /* Hash table organized like this: table[hash key]->[list with values]
  * Note: this implementation is not intended to use on huge loads */
 
-#include "pmem.h"
-#include "phashtable.h"
+#include "p/pmem.h"
+#include "p/phashtable.h"
 
 #include <stdlib.h>
 

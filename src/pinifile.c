@@ -15,10 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "perror.h"
-#include "pinifile.h"
-#include "pmem.h"
-#include "pstring.h"
+#include "p/perror.h"
+#include "p/pinifile.h"
+#include "p/pmem.h"
+#include "p/pstring.h"
 #include "perror-private.h"
 
 #include <stdlib.h>

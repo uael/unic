@@ -15,10 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "perror.h"
-#include "pmem.h"
-#include "psemaphore.h"
-#include "pshm.h"
+#include "p/perror.h"
+#include "p/pmem.h"
+#include "p/psemaphore.h"
+#include "p/pshm.h"
 #include "perror-private.h"
 #include "pipc-private.h"
 #include "psysclose-private.h"

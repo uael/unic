@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE psocket_test
 
-#include "plibsys.h"
+#include "p/plibsys.h"
 
 #include <string.h>
 

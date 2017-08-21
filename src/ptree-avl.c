@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
+#include "p/pmem.h"
 #include "ptree-avl.h"
 
 typedef struct PTreeAVLNode_ {

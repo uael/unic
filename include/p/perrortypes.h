@@ -36,7 +36,7 @@
 #ifndef PLIBSYS_HEADER_PERRORTYPES_H
 #define PLIBSYS_HEADER_PERRORTYPES_H
 
-#include <pmacros.h>
+#include "p/pmacros.h"
 
 /** Enum with error domains. */
 typedef enum PErrorDomain_ {

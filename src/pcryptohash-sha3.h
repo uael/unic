@@ -24,8 +24,8 @@
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA3_H
 #define PLIBSYS_HEADER_PCRYPTOHASHSHA3_H
 
-#include "ptypes.h"
-#include "pmacros.h"
+#include "p/ptypes.h"
+#include "p/pmacros.h"
 
 typedef struct PHashSHA3_ PHashSHA3;
 

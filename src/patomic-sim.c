@@ -16,8 +16,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "patomic.h"
-#include "pmutex.h"
+#include "p/patomic.h"
+#include "p/pmutex.h"
 
 /* We have to use the slow, but safe locking method. */
 static PMutex *pp_atomic_mutex = NULL;

@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE pmacros_test
 
-#include "plibsys.h"
+#include "p/plibsys.h"
 
 #include <stdlib.h>
 #include <time.h>

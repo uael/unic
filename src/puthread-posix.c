@@ -15,13 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "patomic.h"
-#include "puthread.h"
+#include "p/pmem.h"
+#include "p/patomic.h"
+#include "p/puthread.h"
 #include "puthread-private.h"
 
 #ifdef P_OS_SCO
-#  include "pmutex.h"
+#  include "p/pmutex.h"
 #endif
 
 #include <unistd.h>

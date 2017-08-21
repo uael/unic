@@ -22,9 +22,9 @@
 #ifndef PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
 #define PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
 
-#include "pmacros.h"
-#include "ptypes.h"
-#include "puthread.h"
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/puthread.h"
 
 /** Base thread structure */
 typedef struct PUThreadBase_ {

@@ -87,9 +87,9 @@
 #ifndef PLIBSYS_HEADER_PSEMAPHORE_H
 #define PLIBSYS_HEADER_PSEMAPHORE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <perror.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/perror.h"
 
 /** Enum with semaphore creation modes. */
 typedef enum PSemaphoreAccessMode_ {

@@ -50,9 +50,9 @@
 #ifndef PLIBSYS_HEADER_PERROR_H
 #define PLIBSYS_HEADER_PERROR_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <perrortypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/perrortypes.h"
 
 /** Opaque data structure for an error object. */
 typedef struct PError_ PError;

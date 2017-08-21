@@ -82,8 +82,8 @@
 #ifndef PLIBSYS_HEADER_PUTHREAD_H
 #define PLIBSYS_HEADER_PUTHREAD_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Typedef for a #PUThread running method. */
 typedef ppointer (*PUThreadFunc)(ppointer arg);

@@ -53,9 +53,9 @@
 #ifndef PLIBSYS_HEADER_PHASHTABLE_H
 #define PLIBSYS_HEADER_PHASHTABLE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <plist.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/plist.h"
 
 /** Opaque data structure for a hash table. */
 typedef struct PHashTable_ PHashTable;

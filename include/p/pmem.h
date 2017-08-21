@@ -63,9 +63,9 @@
 #ifndef PLIBSYS_HEADER_PMEM_H
 #define PLIBSYS_HEADER_PMEM_H
 
-#include <ptypes.h>
-#include <pmacros.h>
-#include <perror.h>
+#include "ptypes.h"
+#include "pmacros.h"
+#include "perror.h"
 
 /** Memory management table. */
 typedef struct PMemVTable_ {

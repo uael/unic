@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "perror.h"
-#include "pfile.h"
+#include "p/perror.h"
+#include "p/pfile.h"
 #include "perror-private.h"
 
 #ifndef P_OS_WIN

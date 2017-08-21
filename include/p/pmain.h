@@ -156,8 +156,8 @@
 #ifndef PLIBSYS_HEADER_PMAIN_H
 #define PLIBSYS_HEADER_PMAIN_H
 
-#include <pmacros.h>
-#include <pmem.h>
+#include "p/pmacros.h"
+#include "p/pmem.h"
 
 /**
  * @brief Initializes library resources.

@@ -57,8 +57,8 @@
 #ifndef PLIBSYS_HEADER_PTREE_H
 #define PLIBSYS_HEADER_PTREE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Tree opaque data structure. */
 typedef struct PTree_ PTree;

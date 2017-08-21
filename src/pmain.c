@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "pmain.h"
+#include "p/pmem.h"
+#include "p/pmain.h"
 
 extern void p_mem_init(void);
 extern void p_mem_shutdown(void);

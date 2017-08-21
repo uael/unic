@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "pdir.h"
+#include "p/pmem.h"
+#include "p/pdir.h"
 
 P_API void
 p_dir_entry_free(PDirEntry *entry) {

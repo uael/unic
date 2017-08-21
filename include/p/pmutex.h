@@ -58,8 +58,8 @@
 #ifndef PLIBSYS_HEADER_PMUTEX_H
 #define PLIBSYS_HEADER_PMUTEX_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Mutex opaque data structure. */
 typedef struct PMutex_ PMutex;

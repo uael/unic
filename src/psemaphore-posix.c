@@ -15,9 +15,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "perror.h"
-#include "pmem.h"
-#include "psemaphore.h"
+#include "p/perror.h"
+#include "p/pmem.h"
+#include "p/psemaphore.h"
 #include "perror-private.h"
 #include "pipc-private.h"
 

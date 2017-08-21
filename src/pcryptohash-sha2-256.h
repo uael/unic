@@ -24,8 +24,8 @@
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA2_256_H
 #define PLIBSYS_HEADER_PCRYPTOHASHSHA2_256_H
 
-#include "ptypes.h"
-#include "pmacros.h"
+#include "p/ptypes.h"
+#include "p/pmacros.h"
 
 typedef struct PHashSHA2_256_ PHashSHA2_256;
 

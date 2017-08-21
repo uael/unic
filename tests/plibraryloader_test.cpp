@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE plibraryloader_test
 
-#include "plibsys.h"
+#include "p/plibsys.h"
 
 #include <stdio.h>
 

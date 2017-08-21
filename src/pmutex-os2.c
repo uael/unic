@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "pmutex.h"
+#include "p/pmem.h"
+#include "p/pmutex.h"
 
 #include <stdlib.h>
 

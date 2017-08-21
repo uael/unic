@@ -35,9 +35,9 @@
 #ifndef PLIBSYS_HEADER_PMACROS_H
 #define PLIBSYS_HEADER_PMACROS_H
 
-#include <pmacroscompiler.h>
-#include <pmacroscpu.h>
-#include <pmacrosos.h>
+#include "pmacroscompiler.h"
+#include "pmacroscpu.h"
+#include "pmacrosos.h"
 
 #include <stdio.h>
 

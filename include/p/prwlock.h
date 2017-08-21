@@ -62,8 +62,8 @@
 #ifndef PLIBSYS_HEADER_PRWLOCK_H
 #define PLIBSYS_HEADER_PRWLOCK_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Read-write lock opaque data structure. */
 typedef struct PRWLock_ PRWLock;

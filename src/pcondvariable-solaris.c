@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "pcondvariable.h"
+#include "p/pmem.h"
+#include "p/pcondvariable.h"
 
 #include <stdlib.h>
 #include <thread.h>

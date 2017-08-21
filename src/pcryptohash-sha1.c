@@ -17,7 +17,7 @@
 
 #include <string.h>
 
-#include "pmem.h"
+#include "p/pmem.h"
 #include "pcryptohash-sha1.h"
 
 struct PHashSHA1_ {

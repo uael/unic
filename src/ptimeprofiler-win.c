@@ -17,7 +17,7 @@
 
 /* https://msdn.microsoft.com/ru-ru/library/windows/desktop/dn553408(v=vs.85).aspx */
 
-#include "ptimeprofiler.h"
+#include "p/ptimeprofiler.h"
 #include "ptimeprofiler-private.h"
 
 #if PLIBSYS_HAS_LLDIV

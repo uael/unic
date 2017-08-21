@@ -66,9 +66,9 @@
 #ifndef PLIBSYS_HEADER_PSHMBUFFER_H
 #define PLIBSYS_HEADER_PSHMBUFFER_H
 
-#include <ptypes.h>
-#include <pmacros.h>
-#include <perror.h>
+#include "p/ptypes.h"
+#include "p/pmacros.h"
+#include "p/perror.h"
 
 /** Shared memory buffer opaque data structure. */
 typedef struct PShmBuffer_ PShmBuffer;

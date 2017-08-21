@@ -63,8 +63,8 @@
 #ifndef PLIBSYS_HEADER_PLIBRARYLOADER_H
 #define PLIBSYS_HEADER_PLIBRARYLOADER_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Opaque data structure to handle a shared library. */
 typedef struct PLibraryLoader_ PLibraryLoader;

@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "ptimeprofiler.h"
+#include "p/pmem.h"
+#include "p/ptimeprofiler.h"
 #include "ptimeprofiler-private.h"
 
 extern puint64 p_time_profiler_get_ticks_internal(void);

@@ -15,9 +15,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pdir.h"
-#include "pmem.h"
-#include "pstring.h"
+#include "p/pdir.h"
+#include "p/pmem.h"
+#include "p/pstring.h"
 #include "perror-private.h"
 
 #include <stdlib.h>

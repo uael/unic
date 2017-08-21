@@ -144,9 +144,9 @@
 #ifndef PLIBSYS_HEADER_PSOCKET_H
 #define PLIBSYS_HEADER_PSOCKET_H
 
-#include <pmacros.h>
-#include <psocketaddress.h>
-#include <perror.h>
+#include "p/pmacros.h"
+#include "p/psocketaddress.h"
+#include "p/perror.h"
 
 /** Socket protocols specified by the IANA.  */
 typedef enum PSocketProtocol_ {

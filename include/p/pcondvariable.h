@@ -64,9 +64,9 @@
 #ifndef PLIBSYS_HEADER_PCONDVARIABLE_H
 #define PLIBSYS_HEADER_PCONDVARIABLE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <pmutex.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/pmutex.h"
 
 /** Condition variable opaque data structure. */
 typedef struct PCondVariable_ PCondVariable;

@@ -15,11 +15,11 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "perror.h"
-#include "pfile.h"
-#include "plibraryloader.h"
-#include "pmem.h"
-#include "pstring.h"
+#include "p/perror.h"
+#include "p/pfile.h"
+#include "p/plibraryloader.h"
+#include "p/pmem.h"
+#include "p/pstring.h"
 
 typedef HINSTANCE plibrary_handle;
 

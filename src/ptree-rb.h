@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PTREERB_H
 #define PLIBSYS_HEADER_PTREERB_H
 
-#include "pmacros.h"
-#include "ptypes.h"
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 #include "ptree-private.h"
 
 pboolean p_tree_rb_insert(PTreeBaseNode **root_node,

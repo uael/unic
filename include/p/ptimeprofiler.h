@@ -40,8 +40,8 @@
 #ifndef PLIBSYS_HEADER_PTIMEPROFILER_H
 #define PLIBSYS_HEADER_PTIMEPROFILER_H
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 /** Time profiler opaque data structure. */
 typedef struct PTimeProfiler_ PTimeProfiler;

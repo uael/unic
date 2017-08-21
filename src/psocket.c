@@ -18,10 +18,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
-#include "psocket.h"
+#include "p/pmem.h"
+#include "p/psocket.h"
 #ifdef P_OS_SCO
-#  include "ptimeprofiler.h"
+#  include "p/ptimeprofiler.h"
 #endif
 #include "perror-private.h"
 #include "psysclose-private.h"

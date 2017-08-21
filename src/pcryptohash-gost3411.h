@@ -24,8 +24,8 @@
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
 #define PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
 
-#include "ptypes.h"
-#include "pmacros.h"
+#include "p/ptypes.h"
+#include "p/pmacros.h"
 
 typedef struct PHashGOST3411_ PHashGOST3411;
 

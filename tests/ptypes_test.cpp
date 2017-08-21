@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE ptypes_test
 
-#include "plibsys.h"
+#include "p/plibsys.h"
 
 #ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>

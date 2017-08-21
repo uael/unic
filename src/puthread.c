@@ -15,13 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "patomic.h"
+#include "p/patomic.h"
 #ifndef P_OS_WIN
-#  include "perror.h"
+#  include "p/perror.h"
 #endif
-#include "pmem.h"
-#include "pspinlock.h"
-#include "puthread.h"
+#include "p/pmem.h"
+#include "p/pspinlock.h"
+#include "p/puthread.h"
 #include "puthread-private.h"
 
 #ifdef P_OS_OS2

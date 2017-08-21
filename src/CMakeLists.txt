@@ -52,44 +52,49 @@ endif ()
 
 include(${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/platform.cmake)
 
+set(PLIBSYS_INCLUDE_DIR
+  ${PROJECT_SOURCE_DIR}/include
+  )
+
 set(PLIBSYS_INCLUDE_DIRS
+  ${PLIBSYS_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src
   ${CMAKE_BINARY_DIR}
   )
 
 set(PLIBSYS_PUBLIC_HDRS
-  patomic.h
-  ptypes.h
-  pmacros.h
-  pmacroscompiler.h
-  pmacroscpu.h
-  pmacrosos.h
-  pcondvariable.h
-  pcryptohash.h
-  perror.h
-  perrortypes.h
-  pdir.h
-  pfile.h
-  phashtable.h
-  pinifile.h
-  plibsys.h
-  plibraryloader.h
-  plist.h
-  pmain.h
-  pmem.h
-  pmutex.h
-  pprocess.h
-  prwlock.h
-  psemaphore.h
-  pshm.h
-  pshmbuffer.h
-  psocket.h
-  psocketaddress.h
-  pspinlock.h
-  pstring.h
-  ptimeprofiler.h
-  ptree.h
-  puthread.h
+  ${PLIBSYS_INCLUDE_DIR}/p/patomic.h
+  ${PLIBSYS_INCLUDE_DIR}/p/ptypes.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmacros.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmacroscompiler.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmacroscpu.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmacrosos.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pcondvariable.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pcryptohash.h
+  ${PLIBSYS_INCLUDE_DIR}/p/perror.h
+  ${PLIBSYS_INCLUDE_DIR}/p/perrortypes.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pdir.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pfile.h
+  ${PLIBSYS_INCLUDE_DIR}/p/phashtable.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pinifile.h
+  ${PLIBSYS_INCLUDE_DIR}/p/plibsys.h
+  ${PLIBSYS_INCLUDE_DIR}/p/plibraryloader.h
+  ${PLIBSYS_INCLUDE_DIR}/p/plist.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmain.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmem.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pmutex.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pprocess.h
+  ${PLIBSYS_INCLUDE_DIR}/p/prwlock.h
+  ${PLIBSYS_INCLUDE_DIR}/p/psemaphore.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pshm.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pshmbuffer.h
+  ${PLIBSYS_INCLUDE_DIR}/p/psocket.h
+  ${PLIBSYS_INCLUDE_DIR}/p/psocketaddress.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pspinlock.h
+  ${PLIBSYS_INCLUDE_DIR}/p/pstring.h
+  ${PLIBSYS_INCLUDE_DIR}/p/ptimeprofiler.h
+  ${PLIBSYS_INCLUDE_DIR}/p/ptree.h
+  ${PLIBSYS_INCLUDE_DIR}/p/puthread.h
   )
 
 set(PLIBSYS_PRIVATE_HDRS

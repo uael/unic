@@ -22,8 +22,8 @@
 #ifndef PLIBSYS_HEADER_PLIBSYS_PRIVATE_H
 #define PLIBSYS_HEADER_PLIBSYS_PRIVATE_H
 
-#include "pmacros.h"
-#include "ptypes.h"
+#include "p/pmacros.h"
+#include "p/ptypes.h"
 
 #ifndef PLIBSYS_HAS_SOCKLEN_T
 #  ifdef P_OS_VMS

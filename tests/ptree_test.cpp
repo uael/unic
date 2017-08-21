@@ -21,7 +21,7 @@
 
 #define BOOST_TEST_MODULE ptree_test
 
-#include "plibsys.h"
+#include "p/plibsys.h"
 
 #include <stdlib.h>
 #include <string.h>

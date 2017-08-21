@@ -34,9 +34,9 @@
 #ifndef PLIBSYS_HEADER_PFILE_H
 #define PLIBSYS_HEADER_PFILE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <perror.h>
+#include "p/pmacros.h"
+#include "p/ptypes.h"
+#include "p/perror.h"
 
 /**
  * @def P_DIR_SEPARATOR
