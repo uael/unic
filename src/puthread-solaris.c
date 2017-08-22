@@ -15,18 +15,16 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <thread.h>
+
 #include "p/mem.h"
 #include "p/atomic.h"
 #include "p/uthread.h"
 #include "puthread-private.h"
 
 #ifndef P_OS_UNIXWARE
-
 # include "p/mutex.h"
-
 #endif
-
-#include <thread.h>
 
 #ifdef P_OS_UNIXWARE
 # define PLIBSYS_THREAD_MIN_PRIO 0

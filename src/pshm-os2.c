@@ -15,21 +15,22 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "p/mem.h"
-#include "p/shm.h"
-#include "perror-private.h"
-#include "pipc-private.h"
-
 #define INCL_DOSMEMMGR
 #define INCL_DOSSEMAPHORES
 #define INCL_DOSERRORS
-
 #include <os2.h>
+
+#include "p/err.h"
+#include "p/mem.h"
+#include "p/shm.h"
+#include "p/string.h"
+#include "perror-private.h"
+#include "pipc-private.h"
 
 #define P_SHM_MEM_PREFIX  "\\SHAREMEM\\"
 #define P_SHM_SEM_PREFIX  "\\SEM32\\"
 #define P_SHM_SUFFIX    "_p_shm_object"
+
 struct shm {
   byte_t *platform_key;
   ptr_t addr;

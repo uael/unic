@@ -36,6 +36,7 @@
 #   include <stropts.h>
 # endif
 #endif
+
 #ifndef P_OS_WIN
 # if defined (P_OS_BEOS) || defined (P_OS_MAC) || defined (P_OS_MAC9) || \
       defined (P_OS_OS2)
@@ -69,15 +70,19 @@ struct socket {
   p_profiler_t *timer;
 #endif
 };
+
 #ifndef SHUT_RD
 # define SHUT_RD      0
 #endif
+
 #ifndef SHUT_WR
 # define SHUT_WR      1
 #endif
+
 #ifndef SHUT_RDWR
 # define SHUT_RDWR      2
 #endif
+
 #ifdef MSG_NOSIGNAL
 # define P_SOCKET_DEFAULT_SEND_FLAGS  MSG_NOSIGNAL
 #else
@@ -85,8 +90,7 @@ struct socket {
 #endif
 
 static bool
-pp_socket_set_fd_blocking(int_t fd, bool blocking,
-  err_t **error);
+pp_socket_set_fd_blocking(int_t fd, bool blocking, err_t **error);
 
 static bool
 pp_socket_check(const socket_t *socket, err_t **error);
@@ -95,14 +99,13 @@ static bool
 pp_socket_set_details_from_fd(socket_t *socket, err_t **error);
 
 static bool
-pp_socket_set_fd_blocking(int_t fd,
-  bool blocking,
-  err_t **error) {
+pp_socket_set_fd_blocking(int_t fd, bool blocking, err_t **error) {
 #ifndef P_OS_WIN
   int32_t arg;
 #else
   ulong_t arg;
 #endif
+
 #ifndef P_OS_WIN
 # ifdef P_OS_VMS
   arg = !blocking;
@@ -119,9 +122,7 @@ pp_socket_set_fd_blocking(int_t fd,
     P_WARNING ("socket_t::pp_socket_set_fd_blocking: fcntl() failed");
     arg = 0;
   }
-
   arg = (!blocking) ? (arg | O_NONBLOCK) : (arg & ~O_NONBLOCK);
-
   if (P_UNLIKELY (fcntl(fd, F_SETFL, arg) < 0)) {
 # endif
 #else
@@ -140,8 +141,7 @@ pp_socket_set_fd_blocking(int_t fd,
 }
 
 static bool
-pp_socket_check(const socket_t *socket,
-  err_t **error) {
+pp_socket_check(const socket_t *socket, err_t **error) {
   if (P_UNLIKELY (socket->closed)) {
     p_error_set_error_p(
       error,
@@ -155,8 +155,7 @@ pp_socket_check(const socket_t *socket,
 }
 
 static bool
-pp_socket_set_details_from_fd(socket_t *socket,
-  err_t **error) {
+pp_socket_set_details_from_fd(socket_t *socket, err_t **error) {
 #ifdef SO_DOMAIN
   socket_family_t family;
 #endif
@@ -169,6 +168,7 @@ pp_socket_set_details_from_fd(socket_t *socket,
 #else
   int_t bool_val;
 #endif
+
   fd = socket->fd;
   optlen = sizeof(value);
   if (P_UNLIKELY (
@@ -218,7 +218,7 @@ pp_socket_set_details_from_fd(socket_t *socket,
     return false;
   }
 #ifdef SO_DOMAIN
-  if (!(addrlen > 0)) {
+  if (addrlen <= 0) {
     optlen = sizeof(family);
 
     if (P_UNLIKELY (getsockopt(socket->fd,
@@ -284,7 +284,7 @@ pp_socket_set_details_from_fd(socket_t *socket,
       P_WARNING (
         "socket_t::pp_socket_set_details_from_fd: getsockopt() with SO_KEEPALIVE failed");
 #endif
-    socket->keepalive = !!bool_val;
+    socket->keepalive = (uint_t) (bool_val != 0);
   } else {
     /* Can't read, maybe not supported, assume false */
     socket->keepalive = false;
@@ -322,12 +322,12 @@ p_socket_close_once(void) {
 }
 
 socket_t *
-p_socket_new_from_fd(int_t fd,
-  err_t **error) {
+p_socket_new_from_fd(int_t fd, err_t **error) {
   socket_t *ret;
 #if !defined (P_OS_WIN) && defined (SO_NOSIGPIPE)
   int_t flags;
 #endif
+
   if (P_UNLIKELY (fd < 0)) {
     p_error_set_error_p(
       error,
@@ -390,15 +390,14 @@ p_socket_new_from_fd(int_t fd,
 }
 
 socket_t *
-p_socket_new(socket_family_t family,
-  socket_kind_t type,
-  socket_protocol_t protocol,
-  err_t **error) {
+p_socket_new(socket_family_t family, socket_kind_t type,
+  socket_protocol_t protocol, err_t **error) {
   socket_t *ret;
   int_t native_type, fd;
 #ifndef P_OS_WIN
   int_t flags;
 #endif
+
   if (P_UNLIKELY (family == P_SOCKET_FAMILY_UNKNOWN ||
     type == P_SOCKET_UNKNOWN ||
     protocol == P_SOCKET_PROTOCOL_UNKNOWN)) {
@@ -548,7 +547,7 @@ p_socket_get_keepalive(const socket_t *socket) {
   if (P_UNLIKELY (socket == NULL)) {
     return false;
   }
-  return socket->keepalive;
+  return (bool) socket->keepalive;
 }
 
 bool
@@ -556,7 +555,7 @@ p_socket_get_blocking(socket_t *socket) {
   if (P_UNLIKELY (socket == NULL)) {
     return false;
   }
-  return socket->blocking;
+  return (bool) socket->blocking;
 }
 
 int
@@ -576,11 +575,11 @@ p_socket_get_timeout(const socket_t *socket) {
 }
 
 socketaddr_t *
-p_socket_get_local_address(const socket_t *socket,
-  err_t **error) {
+p_socket_get_local_address(const socket_t *socket, err_t **error) {
   struct sockaddr_storage buffer;
   socklen_t len;
   socketaddr_t *ret;
+
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -614,11 +613,11 @@ p_socket_get_local_address(const socket_t *socket,
 }
 
 socketaddr_t *
-p_socket_get_remote_address(const socket_t *socket,
-  err_t **error) {
+p_socket_get_remote_address(const socket_t *socket, err_t **error) {
   struct sockaddr_storage buffer;
   socklen_t len;
   socketaddr_t *ret;
+
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -662,7 +661,7 @@ p_socket_is_connected(const socket_t *socket) {
   if (P_UNLIKELY (socket == NULL)) {
     return false;
   }
-  return socket->connected;
+  return (bool) socket->connected;
 }
 
 bool
@@ -670,14 +669,14 @@ p_socket_is_closed(const socket_t *socket) {
   if (P_UNLIKELY (socket == NULL)) {
     return true;
   }
-  return socket->closed;
+  return (bool) socket->closed;
 }
 
 bool
-p_socket_check_connect_result(socket_t *socket,
-  err_t **error) {
+p_socket_check_connect_result(socket_t *socket, err_t **error) {
   socklen_t optlen;
   int_t val;
+
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -707,7 +706,7 @@ p_socket_check_connect_result(socket_t *socket,
       "Error in socket layer"
     );
   }
-  socket->connected = (val == 0);
+  socket->connected = (uint_t) (val == 0);
   return (val == 0);
 }
 
@@ -740,8 +739,7 @@ p_socket_set_keepalive(socket_t *socket,
 }
 
 void
-p_socket_set_blocking(socket_t *socket,
-  bool blocking) {
+p_socket_set_blocking(socket_t *socket, bool blocking) {
   if (P_UNLIKELY (socket == NULL)) {
     return;
   }
@@ -749,8 +747,7 @@ p_socket_set_blocking(socket_t *socket,
 }
 
 void
-p_socket_set_listen_backlog(socket_t *socket,
-  int_t backlog) {
+p_socket_set_listen_backlog(socket_t *socket, int_t backlog) {
   if (P_UNLIKELY (socket == NULL || socket->listening)) {
     return;
   }
@@ -758,8 +755,7 @@ p_socket_set_listen_backlog(socket_t *socket,
 }
 
 void
-p_socket_set_timeout(socket_t *socket,
-  int_t timeout) {
+p_socket_set_timeout(socket_t *socket, int_t timeout) {
   if (P_UNLIKELY (socket == NULL)) {
     return;
   }
@@ -770,9 +766,7 @@ p_socket_set_timeout(socket_t *socket,
 }
 
 bool
-p_socket_bind(const socket_t *socket,
-  socketaddr_t *address,
-  bool allow_reuse,
+p_socket_bind(const socket_t *socket, socketaddr_t *address, bool allow_reuse,
   err_t **error) {
   struct sockaddr_storage addr;
 #ifdef SO_REUSEPORT
@@ -783,6 +777,7 @@ p_socket_bind(const socket_t *socket,
 #else
   int_t value;
 #endif
+
   if (P_UNLIKELY (socket == NULL || address == NULL)) {
     p_error_set_error_p(
       error,
@@ -850,13 +845,12 @@ p_socket_bind(const socket_t *socket,
 }
 
 bool
-p_socket_connect(socket_t *socket,
-  socketaddr_t *address,
-  err_t **error) {
+p_socket_connect(socket_t *socket, socketaddr_t *address, err_t **error) {
   struct sockaddr_storage buffer;
   int_t err_code;
   int_t conn_result;
   err_io_t sock_err;
+
   if (P_UNLIKELY (socket == NULL || address == NULL)) {
     p_error_set_error_p(
       error,
@@ -939,8 +933,7 @@ p_socket_connect(socket_t *socket,
 }
 
 bool
-p_socket_listen(socket_t *socket,
-  err_t **error) {
+p_socket_listen(socket_t *socket, err_t **error) {
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -967,8 +960,7 @@ p_socket_listen(socket_t *socket,
 }
 
 socket_t *
-p_socket_accept(const socket_t *socket,
-  err_t **error) {
+p_socket_accept(const socket_t *socket, err_t **error) {
   socket_t *ret;
   err_io_t sock_err;
   int_t res;
@@ -976,6 +968,7 @@ p_socket_accept(const socket_t *socket,
 #ifndef P_OS_WIN
   int_t flags;
 #endif
+
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -1041,13 +1034,12 @@ p_socket_accept(const socket_t *socket,
 }
 
 ssize_t
-p_socket_receive(const socket_t *socket,
-  byte_t *buffer,
-  size_t buflen,
+p_socket_receive(const socket_t *socket, byte_t *buffer, size_t buflen,
   err_t **error) {
   err_io_t sock_err;
   ssize_t ret;
   int_t err_code;
+
   if (P_UNLIKELY (socket == NULL || buffer == NULL)) {
     p_error_set_error_p(
       error,
@@ -1093,16 +1085,14 @@ p_socket_receive(const socket_t *socket,
 }
 
 ssize_t
-p_socket_receive_from(const socket_t *socket,
-  socketaddr_t **address,
-  byte_t *buffer,
-  size_t buflen,
-  err_t **error) {
+p_socket_receive_from(const socket_t *socket, socketaddr_t **address,
+  byte_t *buffer, size_t buflen, err_t **error) {
   err_io_t sock_err;
   struct sockaddr_storage sa;
   socklen_t optlen;
   ssize_t ret;
   int_t err_code;
+
   if (P_UNLIKELY (socket == NULL || buffer == NULL || buflen == 0)) {
     p_error_set_error_p(
       error,
@@ -1160,13 +1150,12 @@ p_socket_receive_from(const socket_t *socket,
 }
 
 ssize_t
-p_socket_send(const socket_t *socket,
-  const byte_t *buffer,
-  size_t buflen,
+p_socket_send(const socket_t *socket, const byte_t *buffer, size_t buflen,
   err_t **error) {
   err_io_t sock_err;
   ssize_t ret;
   int_t err_code;
+
   if (P_UNLIKELY (socket == NULL || buffer == NULL || buflen == 0)) {
     p_error_set_error_p(
       error,
@@ -1218,16 +1207,14 @@ p_socket_send(const socket_t *socket,
 }
 
 ssize_t
-p_socket_send_to(const socket_t *socket,
-  socketaddr_t *address,
-  const byte_t *buffer,
-  size_t buflen,
-  err_t **error) {
+p_socket_send_to(const socket_t *socket, socketaddr_t *address,
+  const byte_t *buffer, size_t buflen, err_t **error) {
   err_io_t sock_err;
   struct sockaddr_storage sa;
   socklen_t optlen;
   ssize_t ret;
   int_t err_code;
+
   if (!socket || !address || !buffer) {
     p_error_set_error_p(
       error,
@@ -1288,9 +1275,9 @@ p_socket_send_to(const socket_t *socket,
 }
 
 bool
-p_socket_close(socket_t *socket,
-  err_t **error) {
+p_socket_close(socket_t *socket, err_t **error) {
   int_t err_code;
+
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -1391,12 +1378,11 @@ p_socket_free(socket_t *socket) {
 }
 
 bool
-p_socket_set_buffer_size(const socket_t *socket,
-  socket_dir_t dir,
-  size_t size,
+p_socket_set_buffer_size(const socket_t *socket, socket_dir_t dir, size_t size,
   err_t **error) {
   int_t optname;
   int_t optval;
+
   if (P_UNLIKELY (socket == NULL)) {
     p_error_set_error_p(
       error,
@@ -1429,8 +1415,7 @@ p_socket_set_buffer_size(const socket_t *socket,
 }
 
 bool
-p_socket_io_condition_wait(const socket_t *socket,
-  socket_io_cond_t condition,
+p_socket_io_condition_wait(const socket_t *socket, socket_io_cond_t condition,
   err_t **error) {
 #if defined (P_OS_WIN)
   long network_events;

@@ -15,16 +15,16 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/sem.h"
+#include "p/sema.h"
 
-struct sem {
+struct sema {
   int_t hdl;
 };
 
-sem_t *
-p_semaphore_new(const byte_t *name,
+sema_t *
+p_sema_new(const byte_t *name,
   int_t init_val,
-  sem_access_t mode,
+  sema_access_t mode,
   err_t **error) {
   P_UNUSED (name);
   P_UNUSED (init_val);
@@ -39,12 +39,12 @@ p_semaphore_new(const byte_t *name,
 }
 
 void
-p_semaphore_take_ownership(sem_t *sem) {
+p_sema_take_ownership(sema_t *sem) {
   P_UNUSED (sem);
 }
 
 bool
-p_semaphore_acquire(sem_t *sem,
+p_sema_acquire(sema_t *sem,
   err_t **error) {
   P_UNUSED (sem);
   p_error_set_error_p(
@@ -57,7 +57,7 @@ p_semaphore_acquire(sem_t *sem,
 }
 
 bool
-p_semaphore_release(sem_t *sem,
+p_sema_release(sema_t *sem,
   err_t **error) {
   P_UNUSED (sem);
   p_error_set_error_p(
@@ -70,7 +70,7 @@ p_semaphore_release(sem_t *sem,
 }
 
 void
-p_semaphore_free(sem_t *sem) {
+p_sema_free(sema_t *sem) {
   P_UNUSED (sem);
 }
 

@@ -61,6 +61,8 @@
 #include "macros.h"
 #include "err.h"
 
+#include <memory.h>
+
 typedef struct mem_vtable mem_vtable_t;
 
 /*!@brief Memory management table. */

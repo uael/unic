@@ -73,7 +73,7 @@
  *
  * - BeOS lacks support for process-wide named semaphores.
  *
- * Use the third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new() to reset
+ * Use the third argument as #P_SEMA_CREATE in p_semaphore_new() to reset
  * a semaphore value while opening it. This argument is ignored on Windows. You
  * can also take ownership of the semaphore with p_semaphore_take_ownership() to
  * explicitly remove it from the system after closing.
@@ -85,20 +85,20 @@
 #include "p/types.h"
 #include "p/err.h"
 
-typedef enum sem_access sem_access_t;
-
 /*!@brief Semaphore opaque data structure. */
-typedef struct sem sem_t;
+typedef struct sema sema_t;
 
 /*!@brief Enum with semaphore creation modes. */
-enum sem_access {
+enum sema_access {
 
   /*!@brief Opens an existing semaphore or creates one with a given value. */
-  P_SEM_ACCESS_OPEN = 0,
+  P_SEMA_OPEN = 0,
 
   /*!@brief Creates semaphore, resets to a given value if exists. */
-  P_SEM_ACCESS_CREATE = 1
+  P_SEMA_CREATE = 1
 };
+
+typedef enum sema_access sema_access_t;
 
 /*!@brief Creates a new #PSemaphore object.
  * @param name Semaphore name.
@@ -111,12 +111,12 @@ enum sem_access {
  *
  * The @a init_val is used only in one of following cases: a semaphore with the
  * such name doesn't exist, or the semaphore with the such name exists but
- * @a mode specified as #P_SEM_ACCESS_CREATE (non-Windows platforms only). In
+ * @a mode specified as #P_SEMA_CREATE (non-Windows platforms only). In
  * other cases @a init_val is ignored. The @a name is system-wide, so any other
  * process can open that semaphore passing the same name.
  */
-P_API sem_t *
-p_semaphore_new(const byte_t *name, int_t init_val, sem_access_t mode,
+P_API sema_t *
+p_sema_new(const byte_t *name, int_t init_val, sema_access_t mode,
   err_t **error);
 
 /*!@brief Takes ownership of a semaphore.
@@ -134,12 +134,12 @@ p_semaphore_new(const byte_t *name, int_t init_val, sem_access_t mode,
  * remove it with the p_semaphore_free() call. After that, create it again.
  *
  * You can also do the same thing upon semaphore creation passing
- * #P_SEM_ACCESS_CREATE to p_semaphore_new(). The only difference is that you
+ * #P_SEMA_CREATE to p_semaphore_new(). The only difference is that you
  * should already know whether this semaphore object is from the previous crash
  * or not.
  */
 P_API void
-p_semaphore_take_ownership(sem_t *sem);
+p_sema_take_ownership(sema_t *sem);
 
 /*!@brief Acquires (P operation) a semaphore.
  * @param sem #PSemaphore to acquire.
@@ -148,7 +148,7 @@ p_semaphore_take_ownership(sem_t *sem);
  * @since 0.0.1
  */
 P_API bool
-p_semaphore_acquire(sem_t *sem, err_t **error);
+p_sema_acquire(sema_t *sem, err_t **error);
 
 /*!@brief Releases (V operation) a semaphore.
  * @param sem #PSemaphore to release.
@@ -157,7 +157,7 @@ p_semaphore_acquire(sem_t *sem, err_t **error);
  * @since 0.0.1
  */
 P_API bool
-p_semaphore_release(sem_t *sem, err_t **error);
+p_sema_release(sema_t *sem, err_t **error);
 
 /*!@brief Frees #PSemaphore object.
  * @param sem #PSemaphore to free.
@@ -167,6 +167,6 @@ p_semaphore_release(sem_t *sem, err_t **error);
  * deadlock while removing the acquired semaphore.
  */
 P_API void
-p_semaphore_free(sem_t *sem);
+p_sema_free(sema_t *sem);
 
 #endif /* !P_SEM_H__ */

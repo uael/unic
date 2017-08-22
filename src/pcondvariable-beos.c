@@ -15,11 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <kernel/OS.h>
+
 #include "p/condvar.h"
 #include "p/spinlock.h"
 #include "p/atomic.h"
+#include "p/string.h"
 #include "p/mem.h"
-#include <kernel/OS.h>
 
 typedef struct _PCondThread {
   thread_id thread;

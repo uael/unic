@@ -142,11 +142,6 @@
 #include "p/socketaddr.h"
 #include "p/err.h"
 
-typedef enum socket_protocol socket_protocol_t;
-typedef enum socket_kind socket_kind_t;
-typedef enum socket_dir socket_dir_t;
-typedef enum socket_io_cond socket_io_cond_t;
-
 /*!@brief Socket opaque structure. */
 typedef struct socket socket_t;
 
@@ -204,6 +199,11 @@ enum socket_io_cond {
   /*!@brief Ready to write. */
   P_SOCKET_IO_CONDITION_POLLOUT = 2
 };
+
+typedef enum socket_protocol socket_protocol_t;
+typedef enum socket_kind socket_kind_t;
+typedef enum socket_dir socket_dir_t;
+typedef enum socket_io_cond socket_io_cond_t;
 
 /*!@brief Creates a new #PSocket object from a file descriptor.
  * @param fd File descriptor to create the socket from.

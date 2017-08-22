@@ -80,8 +80,6 @@
 #include "p/types.h"
 #include "p/err.h"
 
-typedef enum shm_access shm_access_t;
-
 /*!@brief Shared memory opaque data structure. */
 typedef struct shm shm_t;
 
@@ -94,6 +92,8 @@ enum shm_access {
   /*!@brief Read/write access. */
   P_SHM_ACCESS_READWRITE = 1
 };
+
+typedef enum shm_access shm_access_t;
 
 /*!@brief Creates a new #PShm object.
  * @param name Shared memory name.

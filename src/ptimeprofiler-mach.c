@@ -15,12 +15,12 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/profiler.h"
-#include "ptimeprofiler-private.h"
 #include <mach/mach_time.h>
 
-static uint64_t pp_profiler_freq_num = 0;
+#include "p/profiler.h"
+#include "ptimeprofiler-private.h"
 
+static uint64_t pp_profiler_freq_num = 0;
 static uint64_t pp_profiler_freq_denom = 0;
 
 uint64_t

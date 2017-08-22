@@ -15,12 +15,16 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
 #include "p/dir.h"
 #include "p/mem.h"
 #include "p/string.h"
 #include "perror-private.h"
-#include <dirent.h>
-#include <sys/stat.h>
 
 #if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
     defined(P_OS_IRIX) || defined(P_OS_HAIKU)
@@ -171,7 +175,7 @@ p_dir_get_next_entry(dir_t *dir,
   err_t **error) {
   dirent_t *ret;
 #ifdef P_DIR_NEED_BUF_ALLOC
-  struct dirent *dirent_st;
+  struct p_dirent *dirent_st;
 #elif !defined(P_DIR_NON_REENTRANT)
   struct dirent dirent_st;
 #endif
@@ -210,7 +214,7 @@ p_dir_get_next_entry(dir_t *dir,
   name_max = (int_t) (NAME_MAX);
 #endif
 #ifdef P_DIR_NEED_BUF_ALLOC
-  if (P_UNLIKELY ((dirent_st = p_malloc0 (sizeof (struct dirent) + name_max + 1)) == NULL)) {
+  if (P_UNLIKELY ((dirent_st = p_malloc0 (sizeof (struct p_dirent) + name_max + 1)) == NULL)) {
     p_error_set_error_p (error,
              (int_t) P_ERR_IO_NO_RESOURCES,
              0,

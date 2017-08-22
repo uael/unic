@@ -15,14 +15,16 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "p/mem.h"
-#include "p/sem.h"
-#include "perror-private.h"
-#include "pipc-private.h"
 #include <unistd.h>
 #include <errno.h>
 #include <sys/sem.h>
+
+#include "p/err.h"
+#include "p/mem.h"
+#include "p/sema.h"
+#include "p/string.h"
+#include "perror-private.h"
+#include "pipc-private.h"
 
 #define P_SEM_SUFFIX    "_p_sem_object"
 #define P_SEM_INVALID_HDL  -1
@@ -39,24 +41,24 @@ typedef union p_semun_ {
 
 typedef int psem_hdl;
 
-struct sem {
+struct sema {
   bool file_created;
   bool sem_created;
   key_t unix_key;
   byte_t *platform_key;
   psem_hdl sem_hdl;
-  sem_access_t mode;
+  sema_access_t mode;
   int_t init_val;
 };
 
 static bool
-pp_semaphore_create_handle(sem_t *sem, err_t **error);
+pp_semaphore_create_handle(sema_t *sem, err_t **error);
 
 static void
-pp_semaphore_clean_handle(sem_t *sem);
+pp_semaphore_clean_handle(sema_t *sem);
 
 static bool
-pp_semaphore_create_handle(sem_t *sem, err_t **error) {
+pp_semaphore_create_handle(sema_t *sem, err_t **error) {
   int_t built;
   p_semun semun_op;
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
@@ -117,7 +119,7 @@ pp_semaphore_create_handle(sem_t *sem, err_t **error) {
     pp_semaphore_clean_handle(sem);
     return false;
   }
-  if (sem->sem_created == true || sem->mode == P_SEM_ACCESS_CREATE) {
+  if (sem->sem_created == true || sem->mode == P_SEMA_CREATE) {
     semun_op.val = sem->init_val;
     if (P_UNLIKELY (semctl(sem->sem_hdl, 0, SETVAL, semun_op) == -1)) {
       p_error_set_error_p(
@@ -134,28 +136,28 @@ pp_semaphore_create_handle(sem_t *sem, err_t **error) {
 }
 
 static void
-pp_semaphore_clean_handle(sem_t *sem) {
+pp_semaphore_clean_handle(sema_t *sem) {
   if (sem->sem_hdl != P_SEM_INVALID_HDL &&
     sem->sem_created == true &&
     semctl(sem->sem_hdl, 0, IPC_RMID) == -1)
     P_ERROR (
-      "sem_t::pp_semaphore_clean_handle: semctl() with IPC_RMID failed");
+      "sema_t::pp_semaphore_clean_handle: semctl() with IPC_RMID failed");
   if (sem->file_created == true &&
     sem->platform_key != NULL &&
     unlink(sem->platform_key) == -1)
-    P_ERROR ("sem_t::pp_semaphore_clean_handle: unlink() failed");
+    P_ERROR ("sema_t::pp_semaphore_clean_handle: unlink() failed");
   sem->file_created = false;
   sem->sem_created = false;
   sem->unix_key = -1;
   sem->sem_hdl = P_SEM_INVALID_HDL;
 }
 
-sem_t *
-p_semaphore_new(const byte_t *name,
+sema_t *
+p_sema_new(const byte_t *name,
   int_t init_val,
-  sem_access_t mode,
+  sema_access_t mode,
   err_t **error) {
-  sem_t *ret;
+  sema_t *ret;
   byte_t *new_name;
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
     p_error_set_error_p(
@@ -166,7 +168,7 @@ p_semaphore_new(const byte_t *name,
     );
     return NULL;
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sem_t))) == NULL)) {
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sema_t))) == NULL)) {
     p_error_set_error_p(
       error,
       (int_t) P_ERR_IPC_NO_RESOURCES,
@@ -193,14 +195,14 @@ p_semaphore_new(const byte_t *name,
   ret->mode = mode;
   p_free(new_name);
   if (P_UNLIKELY (pp_semaphore_create_handle(ret, error) == false)) {
-    p_semaphore_free(ret);
+    p_sema_free(ret);
     return NULL;
   }
   return ret;
 }
 
 void
-p_semaphore_take_ownership(sem_t *sem) {
+p_sema_take_ownership(sema_t *sem) {
   if (P_UNLIKELY (sem == NULL)) {
     return;
   }
@@ -208,7 +210,7 @@ p_semaphore_take_ownership(sem_t *sem) {
 }
 
 bool
-p_semaphore_acquire(sem_t *sem,
+p_sema_acquire(sema_t *sem,
   err_t **error) {
   bool ret;
   int_t res;
@@ -229,7 +231,7 @@ p_semaphore_acquire(sem_t *sem,
       p_error_get_last_system() == EIDRM ||
         p_error_get_last_system() == EINVAL
     ))) {
-    P_WARNING ("sem_t::p_semaphore_acquire: trying to recreate");
+    P_WARNING ("sema_t::p_sema_acquire: trying to recreate");
     pp_semaphore_clean_handle(sem);
     if (P_UNLIKELY (pp_semaphore_create_handle(sem, error) == false)) {
       return false;
@@ -250,7 +252,7 @@ p_semaphore_acquire(sem_t *sem,
 }
 
 bool
-p_semaphore_release(sem_t *sem,
+p_sema_release(sema_t *sem,
   err_t **error) {
   bool ret;
   int_t res;
@@ -271,7 +273,7 @@ p_semaphore_release(sem_t *sem,
       p_error_get_last_system() == EIDRM ||
         p_error_get_last_system() == EINVAL
     ))) {
-    P_WARNING ("sem_t::p_semaphore_release: trying to recreate");
+    P_WARNING ("sema_t::p_sema_release: trying to recreate");
     pp_semaphore_clean_handle(sem);
     if (P_UNLIKELY (pp_semaphore_create_handle(sem, error) == false)) {
       return false;
@@ -290,7 +292,7 @@ p_semaphore_release(sem_t *sem,
 }
 
 void
-p_semaphore_free(sem_t *sem) {
+p_sema_free(sema_t *sem) {
   if (P_UNLIKELY (sem == NULL)) {
     return;
   }

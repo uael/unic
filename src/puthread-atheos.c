@@ -15,12 +15,14 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <atheos/threads.h>
+#include <atheos/tld.h>
+
 #include "p/mem.h"
 #include "p/atomic.h"
 #include "p/uthread.h"
+#include "p/string.h"
 #include "puthread-private.h"
-#include <atheos/threads.h>
-#include <atheos/tld.h>
 
 typedef thread_id puthread_hdl;
 

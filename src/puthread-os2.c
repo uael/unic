@@ -17,7 +17,6 @@
 
 #define INCL_DOSPROCESS
 #define INCL_DOSERRORS
-
 #include <os2.h>
 #include <process.h>
 

@@ -15,6 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "p/mem.h"
 #include "p/hash.h"
 #include "pcryptohash-gost3411.h"

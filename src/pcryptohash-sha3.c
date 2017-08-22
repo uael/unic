@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include "p/string.h"
 #include "p/mem.h"
 #include "pcryptohash-sha3.h"
 

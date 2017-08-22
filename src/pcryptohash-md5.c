@@ -16,6 +16,7 @@
  */
 
 #include "p/mem.h"
+#include "p/string.h"
 #include "pcryptohash-md5.h"
 
 struct PHashMD5_ {

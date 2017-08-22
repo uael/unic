@@ -65,8 +65,6 @@
 #include "p/macros.h"
 #include "p/types.h"
 
-typedef enum hash_kind hash_kind_t;
-
 /*!@brief Opaque data structure for handling a cryptographic hash context. */
 typedef struct hash hash_t;
 
@@ -128,6 +126,8 @@ enum hash_kind {
    */
   P_HASH_GOST = 10
 };
+
+typedef enum hash_kind hash_kind_t;
 
 /*!@brief Initializes a new #PCryptoHash context.
  * @param type Hash function type to use, can't be changed later.

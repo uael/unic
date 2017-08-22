@@ -16,6 +16,7 @@
  */
 
 #include "p/mem.h"
+#include "p/string.h"
 #include "pcryptohash-gost3411.h"
 
 struct PHashGOST3411_ {

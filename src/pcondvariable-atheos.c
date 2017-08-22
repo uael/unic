@@ -15,12 +15,14 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <atheos/semaphore.h>
+#include <atheos/threads.h>
+
 #include "p/condvar.h"
 #include "p/spinlock.h"
 #include "p/atomic.h"
 #include "p/mem.h"
-#include <atheos/semaphore.h>
-#include <atheos/threads.h>
+#include "p/string.h"
 
 typedef struct _PCondThread {
   thread_id thread;

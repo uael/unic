@@ -18,10 +18,7 @@
 
 #include "p/mem.h"
 #include "p/string.h"
-#include <ctype.h>
-
-#define P_STR_MAX_EXPON    308
-
+#define P_STR_MAX_EXPON 308
 byte_t *
 p_strdup(const byte_t *str) {
   byte_t *ret;
@@ -78,22 +75,21 @@ p_strtok(byte_t *str, const byte_t *delim, byte_t **buf) {
   }
 #ifdef P_OS_WIN
 # ifdef P_CC_MSVC
-    if (P_UNLIKELY (buf == NULL))
-      return str;
+  if (P_UNLIKELY (buf == NULL))
+    return str;
 #   if _MSC_VER < 1400
-    P_UNUSED (buf);
-    return strtok (str, delim);
+  P_UNUSED (buf);
+  return strtok (str, delim);
 #   else
-    return strtok_s (str, delim, buf);
+  return strtok_s (str, delim, buf);
 #   endif
 # else
-  P_UNUSED (buf);
-  return strtok(str, delim);
+P_UNUSED (buf);
+return strtok(str, delim);
 # endif
 #else
   if (P_UNLIKELY (buf == NULL))
     return str;
-
   return strtok_r(str, delim, buf);
 #endif
 }

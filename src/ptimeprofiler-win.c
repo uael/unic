@@ -21,6 +21,7 @@
 #include "ptimeprofiler-private.h"
 
 #if PLIBSYS_HAS_LLDIV
+#  include <stdlib.h>
 #endif
 
 typedef uint64_t (WINAPI

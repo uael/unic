@@ -15,15 +15,18 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <time.h>
+
 #include "p/atomic.h"
 
 #ifndef P_OS_WIN
-# include "p/error.h"
+# include "p/err.h"
 #endif
 
 #include "p/mem.h"
 #include "p/spinlock.h"
 #include "p/uthread.h"
+#include "p/string.h"
 #include "puthread-private.h"
 
 #ifdef P_OS_OS2
@@ -32,22 +35,25 @@
 # define INCL_DOSMISC
 # include <os2.h>
 #endif
+
 #ifndef P_OS_WIN
 # include <unistd.h>
 #endif
+
 #ifdef P_OS_WIN
-
 typedef void (WINAPI *SystemInfoFunc)(LPSYSTEM_INFO);
-
 #endif
+
 #ifdef P_OS_HPUX
 # include <sys/pstat.h>
 #endif
+
 #ifdef P_OS_BSD4
 # include <sys/param.h>
 # include <sys/types.h>
 # include <sys/sysctl.h>
 #endif
+
 #ifdef P_OS_VMS
 # define __NEW_STARLET 1
 # include <starlet.h>
@@ -60,15 +66,19 @@ typedef void (WINAPI *SystemInfoFunc)(LPSYSTEM_INFO);
 # include <tis.h>
 # include <lib$routines.h>
 #endif
+
 #ifdef P_OS_QNX6
 # include <sys/syspage.h>
 #endif
+
 #ifdef P_OS_BEOS
 # include <kernel/OS.h>
 #endif
+
 #ifdef P_OS_SYLLABLE
 # include <atheos/sysinfo.h>
 #endif
+
 #if defined (P_OS_SCO) && !defined (_SC_NPROCESSORS_ONLN)
 # include <sys/utsname.h>
 #endif

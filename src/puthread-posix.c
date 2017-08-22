@@ -15,17 +15,19 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
+#include <errno.h>
+#include <pthread.h>
+
 #include "p/mem.h"
 #include "p/atomic.h"
 #include "p/uthread.h"
+#include "p/string.h"
 #include "puthread-private.h"
 
 #ifdef P_OS_SCO
 # include "p/pmutex.h"
 #endif
-
-#include <errno.h>
-#include <pthread.h>
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 # ifndef P_OS_VMS

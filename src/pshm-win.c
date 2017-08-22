@@ -17,7 +17,8 @@
 
 #include "p/err.h"
 #include "p/mem.h"
-#include "p/sem.h"
+#include "p/sema.h"
+#include "p/string.h"
 #include "p/shm.h"
 #include "perror-private.h"
 #include "pipc-private.h"
@@ -32,7 +33,7 @@ struct shm {
   pshm_hdl shm_hdl;
   ptr_t addr;
   size_t size;
-  sem_t *sem;
+  sema_t *sem;
   shm_access_t perms;
 };
 
@@ -107,9 +108,9 @@ pp_shm_create_handle(shm_t *shm,
   }
   shm->size = mem_stat.RegionSize;
   if (P_UNLIKELY ((
-    shm->sem = p_semaphore_new(
+    shm->sem = p_sema_new(
       shm->platform_key, 1,
-      is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
+      is_exists ? P_SEMA_OPEN : P_SEMA_CREATE,
       error
     )) == NULL)) {
     pp_shm_clean_handle(shm);
@@ -127,7 +128,7 @@ pp_shm_clean_handle(shm_t *shm) {
     shm->shm_hdl != P_SHM_INVALID_HDL && CloseHandle(shm->shm_hdl) == 0))
     P_ERROR ("shm_t::pp_shm_clean_handle: CloseHandle() failed");
   if (P_LIKELY (shm->sem != NULL)) {
-    p_semaphore_free(shm->sem);
+    p_sema_free(shm->sem);
     shm->sem = NULL;
   }
   shm->shm_hdl = P_SHM_INVALID_HDL;
@@ -216,7 +217,7 @@ p_shm_lock(shm_t *shm,
     );
     return false;
   }
-  return p_semaphore_acquire(shm->sem, error);
+  return p_sema_acquire(shm->sem, error);
 }
 
 bool
@@ -231,7 +232,7 @@ p_shm_unlock(shm_t *shm,
     );
     return false;
   }
-  return p_semaphore_release(shm->sem, error);
+  return p_sema_release(shm->sem, error);
 }
 
 ptr_t

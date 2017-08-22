@@ -1026,4 +1026,8 @@ typedef int_t (*cmp_fn_t)(const_ptr_t a, const_ptr_t b);
  */
 typedef int_t(*cmp_data_fn_t)(const_ptr_t a, const_ptr_t b, ptr_t data);
 
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdarg.h>
+
 #endif /* !P_TYPES_H__ */

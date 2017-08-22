@@ -27,6 +27,9 @@
 #ifndef P_STRING_H__
 # define P_STRING_H__
 
+#include <string.h>
+#include <ctype.h>
+
 #include "p/macros.h"
 #include "p/types.h"
 

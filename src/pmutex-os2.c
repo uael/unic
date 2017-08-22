@@ -15,13 +15,12 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/mutex.h"
-
 #define INCL_DOSSEMAPHORES
 #define INCL_DOSERRORS
-
 #include <os2.h>
+
+#include "p/mem.h"
+#include "p/mutex.h"
 
 typedef HMTX mutex_hdl;
 

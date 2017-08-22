@@ -15,10 +15,11 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "psysclose-private.h"
 #include <unistd.h>
 #include <errno.h>
+
+#include "p/err.h"
+#include "psysclose-private.h"
 
 int_t
 p_sys_close(int_t fd) {

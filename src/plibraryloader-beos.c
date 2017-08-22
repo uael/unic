@@ -15,12 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <be/kernel/image.h>
+
 #include "p/err.h"
 #include "p/file.h"
 #include "p/dl.h"
 #include "p/mem.h"
 #include "p/string.h"
-#include <be/kernel/image.h>
 
 typedef image_id plibrary_handle;
 

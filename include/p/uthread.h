@@ -79,8 +79,6 @@
 #include "p/macros.h"
 #include "p/types.h"
 
-typedef enum uthread_prio uthread_prio_t;
-
 /*!@brief Typedef for a #PUThread running method. */
 typedef ptr_t (*uthread_fn_t)(ptr_t arg);
 
@@ -117,6 +115,8 @@ enum uthread_prio {
   /*!@brief Scheduled as often as possible. */
   P_UTHREAD_PRIORITY_TIMECRITICAL = 7
 };
+
+typedef enum uthread_prio uthread_prio_t;
 
 /*!@brief Creates a new #PUThread and starts it.
  * @param func Main thread function to run.

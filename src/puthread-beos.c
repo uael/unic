@@ -15,14 +15,16 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <kernel/OS.h>
+#include <kernel/scheduler.h>
+#include <support/TLS.h>
+
 #include "p/mem.h"
 #include "p/atomic.h"
 #include "p/mutex.h"
 #include "p/uthread.h"
+#include "p/string.h"
 #include "puthread-private.h"
-#include <kernel/OS.h>
-#include <kernel/scheduler.h>
-#include <support/TLS.h>
 
 typedef thread_id puthread_hdl;
 

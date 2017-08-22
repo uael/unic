@@ -34,83 +34,85 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-BOOST_AUTO_TEST_CASE (patomic_general_test)
-{
-	p_libsys_init ();
+BOOST_AUTO_TEST_CASE (patomic_general_test) {
+  p_libsys_init();
 
-	(void) p_atomic_is_lock_free ();
+  (void) p_atomic_is_lock_free();
 
-	int_t atomic_int = 0;
-	p_atomic_int_set (&atomic_int, 10);
+  int_t atomic_int = 0;
+  p_atomic_int_set(&atomic_int, 10);
 
-	BOOST_CHECK (p_atomic_int_add (&atomic_int, 5) == 10);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 15);
+  BOOST_CHECK (p_atomic_int_add(&atomic_int, 5) == 10);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 15);
 
-	p_atomic_int_add (&atomic_int, -5);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 10);
+  p_atomic_int_add(&atomic_int, -5);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 10);
 
-	p_atomic_int_inc (&atomic_int);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 11);
+  p_atomic_int_inc(&atomic_int);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 11);
 
-	BOOST_CHECK (p_atomic_int_dec_and_test (&atomic_int) == false);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 10);
+  BOOST_CHECK (p_atomic_int_dec_and_test(&atomic_int) == false);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 10);
 
-	BOOST_CHECK (p_atomic_int_compare_and_exchange (&atomic_int, 10, -10) == true);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == -10);
-	BOOST_CHECK (p_atomic_int_compare_and_exchange (&atomic_int, 10, 20) == false);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == -10);
+  BOOST_CHECK (p_atomic_int_compare_and_exchange(&atomic_int, 10, -10) == true);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == -10);
+  BOOST_CHECK (p_atomic_int_compare_and_exchange(&atomic_int, 10, 20) == false);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == -10);
 
-	p_atomic_int_inc (&atomic_int);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == -9);
+  p_atomic_int_inc(&atomic_int);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == -9);
 
-	p_atomic_int_set (&atomic_int, 4);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 4);
+  p_atomic_int_set(&atomic_int, 4);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 4);
 
-	BOOST_CHECK (p_atomic_int_xor ((uint_t *) &atomic_int, (uint_t) 1) == 4);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 5);
+  BOOST_CHECK (p_atomic_int_xor((uint_t *) &atomic_int, (uint_t) 1) == 4);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 5);
 
-	BOOST_CHECK (p_atomic_int_or ((uint_t *) &atomic_int, (uint_t) 2) == 5);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 7);
+  BOOST_CHECK (p_atomic_int_or((uint_t *) &atomic_int, (uint_t) 2) == 5);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 7);
 
-	BOOST_CHECK (p_atomic_int_and ((uint_t *) &atomic_int, (uint_t) 1) == 7);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 1);
+  BOOST_CHECK (p_atomic_int_and((uint_t *) &atomic_int, (uint_t) 1) == 7);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 1);
 
-	p_atomic_int_set (&atomic_int, 51);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 51);
+  p_atomic_int_set(&atomic_int, 51);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 51);
 
-	for (int_t i = 51; i > 1; --i) {
-		BOOST_CHECK (p_atomic_int_dec_and_test (&atomic_int) == false);
-		BOOST_CHECK (p_atomic_int_get (&atomic_int) == (i - 1));
-	}
+  for (int_t i = 51; i > 1; --i) {
+    BOOST_CHECK (p_atomic_int_dec_and_test(&atomic_int) == false);
+    BOOST_CHECK (p_atomic_int_get(&atomic_int) == (i - 1));
+  }
 
-	BOOST_CHECK (p_atomic_int_dec_and_test (&atomic_int) == true);
-	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 0);
+  BOOST_CHECK (p_atomic_int_dec_and_test(&atomic_int) == true);
+  BOOST_CHECK (p_atomic_int_get(&atomic_int) == 0);
 
-	ptr_t atomic_pointer = NULL;
-	p_atomic_pointer_set (&atomic_pointer, PUINT_TO_POINTER (P_MAXSIZE));
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PUINT_TO_POINTER (P_MAXSIZE));
+  ptr_t atomic_pointer = NULL;
+  p_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (P_MAXSIZE));
+  BOOST_CHECK (
+    p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(P_MAXSIZE));
 
-	p_atomic_pointer_set (&atomic_pointer, PUINT_TO_POINTER (100));
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PUINT_TO_POINTER (100));
-	BOOST_CHECK (p_atomic_pointer_add (&atomic_pointer, (ssize_t) 100) == 100);
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PUINT_TO_POINTER (200));
+  p_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (100));
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(100));
+  BOOST_CHECK (p_atomic_pointer_add(&atomic_pointer, (ssize_t) 100) == 100);
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(200));
 
-	p_atomic_pointer_set (&atomic_pointer, PINT_TO_POINTER (4));
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PINT_TO_POINTER (4));
+  p_atomic_pointer_set(&atomic_pointer, PINT_TO_POINTER (4));
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(4));
 
-	BOOST_CHECK (p_atomic_pointer_xor (&atomic_pointer, (size_t) 1) == 4);
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PINT_TO_POINTER (5));
+  BOOST_CHECK (p_atomic_pointer_xor(&atomic_pointer, (size_t) 1) == 4);
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(5));
 
-	BOOST_CHECK (p_atomic_pointer_or (&atomic_pointer, (size_t) 2) == 5);
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PINT_TO_POINTER (7));
+  BOOST_CHECK (p_atomic_pointer_or(&atomic_pointer, (size_t) 2) == 5);
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(7));
 
-	BOOST_CHECK (p_atomic_pointer_and (&atomic_pointer, (size_t) 1) == 7);
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == PINT_TO_POINTER (1));
+  BOOST_CHECK (p_atomic_pointer_and(&atomic_pointer, (size_t) 1) == 7);
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(1));
 
-	BOOST_CHECK (p_atomic_pointer_compare_and_exchange (&atomic_pointer, PUINT_TO_POINTER (1), NULL) == true);
-	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == NULL);
+  BOOST_CHECK (
+    p_atomic_pointer_compare_and_exchange(&atomic_pointer, PUINT_TO_POINTER(1),
+      NULL) == true);
+  BOOST_CHECK (p_atomic_pointer_get(&atomic_pointer) == NULL);
 
-	p_libsys_shutdown ();
+  p_libsys_shutdown();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

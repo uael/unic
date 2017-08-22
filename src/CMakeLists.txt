@@ -84,7 +84,7 @@ set(PLIBSYS_PUBLIC_HDRS
   ${PLIBSYS_INCLUDE_DIR}/p/mutex.h
   ${PLIBSYS_INCLUDE_DIR}/p/process.h
   ${PLIBSYS_INCLUDE_DIR}/p/rwlock.h
-  ${PLIBSYS_INCLUDE_DIR}/p/sem.h
+  ${PLIBSYS_INCLUDE_DIR}/p/sema.h
   ${PLIBSYS_INCLUDE_DIR}/p/shm.h
   ${PLIBSYS_INCLUDE_DIR}/p/shmbuf.h
   ${PLIBSYS_INCLUDE_DIR}/p/socket.h

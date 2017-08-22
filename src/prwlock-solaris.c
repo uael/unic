@@ -15,9 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <thread.h>
+
 #include "p/mem.h"
 #include "p/rwlock.h"
-#include <thread.h>
 
 typedef rwlock_t rwlock_hdl;
 

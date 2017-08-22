@@ -15,12 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <dlfcn.h>
+
 #include "p/err.h"
 #include "p/file.h"
 #include "p/dl.h"
 #include "p/mem.h"
 #include "p/string.h"
-#include <dlfcn.h>
 
 /* FreeBSD may cause a segfault: https://reviews.freebsd.org/D5112,
  * DragonFlyBSD as well, so we need to check a file size before calling dlopen()

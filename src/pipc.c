@@ -17,6 +17,8 @@
 
 #include "p/mem.h"
 #include "p/hash.h"
+#include "p/string.h"
+#include "psysclose-private.h"
 
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 # include <errno.h>
@@ -24,6 +26,7 @@
 # include <sys/stat.h>
 # include <sys/ipc.h>
 #endif
+
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 byte_t *
 p_ipc_unix_get_temp_dir(void) {

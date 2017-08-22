@@ -15,10 +15,12 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/profiler.h"
-#include "ptimeprofiler-private.h"
+#include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
+
+#include "p/profiler.h"
+#include "ptimeprofiler-private.h"
 
 #ifndef _POSIX_MONOTONIC_CLOCK
 # define _POSIX_MONOTONIC_CLOCK (-1)

@@ -31,112 +31,109 @@
 
 #define PSPINLOCK_MAX_VAL 10
 
-static int_t        spinlock_test_val = 0;
-static spinlock_t * global_spinlock   = NULL;
+static int_t spinlock_test_val = 0;
+static spinlock_t *global_spinlock = NULL;
 
-extern "C" ptr_t pmem_alloc (size_t nbytes)
-{
-	P_UNUSED (nbytes);
-	return (ptr_t) NULL;
+extern "C" ptr_t
+pmem_alloc(size_t nbytes) {
+  P_UNUSED (nbytes);
+  return (ptr_t) NULL;
 }
 
-extern "C" ptr_t pmem_realloc (ptr_t block, size_t nbytes)
-{
-	P_UNUSED (block);
-	P_UNUSED (nbytes);
-	return (ptr_t) NULL;
+extern "C" ptr_t
+pmem_realloc(ptr_t block, size_t nbytes) {
+  P_UNUSED (block);
+  P_UNUSED (nbytes);
+  return (ptr_t) NULL;
 }
 
-extern "C" void pmem_free (ptr_t block)
-{
-	P_UNUSED (block);
+extern "C" void
+pmem_free(ptr_t block) {
+  P_UNUSED (block);
 }
 
-static void * spinlock_test_thread (void *)
-{
-	int_t	i;
+static void *
+spinlock_test_thread(void *) {
+  int_t i;
 
-	for (i = 0; i < 1000; ++i) {
-		if (!p_spinlock_trylock (global_spinlock)) {
-			if (!p_spinlock_lock (global_spinlock))
-				p_uthread_exit (1);
-		}
+  for (i = 0; i < 1000; ++i) {
+    if (!p_spinlock_trylock(global_spinlock)) {
+      if (!p_spinlock_lock(global_spinlock))
+        p_uthread_exit(1);
+    }
 
-		if (spinlock_test_val == PSPINLOCK_MAX_VAL)
-			--spinlock_test_val;
-		else {
-			p_uthread_sleep (1);
-			++spinlock_test_val;
-		}
+    if (spinlock_test_val == PSPINLOCK_MAX_VAL)
+      --spinlock_test_val;
+    else {
+      p_uthread_sleep(1);
+      ++spinlock_test_val;
+    }
 
-		if (!p_spinlock_unlock (global_spinlock))
-			p_uthread_exit (1);
-	}
+    if (!p_spinlock_unlock(global_spinlock))
+      p_uthread_exit(1);
+  }
 
-	p_uthread_exit (0);
+  p_uthread_exit(0);
 
-	return NULL;
+  return NULL;
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
-{
-	p_libsys_init ();
+BOOST_AUTO_TEST_CASE (pspinlock_nomem_test) {
+  p_libsys_init();
 
-	mem_vtable_t vtable;
+  mem_vtable_t vtable;
 
-	vtable.free    = pmem_free;
-	vtable.malloc  = pmem_alloc;
-	vtable.realloc = pmem_realloc;
+  vtable.free = pmem_free;
+  vtable.malloc = pmem_alloc;
+  vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
-	BOOST_CHECK (p_spinlock_new () == NULL);
+  BOOST_CHECK (p_mem_set_vtable(&vtable) == true);
+  BOOST_CHECK (p_spinlock_new() == NULL);
 
-	p_mem_restore_vtable ();
+  p_mem_restore_vtable();
 
-	p_libsys_shutdown ();
+  p_libsys_shutdown();
 }
 
-BOOST_AUTO_TEST_CASE (pspinlock_bad_input_test)
-{
-	p_libsys_init ();
+BOOST_AUTO_TEST_CASE (pspinlock_bad_input_test) {
+  p_libsys_init();
 
-	BOOST_REQUIRE (p_spinlock_lock (NULL) == false);
-	BOOST_REQUIRE (p_spinlock_unlock (NULL) == false);
-	BOOST_REQUIRE (p_spinlock_trylock (NULL) == false);
-	p_spinlock_free (NULL);
+  BOOST_REQUIRE (p_spinlock_lock(NULL) == false);
+  BOOST_REQUIRE (p_spinlock_unlock(NULL) == false);
+  BOOST_REQUIRE (p_spinlock_trylock(NULL) == false);
+  p_spinlock_free(NULL);
 
-	p_libsys_shutdown ();
+  p_libsys_shutdown();
 }
 
-BOOST_AUTO_TEST_CASE (pspinlock_general_test)
-{
-	uthread_t *thr1, *thr2;
+BOOST_AUTO_TEST_CASE (pspinlock_general_test) {
+  uthread_t *thr1, *thr2;
 
-	p_libsys_init ();
+  p_libsys_init();
 
-	spinlock_test_val = PSPINLOCK_MAX_VAL;
-	global_spinlock   = p_spinlock_new ();
+  spinlock_test_val = PSPINLOCK_MAX_VAL;
+  global_spinlock = p_spinlock_new();
 
-	BOOST_REQUIRE (global_spinlock != NULL);
+  BOOST_REQUIRE (global_spinlock != NULL);
 
-	thr1 = p_uthread_create ((uthread_fn_t) spinlock_test_thread, NULL, true);
-	BOOST_REQUIRE (thr1 != NULL);
+  thr1 = p_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
+  BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((uthread_fn_t) spinlock_test_thread, NULL, true);
-	BOOST_REQUIRE (thr2 != NULL);
+  thr2 = p_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
+  BOOST_REQUIRE (thr2 != NULL);
 
-	BOOST_CHECK (p_uthread_join (thr1) == 0);
-	BOOST_CHECK (p_uthread_join (thr2) == 0);
+  BOOST_CHECK (p_uthread_join(thr1) == 0);
+  BOOST_CHECK (p_uthread_join(thr2) == 0);
 
-	BOOST_REQUIRE (spinlock_test_val == PSPINLOCK_MAX_VAL);
+  BOOST_REQUIRE (spinlock_test_val == PSPINLOCK_MAX_VAL);
 
-	p_uthread_unref (thr1);
-	p_uthread_unref (thr2);
-	p_spinlock_free (global_spinlock);
+  p_uthread_unref(thr1);
+  p_uthread_unref(thr2);
+  p_spinlock_free(global_spinlock);
 
-	p_libsys_shutdown ();
+  p_libsys_shutdown();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

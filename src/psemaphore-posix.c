@@ -15,14 +15,15 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "p/mem.h"
-#include "p/sem.h"
-#include "perror-private.h"
-#include "pipc-private.h"
 #include <fcntl.h>
 #include <semaphore.h>
 #include <errno.h>
+
+#include "p/err.h"
+#include "p/mem.h"
+#include "p/sema.h"
+#include "perror-private.h"
+#include "pipc-private.h"
 
 #define P_SEM_SUFFIX    "_p_sem_object"
 
@@ -30,14 +31,14 @@ typedef sem_t psem_hdl;
 
 /* On some HP-UX versions it may not be defined */
 #ifndef SEM_FAILED
-# define SEM_FAILED ((sem_t *) -1)
+# define SEM_FAILED ((sema_t *) -1)
 #endif
 #ifdef P_OS_SOLARIS
-# define P_SEM_INVALID_HDL (sem_t *) -1
+# define P_SEM_INVALID_HDL (sema_t *) -1
 #else
 # define P_SEM_INVALID_HDL  SEM_FAILED
 #endif
-struct sem {
+struct sema {
   bool sem_created;
   byte_t *platform_key;
 #if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
@@ -47,18 +48,18 @@ struct sem {
 #if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
 # pragma __pointer_size 32
 #endif
-  sem_access_t mode;
+  sema_access_t mode;
   int_t init_val;
 };
 
 static bool
-pp_semaphore_create_handle(sem_t *sem, err_t **error);
+pp_semaphore_create_handle(sema_t *sem, err_t **error);
 
 static void
-pp_semaphore_clean_handle(sem_t *sem);
+pp_semaphore_clean_handle(sema_t *sem);
 
 static bool
-pp_semaphore_create_handle(sem_t *sem,
+pp_semaphore_create_handle(sema_t *sem,
   err_t **error) {
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
     p_error_set_error_p(
@@ -81,7 +82,7 @@ pp_semaphore_create_handle(sem_t *sem,
     p_error_get_last_system() == EINTR) {}
   if (sem->sem_hdl == P_SEM_INVALID_HDL) {
     if (p_error_get_last_system() == EEXIST) {
-      if (sem->mode == P_SEM_ACCESS_CREATE) {
+      if (sem->mode == P_SEMA_CREATE) {
         sem_unlink(sem->platform_key);
       }
       while ((
@@ -110,24 +111,24 @@ pp_semaphore_create_handle(sem_t *sem,
 }
 
 static void
-pp_semaphore_clean_handle(sem_t *sem) {
+pp_semaphore_clean_handle(sema_t *sem) {
   if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL &&
     sem_close(sem->sem_hdl) == -1))
-    P_ERROR ("sem_t::pp_semaphore_clean_handle: sem_close() failed");
+    P_ERROR ("sema_t::pp_semaphore_clean_handle: sem_close() failed");
   if (sem->sem_hdl != P_SEM_INVALID_HDL &&
     sem->sem_created == true &&
     sem_unlink(sem->platform_key) == -1)
-    P_ERROR ("sem_t::pp_semaphore_clean_handle: sem_unlink() failed");
+    P_ERROR ("sema_t::pp_semaphore_clean_handle: sem_unlink() failed");
   sem->sem_created = false;
   sem->sem_hdl = P_SEM_INVALID_HDL;
 }
 
-sem_t *
-p_semaphore_new(const byte_t *name,
+sema_t *
+p_sema_new(const byte_t *name,
   int_t init_val,
-  sem_access_t mode,
+  sema_access_t mode,
   err_t **error) {
-  sem_t *ret;
+  sema_t *ret;
   byte_t *new_name;
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
     p_error_set_error_p(
@@ -138,7 +139,7 @@ p_semaphore_new(const byte_t *name,
     );
     return NULL;
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sem_t))) == NULL)) {
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sema_t))) == NULL)) {
     p_error_set_error_p(
       error,
       (int_t) P_ERR_IPC_NO_RESOURCES,
@@ -170,14 +171,14 @@ p_semaphore_new(const byte_t *name,
   ret->mode = mode;
   p_free(new_name);
   if (P_UNLIKELY (pp_semaphore_create_handle(ret, error) == false)) {
-    p_semaphore_free(ret);
+    p_sema_free(ret);
     return NULL;
   }
   return ret;
 }
 
 void
-p_semaphore_take_ownership(sem_t *sem) {
+p_sema_take_ownership(sema_t *sem) {
   if (P_UNLIKELY (sem == NULL)) {
     return;
   }
@@ -185,7 +186,7 @@ p_semaphore_take_ownership(sem_t *sem) {
 }
 
 bool
-p_semaphore_acquire(sem_t *sem,
+p_sema_acquire(sema_t *sem,
   err_t **error) {
   bool ret;
   int_t res;
@@ -213,7 +214,7 @@ p_semaphore_acquire(sem_t *sem,
 }
 
 bool
-p_semaphore_release(sem_t *sem,
+p_sema_release(sema_t *sem,
   err_t **error) {
   bool ret;
   if (P_UNLIKELY (sem == NULL)) {
@@ -238,7 +239,7 @@ p_semaphore_release(sem_t *sem,
 }
 
 void
-p_semaphore_free(sem_t *sem) {
+p_sema_free(sema_t *sem) {
   if (P_UNLIKELY (sem == NULL)) {
     return;
   }

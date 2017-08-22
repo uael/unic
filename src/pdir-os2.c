@@ -15,15 +15,14 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#define INCL_DOSFILEMGR
+#define INCL_DOSERRORS
+#include <os2.h>
+
 #include "p/dir.h"
 #include "p/mem.h"
 #include "p/string.h"
 #include "perror-private.h"
-
-#define INCL_DOSFILEMGR
-#define INCL_DOSERRORS
-
-#include <os2.h>
 
 struct dir {
   FILEFINDBUF3 find_data;

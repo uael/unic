@@ -54,13 +54,11 @@
 #include "p/macros.h"
 #include "p/types.h"
 
-typedef enum PTreeType_ PTreeType;
-
 /*!@brief Tree opaque data structure. */
 typedef struct tree tree_t;
 
 /*!@brief Internal data organization algorithm for #PTree. */
-enum PTreeType_ {
+enum tree_kind {
 
   /*!@brief Unbalanced binary tree. */
   P_TREE_TYPE_BINARY = 0,
@@ -72,6 +70,8 @@ enum PTreeType_ {
   P_TREE_TYPE_AVL = 2
 };
 
+typedef enum tree_kind tree_kind_t;
+
 /*!@brief Initializes new #PTree.
  * @param type Tree algorithm type to use, can't be changed later.
  * @param func Key compare function.
@@ -81,7 +81,7 @@ enum PTreeType_ {
  * The caller takes ownership of all the keys and the values passed to the tree.
  */
 P_API tree_t *
-p_tree_new(PTreeType type, cmp_fn_t func);
+p_tree_new(tree_kind_t type, cmp_fn_t func);
 
 /*!@brief Initializes new #PTree with additional data.
  * @param type Tree algorithm type to use, can't be changed later.
@@ -93,7 +93,7 @@ p_tree_new(PTreeType type, cmp_fn_t func);
  * The caller takes ownership of all the keys and the values passed to the tree.
  */
 P_API tree_t *
-p_tree_new_with_data(PTreeType type, cmp_data_fn_t func, ptr_t data);
+p_tree_new_with_data(tree_kind_t type, cmp_data_fn_t func, ptr_t data);
 
 /*!@brief Initializes new #PTree with additional data and memory management.
  * @param type Tree algorithm type to use, can't be changed later.
@@ -110,7 +110,7 @@ p_tree_new_with_data(PTreeType type, cmp_data_fn_t func, ptr_t data);
  * be called.
  */
 P_API tree_t *
-p_tree_new_full(PTreeType type, cmp_data_fn_t func, ptr_t data,
+p_tree_new_full(tree_kind_t type, cmp_data_fn_t func, ptr_t data,
   destroy_fn_t key_destroy, destroy_fn_t value_destroy);
 
 /*!@brief Inserts a new key-value pair into a tree.
@@ -180,7 +180,7 @@ p_tree_clear(tree_t *tree);
  * @return Tree internal organization algorithm used for a given object.
  * @since 0.0.1
  */
-P_API PTreeType
+P_API tree_kind_t
 p_tree_get_type(const tree_t *tree);
 
 /*!@brief Gets node count.

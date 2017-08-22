@@ -47,30 +47,25 @@ struct tree {
   destroy_fn_t value_destroy_func;
   cmp_data_fn_t compare_func;
   ptr_t data;
-  PTreeType type;
+  tree_kind_t type;
   int_t nnodes;
 };
 
 tree_t *
-p_tree_new(PTreeType type,
-  cmp_fn_t func) {
+p_tree_new(tree_kind_t type, cmp_fn_t func) {
   return p_tree_new_full(type, (cmp_data_fn_t) func, NULL, NULL, NULL);
 }
 
 tree_t *
-p_tree_new_with_data(PTreeType type,
-  cmp_data_fn_t func,
-  ptr_t data) {
+p_tree_new_with_data(tree_kind_t type, cmp_data_fn_t func, ptr_t data) {
   return p_tree_new_full(type, func, data, NULL, NULL);
 }
 
 tree_t *
-p_tree_new_full(PTreeType type,
-  cmp_data_fn_t func,
-  ptr_t data,
-  destroy_fn_t key_destroy,
-  destroy_fn_t value_destroy) {
+p_tree_new_full(tree_kind_t type, cmp_data_fn_t func, ptr_t data,
+  destroy_fn_t key_destroy, destroy_fn_t value_destroy) {
   tree_t *ret;
+
   if (P_UNLIKELY (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_AVL)) {
     return NULL;
   }
@@ -107,10 +102,9 @@ p_tree_new_full(PTreeType type,
 }
 
 void
-p_tree_insert(tree_t *tree,
-  ptr_t key,
-  ptr_t value) {
+p_tree_insert(tree_t *tree, ptr_t key, ptr_t value) {
   bool result;
+
   if (P_UNLIKELY (tree == NULL)) {
     return;
   }
@@ -129,9 +123,9 @@ p_tree_insert(tree_t *tree,
 }
 
 bool
-p_tree_remove(tree_t *tree,
-  const_ptr_t key) {
+p_tree_remove(tree_t *tree, const_ptr_t key) {
   bool result;
+
   if (P_UNLIKELY (tree == NULL || tree->root == NULL)) {
     return false;
   }
@@ -150,10 +144,10 @@ p_tree_remove(tree_t *tree,
 }
 
 ptr_t
-p_tree_lookup(tree_t *tree,
-  const_ptr_t key) {
+p_tree_lookup(tree_t *tree, const_ptr_t key) {
   PTreeBaseNode *cur_node;
   int_t cmp_result;
+
   if (P_UNLIKELY (tree == NULL)) {
     return NULL;
   }
@@ -172,13 +166,12 @@ p_tree_lookup(tree_t *tree,
 }
 
 void
-p_tree_foreach(tree_t *tree,
-  traverse_fn_t traverse_func,
-  ptr_t user_data) {
+p_tree_foreach(tree_t *tree, traverse_fn_t traverse_func, ptr_t user_data) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   int_t mod_counter;
   bool need_stop;
+
   if (P_UNLIKELY (tree == NULL || traverse_func == NULL)) {
     return;
   }
@@ -231,6 +224,7 @@ p_tree_clear(tree_t *tree) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   PTreeBaseNode *next_node;
+
   if (P_UNLIKELY (tree == NULL || tree->root == NULL)) {
     return;
   }
@@ -261,10 +255,10 @@ p_tree_clear(tree_t *tree) {
   tree->root = NULL;
 }
 
-PTreeType
+tree_kind_t
 p_tree_get_type(const tree_t *tree) {
   if (P_UNLIKELY (tree == NULL)) {
-    return (PTreeType) -1;
+    return (tree_kind_t) -1;
   }
   return tree->type;
 }

@@ -15,9 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <kernel/OS.h>
+
 #include "p/profiler.h"
 #include "ptimeprofiler-private.h"
-#include <kernel/OS.h>
 
 uint64_t
 p_profiler_get_ticks_internal() {

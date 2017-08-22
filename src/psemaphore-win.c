@@ -17,7 +17,8 @@
 
 #include "p/err.h"
 #include "p/mem.h"
-#include "p/sem.h"
+#include "p/sema.h"
+#include "p/string.h"
 #include "perror-private.h"
 #include "pipc-private.h"
 
@@ -26,20 +27,20 @@
 
 typedef HANDLE psem_hdl;
 
-struct sem {
+struct sema {
   byte_t *platform_key;
   psem_hdl sem_hdl;
   int_t init_val;
 };
 
 static bool
-pp_semaphore_create_handle(sem_t *sem, err_t **error);
+pp_semaphore_create_handle(sema_t *sem, err_t **error);
 
 static void
-pp_semaphore_clean_handle(sem_t *sem);
+pp_semaphore_clean_handle(sema_t *sem);
 
 static bool
-pp_semaphore_create_handle(sem_t *sem, err_t **error) {
+pp_semaphore_create_handle(sema_t *sem, err_t **error) {
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
     p_error_set_error_p(
       error,
@@ -70,19 +71,19 @@ pp_semaphore_create_handle(sem_t *sem, err_t **error) {
 }
 
 static void
-pp_semaphore_clean_handle(sem_t *sem) {
+pp_semaphore_clean_handle(sema_t *sem) {
   if (P_UNLIKELY (
     sem->sem_hdl != P_SEM_INVALID_HDL && CloseHandle(sem->sem_hdl) == 0))
-    P_ERROR ("sem_t::pp_semaphore_clean_handle: CloseHandle() failed");
+    P_ERROR ("sema_t::pp_semaphore_clean_handle: CloseHandle() failed");
   sem->sem_hdl = P_SEM_INVALID_HDL;
 }
 
-sem_t *
-p_semaphore_new(const byte_t *name,
+sema_t *
+p_sema_new(const byte_t *name,
   int_t init_val,
-  sem_access_t mode,
+  sema_access_t mode,
   err_t **error) {
-  sem_t *ret;
+  sema_t *ret;
   byte_t *new_name;
   P_UNUSED (mode);
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
@@ -94,7 +95,7 @@ p_semaphore_new(const byte_t *name,
     );
     return NULL;
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sem_t))) == NULL)) {
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sema_t))) == NULL)) {
     p_error_set_error_p(
       error,
       (int_t) P_ERR_IPC_NO_RESOURCES,
@@ -120,19 +121,19 @@ p_semaphore_new(const byte_t *name,
   ret->init_val = init_val;
   p_free(new_name);
   if (P_UNLIKELY (pp_semaphore_create_handle(ret, error) == false)) {
-    p_semaphore_free(ret);
+    p_sema_free(ret);
     return NULL;
   }
   return ret;
 }
 
 void
-p_semaphore_take_ownership(sem_t *sem) {
+p_sema_take_ownership(sema_t *sem) {
   P_UNUSED (sem);
 }
 
 bool
-p_semaphore_acquire(sem_t *sem,
+p_sema_acquire(sema_t *sem,
   err_t **error) {
   bool ret;
   if (P_UNLIKELY (sem == NULL)) {
@@ -158,7 +159,7 @@ p_semaphore_acquire(sem_t *sem,
 }
 
 bool
-p_semaphore_release(sem_t *sem,
+p_sema_release(sema_t *sem,
   err_t **error) {
   bool ret;
   if (P_UNLIKELY (sem == NULL)) {
@@ -183,7 +184,7 @@ p_semaphore_release(sem_t *sem,
 }
 
 void
-p_semaphore_free(sem_t *sem) {
+p_sema_free(sema_t *sem) {
   if (P_UNLIKELY (sem == NULL)) {
     return;
   }

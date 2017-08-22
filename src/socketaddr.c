@@ -22,9 +22,12 @@
 #ifndef P_OS_WIN
 # include <arpa/inet.h>
 #endif
-#if defined (PLIBSYS_HAS_GETADDRINFO) && !defined (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+
+#if defined(PLIBSYS_HAS_GETADDRINFO) && \
+    !defined(PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
 # undef PLIBSYS_HAS_GETADDRINFO
 #endif
+
 #ifdef PLIBSYS_HAS_GETADDRINFO
 # include <netdb.h>
 #endif
@@ -38,6 +41,7 @@
 #   define INET_ADDRSTRLEN 16
 # endif
 #endif
+
 #ifdef AF_INET6
 # ifndef INET6_ADDRSTRLEN
 #   ifdef P_OS_WIN
@@ -48,16 +52,19 @@
 #   endif
 # endif
 #endif
+
 #ifdef P_OS_VMS
 # if PLIBSYS_SIZEOF_VOID_P == 8
 #   define addrinfo __addrinfo64
 # endif
 #endif
+
 #if defined (P_OS_BEOS) || defined (P_OS_OS2)
 # ifdef AF_INET6
 #   undef AF_INET6
 # endif
 #endif
+
 struct socketaddr {
   socket_family_t family;
   union addr_ {
@@ -72,10 +79,10 @@ struct socketaddr {
 };
 
 socketaddr_t *
-p_socketaddr_new_from_native(const_ptr_t native,
-  size_t len) {
+p_socketaddr_new_from_native(const_ptr_t native, size_t len) {
   socketaddr_t *ret;
   uint16_t family;
+
   if (P_UNLIKELY (native == NULL || len == 0)) {
     return NULL;
   }
@@ -127,8 +134,7 @@ p_socketaddr_new_from_native(const_ptr_t native,
 }
 
 socketaddr_t *
-p_socketaddr_new(const byte_t *address,
-  uint16_t port) {
+p_socketaddr_new(const byte_t *address, uint16_t port) {
   socketaddr_t *ret;
 #if defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)
   struct addrinfo hints;
@@ -142,10 +148,11 @@ p_socketaddr_new(const byte_t *address,
 # endif /* AF_INET6 */
   int_t len;
 #endif /* P_OS_WIN */
+
   if (P_UNLIKELY (address == NULL)) {
     return NULL;
   }
-#if (defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)) && defined (AF_INET6)
+#if (defined(P_OS_WIN) || defined(PLIBSYS_HAS_GETADDRINFO)) && defined(AF_INET6)
   if (strchr(address, ':') != NULL) {
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -212,13 +219,13 @@ p_socketaddr_new(const byte_t *address,
 }
 
 socketaddr_t *
-p_socketaddr_new_any(socket_family_t family,
-  uint16_t port) {
+p_socketaddr_new_any(socket_family_t family, uint16_t port) {
   socketaddr_t *ret;
   ubyte_t any_addr[] = {0, 0, 0, 0};
 #ifdef AF_INET6
   struct in6_addr any6_addr = IN6ADDR_ANY_INIT;
 #endif
+
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(socketaddr_t))) == NULL)) {
     P_ERROR (
       "socketaddr_t::p_socketaddr_new_any: failed to allocate memory");
@@ -242,13 +249,13 @@ p_socketaddr_new_any(socket_family_t family,
 }
 
 socketaddr_t *
-p_socketaddr_new_loopback(socket_family_t family,
-  uint16_t port) {
+p_socketaddr_new_loopback(socket_family_t family, uint16_t port) {
   socketaddr_t *ret;
   ubyte_t loop_addr[] = {127, 0, 0, 0};
 #ifdef AF_INET6
   struct in6_addr loop6_addr = IN6ADDR_LOOPBACK_INIT;
 #endif
+
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(socketaddr_t))) == NULL)) {
     P_ERROR (
       "socketaddr_t::p_socketaddr_new_loopback: failed to allocate memory");
@@ -274,13 +281,12 @@ p_socketaddr_new_loopback(socket_family_t family,
 }
 
 bool
-p_socketaddr_to_native(const socketaddr_t *addr,
-  ptr_t dest,
-  size_t destlen) {
+p_socketaddr_to_native(const socketaddr_t *addr, ptr_t dest, size_t destlen) {
   struct sockaddr_in *sin;
 #ifdef AF_INET6
   struct sockaddr_in6 *sin6;
 #endif
+
   if (P_UNLIKELY (addr == NULL || dest == NULL || destlen == 0)) {
     return false;
   }
@@ -370,6 +376,7 @@ p_socketaddr_get_address(const socketaddr_t *addr) {
   struct sockaddr_in6 *sin6;
 # endif /* AF_INET6 */
 #endif /* P_OS_WIN */
+
   if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN)) {
     return NULL;
   }
@@ -452,8 +459,7 @@ p_socketaddr_get_scope_id(const socketaddr_t *addr) {
 }
 
 void
-p_socketaddr_set_flow_info(socketaddr_t *addr,
-  uint32_t flowinfo) {
+p_socketaddr_set_flow_info(socketaddr_t *addr, uint32_t flowinfo) {
   if (P_UNLIKELY (addr == NULL)) {
     return;
   }
@@ -469,8 +475,7 @@ p_socketaddr_set_flow_info(socketaddr_t *addr,
 }
 
 void
-p_socketaddr_set_scope_id(socketaddr_t *addr,
-  uint32_t scope_id) {
+p_socketaddr_set_scope_id(socketaddr_t *addr, uint32_t scope_id) {
   if (P_UNLIKELY (addr == NULL)) {
     return;
   }
@@ -523,6 +528,7 @@ p_socketaddr_is_ipv6_supported(void) {
 bool
 p_socketaddr_is_any(const socketaddr_t *addr) {
   uint32_t addr4;
+
   if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN)) {
     return false;
   }
@@ -543,6 +549,7 @@ p_socketaddr_is_any(const socketaddr_t *addr) {
 bool
 p_socketaddr_is_loopback(const socketaddr_t *addr) {
   uint32_t addr4;
+
   if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN)) {
     return false;
   }

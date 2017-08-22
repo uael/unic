@@ -55,10 +55,6 @@
 #include "p/macros.h"
 #include "p/types.h"
 
-typedef enum err_domain err_domain_t;
-typedef enum err_io err_io_t;
-typedef enum err_ipc err_ipc_t;
-
 typedef struct err err_t;
 
 /*!@brief Enum with error domains. */
@@ -186,6 +182,10 @@ enum err_ipc {
   /*!@brief General error. */
   P_ERR_IPC_FAILED = 610
 };
+
+typedef enum err_domain err_domain_t;
+typedef enum err_io err_io_t;
+typedef enum err_ipc err_ipc_t;
 
 /*!@brief Initializes a new empty #err_t.
  * @return Newly initialized #err_t object in case of success, NULL otherwise.

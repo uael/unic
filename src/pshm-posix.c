@@ -15,18 +15,20 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "p/mem.h"
-#include "p/sem.h"
-#include "p/shm.h"
-#include "perror-private.h"
-#include "pipc-private.h"
-#include "psysclose-private.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <errno.h>
+
+#include "p/err.h"
+#include "p/mem.h"
+#include "p/sema.h"
+#include "p/string.h"
+#include "p/shm.h"
+#include "perror-private.h"
+#include "pipc-private.h"
+#include "psysclose-private.h"
 
 #define P_SHM_SUFFIX    "_p_shm_object"
 #define P_SHM_INVALID_HDL  -1
@@ -35,7 +37,7 @@ struct shm {
   byte_t *platform_key;
   ptr_t addr;
   size_t size;
-  sem_t *sem;
+  sema_t *sem;
   shm_access_t perms;
 };
 
@@ -141,9 +143,9 @@ pp_shm_create_handle(shm_t *shm,
   if (P_UNLIKELY (p_sys_close(fd) != 0))
     P_WARNING ("shm_t::pp_shm_create_handle: p_sys_close() failed(4)");
   if (P_UNLIKELY ((
-    shm->sem = p_semaphore_new(
+    shm->sem = p_sema_new(
       shm->platform_key, 1,
-      is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
+      is_exists ? P_SEMA_OPEN : P_SEMA_CREATE,
       error
     )) == NULL)) {
     pp_shm_clean_handle(shm);
@@ -159,7 +161,7 @@ pp_shm_clean_handle(shm_t *shm) {
   if (shm->shm_created == true && shm_unlink(shm->platform_key) == -1)
     P_ERROR ("shm_t::pp_shm_clean_handle: shm_unlink() failed");
   if (P_LIKELY (shm->sem != NULL)) {
-    p_semaphore_free(shm->sem);
+    p_sema_free(shm->sem);
     shm->sem = NULL;
   }
   shm->shm_created = false;
@@ -230,7 +232,7 @@ p_shm_take_ownership(shm_t *shm) {
     return;
   }
   shm->shm_created = true;
-  p_semaphore_take_ownership(shm->sem);
+  p_sema_take_ownership(shm->sem);
 }
 
 void
@@ -257,7 +259,7 @@ p_shm_lock(shm_t *shm,
     );
     return false;
   }
-  return p_semaphore_acquire(shm->sem, error);
+  return p_sema_acquire(shm->sem, error);
 }
 
 bool
@@ -272,7 +274,7 @@ p_shm_unlock(shm_t *shm,
     );
     return false;
   }
-  return p_semaphore_release(shm->sem, error);
+  return p_sema_release(shm->sem, error);
 }
 
 ptr_t

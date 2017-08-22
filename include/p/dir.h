@@ -41,11 +41,9 @@
 #include "p/types.h"
 #include "p/err.h"
 
-typedef enum dirent_kind dirent_kind_t;
-
 /*!@brief Directory opaque data structure. */
 typedef struct dir dir_t;
-typedef struct dirent dirent_t;
+typedef struct p_dirent dirent_t;
 
 /*!@brief Directory entry types. */
 enum dirent_kind {
@@ -60,8 +58,10 @@ enum dirent_kind {
   P_DIRENT_OTHER = 3
 };
 
+typedef enum dirent_kind dirent_kind_t;
+
 /*!@brief Structure with directory entry information. */
-struct dirent {
+struct p_dirent {
 
   /*!@brief Name. */
   char *name;

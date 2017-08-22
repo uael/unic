@@ -15,16 +15,15 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#define INCL_DOSMODULEMGR
+#define INCL_DOSERRORS
+#include <os2.h>
+
 #include "p/err.h"
 #include "p/file.h"
 #include "p/dl.h"
 #include "p/mem.h"
 #include "p/string.h"
-
-#define INCL_DOSMODULEMGR
-#define INCL_DOSERRORS
-
-#include <os2.h>
 
 typedef HMODULE plibrary_handle;
 

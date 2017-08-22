@@ -54,8 +54,6 @@
 # include <netinet/in.h>
 #endif
 
-typedef enum socket_family socket_family_t;
-
 /*!@brief Socket address opaque structure. */
 typedef struct socketaddr socketaddr_t;
 
@@ -76,6 +74,8 @@ enum socket_family {
   P_SOCKET_FAMILY_INET6 = -1
 #endif
 };
+
+typedef enum socket_family socket_family_t;
 
 /*!@brief Creates new #PSocketAddress from the native socket address raw data.
  * @param native Pointer to the native socket address raw data.

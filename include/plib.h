@@ -38,7 +38,7 @@
 #include "p/mutex.h"
 #include "p/process.h"
 #include "p/rwlock.h"
-#include "p/sem.h"
+#include "p/sema.h"
 #include "p/shm.h"
 #include "p/shmbuf.h"
 #include "p/socket.h"
