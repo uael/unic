@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/libloader.h
+/*!@file p/dl.h
  * @brief Shared library loader
  * @author Alexander Saprykin
  *
@@ -36,9 +35,9 @@
  * symbols. Usually only the exported symbols are available from outside the
  * shared library. Actually all those symbols represent a library API.
  *
- * Use p_library_loader_new() to load a shared library and
- * p_library_loader_get_symbol() to retrieve a pointer to a symbol within it.
- * Close the library after usage with p_library_loader_free().
+ * Use p_dl_new() to load a shared library and
+ * p_dl_get_symbol() to retrieve a pointer to a symbol within it.
+ * Close the library after usage with p_dl_free().
  *
  * Please note the following platform specific differences:
  *
@@ -55,25 +54,19 @@
  * load the same library several times independently (not like a traditional
  * shared library).
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
-#ifndef P_LIBLOADER_H__
-#define P_LIBLOADER_H__
+#ifndef P_DL_H__
+# define P_DL_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Opaque data structure to handle a shared library. */
-typedef struct PLibraryLoader_ PLibraryLoader;
+/*!@brief Opaque data structure to handle a shared library. */
+typedef struct dl dl_t;
 
-/** Pointer to a function address. */
+/*!@brief Pointer to a function address. */
 typedef void (*PFuncAddr)(void);
 
-/**
- * @brief Loads a shared library.
+/*!@brief Loads a shared library.
  * @param path Path to the shared library file.
  * @return Pointer to #PLibraryLoader in case of success, NULL otherwise.
  * @since 0.0.1
@@ -83,10 +76,10 @@ typedef void (*PFuncAddr)(void);
  * #PLibraryLoader, thus the shared library would be unloaded from the address
  * space only when the counter becomes zero.
  */
-P_API PLibraryLoader *p_library_loader_new(const byte_t *path);
+P_API dl_t *
+p_dl_new(const byte_t *path);
 
-/**
- * @brief Gets a pointer to a symbol in the loaded shared library.
+/*!@brief Gets a pointer to a symbol in the loaded shared library.
  * @param loader Pointer to the loaded shared library handle.
  * @param sym Name of the symbol.
  * @return Pointer to the symbol in case of success, NULL otherwise.
@@ -94,20 +87,19 @@ P_API PLibraryLoader *p_library_loader_new(const byte_t *path);
  *
  * Since the symbol may have a NULL value, the returned NULL value from this
  * call actually doesn't mean the failed result. You can additionally check the
- * error result using p_library_loader_get_last_error().
+ * error result using p_dl_get_last_error().
  */
-P_API PFuncAddr p_library_loader_get_symbol(PLibraryLoader *loader,
-  const byte_t *sym);
+P_API PFuncAddr
+p_dl_get_symbol(dl_t *loader, const byte_t *sym);
 
-/**
- * @brief Frees memory and allocated resources of #PLibraryLoader.
+/*!@brief Frees memory and allocated resources of #PLibraryLoader.
  * @param loader #PLibraryLoader object to free.
  * @since 0.0.1
  */
-P_API void p_library_loader_free(PLibraryLoader *loader);
+P_API void
+p_dl_free(dl_t *loader);
 
-/**
- * @brief Gets the last occurred error.
+/*!@brief Gets the last occurred error.
  * @param loader #PLibraryLoader object to get error for.
  * @return Human readable error string in case of success, NULL otherwise.
  * @since 0.0.1
@@ -124,10 +116,10 @@ P_API void p_library_loader_free(PLibraryLoader *loader);
  * Some operating systems may return last error even if library handler was not
  * created. In that case try to pass NULL value as a parameter.
  */
-P_API byte_t *p_library_loader_get_last_error(PLibraryLoader *loader);
+P_API byte_t *
+p_dl_get_last_error(dl_t *loader);
 
-/**
- * @brief Checks whether library loading subsystem uses reference counting.
+/*!@brief Checks whether library loading subsystem uses reference counting.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.3
  *
@@ -138,6 +130,7 @@ P_API byte_t *p_library_loader_get_last_error(PLibraryLoader *loader);
  * @note For now, only HP-UX on 32-bit PA-RISC systems with shl_* model doesn't
  * support reference counting.
  */
-P_API bool p_library_loader_is_ref_counted(void);
+P_API bool
+p_dl_is_ref_counted(void);
 
-#endif /* P_LIBLOADER_H__ */
+#endif /* !P_DL_H__ */

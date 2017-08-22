@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/hash.h
+/*!@file p/hash.h
  * @brief Cryptographic hash function
  * @author Alexander Saprykin
  *
@@ -60,55 +59,86 @@
  *
  * A hashing algorithm couldn't be changed after the context initialization.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_HASH_H__
-#define P_HASH_H__
+# define P_HASH_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Opaque data structure for handling a cryptographic hash context. */
-typedef struct PCryptoHash_ PCryptoHash;
+typedef enum hash_kind hash_kind_t;
 
-/** Cryptographic hash function types for #PCryptoHash. */
-typedef enum PCryptoHashType_ {
-  P_HASH_TYPE_MD5 = 0, /**< MD5 hash function.			@since 0.0.1	*/
-  P_HASH_TYPE_SHA1 = 1, /**< SHA-1 hash function.			@since 0.0.1	*/
-  P_HASH_TYPE_SHA2_224 =
-  2, /**< SHA-2/224 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA2_256 =
-  3, /**< SHA-2/256 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA2_384 =
-  4, /**< SHA-2/384 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA2_512 =
-  5, /**< SHA-2/512 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA3_224 =
-  6, /**< SHA-2/224 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA3_256 =
-  7, /**< SHA-2/256 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA3_384 =
-  8, /**< SHA-2/384 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_SHA3_512 =
-  9, /**< SHA-3/512 hash function.		@since 0.0.2	*/
-  P_HASH_TYPE_GOST =
-  10 /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
-} PCryptoHashType;
+/*!@brief Opaque data structure for handling a cryptographic hash context. */
+typedef struct hash hash_t;
 
-/**
- * @brief Initializes a new #PCryptoHash context.
+/*!@brief Cryptographic hash function types for #PCryptoHash. */
+enum hash_kind {
+
+  /*!@brief MD5 hash function.
+   * @since 0.0.1
+   */
+  P_HASH_MD5 = 0,
+
+  /*!@brief SHA-1 hash function.
+   * @since 0.0.1
+   */
+  P_HASH_SHA1 = 1,
+  
+  /*!@brief SHA-2/224 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA2_224 = 2,
+
+  /*!@brief SHA-2/256 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA2_256 = 3,
+
+  /*!@brief SHA-2/384 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA2_384 = 4,
+  
+  /*!@brief SHA-2/512 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA2_512 = 5,
+  
+  /*!@brief SHA-2/224 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA3_224 = 6,
+  
+  /*!@brief SHA-2/256 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA3_256 = 7,
+  
+  /*!@brief SHA-2/384 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA3_384 = 8,
+  
+  /*!@brief SHA-3/512 hash function.
+   * @since 0.0.2
+   */
+  P_HASH_SHA3_512 = 9,
+  
+  /*!@brief GOST (R 34.11-94) hash function.
+   * @since 0.0.1
+   */
+  P_HASH_GOST = 10
+};
+
+/*!@brief Initializes a new #PCryptoHash context.
  * @param type Hash function type to use, can't be changed later.
  * @return Newly initialized #PCryptoHash context in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */
-P_API PCryptoHash *p_crypto_hash_new(PCryptoHashType type);
+P_API hash_t *
+p_crypto_hash_new(hash_kind_t type);
 
-/**
- * @brief Adds a new chunk of data for hashing.
+/*!@brief Adds a new chunk of data for hashing.
  * @param hash #PCryptoHash context to add @a data to.
  * @param data Data to add for hashing.
  * @param len Data length, in bytes.
@@ -116,12 +146,10 @@ P_API PCryptoHash *p_crypto_hash_new(PCryptoHashType type);
  * the hash couldn't be updated anymore as it becomes close.
  * @since 0.0.1
  */
-P_API void p_crypto_hash_update(PCryptoHash *hash,
-  const ubyte_t *data,
-  size_t len);
+P_API void
+p_crypto_hash_update(hash_t *hash, const ubyte_t *data, size_t len);
 
-/**
- * @brief Resets a hash state.
+/*!@brief Resets a hash state.
  * @param hash #PCryptoHash context to reset.
  * @since 0.0.1
  *
@@ -129,10 +157,10 @@ P_API void p_crypto_hash_update(PCryptoHash *hash,
  * added data will be lost. A hash function type couldn't be changed during or
  * after the resets.
  */
-P_API void p_crypto_hash_reset(PCryptoHash *hash);
+P_API void
+p_crypto_hash_reset(hash_t *hash);
 
-/**
- * @brief Gets a hash in a hexidemical representation.
+/*!@brief Gets a hash in a hexidemical representation.
  * @param hash #PCryptoHash context to get a string from.
  * @return NULL-terminated string with the hexidemical representation of a hash
  * state in case of success, NULL otherwise. The string should be freed with
@@ -141,10 +169,10 @@ P_API void p_crypto_hash_reset(PCryptoHash *hash);
  * updates.
  * @since 0.0.1
  */
-P_API byte_t *p_crypto_hash_get_string(PCryptoHash *hash);
+P_API byte_t *
+p_crypto_hash_get_string(hash_t *hash);
 
-/**
- * @brief Gets a hash in a raw representation.
+/*!@brief Gets a hash in a raw representation.
  * @param hash #PCryptoHash context to get a digest from.
  * @param buf Buffer to store the digest with the hash raw representation.
  * @param[in,out] len Size of @a buf when calling, count of written bytes
@@ -153,33 +181,32 @@ P_API byte_t *p_crypto_hash_get_string(PCryptoHash *hash);
  * further updates.
  * @since 0.0.1
  */
-P_API void p_crypto_hash_get_digest(PCryptoHash *hash,
-  ubyte_t *buf,
-  size_t *len);
+P_API void
+p_crypto_hash_get_digest(hash_t *hash, ubyte_t *buf, size_t *len);
 
-/**
- * @brief Gets a hash digest length depending on its type.
+/*!@brief Gets a hash digest length depending on its type.
  * @param hash #PCryptoHash context to get the length for.
  * @return Length (in bytes) of the given hash depending on its type in case of
  * success, -1 otherwise.
  * @note This length doesn't match a string hash representation.
  * @since 0.0.1
  */
-P_API ssize_t p_crypto_hash_get_length(const PCryptoHash *hash);
+P_API ssize_t
+p_crypto_hash_get_length(const hash_t *hash);
 
-/**
- * @brief Gets a hash function type.
+/*!@brief Gets a hash function type.
  * @param hash #PCryptoHash context to get the type for.
  * @return Hash function type used in the given context.
  * @since 0.0.1
  */
-P_API PCryptoHashType p_crypto_hash_get_type(const PCryptoHash *hash);
+P_API hash_kind_t
+p_crypto_hash_get_type(const hash_t *hash);
 
-/**
- * @brief Frees a previously initialized hash context.
+/*!@brief Frees a previously initialized hash context.
  * @param hash #PCryptoHash context to free.
  * @since 0.0.1
  */
-P_API void p_crypto_hash_free(PCryptoHash *hash);
+P_API void
+p_crypto_hash_free(hash_t *hash);
 
-#endif /* P_HASH_H__ */
+#endif /* !P_HASH_H__ */

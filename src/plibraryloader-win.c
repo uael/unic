@@ -15,103 +15,95 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/error.h"
+#include "p/err.h"
 #include "p/file.h"
-#include "p/libloader.h"
+#include "p/dl.h"
 #include "p/mem.h"
 #include "p/string.h"
 
 typedef HINSTANCE plibrary_handle;
 
-struct PLibraryLoader_ {
+struct dl {
   plibrary_handle handle;
 };
 
-static void pp_library_loader_clean_handle(plibrary_handle handle);
+static void
+pp_dl_clean_handle(plibrary_handle handle);
 
 static void
-pp_library_loader_clean_handle(plibrary_handle handle) {
+pp_dl_clean_handle(plibrary_handle handle) {
   if (P_UNLIKELY (!FreeLibrary(handle)))
     P_ERROR (
-      "PLibraryLoader::pp_library_loader_clean_handle: FreeLibrary() failed");
+      "dl_t::pp_dl_clean_handle: FreeLibrary() failed");
 }
 
-P_API PLibraryLoader *
-p_library_loader_new(const byte_t *path) {
-  PLibraryLoader *loader = NULL;
+dl_t *
+p_dl_new(const byte_t *path) {
+  dl_t *loader = NULL;
   plibrary_handle handle;
-
-  if (!p_file_is_exists(path))
+  if (!p_file_is_exists(path)) {
     return NULL;
-
+  }
   if (P_UNLIKELY ((handle = LoadLibraryA(path)) == NULL)) {
-    P_ERROR ("PLibraryLoader::p_library_loader_new: LoadLibraryA() failed");
+    P_ERROR ("dl_t::p_dl_new: LoadLibraryA() failed");
     return NULL;
   }
-
-  if (P_UNLIKELY ((loader = p_malloc0(sizeof(PLibraryLoader))) == NULL)) {
-    P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
-    pp_library_loader_clean_handle(handle);
+  if (P_UNLIKELY ((loader = p_malloc0(sizeof(dl_t))) == NULL)) {
+    P_ERROR ("dl_t::p_dl_new: failed to allocate memory");
+    pp_dl_clean_handle(handle);
     return NULL;
   }
-
   loader->handle = handle;
-
   return loader;
 }
 
-P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
+PFuncAddr
+p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   PFuncAddr ret_sym = NULL;
-
-  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
+  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
-
+  }
   ret_sym = (PFuncAddr) GetProcAddress(loader->handle, sym);
-
   return ret_sym;
 }
 
-P_API void
-p_library_loader_free(PLibraryLoader *loader) {
-  if (P_UNLIKELY (loader == NULL))
+void
+p_dl_free(dl_t *loader) {
+  if (P_UNLIKELY (loader == NULL)) {
     return;
-
-  pp_library_loader_clean_handle(loader->handle);
-
+  }
+  pp_dl_clean_handle(loader->handle);
   p_free(loader);
 }
 
-P_API byte_t *
-p_library_loader_get_last_error(PLibraryLoader *loader) {
+byte_t *
+p_dl_get_last_error(dl_t *loader) {
   byte_t *res = NULL;
   DWORD err_code;
   LPVOID msg_buf;
-
   P_UNUSED (loader);
-
   err_code = p_error_get_last_system();
-
-  if (err_code == 0)
+  if (err_code == 0) {
     return NULL;
-
-  if (P_LIKELY (FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+  }
+  if (P_LIKELY (FormatMessageA(
+    FORMAT_MESSAGE_ALLOCATE_BUFFER |
       FORMAT_MESSAGE_FROM_SYSTEM |
       FORMAT_MESSAGE_IGNORE_INSERTS,
     NULL,
     err_code,
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    (LPSTR) & msg_buf,
+    (LPSTR) &msg_buf,
     0,
-    NULL) != 0)) {
+    NULL
+  ) != 0)) {
     res = p_strdup((byte_t *) msg_buf);
     LocalFree(msg_buf);
   }
-
   return res;
 }
 
-P_API bool
-p_library_loader_is_ref_counted(void) {
+bool
+p_dl_is_ref_counted(void) {
   return true;
 }

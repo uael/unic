@@ -15,34 +15,41 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* SHA2-512 interface implementation for #PCryptoHash */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
+/* SHA2-512 interface implementation for #hash_t */
 
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
-#define PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
+# define PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
 
 #include "p/types.h"
 #include "p/macros.h"
 
 typedef struct PHashSHA2_512_ PHashSHA2_512;
 
-PHashSHA2_512 *p_crypto_hash_sha2_512_new(void);
-void p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx, const ubyte_t *data,
-  size_t len);
-void p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx);
-const ubyte_t *p_crypto_hash_sha2_512_digest(PHashSHA2_512 *ctx);
-void p_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx);
-void p_crypto_hash_sha2_512_free(PHashSHA2_512 *ctx);
+PHashSHA2_512 *
+p_crypto_hash_sha2_512_new(void);
 
-PHashSHA2_512 *p_crypto_hash_sha2_384_new(void);
+void
+p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx, const ubyte_t *data,
+  size_t len);
+
+void
+p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx);
+
+const ubyte_t *
+p_crypto_hash_sha2_512_digest(PHashSHA2_512 *ctx);
+
+void
+p_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx);
+
+void
+p_crypto_hash_sha2_512_free(PHashSHA2_512 *ctx);
+
+PHashSHA2_512 *
+p_crypto_hash_sha2_384_new(void);
 
 #define p_crypto_hash_sha2_384_update p_crypto_hash_sha2_512_update
 #define p_crypto_hash_sha2_384_finish p_crypto_hash_sha2_512_finish
 #define p_crypto_hash_sha2_384_digest p_crypto_hash_sha2_512_digest
 #define p_crypto_hash_sha2_384_reset  p_crypto_hash_sha2_512_reset
 #define p_crypto_hash_sha2_384_free   p_crypto_hash_sha2_512_free
-
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H */

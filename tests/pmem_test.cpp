@@ -58,7 +58,7 @@ extern "C" void pmem_free (ptr_t block)
 
 BOOST_AUTO_TEST_CASE (pmem_bad_input_test)
 {
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	p_libsys_init ();
 
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE (pmem_bad_input_test)
 
 BOOST_AUTO_TEST_CASE (pmem_general_test)
 {
-	PMemVTable	vtable;
+	mem_vtable_t	vtable;
 	ptr_t	ptr = NULL;
 	int_t		i;
 

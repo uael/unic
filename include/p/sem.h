@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/sem.h
+/*!@file p/sem.h
  * @brief Semaphore routines
  * @author Alexander Saprykin
  *
@@ -79,31 +78,29 @@
  * can also take ownership of the semaphore with p_semaphore_take_ownership() to
  * explicitly remove it from the system after closing.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_SEM_H__
-#define P_SEM_H__
+# define P_SEM_H__
 
 #include "p/macros.h"
 #include "p/types.h"
-#include "p/error.h"
+#include "p/err.h"
 
-/** Enum with semaphore creation modes. */
-typedef enum PSemaphoreAccessMode_ {
-  P_SEM_ACCESS_OPEN =
-  0,  /**< Opens an existing semaphore or creates one with a given value.	*/
-  P_SEM_ACCESS_CREATE =
-  1  /**< Creates semaphore, resets to a given value if exists.		*/
-} PSemaphoreAccessMode;
+typedef enum sem_access sem_access_t;
 
-/** Semaphore opaque data structure. */
-typedef struct PSemaphore_ PSemaphore;
+/*!@brief Semaphore opaque data structure. */
+typedef struct sem sem_t;
 
-/**
- * @brief Creates a new #PSemaphore object.
+/*!@brief Enum with semaphore creation modes. */
+enum sem_access {
+
+  /*!@brief Opens an existing semaphore or creates one with a given value. */
+  P_SEM_ACCESS_OPEN = 0,
+
+  /*!@brief Creates semaphore, resets to a given value if exists. */
+  P_SEM_ACCESS_CREATE = 1
+};
+
+/*!@brief Creates a new #PSemaphore object.
  * @param name Semaphore name.
  * @param init_val Initial semaphore value.
  * @param mode Creation mode.
@@ -118,13 +115,11 @@ typedef struct PSemaphore_ PSemaphore;
  * other cases @a init_val is ignored. The @a name is system-wide, so any other
  * process can open that semaphore passing the same name.
  */
-P_API PSemaphore *p_semaphore_new(const byte_t *name,
-  int_t init_val,
-  PSemaphoreAccessMode mode,
-  p_err_t **error);
+P_API sem_t *
+p_semaphore_new(const byte_t *name, int_t init_val, sem_access_t mode,
+  err_t **error);
 
-/**
- * @brief Takes ownership of a semaphore.
+/*!@brief Takes ownership of a semaphore.
  * @param sem Semaphore to take ownership.
  * @since 0.0.1
  *
@@ -143,36 +138,35 @@ P_API PSemaphore *p_semaphore_new(const byte_t *name,
  * should already know whether this semaphore object is from the previous crash
  * or not.
  */
-P_API void p_semaphore_take_ownership(PSemaphore *sem);
+P_API void
+p_semaphore_take_ownership(sem_t *sem);
 
-/**
- * @brief Acquires (P operation) a semaphore.
+/*!@brief Acquires (P operation) a semaphore.
  * @param sem #PSemaphore to acquire.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_semaphore_acquire(PSemaphore *sem,
-  p_err_t **error);
+P_API bool
+p_semaphore_acquire(sem_t *sem, err_t **error);
 
-/**
- * @brief Releases (V operation) a semaphore.
+/*!@brief Releases (V operation) a semaphore.
  * @param sem #PSemaphore to release.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_semaphore_release(PSemaphore *sem,
-  p_err_t **error);
+P_API bool
+p_semaphore_release(sem_t *sem, err_t **error);
 
-/**
- * @brief Frees #PSemaphore object.
+/*!@brief Frees #PSemaphore object.
  * @param sem #PSemaphore to free.
  * @since 0.0.1
  *
  * It doesn't release an acquired semaphore, be careful to not to make a
  * deadlock while removing the acquired semaphore.
  */
-P_API void p_semaphore_free(PSemaphore *sem);
+P_API void
+p_semaphore_free(sem_t *sem);
 
-#endif /* P_SEM_H__ */
+#endif /* !P_SEM_H__ */

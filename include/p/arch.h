@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/arch.h
+/*!@file p/arch.h
  * @brief CPU detection macros
  * @author Alexander Saprykin
  *
@@ -27,13 +26,8 @@
  * This family of macros provides CPU detection and defines one or several of
  * P_CPU_x macros.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_ARCH_H__
-#define P_ARCH_H__
+# define P_ARCH_H__
 
 /*
  * List of supported CPU architectures (P_CPU_x):
@@ -73,14 +67,12 @@
  * HPPA_64         - HPPA-RISC 64-bit
  */
 
-/**
- * @def P_CPU_ALPHA
+/*!@def P_CPU_ALPHA
  * @brief DEC Alpha architecture.
  * @since 0.0.3
  */
 
-/**
- * @def P_CPU_ARM
+/*!@def P_CPU_ARM
  * @brief ARM architecture.
  * @since 0.0.3
  *
@@ -89,8 +81,7 @@
  * defined, as well as #P_CPU_ARM_32 or #P_CPU_ARM_64.
  */
 
-/**
- * @def P_CPU_ARM_32
+/*!@def P_CPU_ARM_32
  * @brief ARM 32-bit architecture.
  * @since 0.0.3
  *
@@ -98,8 +89,7 @@
  * macros (P_CPU_ARM_Vx) is also defined, as well as #P_CPU_ARM.
  */
 
-/**
- * @def P_CPU_ARM_64
+/*!@def P_CPU_ARM_64
  * @brief ARM 64-bit architecture.
  * @since 0.0.3
  *
@@ -107,8 +97,7 @@
  * macros (P_CPU_ARM_Vx) is also defined, as well as #P_CPU_ARM.
  */
 
-/**
- * @def P_CPU_ARM_V2
+/*!@def P_CPU_ARM_V2
  * @brief ARMv2 architecture revision.
  * @since 0.0.3
  *
@@ -116,8 +105,7 @@
  * are also defined.
  */
 
-/**
- * @def P_CPU_ARM_V3
+/*!@def P_CPU_ARM_V3
  * @brief ARMv3 architecture revision.
  * @since 0.0.3
  *
@@ -125,8 +113,7 @@
  * are also defined.
  */
 
-/**
- * @def P_CPU_ARM_V4
+/*!@def P_CPU_ARM_V4
  * @brief ARMv4 architecture revision.
  * @since 0.0.3
  *
@@ -134,8 +121,7 @@
  * are also defined.
  */
 
-/**
- * @def P_CPU_ARM_V5
+/*!@def P_CPU_ARM_V5
  * @brief ARMv5 architecture revision.
  * @since 0.0.3
  *
@@ -143,8 +129,7 @@
  * are also defined.
  */
 
-/**
- * @def P_CPU_ARM_V6
+/*!@def P_CPU_ARM_V6
  * @brief ARMv6 architecture revision.
  * @since 0.0.3
  *
@@ -152,8 +137,7 @@
  * are also defined.
  */
 
-/**
- * @def P_CPU_ARM_V7
+/*!@def P_CPU_ARM_V7
  * @brief ARMv7 architecture revision.
  * @since 0.0.3
  *
@@ -161,8 +145,7 @@
  * are also defined.
  */
 
-/**
- * @def P_CPU_ARM_V8
+/*!@def P_CPU_ARM_V8
  * @brief ARMv8 architecture revision.
  * @since 0.0.3
  *
@@ -170,8 +153,7 @@
  * is defined, as well as #P_CPU_ARM.
  */
 
-/**
- * @def P_CPU_X86
+/*!@def P_CPU_X86
  * @brief Intel x86 architecture.
  * @since 0.0.3
  *
@@ -181,8 +163,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_X86_32
+/*!@def P_CPU_X86_32
  * @brief Intel x86 32-bit architecture.
  * @since 0.0.3
  *
@@ -190,8 +171,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_X86_64
+/*!@def P_CPU_X86_64
  * @brief Intel x86 64-bit architecture.
  * @since 0.0.3
  *
@@ -199,16 +179,14 @@
  * defined.
  */
 
-/**
- * @def P_CPU_IA64
+/*!@def P_CPU_IA64
  * @brief Intel Itanium (IA-64) architecture.
  * @since 0.0.3
  *
  * This macro is defined for Intel Itanium (IA-64) target.
  */
 
-/**
- * @def P_CPU_MIPS
+/*!@def P_CPU_MIPS
  * @brief MIPS architecture.
  * @since 0.0.3
  *
@@ -216,8 +194,7 @@
  * (P_CPU_MIPS_xx) for different MIPS ISAs may be defined.
  */
 
-/**
- * @def P_CPU_MIPS_I
+/*!@def P_CPU_MIPS_I
  * @brief MIPS I ISA.
  * @since 0.0.3
  *
@@ -225,8 +202,7 @@
  * as probably some other ISA macros (P_CPU_MIPS_xx).
  */
 
-/**
- * @def P_CPU_MIPS_II
+/*!@def P_CPU_MIPS_II
  * @brief MIPS II ISA.
  * @since 0.0.3
  *
@@ -234,8 +210,7 @@
  * also defined, as well as probably some other ISA macros (P_CPU_MIPS_xx).
  */
 
-/**
- * @def P_CPU_MIPS_III
+/*!@def P_CPU_MIPS_III
  * @brief MIPS III ISA.
  * @since 0.0.3
  *
@@ -244,8 +219,7 @@
  * (P_CPU_MIPS_xx).
  */
 
-/**
- * @def P_CPU_MIPS_IV
+/*!@def P_CPU_MIPS_IV
  * @brief MIPS IV ISA.
  * @since 0.0.3
  *
@@ -254,8 +228,7 @@
  * other ISA macros (P_CPU_MIPS_xx).
  */
 
-/**
- * @def P_CPU_MIPS_32
+/*!@def P_CPU_MIPS_32
  * @brief MIPS32 ISA.
  * @since 0.0.3
  *
@@ -263,8 +236,7 @@
  * #P_CPU_MIPS_II.
  */
 
-/**
- * @def P_CPU_MIPS_64
+/*!@def P_CPU_MIPS_64
  * @brief MIPS64 ISA.
  * @since 0.0.3
  *
@@ -272,8 +244,7 @@
  * #P_CPU_MIPS_II, #P_CPU_MIPS_III, #P_CPU_MIPS_IV and are also defined.
  */
 
-/**
- * @def P_CPU_POWER
+/*!@def P_CPU_POWER
  * @brief PowerPC architecture.
  * @since 0.0.3
  *
@@ -281,8 +252,7 @@
  * specific macros (P_CPU_POWER_xx) is also defined.
  */
 
-/**
- * @def P_CPU_POWER_32
+/*!@def P_CPU_POWER_32
  * @brief PowerPC 32-bit architecture.
  * @since 0.0.3
  *
@@ -290,8 +260,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_POWER_64
+/*!@def P_CPU_POWER_64
  * @brief PowerPC 64-bit architecture.
  * @since 0.0.3
  *
@@ -299,8 +268,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_SPARC
+/*!@def P_CPU_SPARC
  * @brief Sun SPARC architecture.
  * @since 0.0.3
  *
@@ -308,8 +276,7 @@
  * specific macros (P_CPU_SPARC_xx) is also may be defined.
  */
 
-/**
- * @def P_CPU_SPARC_V8
+/*!@def P_CPU_SPARC_V8
  * @brief Sun SPARC V8 architecture.
  * @since 0.0.3
  *
@@ -317,8 +284,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_SPARC_V9
+/*!@def P_CPU_SPARC_V9
  * @brief Sun SPARC V9 architecture.
  * @since 0.0.3
  *
@@ -326,8 +292,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_HPPA
+/*!@def P_CPU_HPPA
  * @brief HP PA-RISC architecture.
  * @since 0.0.3
  *
@@ -335,8 +300,7 @@
  * specific macros (P_CPU_HPPA_xx) is also defined.
  */
 
-/**
- * @def P_CPU_HPPA_32
+/*!@def P_CPU_HPPA_32
  * @brief HP PA-RISC 32-bit (1.0, 1.1) architecture.
  * @since 0.0.3
  *
@@ -344,8 +308,7 @@
  * defined.
  */
 
-/**
- * @def P_CPU_HPPA_64
+/*!@def P_CPU_HPPA_64
  * @brief HP PA-RISC 64-bit (2.0) architecture.
  * @since 0.0.3
  *
@@ -354,248 +317,245 @@
  */
 
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
-#  define P_CPU_ALPHA
+# define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
       defined(_M_ARM_) || defined(__arm) || defined(__aarch64__)
-#  if defined(__aarch64__)
-#    define P_CPU_ARM_64
-#  else
-#    define P_CPU_ARM_32
-#  endif
-#  if defined(__ARM_ARCH) && __ARM_ARCH > 1
-#    define P_CPU_ARM __ARM_ARCH
-#  elif defined(__TARGET_ARCH_ARM) && __TARGET_ARCH_ARM > 1
-#    define P_CPU_ARM __TARGET_ARCH_ARM
-#  elif defined(_M_ARM) && _M_ARM > 1
-#    define P_CPU_ARM _M_ARM
-#  elif defined(__ARM64_ARCH_8__)  || \
-  defined(__aarch64__)       || \
-  defined(__CORE_CORTEXAV8__)
-#    define P_CPU_ARM 8
-#    define P_CPU_ARM_V8
-#  elif defined(__ARM_ARCH_7__)    || \
-  defined(__ARM_ARCH_7A__)   || \
-  defined(__ARM_ARCH_7R__)   || \
-  defined(__ARM_ARCH_7M__)   || \
-  defined(__ARM_ARCH_7S__)   || \
-  defined(_ARM_ARCH_7)       || \
-  defined(__CORE_CORTEXA__)
-#    define P_CPU_ARM 7
-#    define P_CPU_ARM_V7
-#  elif defined(__ARM_ARCH_6__)    || \
-  defined(__ARM_ARCH_6J__)   || \
-  defined(__ARM_ARCH_6T2__)  || \
-  defined(__ARM_ARCH_6Z__)   || \
-  defined(__ARM_ARCH_6K__)   || \
-  defined(__ARM_ARCH_6ZK__)  || \
-  defined(__ARM_ARCH_6M__)
-#    define P_CPU_ARM 6
-#    define P_CPU_ARM_V6
-#  elif defined(__ARM_ARCH_5__)    || \
-  defined(__ARM_ARCH_5E__)   || \
-  defined(__ARM_ARCH_5T__)   || \
-  defined(__ARM_ARCH_5TE__)  || \
-  defined(__ARM_ARCH_5TEJ__)
-#    define P_CPU_ARM 5
-#    define P_CPU_ARM_V5
-#  elif defined(__ARM_ARCH_4__)    || \
-  defined(__ARM_ARCH_4T__)
-#    define P_CPU_ARM 4
-#    define P_CPU_ARM_V4
-#  elif defined(__ARM_ARCH_3__)    || \
-  defined(__ARM_ARCH_3M__)
-#    define P_CPU_ARM 3
-#    define P_CPU_ARM_V3
-#  elif defined(__ARM_ARCH_2__)
-#    define P_CPU_ARM 2
-#    define P_CPU_ARM_V2
-#  endif
+# if defined(__aarch64__)
+#   define P_CPU_ARM_64
+# else
+#   define P_CPU_ARM_32
+# endif
+# if defined(__ARM_ARCH) && __ARM_ARCH > 1
+#   define P_CPU_ARM __ARM_ARCH
+# elif defined(__TARGET_ARCH_ARM) && __TARGET_ARCH_ARM > 1
+#   define P_CPU_ARM __TARGET_ARCH_ARM
+# elif defined(_M_ARM) && _M_ARM > 1
+#   define P_CPU_ARM _M_ARM
+# elif defined(__ARM64_ARCH_8__) || defined(__aarch64__) || \
+       defined(__CORE_CORTEXAV8__)
+#   define P_CPU_ARM 8
+#   define P_CPU_ARM_V8
+# elif defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || \
+       defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || \
+       defined(__ARM_ARCH_7S__) || defined(_ARM_ARCH_7) || \
+       defined(__CORE_CORTEXA__)
+#   define P_CPU_ARM 7
+#   define P_CPU_ARM_V7
+# elif defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) || \
+       defined(__ARM_ARCH_6T2__) || defined(__ARM_ARCH_6Z__) || \
+       defined(__ARM_ARCH_6K__) || defined(__ARM_ARCH_6ZK__) || \
+       defined(__ARM_ARCH_6M__)
+#   define P_CPU_ARM 6
+#   define P_CPU_ARM_V6
+# elif defined(__ARM_ARCH_5__) || defined(__ARM_ARCH_5E__) || \
+       defined(__ARM_ARCH_5T__) || defined(__ARM_ARCH_5TE__) || \
+       defined(__ARM_ARCH_5TEJ__)
+#   define P_CPU_ARM 5
+#   define P_CPU_ARM_V5
+# elif defined(__ARM_ARCH_4__) || defined(__ARM_ARCH_4T__)
+#   define P_CPU_ARM 4
+#   define P_CPU_ARM_V4
+# elif defined(__ARM_ARCH_3__) || defined(__ARM_ARCH_3M__)
+#   define P_CPU_ARM 3
+#   define P_CPU_ARM_V3
+# elif defined(__ARM_ARCH_2__)
+#   define P_CPU_ARM 2
+#   define P_CPU_ARM_V2
+# endif
 #elif defined(__i386__) || defined(__i386) || defined(_M_IX86)
-#  define P_CPU_X86_32
-#  if defined(_M_IX86)
-#    if (_M_IX86 <= 600)
-#      define P_CPU_X86 (_M_IX86 / 100)
-#    else
-#      define P_CPU_X86 6
-#    endif
-#  elif defined(__i686__) || defined(__athlon__) || defined(__SSE__) || defined(__pentiumpro__)
-#    define P_CPU_X86 6
-#  elif defined(__i586__) || defined(__k6__) || defined(__pentium__)
-#    define P_CPU_X86 5
-#  elif defined(__i486__) || defined(__80486__)
-#    define P_CPU_X86 4
-#  else
-#    define P_CPU_X86 3
-#  endif
-#elif defined(__x86_64__) || defined(__x86_64) || \
-      defined(__amd64__) || defined(__amd64) || \
-      defined(_M_X64) || defined(_M_AMD64)
-#  define P_CPU_X86_64
-#  define P_CPU_X86 6
+# define P_CPU_X86_32
+# if defined(_M_IX86)
+#   if (_M_IX86 <= 600)
+#     define P_CPU_X86 (_M_IX86 / 100)
+#   else
+#     define P_CPU_X86 6
+#   endif
+# elif defined(__i686__) || defined(__athlon__) || defined(__SSE__) || \
+       defined(__pentiumpro__)
+#   define P_CPU_X86 6
+# elif defined(__i586__) || defined(__k6__) || defined(__pentium__)
+#   define P_CPU_X86 5
+# elif defined(__i486__) || defined(__80486__)
+#   define P_CPU_X86 4
+# else
+#   define P_CPU_X86 3
+# endif
+#elif defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || \
+      defined(__amd64) || defined(_M_X64) || defined(_M_AMD64)
+# define P_CPU_X86_64
+# define P_CPU_X86 6
 #elif defined(__ia64__) || defined(__ia64) || defined(_M_IA64)
-#  define P_CPU_IA64
+# define P_CPU_IA64
 #elif defined(__mips__) || defined(__mips) || defined(_M_MRX000)
-#  define P_CPU_MIPS
-#  if defined(_M_MRX000)
-#    if (_M_MRX000 >= 10000)
-#      define P_CPU_MIPS_IV
-#    else
-#      define P_CPU_MIPS_III
-#    endif
-#  endif
-#  if defined(_MIPS_ARCH_MIPS64) || (defined(__mips) && __mips - 0 >= 64) || \
-     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS64) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS64)
-#    define P_CPU_MIPS_64
-#  elif defined(_MIPS_ARCH_MIPS32) || (defined(__mips) && __mips - 0 >= 32) || \
-       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS32) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS32)
-#    define P_CPU_MIPS_32
-#  elif defined(_MIPS_ARCH_MIPS4) || (defined(__mips) && __mips - 0 >= 4) || \
-       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS4) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS4)
-#    define P_CPU_MIPS_IV
-#  elif defined(_MIPS_ARCH_MIPS3) || (defined(__mips) && __mips - 0 >= 3) || \
-       (defined(_MIPS_ISA)&& defined(_MIPS_ISA_MIPS3) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS3)
-#    define P_CPU_MIPS_III
-#  elif defined(_MIPS_ARCH_MIPS2) || (defined(__mips) && __mips - 0 >= 2) || \
-       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS2) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS2)
-#    define P_CPU_MIPS_II
-#  elif defined(_MIPS_ARCH_MIPS1) || (defined(__mips) && __mips - 0 >= 1) || \
-     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS1) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS1)
-#    define P_CPU_MIPS_I
-#  endif
-#  if defined(P_CPU_MIPS_64)
-#    define P_CPU_MIPS_IV
-#  endif
-#  if defined(P_CPU_MIPS_IV)
-#    define P_CPU_MIPS_III
-#  endif
-#  if defined(P_CPU_MIPS_32) || defined(P_CPU_MIPS_III)
-#    define P_CPU_MIPS_II
-#  endif
-#  if defined(P_CPU_MIPS_II)
-#    define P_CPU_MIPS_I
-#  endif
-#elif defined(__powerpc__) || defined(__powerpc) || defined(__ppc__)   || defined(__ppc) || \
-      defined(_ARCH_PPC)   || defined(_ARCH_PWR) || defined(_ARCH_COM) || \
-      defined(_M_PPC)      || defined(_M_MPPC)
-#  define P_CPU_POWER
-#  if defined(__powerpc64__) || defined(__powerpc64) || defined(__ppc64__) || defined(__ppc64) || \
-      defined(__64BIT__)     || defined(__LP64__)    || defined(_LP64)
-#    define P_CPU_POWER_64
-#  else
-#    define P_CPU_POWER_32
-#  endif
+# define P_CPU_MIPS
+# if defined(_M_MRX000)
+#   if (_M_MRX000 >= 10000)
+#     define P_CPU_MIPS_IV
+#   else
+#     define P_CPU_MIPS_III
+#   endif
+# endif
+# if defined(_MIPS_ARCH_MIPS64) || (defined(__mips) && __mips - 0 >= 64) || \
+     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS64) && \
+     __MIPS_ISA - 0 >= _MIPS_ISA_MIPS64)
+#   define P_CPU_MIPS_64
+# elif defined(_MIPS_ARCH_MIPS32) || (defined(__mips) && __mips - 0 >= 32) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS32) && \
+       __MIPS_ISA - 0 >= _MIPS_ISA_MIPS32)
+#   define P_CPU_MIPS_32
+# elif defined(_MIPS_ARCH_MIPS4) || (defined(__mips) && __mips - 0 >= 4) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS4) && \
+       __MIPS_ISA - 0 >= _MIPS_ISA_MIPS4)
+#   define P_CPU_MIPS_IV
+# elif defined(_MIPS_ARCH_MIPS3) || (defined(__mips) && __mips - 0 >= 3) || \
+       (defined(_MIPS_ISA)&& defined(_MIPS_ISA_MIPS3) && \
+       __MIPS_ISA - 0 >= _MIPS_ISA_MIPS3)
+#   define P_CPU_MIPS_III
+# elif defined(_MIPS_ARCH_MIPS2) || (defined(__mips) && __mips - 0 >= 2) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS2) && \
+       __MIPS_ISA - 0 >= _MIPS_ISA_MIPS2)
+#   define P_CPU_MIPS_II
+# elif defined(_MIPS_ARCH_MIPS1) || (defined(__mips) && __mips - 0 >= 1) || \
+     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS1) && \
+     __MIPS_ISA - 0 >= _MIPS_ISA_MIPS1)
+#   define P_CPU_MIPS_I
+# endif
+# if defined(P_CPU_MIPS_64)
+#   define P_CPU_MIPS_IV
+# endif
+# if defined(P_CPU_MIPS_IV)
+#   define P_CPU_MIPS_III
+# endif
+# if defined(P_CPU_MIPS_32) || defined(P_CPU_MIPS_III)
+#   define P_CPU_MIPS_II
+# endif
+# if defined(P_CPU_MIPS_II)
+#   define P_CPU_MIPS_I
+# endif
+#elif defined(__powerpc__) || defined(__powerpc) || defined(__ppc__) || \
+      defined(__ppc) || defined(_ARCH_PPC) || defined(_ARCH_PWR) || \
+      defined(_ARCH_COM) || defined(_M_PPC) || defined(_M_MPPC)
+# define P_CPU_POWER
+# if defined(__powerpc64__) || defined(__powerpc64) || defined(__ppc64__) || \
+     defined(__ppc64) || defined(__64BIT__) || defined(__LP64__) || \
+     defined(_LP64)
+#   define P_CPU_POWER_64
+# else
+#   define P_CPU_POWER_32
+# endif
 #elif defined(__sparc__) || defined(__sparc)
-#  define P_CPU_SPARC
-#  if defined(__sparc_v9__) || defined(__sparcv9)
-#    define P_CPU_SPARC_V9
-#  elif defined(__sparc_v8__) || defined(__sparcv8)
-#    define P_CPU_SPARC_V8
-#  endif
+# define P_CPU_SPARC
+# if defined(__sparc_v9__) || defined(__sparcv9)
+#   define P_CPU_SPARC_V9
+# elif defined(__sparc_v8__) || defined(__sparcv8)
+#   define P_CPU_SPARC_V8
+# endif
 #elif defined(__hppa__) || defined(__hppa)
-#  define P_CPU_HPPA
-#  if defined(_PA_RISC2_0) || defined(__RISC2_0__) || defined(__HPPA20__) || defined(__PA8000__)
-#    define P_CPU_HPPA_64
-#  else
-#    define P_CPU_HPPA_32
-#  endif
+# define P_CPU_HPPA
+# if defined(_PA_RISC2_0) || defined(__RISC2_0__) || defined(__HPPA20__) || \
+     defined(__PA8000__)
+#   define P_CPU_HPPA_64
+# else
+#   define P_CPU_HPPA_32
+# endif
 #endif
 
 /* We need this to generate full Doxygen documentation */
 
 #ifdef DOXYGEN
-#  ifndef P_CPU_ALPHA
-#    define P_CPU_ALPHA
-#  endif
-#  ifndef P_CPU_ARM
-#    define P_CPU_ARM
-#  endif
-#  ifndef P_CPU_ARM_32
-#    define P_CPU_ARM_32
-#  endif
-#  ifndef P_CPU_ARM_64
-#    define P_CPU_ARM_64
-#  endif
-#  ifndef P_CPU_ARM_V2
-#    define P_CPU_ARM_V2
-#  endif
-#  ifndef P_CPU_ARM_V3
-#    define P_CPU_ARM_V3
-#  endif
-#  ifndef P_CPU_ARM_V4
-#    define P_CPU_ARM_V4
-#  endif
-#  ifndef P_CPU_ARM_V5
-#    define P_CPU_ARM_V5
-#  endif
-#  ifndef P_CPU_ARM_V6
-#    define P_CPU_ARM_V6
-#  endif
-#  ifndef P_CPU_ARM_V7
-#    define P_CPU_ARM_V7
-#  endif
-#  ifndef P_CPU_ARM_V8
-#    define P_CPU_ARM_V8
-#  endif
-#  ifndef P_CPU_X86
-#    define P_CPU_X86
-#  endif
-#  ifndef P_CPU_X86_32
-#    define P_CPU_X86_32
-#  endif
-#  ifndef P_CPU_X86_64
-#    define P_CPU_X86_64
-#  endif
-#  ifndef P_CPU_IA64
-#    define P_CPU_IA64
-#  endif
-#  ifndef P_CPU_MIPS
-#    define P_CPU_MIPS
-#  endif
-#  ifndef P_CPU_MIPS_I
-#    define P_CPU_MIPS_I
-#  endif
-#  ifndef P_CPU_MIPS_II
-#    define P_CPU_MIPS_II
-#  endif
-#  ifndef P_CPU_MIPS_III
-#    define P_CPU_MIPS_III
-#  endif
-#  ifndef P_CPU_MIPS_IV
-#    define P_CPU_MIPS_IV
-#  endif
-#  ifndef P_CPU_MIPS_32
-#    define P_CPU_MIPS_32
-#  endif
-#  ifndef P_CPU_MIPS_64
-#    define P_CPU_MIPS_64
-#  endif
-#  ifndef P_CPU_POWER
-#    define P_CPU_POWER
-#  endif
-#  ifndef P_CPU_POWER_32
-#    define P_CPU_POWER_32
-#  endif
-#  ifndef P_CPU_POWER_64
-#    define P_CPU_POWER_64
-#  endif
-#  ifndef P_CPU_SPARC
-#    define P_CPU_SPARC
-#  endif
-#  ifndef P_CPU_SPARC_V8
-#    define P_CPU_SPARC_V8
-#  endif
-#  ifndef P_CPU_SPARC_V9
-#    define P_CPU_SPARC_V9
-#  endif
-#  ifndef P_CPU_HPPA
-#    define P_CPU_HPPA
-#  endif
-#  ifndef P_CPU_HPPA_32
-#    define P_CPU_HPPA_32
-#  endif
-#  ifndef P_CPU_HPPA_64
-#    define P_CPU_HPPA_64
-#  endif
+# ifndef P_CPU_ALPHA
+#   define P_CPU_ALPHA
+# endif
+# ifndef P_CPU_ARM
+#   define P_CPU_ARM
+# endif
+# ifndef P_CPU_ARM_32
+#   define P_CPU_ARM_32
+# endif
+# ifndef P_CPU_ARM_64
+#   define P_CPU_ARM_64
+# endif
+# ifndef P_CPU_ARM_V2
+#   define P_CPU_ARM_V2
+# endif
+# ifndef P_CPU_ARM_V3
+#   define P_CPU_ARM_V3
+# endif
+# ifndef P_CPU_ARM_V4
+#   define P_CPU_ARM_V4
+# endif
+# ifndef P_CPU_ARM_V5
+#   define P_CPU_ARM_V5
+# endif
+# ifndef P_CPU_ARM_V6
+#   define P_CPU_ARM_V6
+# endif
+# ifndef P_CPU_ARM_V7
+#   define P_CPU_ARM_V7
+# endif
+# ifndef P_CPU_ARM_V8
+#   define P_CPU_ARM_V8
+# endif
+# ifndef P_CPU_X86
+#   define P_CPU_X86
+# endif
+# ifndef P_CPU_X86_32
+#   define P_CPU_X86_32
+# endif
+# ifndef P_CPU_X86_64
+#   define P_CPU_X86_64
+# endif
+# ifndef P_CPU_IA64
+#   define P_CPU_IA64
+# endif
+# ifndef P_CPU_MIPS
+#   define P_CPU_MIPS
+# endif
+# ifndef P_CPU_MIPS_I
+#   define P_CPU_MIPS_I
+# endif
+# ifndef P_CPU_MIPS_II
+#   define P_CPU_MIPS_II
+# endif
+# ifndef P_CPU_MIPS_III
+#   define P_CPU_MIPS_III
+# endif
+# ifndef P_CPU_MIPS_IV
+#   define P_CPU_MIPS_IV
+# endif
+# ifndef P_CPU_MIPS_32
+#   define P_CPU_MIPS_32
+# endif
+# ifndef P_CPU_MIPS_64
+#   define P_CPU_MIPS_64
+# endif
+# ifndef P_CPU_POWER
+#   define P_CPU_POWER
+# endif
+# ifndef P_CPU_POWER_32
+#   define P_CPU_POWER_32
+# endif
+# ifndef P_CPU_POWER_64
+#   define P_CPU_POWER_64
+# endif
+# ifndef P_CPU_SPARC
+#   define P_CPU_SPARC
+# endif
+# ifndef P_CPU_SPARC_V8
+#   define P_CPU_SPARC_V8
+# endif
+# ifndef P_CPU_SPARC_V9
+#   define P_CPU_SPARC_V9
+# endif
+# ifndef P_CPU_HPPA
+#   define P_CPU_HPPA
+# endif
+# ifndef P_CPU_HPPA_32
+#   define P_CPU_HPPA_32
+# endif
+# ifndef P_CPU_HPPA_64
+#   define P_CPU_HPPA_64
+# endif
 #endif
 
-#endif /* P_ARCH_H__ */
+#endif /* !P_ARCH_H__ */

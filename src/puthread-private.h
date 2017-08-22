@@ -15,26 +15,36 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
-#define PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
+# define PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
 
 #include "p/macros.h"
 #include "p/types.h"
 #include "p/uthread.h"
 
-/** Base thread structure */
+/*!@brief Base thread structure */
 typedef struct PUThreadBase_ {
-  int_t ref_count;  /**< Reference counter.	*/
-  int_t ret_code;  /**< Return code.	*/
-  bool ours;    /**< Our thread flag.	*/
-  bool joinable;  /**< Joinable flag.	*/
-  PUThreadFunc func;    /**< Thread routine.	*/
-  ptr_t data;    /**< Thread input data.	*/
-  PUThreadPriority prio;    /**< Thread priority.	*/
+
+  /*!@brief Reference counter. */
+  int_t ref_count;
+
+  /*!@brief Return code. */
+  int_t ret_code;
+
+  /*!@brief Our thread flag. */
+  bool ours;
+
+  /*!@brief Joinable flag. */
+  bool joinable;
+
+  /*!@brief Thread routine. */
+  uthread_fn_t func;
+
+  /*!@brief Thread input data. */
+  ptr_t data;
+
+  /*!@brief Thread priority. */
+  uthread_prio_t prio;
 } PUThreadBase;
 
 #endif /* PLIBSYS_HEADER_PUTHREAD_PRIVATE_H */

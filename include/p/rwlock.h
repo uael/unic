@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/rwlock.h
+/*!@file p/rwlock.h
  * @brief Read-write lock
  * @author Alexander Saprykin
  *
@@ -54,29 +53,23 @@
  * A writer enters the critical section with p_rwlock_writer_lock() or
  * p_rwlock_writer_trylock() and exits with p_rwlock_writer_unlock().
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_RWLOCK_H__
-#define P_RWLOCK_H__
+# define P_RWLOCK_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Read-write lock opaque data structure. */
-typedef struct PRWLock_ PRWLock;
+/*!@brief Read-write lock opaque data structure. */
+typedef struct rwlock rwlock_t;
 
-/**
- * @brief Creates a new #PRWLock object.
+/*!@brief Creates a new #PRWLock object.
  * @return Pointer to a newly created #PRWLock object.
  * @since 0.0.1
  */
-P_API PRWLock *p_rwlock_new(void);
+P_API rwlock_t *
+p_rwlock_new(void);
 
-/**
- * @brief Locks a read-write lock for reading.
+/*!@brief Locks a read-write lock for reading.
  * @param lock #PRWLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -86,10 +79,10 @@ P_API PRWLock *p_rwlock_new(void);
  * Forces the calling thread to sleep until the @a lock becomes available for
  * locking.
  */
-P_API bool p_rwlock_reader_lock(PRWLock *lock);
+P_API bool
+p_rwlock_reader_lock(rwlock_t *lock);
 
-/**
- * @brief Tries to lock a read-write lock for reading immediately.
+/*!@brief Tries to lock a read-write lock for reading immediately.
  * @param lock #PRWLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -99,10 +92,10 @@ P_API bool p_rwlock_reader_lock(PRWLock *lock);
  * Tries to lock the @a lock and returns immediately if it is not available for
  * locking.
  */
-P_API bool p_rwlock_reader_trylock(PRWLock *lock);
+P_API bool
+p_rwlock_reader_trylock(rwlock_t *lock);
 
-/**
- * @brief Releases a locked for reading read-write lock.
+/*!@brief Releases a locked for reading read-write lock.
  * @param lock #PRWLock to release.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -116,10 +109,10 @@ P_API bool p_rwlock_reader_trylock(PRWLock *lock);
  * It's implementation dependent whether only the same thread can lock and
  * unlock the same read-write lock.
  */
-P_API bool p_rwlock_reader_unlock(PRWLock *lock);
+P_API bool
+p_rwlock_reader_unlock(rwlock_t *lock);
 
-/**
- * @brief Locks a read-write lock for writing.
+/*!@brief Locks a read-write lock for writing.
  * @param lock #PRWLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -129,10 +122,10 @@ P_API bool p_rwlock_reader_unlock(PRWLock *lock);
  * Forces the calling thread to sleep until the @a lock becomes available for
  * locking.
  */
-P_API bool p_rwlock_writer_lock(PRWLock *lock);
+P_API bool
+p_rwlock_writer_lock(rwlock_t *lock);
 
-/**
- * @brief Tries to lock a read-write lock immediately.
+/*!@brief Tries to lock a read-write lock immediately.
  * @param lock #PRWLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -142,10 +135,10 @@ P_API bool p_rwlock_writer_lock(PRWLock *lock);
  * Tries to lock the @a lock and returns immediately if it is not available for
  * locking.
  */
-P_API bool p_rwlock_writer_trylock(PRWLock *lock);
+P_API bool
+p_rwlock_writer_trylock(rwlock_t *lock);
 
-/**
- * @brief Releases a locked for writing read-write lock.
+/*!@brief Releases a locked for writing read-write lock.
  * @param lock #PRWLock to release.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -159,15 +152,16 @@ P_API bool p_rwlock_writer_trylock(PRWLock *lock);
  * It's implementation dependent whether only the same thread can lock and
  * unlock the same read-write lock.
  */
-P_API bool p_rwlock_writer_unlock(PRWLock *lock);
+P_API bool
+p_rwlock_writer_unlock(rwlock_t *lock);
 
-/**
- * @brief Frees a #PRWLock object.
+/*!@brief Frees a #PRWLock object.
  * @param lock #PRWLock to free.
  * @since 0.0.1
  * @warning It doesn't unlock the @a lock before freeing memory, so you should
  * do it manually.
  */
-P_API void p_rwlock_free(PRWLock *lock);
+P_API void
+p_rwlock_free(rwlock_t *lock);
 
-#endif /* P_RWLOCK_H__ */
+#endif /* !P_RWLOCK_H__ */

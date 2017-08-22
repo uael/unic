@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/main.h
+/*!@file p/main.h
  * @brief Library initialization
  * @author Alexander Saprykin
  *
@@ -42,151 +41,145 @@
  * other than kernel32.dll.
  */
 
-/**
- * @mainpage
+/*!@mainpage
  * Basic
  * - @link
- * pmain.h Library initialization
+ * p/main.h Library initialization
  * @endlink
  * - @link
- * ptypes.h Data types
+ * p/types.h Data types
  * @endlink
  * - @link
- * pmacroscpu.h CPU detection macros
+ * p/arch.h CPU detection macros
  * @endlink
  * - @link
- * pmacrosos.h OS detection macros
+ * p/os.h OS detection macros
  * @endlink
  * - @link
- * pmacroscompiler.h Compiler detection macros
+ * p/cc.h Compiler detection macros
  * @endlink
  * - @link
- * pmacros.h Miscellaneous macros
+ * p/macros.h Miscellaneous macros
  * @endlink
  * - @link
- * pstring.h Strings
+ * p/string.h Strings
  * @endlink
  *
  * System
  * - @link
- * pmem.h Memory management
+ * p/mem.h Memory management
  * @endlink
  * - @link
- * pprocess.h Process
+ * p/process.h Process
  * @endlink
  * - @link
- * plibraryloader.h Shared library loader
+ * p/dl.h Shared library loader
  * @endlink
  * - @link
- * ptimeprofiler.h Time profiler
+ * p/profiler.h Time profiler
  * @endlink
  * - @link
- * perror.h Errors
+ * p/err.h Errors
  * @endlink
  *
  * Data structures
  * - @link
- * plist.h Singly linked list
+ * p/list.h Singly linked list
  * @endlink
  * - @link
- * phashtable.h Hash table
+ * p/htable.h Hash table
  * @endlink
  * - @link
- * pcryptohash.h Cryptographic hash
+ * p/hash.h Cryptographic hash
  * @endlink
  * - @link
- * ptree.h Binary search tree
+ * p/tree.h Binary search tree
  * @endlink
  *
  * Multithreading
  * - @link
- * puthread.h Thread
+ * p/uthread.h Thread
  * @endlink
  * - @link
- * pmutex.h Mutex
+ * p/mutex.h Mutex
  * @endlink
  * - @link
- * pcondvariable.h Condition variable
+ * p/condvar.h Condition variable
  * @endlink
  * - @link
- * prwlock.h Read-write lock
+ * p/rwlock.h Read-write lock
  * @endlink
  * - @link
- * pspinlock.h Spinlock
+ * p/spinlock.h Spinlock
  * @endlink
  * - @link
- * patomic.h Atomic operations
+ * p/atomic.h Atomic operations
  * @endlink
  *
  * Interprocess communication
  * - @link
- * psemaphore.h Semaphore
+ * p/sem.h Semaphore
  * @endlink
  * - @link
- * pshm.h Shared memory
+ * p/shm.h Shared memory
  * @endlink
  * - @link
- * pshmbuffer.h Shared memory buffer
+ * p/shmbuffer.h Shared memory buffer
  * @endlink
  *
  * Networking
  * - @link
- * psocketaddress.h Socket address
+ * p/socketaddr.h Socket address
  * @endlink
  * - @link
- * psocket.h Socket
+ * p/socket.h Socket
  * @endlink
  *
  * File and directories
  * - @link
- * pfile.h Files
+ * p/file.h Files
  * @endlink
  * - @link
- * pdir.h Directories
+ * p/dir.h Directories
  * @endlink
  * - @link
- * pinifile.h INI file parser
+ * p/inifile.h INI file parser
  * @endlink
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_MAIN_H__
-#define P_MAIN_H__
+# define P_MAIN_H__
 
 #include "p/macros.h"
 #include "p/mem.h"
 
-/**
- * @brief Initializes library resources.
+/*!@brief Initializes library resources.
  * @since 0.0.1
  */
-P_API void p_libsys_init(void);
+P_API void
+p_libsys_init(void);
 
-/**
- * @brief Initializes library resources along with the memory table.
+/*!@brief Initializes library resources along with the memory table.
  * @param vtable Memory management table.
  * @since 0.0.1
  */
-P_API void p_libsys_init_full(const PMemVTable *vtable);
+P_API void
+p_libsys_init_full(const mem_vtable_t *vtable);
 
-/**
- * @brief Frees library resources. You should stop using any of the library
+/*!@brief Frees library resources. You should stop using any of the library
  * routines after calling this one.
  * @since 0.0.1
  */
-P_API void p_libsys_shutdown(void);
+P_API void
+p_libsys_shutdown(void);
 
-/**
- * @brief Gets the library version against which it was compiled at run-time.
+/*!@brief Gets the library version against which it was compiled at run-time.
  * @return Library version.
  * @since 0.0.1
  * @note This version may differ from the version the application was compiled
  * against.
  * @sa #PLIBSYS_VERSION, #PLIBSYS_VERSION_STR, #PLIBSYS_VERSION_CHECK
  */
-P_API const byte_t *p_libsys_version(void);
+P_API const byte_t *
+p_libsys_version(void);
 
-#endif /* P_MAIN_H__ */
+#endif /* !P_MAIN_H__ */

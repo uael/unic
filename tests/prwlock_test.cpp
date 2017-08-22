@@ -34,7 +34,7 @@
 #define PRWLOCK_TEST_STRING_1 "This is a test string."
 #define PRWLOCK_TEST_STRING_2 "Ouh, yet another string to check!"
 
-static PRWLock *         test_rwlock        = NULL;
+static rwlock_t *         test_rwlock        = NULL;
 static volatile bool is_threads_working = false;
 static volatile int_t     writers_counter    = 0;
 static byte_t             string_buf[50];
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE (prwlock_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -171,19 +171,19 @@ BOOST_AUTO_TEST_CASE (prwlock_general_test)
 	is_threads_working = true;
 	writers_counter    = 0;
 
-	PUThread *reader_thr1 = p_uthread_create ((PUThreadFunc) reader_thread_func,
+	uthread_t *reader_thr1 = p_uthread_create ((uthread_fn_t) reader_thread_func,
 						  NULL,
 						  true);
 
-	PUThread *reader_thr2 = p_uthread_create ((PUThreadFunc) reader_thread_func,
+	uthread_t *reader_thr2 = p_uthread_create ((uthread_fn_t) reader_thread_func,
 						  NULL,
 						  true);
 
-	PUThread *writer_thr1 = p_uthread_create ((PUThreadFunc) writer_thread_func,
+	uthread_t *writer_thr1 = p_uthread_create ((uthread_fn_t) writer_thread_func,
 						  NULL,
 						  true);
 
-	PUThread *writer_thr2 = p_uthread_create ((PUThreadFunc) writer_thread_func,
+	uthread_t *writer_thr2 = p_uthread_create ((uthread_fn_t) writer_thread_func,
 						  NULL,
 						  true);
 

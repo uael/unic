@@ -15,19 +15,16 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
-#define PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
+# define PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Time profiler opaque data structure. */
+/*!@brief Time profiler opaque data structure. */
 struct p_profiler {
-  uint64_t counter; /**< Ticks counter. */
-};
 
+  /*!@brief Ticks counter. */
+  uint64_t counter;
+};
 #endif /* PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H */

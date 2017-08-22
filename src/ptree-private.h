@@ -15,22 +15,26 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef PLIBSYS_HEADER_PTREE_PRIVATE_H
-#define PLIBSYS_HEADER_PTREE_PRIVATE_H
+# define PLIBSYS_HEADER_PTREE_PRIVATE_H
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Base tree leaf structure. */
+/*!@brief Base tree leaf structure. */
 typedef struct PTreeBaseNode_ {
-  struct PTreeBaseNode_ *left;  /**< Left child.	*/
-  struct PTreeBaseNode_ *right;  /**< Right child.	*/
-  ptr_t key;  /**< Node key.		*/
-  ptr_t value;  /**< Node value.	*/
+
+  /*!@brief Left child. */
+  struct PTreeBaseNode_ *left;
+
+  /*!@brief Right child. */
+  struct PTreeBaseNode_ *right;
+
+  /*!@brief Node key. */
+  ptr_t key;
+
+  /*!@brief Node value. */
+  ptr_t value;
 } PTreeBaseNode;
 
 #endif /* PLIBSYS_HEADER_PTREE_PRIVATE_H */

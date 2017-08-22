@@ -15,38 +15,36 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/libloader.h"
+#include "p/dl.h"
 
-P_API PLibraryLoader *
-p_library_loader_new(const byte_t *path) {
-  P_ERROR ("PLibraryLoader::p_library_loader_new: not implemented");
+dl_t *
+p_dl_new(const byte_t *path) {
+  P_ERROR ("dl_t::p_dl_new: not implemented");
   return NULL;
 }
 
-P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
+PFuncAddr
+p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   P_UNUSED (loader);
   P_UNUSED (sym);
-
-  P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: not implemented");
+  P_ERROR ("dl_t::p_dl_get_symbol: not implemented");
   return NULL;
 }
 
-P_API void
-p_library_loader_free(PLibraryLoader *loader) {
+void
+p_dl_free(dl_t *loader) {
   P_UNUSED (loader);
-  P_ERROR ("PLibraryLoader::p_library_loader_free: not implemented");
+  P_ERROR ("dl_t::p_dl_free: not implemented");
 }
 
-P_API byte_t *
-p_library_loader_get_last_error(PLibraryLoader *loader) {
+byte_t *
+p_dl_get_last_error(dl_t *loader) {
   P_UNUSED (loader);
-
-  P_ERROR ("PLibraryLoader::p_library_loader_get_last_error: not implemented");
+  P_ERROR ("dl_t::p_dl_get_last_error: not implemented");
   return NULL;
 }
 
-P_API bool
-p_library_loader_is_ref_counted(void) {
+bool
+p_dl_is_ref_counted(void) {
   return false;
 }

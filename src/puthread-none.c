@@ -19,9 +19,7 @@
 #include "p/uthread.h"
 #include "puthread-private.h"
 
-#include <stdlib.h>
-
-struct PUThread_ {
+struct uthread {
   PUThreadBase base;
   int_t hdl;
 };
@@ -38,26 +36,21 @@ void
 p_uthread_win32_thread_detach(void) {
 }
 
-PUThread *
-p_uthread_create_internal(PUThreadFunc func,
+uthread_t *
+p_uthread_create_internal(uthread_fn_t func,
   bool joinable,
-  PUThreadPriority prio,
+  uthread_prio_t prio,
   size_t stack_size) {
-  PUThread *ret;
-
+  uthread_t *ret;
   P_UNUSED (stack_size);
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThread))) == NULL)) {
-    P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(uthread_t))) == NULL)) {
+    P_ERROR ("uthread_t::p_uthread_create_internal: failed to allocate memory");
     return NULL;
   }
-
   ret->hdl = -1;
   ret->base.joinable = joinable;
   ret->base.prio = prio;
-
   ret->base.func(ret);
-
   return ret;
 }
 
@@ -66,60 +59,59 @@ p_uthread_exit_internal(void) {
 }
 
 void
-p_uthread_wait_internal(PUThread *thread) {
+p_uthread_wait_internal(uthread_t *thread) {
   P_UNUSED (thread);
 }
 
 void
-p_uthread_free_internal(PUThread *thread) {
+p_uthread_free_internal(uthread_t *thread) {
   p_free(thread);
 }
 
-P_API void
+void
 p_uthread_yield(void) {
 }
 
-P_API bool
-p_uthread_set_priority(PUThread *thread,
-  PUThreadPriority prio) {
-  if (P_UNLIKELY (thread == NULL))
+bool
+p_uthread_set_priority(uthread_t *thread,
+  uthread_prio_t prio) {
+  if (P_UNLIKELY (thread == NULL)) {
     return false;
-
+  }
   thread->base.prio = prio;
-
   return false;
 }
 
-P_API P_HANDLE
+P_HANDLE
 p_uthread_current_id(void) {
   return (P_HANDLE) 0;
 }
 
-P_API PUThreadKey *
-p_uthread_local_new(PDestroyFunc free_func) {
+uthread_key_t *
+p_uthread_local_new(destroy_fn_t free_func) {
   P_UNUSED (free_func);
   return NULL;
 }
 
-P_API void
-p_uthread_local_free(PUThreadKey *key) {
+void
+p_uthread_local_free(uthread_key_t *key) {
   P_UNUSED (key);
 }
 
-P_API ptr_t
-p_uthread_get_local(PUThreadKey *key) {
+ptr_t
+p_uthread_get_local(uthread_key_t *key) {
   P_UNUSED (key);
 }
 
-P_API void
-p_uthread_set_local(PUThreadKey *key,
+void
+p_uthread_set_local(uthread_key_t *key,
   ptr_t value) {
   P_UNUSED (key);
   P_UNUSED (value);
 }
 
-P_API void
-p_uthread_replace_local(PUThreadKey *key,
+void
+p_uthread_replace_local(uthread_key_t *key,
   ptr_t value) {
   P_UNUSED (key);
   P_UNUSED (value);

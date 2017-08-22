@@ -18,32 +18,30 @@
 #include "p/process.h"
 
 #ifndef P_OS_WIN
-#  include <sys/types.h>
-#  include <signal.h>
-#  include <unistd.h>
+# include <sys/types.h>
+# include <signal.h>
+# include <unistd.h>
 #endif
 
-P_API uint32_t
+uint32_t
 p_process_get_current_pid(void) {
 #ifdef P_OS_WIN
-  return (uint32_t) GetCurrentProcessId ();
+  return (uint32_t) GetCurrentProcessId();
 #else
   return (uint32_t) getpid();
 #endif
 }
 
-P_API bool
+bool
 p_process_is_running(uint32_t pid) {
 #ifdef P_OS_WIN
   HANDLE proc;
   DWORD ret;
-
-  if ((proc = OpenProcess (SYNCHRONIZE, false, pid)) == NULL)
+  if ((proc = OpenProcess(SYNCHRONIZE, false, pid)) == NULL) {
     return false;
-
-  ret = WaitForSingleObject (proc, 0);
-  CloseHandle (proc);
-
+  }
+  ret = WaitForSingleObject(proc, 0);
+  CloseHandle(proc);
   return ret == WAIT_TIMEOUT;
 #else
   return kill((pid_t) pid, 0) == 0;

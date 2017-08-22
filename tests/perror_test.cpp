@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE (perror_nomem_test)
 {
 	p_libsys_init ();
 
-	p_err_t *error = p_error_new_literal (0, 0, NULL);
+	err_t *error = p_error_new_literal (0, 0, NULL);
 	BOOST_CHECK (error != NULL);
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 	BOOST_CHECK (p_error_get_domain (NULL) == P_ERR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_copy (NULL) == NULL);
 
-	p_err_t *error = (p_err_t *) 0x1;
+	err_t *error = (err_t *) 0x1;
 
 	p_error_set_code (NULL, 0);
 	p_error_set_native_code (NULL, 0);
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 	p_error_set_error_p (NULL, 0, 0, NULL);
 
 	p_error_set_error_p (&error, 0, 0, NULL);
-	BOOST_CHECK (error == (p_err_t *) 0x1);
+	BOOST_CHECK (error == (err_t *) 0x1);
 
 	p_error_clear (NULL);
 	p_error_free (NULL);
@@ -113,14 +113,14 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	p_libsys_init ();
 
 	/* Empty initialization test */
-	p_err_t *error = p_error_new ();
+	err_t *error = p_error_new ();
 
 	BOOST_CHECK (error != NULL);
 	BOOST_CHECK (p_error_get_code (error) == 0);
 	BOOST_CHECK (p_error_get_domain (error) == P_ERR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_get_message (error) == NULL);
 
-	p_err_t *copy_error = p_error_copy (error);
+	err_t *copy_error = p_error_copy (error);
 
 	BOOST_CHECK (copy_error != NULL);
 	BOOST_CHECK (p_error_get_code (copy_error) == 0);

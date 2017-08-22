@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/socket.h
+/*!@file p/socket.h
  * @brief Socket implementation
  * @author Alexander Saprykin
  *
@@ -106,29 +105,29 @@
  * Here is an example of #PSocket usage:
  * @code
  * PSocketAddress *addr;
- * PSocket	  *sock;
+ * PSocket   *sock;
  *
  * p_libsys_init ();
  * ...
- * if ((addr = p_socket_address_new ("127.0.0.1", 5432)) == NULL) {
- *	...
+ * if ((addr = p_socketaddr_new ("127.0.0.1", 5432)) == NULL) {
+ * ...
  * }
  *
  * if ((sock = p_socket_new (P_SOCKET_FAMILY_INET,
- *			     P_SOCKET_TYPE_DATAGRAM,
- *			     P_SOCKET_PROTOCOL_UDP)) == NULL) {
- *	p_socket_address_free (addr);
- *	...
+ *        P_SOCKET_DATAGRAM,
+ *        P_SOCKET_PROTOCOL_UDP)) == NULL) {
+ * p_socketaddr_free (addr);
+ * ...
  * }
  *
  * if (!p_socket_bind (sock, addr, FALSE)) {
- *	p_socket_address_free(addr);
- *	p_socket_free(sock);
- *	...
+ * p_socketaddr_free(addr);
+ * p_socket_free(sock);
+ * ...
  * }
  *
  * ...
- * p_socket_address_free (addr);
+ * p_socketaddr_free (addr);
  * p_socket_close (sock);
  * p_socket_free (sock);
  * p_libsys_shutdown ();
@@ -136,55 +135,77 @@
  * Here a UDP socket was created, bound to the localhost address and the port
  * @a 5432. Do not forget to close the socket and free memory after its usage.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_SOCKET_H__
-#define P_SOCKET_H__
+# define P_SOCKET_H__
 
 #include "p/macros.h"
 #include "p/socketaddr.h"
-#include "p/error.h"
+#include "p/err.h"
 
-/** Socket protocols specified by the IANA.  */
-typedef enum PSocketProtocol_ {
-  P_SOCKET_PROTOCOL_UNKNOWN = -1,  /**< Unknown protocol.	*/
-  P_SOCKET_PROTOCOL_DEFAULT = 0,  /**< Default protocol.	*/
-  P_SOCKET_PROTOCOL_TCP = 6,  /**< TCP protocol.	*/
-  P_SOCKET_PROTOCOL_UDP = 17,  /**< UDP protocol.	*/
-  P_SOCKET_PROTOCOL_SCTP = 132  /**< SCTP protocol.	*/
-} PSocketProtocol;
+typedef enum socket_protocol socket_protocol_t;
+typedef enum socket_kind socket_kind_t;
+typedef enum socket_dir socket_dir_t;
+typedef enum socket_io_cond socket_io_cond_t;
 
-/** Socket types. */
-typedef enum PSocketType_ {
-  P_SOCKET_TYPE_UNKNOWN = 0,  /**< Unknown type.							*/
-  P_SOCKET_TYPE_STREAM =
-  1,  /**< Connection oritented, reliable, stream of bytes (i.e. TCP).	*/
-  P_SOCKET_TYPE_DATAGRAM =
-  2,  /**< Connection-less, unreliable, datagram passing (i.e. UDP).		*/
-  P_SOCKET_TYPE_SEQPACKET =
-  3  /**< Connection-less, reliable, datagram passing (i.e. SCTP).		*/
-} PSocketType;
+/*!@brief Socket opaque structure. */
+typedef struct socket socket_t;
 
-/** Socket direction for data operations. */
-typedef enum PSocketDirection_ {
-  P_SOCKET_DIRECTION_SND = 0,  /**< Send direction.	*/
-  P_SOCKET_DIRECTION_RCV = 1  /**< Receive direction.	*/
-} PSocketDirection;
+/*!@brief Socket protocols specified by the IANA. */
+enum socket_protocol {
 
-/** Socket IO waiting (polling) conditions. */
-typedef enum PSocketIOCondition_ {
-  P_SOCKET_IO_CONDITION_POLLIN = 1,  /**< Ready to read.	*/
-  P_SOCKET_IO_CONDITION_POLLOUT = 2  /**< Ready to write.	*/
-} PSocketIOCondition;
+  /*!@brief Unknown protocol. */
+  P_SOCKET_PROTOCOL_UNKNOWN = -1,
 
-/** Socket opaque structure. */
-typedef struct PSocket_ PSocket;
+  /*!@brief Default protocol. */
+  P_SOCKET_PROTOCOL_DEFAULT = 0,
 
-/**
- * @brief Creates a new #PSocket object from a file descriptor.
+  /*!@brief TCP protocol. */
+  P_SOCKET_PROTOCOL_TCP = 6,
+
+  /*!@brief UDP protocol. */
+  P_SOCKET_PROTOCOL_UDP = 17,
+
+  /*!@brief SCTP protocol. */
+  P_SOCKET_PROTOCOL_SCTP = 132
+};
+
+/*!@brief Socket types. */
+enum socket_kind {
+
+  /*!@brief Unknown type. */
+  P_SOCKET_UNKNOWN = 0,
+
+  /*!@brief Connection oritented, reliable, stream of bytes (i.e. TCP). */
+  P_SOCKET_STREAM = 1,
+
+  /*!@brief Connection-less, unreliable, datagram passing (i.e. UDP). */
+  P_SOCKET_DATAGRAM = 2,
+
+  /*!@brief Connection-less, reliable, datagram passing (i.e. SCTP). */
+  P_SOCKET_SEQPACKET = 3
+};
+
+/*!@brief Socket direction for data operations. */
+enum socket_dir {
+
+  /*!@brief Send direction. */
+  P_SOCKET_DIRECTION_SND = 0,
+
+  /*!@brief Receive direction. */
+  P_SOCKET_DIRECTION_RCV = 1
+};
+
+/*!@brief Socket IO waiting (polling) conditions. */
+enum socket_io_cond {
+
+  /*!@brief Ready to read. */
+  P_SOCKET_IO_CONDITION_POLLIN = 1,
+
+  /*!@brief Ready to write. */
+  P_SOCKET_IO_CONDITION_POLLOUT = 2
+};
+
+/*!@brief Creates a new #PSocket object from a file descriptor.
  * @param fd File descriptor to create the socket from.
  * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to #PSocket in case of success, NULL otherwise.
@@ -198,11 +219,10 @@ typedef struct PSocket_ PSocket;
  * fail to get a socket family from the descriptor thus failing to construct the
  * #PSocket object.
  */
-P_API PSocket *p_socket_new_from_fd(int_t fd,
-  p_err_t **error);
+P_API socket_t *
+p_socket_new_from_fd(int_t fd, err_t **error);
 
-/**
- * @brief Creates a new #PSocket object.
+/*!@brief Creates a new #PSocket object.
  * @param family Socket family.
  * @param type Socket type.
  * @param protocol Socket data transfer protocol.
@@ -218,22 +238,20 @@ P_API PSocket *p_socket_new_from_fd(int_t fd,
  * #PSocketProtocol has the same values as the system definitions. You can pass
  * any existing protocol value to this call if you know it exactly.
  */
-P_API PSocket *p_socket_new(PSocketFamily family,
-  PSocketType type,
-  PSocketProtocol protocol,
-  p_err_t **error);
+P_API socket_t *
+p_socket_new(socket_family_t family, socket_kind_t type,
+  socket_protocol_t protocol, err_t **error);
 
-/**
- * @brief Gets an underlying file descriptor of a @a socket.
+/*!@brief Gets an underlying file descriptor of a @a socket.
  * @param socket #PSocket to get the file descriptor for.
  * @return File descriptor in case of success, -1 otherwise.
  * @since 0.0.1
  * @sa p_socket_new_from_fd()
  */
-P_API int_t p_socket_get_fd(const PSocket *socket);
+P_API int_t
+p_socket_get_fd(const socket_t *socket);
 
-/**
- * @brief Gets a @a socket address family.
+/*!@brief Gets a @a socket address family.
  * @param socket #PSocket to get the address family for.
  * @return #PSocketFamily in case of success, #P_SOCKET_FAMILY_UNKNOWN
  * otherwise.
@@ -245,29 +263,29 @@ P_API int_t p_socket_get_fd(const PSocket *socket);
  * supported. The INET6 family is available only if the operating system
  * supports it.
  */
-P_API PSocketFamily p_socket_get_family(const PSocket *socket);
+P_API socket_family_t
+p_socket_get_family(const socket_t *socket);
 
-/**
- * @brief Gets a @a socket type.
+/*!@brief Gets a @a socket type.
  * @param socket #PSocket to get the type for.
- * @return #PSocketType in case of success, #P_SOCKET_TYPE_UNKNOWN otherwise.
+ * @return #PSocketType in case of success, #P_SOCKET_UNKNOWN otherwise.
  * @since 0.0.1
  * @sa #PSocketType, p_socket_new()
  */
-P_API PSocketType p_socket_get_type(const PSocket *socket);
+P_API socket_kind_t
+p_socket_get_type(const socket_t *socket);
 
-/**
- * @brief Gets a @a socket data transfer protocol.
+/*!@brief Gets a @a socket data transfer protocol.
  * @param socket #PSocket to get the data transfer protocol for.
  * @return #PSocketProtocol in case of success, #P_SOCKET_PROTOCOL_UNKNOWN
  * otherwise.
  * @since 0.0.1
  * @sa #PSocketProtocol, p_socket_new()
  */
-P_API PSocketProtocol p_socket_get_protocol(const PSocket *socket);
+P_API socket_protocol_t
+p_socket_get_protocol(const socket_t *socket);
 
-/**
- * @brief Checks whether the SO_KEEPALIVE flag is enabled.
+/*!@brief Checks whether the SO_KEEPALIVE flag is enabled.
  * @param socket #PSocket to check the SO_KEEPALIVE flag for.
  * @return TRUE if the SO_KEEPALIVE flag is enabled, FALSE otherwise.
  * @since 0.0.1
@@ -285,10 +303,10 @@ P_API PSocketProtocol p_socket_get_protocol(const PSocket *socket);
  * for a long time, so such an option helps to detect died clients faster
  * without sending them real data. It's some kind of garbage collecting.
  */
-P_API bool p_socket_get_keepalive(const PSocket *socket);
+P_API bool
+p_socket_get_keepalive(const socket_t *socket);
 
-/**
- * @brief Checks whether @a socket is used in a blocking mode.
+/*!@brief Checks whether @a socket is used in a blocking mode.
  * @param socket #PSocket to check the blocking mode for.
  * @return TRUE if @a socket is in the blocking mode, FALSE otherwise.
  * @note A blocking socket will wait for an I/O operation to be completed before
@@ -299,10 +317,10 @@ P_API bool p_socket_get_keepalive(const PSocket *socket);
  * The underlying socket descriptor is always set to the non-blocking mode by
  * default and #PSocket emulates the blocking mode if required.
  */
-P_API bool p_socket_get_blocking(PSocket *socket);
+P_API bool
+p_socket_get_blocking(socket_t *socket);
 
-/**
- * @brief Gets a @a socket listen backlog parameter.
+/*!@brief Gets a @a socket listen backlog parameter.
  * @param socket #PSocket to get the listen backlog parameter for.
  * @return Listen backlog parameter in case of success, -1 otherwise.
  * @since 0.0.1
@@ -318,10 +336,10 @@ P_API bool p_socket_get_blocking(PSocket *socket);
  * Some systems may not allow to set it to high values. By default #PSocket
  * attempts to set it to 5.
  */
-P_API int_t p_socket_get_listen_backlog(const PSocket *socket);
+P_API int_t
+p_socket_get_listen_backlog(const socket_t *socket);
 
-/**
- * @brief Gets a @a socket timeout for blocking I/O operations.
+/*!@brief Gets a @a socket timeout for blocking I/O operations.
  * @param socket #PSocket to get the timeout for.
  * @return Timeout for blocking I/O operations in milliseconds, -1 in case of
  * fail.
@@ -339,10 +357,10 @@ P_API int_t p_socket_get_listen_backlog(const PSocket *socket);
  * Zero timeout means that the operation which requires a time to complete
  * network I/O will be blocked until the operation finishes or error occurres.
  */
-P_API int_t p_socket_get_timeout(const PSocket *socket);
+P_API int_t
+p_socket_get_timeout(const socket_t *socket);
 
-/**
- * @brief Gets a @a socket local (bound) address.
+/*!@brief Gets a @a socket local (bound) address.
  * @param socket #PSocket to get the local address for.
  * @param[out] error Error report object, NULL to ignore.
  * @return #PSocketAddress with the socket local address in case of success,
@@ -353,11 +371,10 @@ P_API int_t p_socket_get_timeout(const PSocket *socket);
  * If the @a socket was not bound explicitly with p_socket_bind() or implicitly
  * with p_socket_connect(), the call will fail.
  */
-P_API PSocketAddress *p_socket_get_local_address(const PSocket *socket,
-  p_err_t **error);
+P_API socketaddr_t *
+p_socket_get_local_address(const socket_t *socket, err_t **error);
 
-/**
- * @brief Gets a @a socket remote endpoint address.
+/*!@brief Gets a @a socket remote endpoint address.
  * @param socket #PSocket to get the remote endpoint address for.
  * @param[out] error Error report object, NULL to ignore.
  * @return #PSocketAddress with the socket endpoint remote address in case of
@@ -371,11 +388,10 @@ P_API PSocketAddress *p_socket_get_local_address(const PSocket *socket,
  * @warning On Syllable this call will always return NULL for connection-less
  * sockets (though connecting is possible).
  */
-P_API PSocketAddress *p_socket_get_remote_address(const PSocket *socket,
-  p_err_t **error);
+P_API socketaddr_t *
+p_socket_get_remote_address(const socket_t *socket, err_t **error);
 
-/**
- * @brief Checks whether a @a socket is connected.
+/*!@brief Checks whether a @a socket is connected.
  * @param socket #PSocket to check a connection for.
  * @return TRUE if the @a socket is connected, FALSE otherwise.
  * @since 0.0.1
@@ -385,10 +401,10 @@ P_API PSocketAddress *p_socket_get_remote_address(const PSocket *socket,
  * whether the p_socket_connect() call was successfully performed on the
  * @a socket.
  */
-P_API bool p_socket_is_connected(const PSocket *socket);
+P_API bool
+p_socket_is_connected(const socket_t *socket);
 
-/**
- * @brief Checks whether a @a socket is closed.
+/*!@brief Checks whether a @a socket is closed.
  * @param socket #PSocket to check a closed state.
  * @return TRUE if the @a socket is closed, FALSE otherwise.
  * @since 0.0.1
@@ -398,10 +414,10 @@ P_API bool p_socket_is_connected(const PSocket *socket);
  * p_socket_check_connect_result() is called. The socket will be closed if
  * p_socket_shutdown() is called for both the directions.
  */
-P_API bool p_socket_is_closed(const PSocket *socket);
+P_API bool
+p_socket_is_closed(const socket_t *socket);
 
-/**
- * @brief Checks a connection state after calling p_socket_connect().
+/*!@brief Checks a connection state after calling p_socket_connect().
  * @param socket #PSocket to check the connection state for.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE if was no error, FALSE otherwise.
@@ -422,11 +438,10 @@ P_API bool p_socket_is_closed(const PSocket *socket);
  * a connection operation to be finished using p_socket_io_condition_wait()
  * with the #P_SOCKET_IO_CONDITION_POLLOUT option.
  */
-P_API bool p_socket_check_connect_result(PSocket *socket,
-  p_err_t **error);
+P_API bool
+p_socket_check_connect_result(socket_t *socket, err_t **error);
 
-/**
- * @brief Sets the @a socket SO_KEEPALIVE flag.
+/*!@brief Sets the @a socket SO_KEEPALIVE flag.
  * @param socket #PSocket to set the SO_KEEPALIVE flag for.
  * @param keepalive Value for the SO_KEEPALIVE flag.
  * @since 0.0.1
@@ -434,11 +449,10 @@ P_API bool p_socket_check_connect_result(PSocket *socket,
  *
  * See p_socket_get_keepalive() documentation for a description of this option.
  */
-P_API void p_socket_set_keepalive(PSocket *socket,
-  bool keepalive);
+P_API void
+p_socket_set_keepalive(socket_t *socket, bool keepalive);
 
-/**
- * @brief Sets a @a socket blocking mode.
+/*!@brief Sets a @a socket blocking mode.
  * @param socket #PSocket to set the blocking mode for.
  * @param blocking Whether to set the @a socket into the blocking mode.
  * @note A blocking socket will wait for an I/O operation to be completed
@@ -449,11 +463,10 @@ P_API void p_socket_set_keepalive(PSocket *socket,
  * @since 0.0.1
  * @sa p_socket_get_blocking()
  */
-P_API void p_socket_set_blocking(PSocket *socket,
-  bool blocking);
+P_API void
+p_socket_set_blocking(socket_t *socket, bool blocking);
 
-/**
- * @brief Sets a @a socket listen backlog parameter.
+/*!@brief Sets a @a socket listen backlog parameter.
  * @param socket #PSocket to set the listen backlog parameter for.
  * @param backlog Value for the listen backlog parameter.
  * @note This parameter can take effect only if it was set before calling
@@ -465,11 +478,10 @@ P_API void p_socket_set_blocking(PSocket *socket,
  * See p_socket_get_listen_backlog() documentation for a description of this
  * option.
  */
-P_API void p_socket_set_listen_backlog(PSocket *socket,
-  int_t backlog);
+P_API void
+p_socket_set_listen_backlog(socket_t *socket, int_t backlog);
 
-/**
- * @brief Sets a @a socket timeout value for blocking I/O operations.
+/*!@brief Sets a @a socket timeout value for blocking I/O operations.
  * @param socket #PSocket to set the @a timeout for.
  * @param timeout Timeout value in milliseconds.
  * @since 0.0.1
@@ -477,11 +489,10 @@ P_API void p_socket_set_listen_backlog(PSocket *socket,
  *
  * See p_socket_get_timeout() documentation for a description of this option.
  */
-P_API void p_socket_set_timeout(PSocket *socket,
-  int_t timeout);
+P_API void
+p_socket_set_timeout(socket_t *socket, int_t timeout);
 
-/**
- * @brief Binds a @a socket to a given local address.
+/*!@brief Binds a @a socket to a given local address.
  * @param socket #PSocket to bind.
  * @param address #PSocketAddress to bind the given @a socket to.
  * @param allow_reuse Whether to allow socket's address reusing.
@@ -523,13 +534,11 @@ P_API void p_socket_set_timeout(PSocket *socket,
  * to TRUE, while a client socket shouldn't set this option to TRUE. If you
  * restart the client quickly with the same address it can fail to bind.
  */
-P_API bool p_socket_bind(const PSocket *socket,
-  PSocketAddress *address,
-  bool allow_reuse,
-  p_err_t **error);
+P_API bool
+p_socket_bind(const socket_t *socket, socketaddr_t *address, bool allow_reuse,
+  err_t **error);
 
-/**
- * @brief Connects a @a socket to a given remote address.
+/*!@brief Connects a @a socket to a given remote address.
  * @param socket #PSocket to connect.
  * @param address #PSocketAddress to connect the @a socket to.
  * @param[out] error Error report object, NULL to ignore.
@@ -556,12 +565,10 @@ P_API bool p_socket_bind(const PSocket *socket,
  * #P_SOCKET_IO_CONDITION_POLLOUT parameter. You should check the connection
  * result after that using p_socket_check_connect_result().
  */
-P_API bool p_socket_connect(PSocket *socket,
-  PSocketAddress *address,
-  p_err_t **error);
+P_API bool
+p_socket_connect(socket_t *socket, socketaddr_t *address, err_t **error);
 
-/**
- * @brief Puts a @a socket into a listening state.
+/*!@brief Puts a @a socket into a listening state.
  * @param socket #PSocket to start listening.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
@@ -578,11 +585,10 @@ P_API bool p_socket_connect(PSocket *socket,
  * backlog parameter must be set before calling p_socket_listen() to take
  * effect.
  */
-P_API bool p_socket_listen(PSocket *socket,
-  p_err_t **error);
+P_API bool
+p_socket_listen(socket_t *socket, err_t **error);
 
-/**
- * @brief Accepts a @a socket incoming connection.
+/*!@brief Accepts a @a socket incoming connection.
  * @param socket #PSocket to accept the incoming connection from.
  * @param[out] error Error report object, NULL to ignore.
  * @return New #PSocket with the accepted connection in case of success, NULL
@@ -593,11 +599,10 @@ P_API bool p_socket_listen(PSocket *socket,
  * accept new incoming connections only after calling p_socket_bind() and
  * p_socket_listen().
  */
-P_API PSocket *p_socket_accept(const PSocket *socket,
-  p_err_t **error);
+P_API socket_t *
+p_socket_accept(const socket_t *socket, err_t **error);
 
-/**
- * @brief Receives data from a given @a socket.
+/*!@brief Receives data from a given @a socket.
  * @param socket #PSocket to receive data from.
  * @param buffer Buffer to write received data in.
  * @param buflen Length of @a buffer.
@@ -615,13 +620,11 @@ P_API PSocket *p_socket_accept(const PSocket *socket,
  * This call is normally used only with the a connected socket, see
  * p_socket_connect().
  */
-P_API ssize_t p_socket_receive(const PSocket *socket,
-  byte_t *buffer,
-  size_t buflen,
-  p_err_t **error);
+P_API ssize_t
+p_socket_receive(const socket_t *socket, byte_t *buffer, size_t buflen,
+  err_t **error);
 
-/**
- * @brief Receives data from a given @a socket and saves a remote address.
+/*!@brief Receives data from a given @a socket and saves a remote address.
  * @param socket #PSocket to receive data from.
  * @param[out] address Pointer to store the remote address in case of success,
  * may be NULL. The caller is responsible to free it after usage.
@@ -640,14 +643,11 @@ P_API ssize_t p_socket_receive(const PSocket *socket,
  *
  * This call is normally used only with a connection-less socket.
  */
-P_API ssize_t p_socket_receive_from(const PSocket *socket,
-  PSocketAddress **address,
-  byte_t *buffer,
-  size_t buflen,
-  p_err_t **error);
+P_API ssize_t
+p_socket_receive_from(const socket_t *socket, socketaddr_t **address,
+  byte_t *buffer, size_t buflen, err_t **error);
 
-/**
- * @brief Sends data through a given @a socket.
+/*!@brief Sends data through a given @a socket.
  * @param socket #PSocket to send data through.
  * @param buffer Buffer with data to send.
  * @param buflen Length of @a buffer.
@@ -662,13 +662,11 @@ P_API ssize_t p_socket_receive_from(const PSocket *socket,
  * remote address using p_socket_connect() because it will always fail, use
  * p_socket_send_to() instead.
  */
-P_API ssize_t p_socket_send(const PSocket *socket,
-  const byte_t *buffer,
-  size_t buflen,
-  p_err_t **error);
+P_API ssize_t
+p_socket_send(const socket_t *socket, const byte_t *buffer, size_t buflen,
+  err_t **error);
 
-/**
- * @brief Sends data through a given @a socket to a given address.
+/*!@brief Sends data through a given @a socket to a given address.
  * @param socket #PSocket to send data through.
  * @param address #PSocketAddress to send data to.
  * @param buffer Buffer with data to send.
@@ -685,14 +683,11 @@ P_API ssize_t p_socket_send(const PSocket *socket,
  * p_socket_send() instead. If you are working with connection oriented sockets
  * then use p_socket_send() after establishing a connection.
  */
-P_API ssize_t p_socket_send_to(const PSocket *socket,
-  PSocketAddress *address,
-  const byte_t *buffer,
-  size_t buflen,
-  p_err_t **error);
+P_API ssize_t
+p_socket_send_to(const socket_t *socket, socketaddr_t *address,
+  const byte_t *buffer, size_t buflen, err_t **error);
 
-/**
- * @brief Closes a @a socket.
+/*!@brief Closes a @a socket.
  * @param socket #PSocket to close.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
@@ -703,11 +698,10 @@ P_API ssize_t p_socket_send_to(const PSocket *socket,
  * a socket connection. See documentation for p_socket_bind() for more
  * information.
  */
-P_API bool p_socket_close(PSocket *socket,
-  p_err_t **error);
+P_API bool
+p_socket_close(socket_t *socket, err_t **error);
 
-/**
- * @brief Shutdowns a full-duplex @a socket data transfer link.
+/*!@brief Shutdowns a full-duplex @a socket data transfer link.
  * @param socket #PSocket to shutdown link.
  * @param shutdown_read Whether to shutdown the incoming data transfer link.
  * @param shutdown_write Whether to shutdown the outcoming data transfer link.
@@ -721,21 +715,19 @@ P_API bool p_socket_close(PSocket *socket,
  * direction. It is often used to gracefully close a connection for a connection
  * oriented socket.
  */
-P_API bool p_socket_shutdown(PSocket *socket,
-  bool shutdown_read,
-  bool shutdown_write,
-  p_err_t **error);
+P_API bool
+p_socket_shutdown(socket_t *socket, bool shutdown_read, bool shutdown_write,
+  err_t **error);
 
-/**
- * @brief Closes a @a socket (if not closed yet) and frees its resources.
+/*!@brief Closes a @a socket (if not closed yet) and frees its resources.
  * @param socket #PSocket to free resources from.
  * @since 0.0.1
  * @sa p_socket_close()
  */
-P_API void p_socket_free(PSocket *socket);
+P_API void
+p_socket_free(socket_t *socket);
 
-/**
- * @brief Sets the @a socket buffer size for a given data transfer direction.
+/*!@brief Sets the @a socket buffer size for a given data transfer direction.
  * @param socket #PSocket to set the buffer size for.
  * @param dir Direction to set the buffer size on.
  * @param size Size of the buffer to set, in bytes.
@@ -744,13 +736,11 @@ P_API void p_socket_free(PSocket *socket);
  * @since 0.0.1
  * @warning Not supported on Syllable.
  */
-P_API bool p_socket_set_buffer_size(const PSocket *socket,
-  PSocketDirection dir,
-  size_t size,
-  p_err_t **error);
+P_API bool
+p_socket_set_buffer_size(const socket_t *socket, socket_dir_t dir, size_t size,
+  err_t **error);
 
-/**
- * @brief Waits for a specified I/O @a condition on @a socket.
+/*!@brief Waits for a specified I/O @a condition on @a socket.
  * @param socket #PSocket to wait for @a condition on.
  * @param condition An I/O condition to wait for on @a socket.
  * @param[out] error Error report object, NULL to ignore.
@@ -763,8 +753,8 @@ P_API bool p_socket_set_buffer_size(const PSocket *socket,
  * doesn't finish until timeout expired, call will fail with
  * #P_ERR_IO_TIMED_OUT error code.
  */
-P_API bool p_socket_io_condition_wait(const PSocket *socket,
-  PSocketIOCondition condition,
-  p_err_t **error);
+P_API bool
+p_socket_io_condition_wait(const socket_t *socket, socket_io_cond_t condition,
+  err_t **error);
 
-#endif /* P_SOCKET_H__ */
+#endif /* !P_SOCKET_H__ */

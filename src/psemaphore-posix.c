@@ -15,15 +15,11 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/error.h"
+#include "p/err.h"
 #include "p/mem.h"
 #include "p/sem.h"
 #include "perror-private.h"
 #include "pipc-private.h"
-
-#include <stdlib.h>
-#include <string.h>
-
 #include <fcntl.h>
 #include <semaphore.h>
 #include <errno.h>
@@ -34,128 +30,136 @@ typedef sem_t psem_hdl;
 
 /* On some HP-UX versions it may not be defined */
 #ifndef SEM_FAILED
-#  define SEM_FAILED ((sem_t *) -1)
+# define SEM_FAILED ((sem_t *) -1)
 #endif
-
 #ifdef P_OS_SOLARIS
-#  define P_SEM_INVALID_HDL	(sem_t *) -1
+# define P_SEM_INVALID_HDL (sem_t *) -1
 #else
-#  define P_SEM_INVALID_HDL  SEM_FAILED
+# define P_SEM_INVALID_HDL  SEM_FAILED
 #endif
-
-struct PSemaphore_ {
+struct sem {
   bool sem_created;
   byte_t *platform_key;
 #if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
-#  pragma __pointer_size 64
+# pragma __pointer_size 64
 #endif
   psem_hdl *sem_hdl;
 #if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
-#  pragma __pointer_size 32
+# pragma __pointer_size 32
 #endif
-  PSemaphoreAccessMode mode;
+  sem_access_t mode;
   int_t init_val;
 };
 
-static bool pp_semaphore_create_handle(PSemaphore *sem, p_err_t **error);
-static void pp_semaphore_clean_handle(PSemaphore *sem);
+static bool
+pp_semaphore_create_handle(sem_t *sem, err_t **error);
+
+static void
+pp_semaphore_clean_handle(sem_t *sem);
 
 static bool
-pp_semaphore_create_handle(PSemaphore *sem,
-  p_err_t **error) {
+pp_semaphore_create_handle(sem_t *sem,
+  err_t **error) {
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return false;
   }
 
   /* Solaris may interrupt sem_open() call */
-  while ((sem->sem_hdl = sem_open(sem->platform_key,
-    O_CREAT | O_EXCL,
-    0660,
-    sem->init_val)) == P_SEM_INVALID_HDL &&
-    p_error_get_last_system() == EINTR);
-
+  while ((
+    sem->sem_hdl = sem_open(
+      sem->platform_key,
+      O_CREAT | O_EXCL,
+      0660,
+      sem->init_val
+    )) == P_SEM_INVALID_HDL &&
+    p_error_get_last_system() == EINTR) {}
   if (sem->sem_hdl == P_SEM_INVALID_HDL) {
     if (p_error_get_last_system() == EEXIST) {
-      if (sem->mode == P_SEM_ACCESS_CREATE)
+      if (sem->mode == P_SEM_ACCESS_CREATE) {
         sem_unlink(sem->platform_key);
-
-      while ((sem->sem_hdl = sem_open(sem->platform_key,
-        0,
-        0,
-        0)) == P_SEM_INVALID_HDL &&
-        p_error_get_last_system() == EINTR);
+      }
+      while ((
+        sem->sem_hdl = sem_open(
+          sem->platform_key,
+          0,
+          0,
+          0
+        )) == P_SEM_INVALID_HDL &&
+        p_error_get_last_system() == EINTR) {}
     }
-  } else
+  } else {
     sem->sem_created = true;
-
+  }
   if (P_UNLIKELY (sem->sem_hdl == P_SEM_INVALID_HDL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
-      "Failed to call sem_open() to create semaphore");
+      "Failed to call sem_open() to create semaphore"
+    );
     pp_semaphore_clean_handle(sem);
     return false;
   }
-
   return true;
 }
 
 static void
-pp_semaphore_clean_handle(PSemaphore *sem) {
+pp_semaphore_clean_handle(sem_t *sem) {
   if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL &&
     sem_close(sem->sem_hdl) == -1))
-    P_ERROR ("PSemaphore::pp_semaphore_clean_handle: sem_close() failed");
-
+    P_ERROR ("sem_t::pp_semaphore_clean_handle: sem_close() failed");
   if (sem->sem_hdl != P_SEM_INVALID_HDL &&
     sem->sem_created == true &&
     sem_unlink(sem->platform_key) == -1)
-    P_ERROR ("PSemaphore::pp_semaphore_clean_handle: sem_unlink() failed");
-
+    P_ERROR ("sem_t::pp_semaphore_clean_handle: sem_unlink() failed");
   sem->sem_created = false;
   sem->sem_hdl = P_SEM_INVALID_HDL;
 }
 
-P_API PSemaphore *
+sem_t *
 p_semaphore_new(const byte_t *name,
   int_t init_val,
-  PSemaphoreAccessMode mode,
-  p_err_t **error) {
-  PSemaphore *ret;
+  sem_access_t mode,
+  err_t **error) {
+  sem_t *ret;
   byte_t *new_name;
-
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return NULL;
   }
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSemaphore))) == NULL)) {
-    p_error_set_error_p(error,
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(sem_t))) == NULL)) {
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
-      "Failed to allocate memory for semaphore");
+      "Failed to allocate memory for semaphore"
+    );
     return NULL;
   }
-
   if (P_UNLIKELY (
     (new_name = p_malloc0(strlen(name) + strlen(P_SEM_SUFFIX) + 1)) == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IPC_NO_RESOURCES,
       0,
-      "Failed to allocate memory for semaphore");
+      "Failed to allocate memory for semaphore"
+    );
     p_free(ret);
     return NULL;
   }
-
   strcpy(new_name, name);
   strcat(new_name, P_SEM_SUFFIX);
-
 #if defined (P_OS_IRIX) || defined (P_OS_TRU64)
   /* IRIX and Tru64 prefer filename styled IPC names */
   ret->platform_key = p_ipc_get_platform_key (new_name, false);
@@ -164,86 +168,83 @@ p_semaphore_new(const byte_t *name,
 #endif
   ret->init_val = init_val;
   ret->mode = mode;
-
   p_free(new_name);
-
   if (P_UNLIKELY (pp_semaphore_create_handle(ret, error) == false)) {
     p_semaphore_free(ret);
     return NULL;
   }
-
   return ret;
 }
 
-P_API void
-p_semaphore_take_ownership(PSemaphore *sem) {
-  if (P_UNLIKELY (sem == NULL))
+void
+p_semaphore_take_ownership(sem_t *sem) {
+  if (P_UNLIKELY (sem == NULL)) {
     return;
-
+  }
   sem->sem_created = true;
 }
 
-P_API bool
-p_semaphore_acquire(PSemaphore *sem,
-  p_err_t **error) {
+bool
+p_semaphore_acquire(sem_t *sem,
+  err_t **error) {
   bool ret;
   int_t res;
-
   if (P_UNLIKELY (sem == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return false;
   }
-
   while ((res = sem_wait(sem->sem_hdl)) == -1
-    && p_error_get_last_system() == EINTR);
-
+    && p_error_get_last_system() == EINTR) {}
   ret = (res == 0);
-
-  if (P_UNLIKELY (ret == false))
-    p_error_set_error_p(error,
+  if (P_UNLIKELY (ret == false)) {
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
-      "Failed to call sem_wait() on semaphore");
-
+      "Failed to call sem_wait() on semaphore"
+    );
+  }
   return ret;
 }
 
-P_API bool
-p_semaphore_release(PSemaphore *sem,
-  p_err_t **error) {
+bool
+p_semaphore_release(sem_t *sem,
+  err_t **error) {
   bool ret;
-
   if (P_UNLIKELY (sem == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IPC_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return false;
   }
-
   ret = (sem_post(sem->sem_hdl) == 0);
-
-  if (P_UNLIKELY (ret == false))
-    p_error_set_error_p(error,
+  if (P_UNLIKELY (ret == false)) {
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_ipc(),
       p_error_get_last_system(),
-      "Failed to call sem_post() on semaphore");
-
+      "Failed to call sem_post() on semaphore"
+    );
+  }
   return ret;
 }
 
-P_API void
-p_semaphore_free(PSemaphore *sem) {
-  if (P_UNLIKELY (sem == NULL))
+void
+p_semaphore_free(sem_t *sem) {
+  if (P_UNLIKELY (sem == NULL)) {
     return;
-
+  }
   pp_semaphore_clean_handle(sem);
-
-  if (P_LIKELY (sem->platform_key != NULL))
+  if (P_LIKELY (sem->platform_key != NULL)) {
     p_free(sem->platform_key);
-
+  }
   p_free(sem);
 }

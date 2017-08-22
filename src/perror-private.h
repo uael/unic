@@ -15,41 +15,36 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef PLIBSYS_HEADER_PERROR_PRIVATE_H
-#define PLIBSYS_HEADER_PERROR_PRIVATE_H
+# define PLIBSYS_HEADER_PERROR_PRIVATE_H
 
 #include "p/macros.h"
 #include "p/types.h"
-#include "p/err.h"
 
-/**
- * @brief Gets an IO error code from a system error code.
+/*!@brief Gets an IO error code from a system error code.
  * @param err_code System error code.
  * @return IO error code.
  */
-p_err_io_t p_error_get_io_from_system(int_t err_code);
+err_io_t
+p_error_get_io_from_system(int_t err_code);
 
-/**
- * @brief Gets an IO error code from the last call result.
+/*!@brief Gets an IO error code from the last call result.
  * @return IO error code.
  */
-p_err_io_t p_error_get_last_io(void);
+err_io_t
+p_error_get_last_io(void);
 
-/**
- * @brief Gets an IPC error code from a system error code
+/*!@brief Gets an IPC error code from a system error code
  * @param err_code System error code.
  * @return IPC error code.
  */
-p_err_ipc_t p_error_get_ipc_from_system(int_t err_code);
+err_ipc_t
+p_error_get_ipc_from_system(int_t err_code);
 
-/**
- * @brief Gets an IPC error code from the last call result.
+/*!@brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
-p_err_ipc_t p_error_get_last_ipc(void);
+err_ipc_t
+p_error_get_last_ipc(void);
 
 #endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */

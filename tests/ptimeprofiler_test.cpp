@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;

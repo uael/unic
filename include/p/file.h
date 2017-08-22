@@ -15,41 +15,33 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/file.h
+/*!@file p/file.h
  * @brief File operations
  * @author Alexander Saprykin
  *
- * To check file existance use p_file_is_exists(). To remove an exisiting file
+ * To check file existence use p_file_is_exists(). To remove an exisiting file
  * use p_file_remove().
  *
- * #P_DIR_SEPARATOR provides a platform independent directory separator symbol
+ * #P_DIR_SEP provides a platform independent directory separator symbol
  * which you can use to form file or directory path.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_FILE_H__
-#define P_FILE_H__
+# define P_FILE_H__
 
 #include "p/macros.h"
 #include "p/types.h"
-#include "p/error.h"
+#include "p/err.h"
 
-/**
- * @def P_DIR_SEPARATOR
+/*!@def P_DIR_SEP
  * @brief A directory separator.
  */
 #if defined (P_OS_WIN) || defined (P_OS_OS2)
-#  define P_DIR_SEPARATOR "\\"
+# define P_DIR_SEP "\\"
 #else
-#  define P_DIR_SEPARATOR "/"
+# define P_DIR_SEP "/"
 #endif
 
-/**
- * @brief Checks whether a file exists or not.
+/*!@brief Checks whether a file exists or not.
  * @param file File name to check.
  * @return TRUE if the file exists, FALSE otherwise.
  * @since 0.0.1
@@ -57,19 +49,19 @@
  * On Windows this call doesn't resolve symbolic links, while on UNIX systems
  * does.
  */
-P_API bool p_file_is_exists(const byte_t *file);
+P_API bool
+p_file_is_exists(const byte_t *file);
 
-/**
- * @brief Removes a file from the disk.
+/*!@brief Removes a file from the disk.
  * @param file File name to remove.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE if the file was successully removed, FALSE otherwise.
+ * @return TRUE if the file was successfully removed, FALSE otherwise.
  * @since 0.0.1
  *
  * This call doesn't resolve symbolic links and remove a symbolic link if the
  * given path points to it.
  */
-P_API bool p_file_remove(const byte_t *file,
-  p_err_t **error);
+P_API bool
+p_file_remove(const byte_t *file, err_t **error);
 
-#endif /* P_FILE_H__ */
+#endif /* !P_FILE_H__ */

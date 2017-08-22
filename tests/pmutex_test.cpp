@@ -30,7 +30,7 @@
 #endif
 
 static int_t mutex_test_val  = 0;
-static PMutex *global_mutex = NULL;
+static mutex_t *global_mutex = NULL;
 
 extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE (pmutex_bad_input_test)
 
 BOOST_AUTO_TEST_CASE (pmutex_general_test)
 {
-	PUThread *thr1, *thr2;
+	uthread_t *thr1, *thr2;
 
 	p_libsys_init ();
 
@@ -119,10 +119,10 @@ BOOST_AUTO_TEST_CASE (pmutex_general_test)
 
 	mutex_test_val = 10;
 
-	thr1 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
+	thr1 = p_uthread_create ((uthread_fn_t) mutex_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
+	thr2 = p_uthread_create ((uthread_fn_t) mutex_test_thread, NULL, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);

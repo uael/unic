@@ -15,27 +15,34 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* GOST R 34.11-94 interface implementation for #PCryptoHash */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
+/* GOST R 34.11-94 interface implementation for #hash_t */
 
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
-#define PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
+# define PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
 
 #include "p/types.h"
 #include "p/macros.h"
 
 typedef struct PHashGOST3411_ PHashGOST3411;
 
-PHashGOST3411 *p_crypto_hash_gost3411_new(void);
-void p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
+PHashGOST3411 *
+p_crypto_hash_gost3411_new(void);
+
+void
+p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
   const ubyte_t *data,
   size_t len);
-void p_crypto_hash_gost3411_finish(PHashGOST3411 *ctx);
-const ubyte_t *p_crypto_hash_gost3411_digest(PHashGOST3411 *ctx);
-void p_crypto_hash_gost3411_reset(PHashGOST3411 *ctx);
-void p_crypto_hash_gost3411_free(PHashGOST3411 *ctx);
+
+void
+p_crypto_hash_gost3411_finish(PHashGOST3411 *ctx);
+
+const ubyte_t *
+p_crypto_hash_gost3411_digest(PHashGOST3411 *ctx);
+
+void
+p_crypto_hash_gost3411_reset(PHashGOST3411 *ctx);
+
+void
+p_crypto_hash_gost3411_free(PHashGOST3411 *ctx);
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H */

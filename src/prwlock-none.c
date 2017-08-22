@@ -17,61 +17,53 @@
 
 #include "p/rwlock.h"
 
-#include <stdlib.h>
-
-struct PRWLock_ {
+struct rwlock {
   int_t hdl;
 };
 
-P_API PRWLock *
+rwlock_t *
 p_rwlock_new(void) {
   return NULL;
 }
 
-P_API bool
-p_rwlock_reader_lock(PRWLock *lock) {
+bool
+p_rwlock_reader_lock(rwlock_t *lock) {
   P_UNUSED (lock);
-
   return false;
 }
 
-P_API bool
-p_rwlock_reader_trylock(PRWLock *lock) {
+bool
+p_rwlock_reader_trylock(rwlock_t *lock) {
   P_UNUSED (lock);
-
   return false;
 }
 
-P_API bool
-p_rwlock_reader_unlock(PRWLock *lock) {
+bool
+p_rwlock_reader_unlock(rwlock_t *lock) {
   P_UNUSED (lock);
-
   return false;
 }
 
-P_API bool
-p_rwlock_writer_lock(PRWLock *lock) {
+bool
+p_rwlock_writer_lock(rwlock_t *lock) {
   P_UNUSED (lock);
-
   return false;
 }
 
-P_API bool
-p_rwlock_writer_trylock(PRWLock *lock) {
+bool
+p_rwlock_writer_trylock(rwlock_t *lock) {
   P_UNUSED (lock);
-
   return false;
 }
 
-P_API bool
-p_rwlock_writer_unlock(PRWLock *lock) {
+bool
+p_rwlock_writer_unlock(rwlock_t *lock) {
   P_UNUSED (lock);
-
   return false;
 }
 
-P_API void
-p_rwlock_free(PRWLock *lock) {
+void
+p_rwlock_free(rwlock_t *lock) {
   P_UNUSED (lock);
 }
 

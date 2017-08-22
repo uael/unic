@@ -17,7 +17,6 @@
 
 #include "p/profiler.h"
 #include "ptimeprofiler-private.h"
-
 #include <kernel/OS.h>
 
 uint64_t

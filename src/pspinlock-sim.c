@@ -19,57 +19,54 @@
 #include "p/mutex.h"
 #include "p/spinlock.h"
 
-struct PSpinLock_ {
-  PMutex *mutex;
+struct spinlock {
+  mutex_t *mutex;
 };
 
-P_API PSpinLock *
+spinlock_t *
 p_spinlock_new(void) {
-  PSpinLock *ret;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSpinLock))) == NULL)) {
-    P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
+  spinlock_t *ret;
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(spinlock_t))) == NULL)) {
+    P_ERROR ("spinlock_t::p_spinlock_new: failed to allocate memory");
     return NULL;
   }
-
   if (P_UNLIKELY ((ret->mutex = p_mutex_new()) == NULL)) {
-    P_ERROR ("PSpinLock::p_spinlock_new: p_mutex_new() failed");
+    P_ERROR ("spinlock_t::p_spinlock_new: p_mutex_new() failed");
     p_free(ret);
     return NULL;
   }
-
   return ret;
 }
 
-P_API bool
-p_spinlock_lock(PSpinLock *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL))
+bool
+p_spinlock_lock(spinlock_t *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL)) {
     return false;
-
+  }
   return p_mutex_lock(spinlock->mutex);
 }
 
-P_API bool
-p_spinlock_trylock(PSpinLock *spinlock) {
-  if (spinlock == NULL)
+bool
+p_spinlock_trylock(spinlock_t *spinlock) {
+  if (spinlock == NULL) {
     return false;
-
+  }
   return p_mutex_trylock(spinlock->mutex);
 }
 
-P_API bool
-p_spinlock_unlock(PSpinLock *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL))
+bool
+p_spinlock_unlock(spinlock_t *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL)) {
     return false;
-
+  }
   return p_mutex_unlock(spinlock->mutex);
 }
 
-P_API void
-p_spinlock_free(PSpinLock *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL))
+void
+p_spinlock_free(spinlock_t *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL)) {
     return;
-
+  }
   p_mutex_free(spinlock->mutex);
   p_free(spinlock);
 }

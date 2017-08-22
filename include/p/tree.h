@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/tree.h
+/*!@file p/tree.h
  * @brief Binary tree data structure
  * @author Alexander Saprykin
  *
@@ -49,29 +48,31 @@
  * Note: all operations with the tree are non-recursive, only iterative calls
  * are used.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_TREE_H__
-#define P_TREE_H__
+# define P_TREE_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Tree opaque data structure. */
-typedef struct PTree_ PTree;
+typedef enum PTreeType_ PTreeType;
 
-/** Internal data organization algorithm for #PTree. */
-typedef enum PTreeType_ {
-  P_TREE_TYPE_BINARY = 0,  /**< Unbalanced binary tree.		*/
-  P_TREE_TYPE_RB = 1,  /**< Red-black self-balancing tree.	*/
-  P_TREE_TYPE_AVL = 2  /**< AVL self-balancing tree.		*/
-} PTreeType;
+/*!@brief Tree opaque data structure. */
+typedef struct tree tree_t;
 
-/**
- * @brief Initializes new #PTree.
+/*!@brief Internal data organization algorithm for #PTree. */
+enum PTreeType_ {
+
+  /*!@brief Unbalanced binary tree. */
+  P_TREE_TYPE_BINARY = 0,
+
+  /*!@brief Red-black self-balancing tree. */
+  P_TREE_TYPE_RB = 1,
+
+  /*!@brief AVL self-balancing tree. */
+  P_TREE_TYPE_AVL = 2
+};
+
+/*!@brief Initializes new #PTree.
  * @param type Tree algorithm type to use, can't be changed later.
  * @param func Key compare function.
  * @return Newly initialized #PTree object in case of success, NULL otherwise.
@@ -79,11 +80,10 @@ typedef enum PTreeType_ {
  *
  * The caller takes ownership of all the keys and the values passed to the tree.
  */
-P_API PTree *p_tree_new(PTreeType type,
-  PCompareFunc func);
+P_API tree_t *
+p_tree_new(PTreeType type, cmp_fn_t func);
 
-/**
- * @brief Initializes new #PTree with additional data.
+/*!@brief Initializes new #PTree with additional data.
  * @param type Tree algorithm type to use, can't be changed later.
  * @param func Key compare function.
  * @param data Data to be passed to @a func along with the keys.
@@ -92,12 +92,10 @@ P_API PTree *p_tree_new(PTreeType type,
  *
  * The caller takes ownership of all the keys and the values passed to the tree.
  */
-P_API PTree *p_tree_new_with_data(PTreeType type,
-  PCompareDataFunc func,
-  ptr_t data);
+P_API tree_t *
+p_tree_new_with_data(PTreeType type, cmp_data_fn_t func, ptr_t data);
 
-/**
- * @brief Initializes new #PTree with additional data and memory management.
+/*!@brief Initializes new #PTree with additional data and memory management.
  * @param type Tree algorithm type to use, can't be changed later.
  * @param func Key compare function.
  * @param data Data to be passed to @a func along with the keys.
@@ -111,14 +109,11 @@ P_API PTree *p_tree_new_with_data(PTreeType type,
  * Upon every node destruction the corresponding key and value functions would
  * be called.
  */
-P_API PTree *p_tree_new_full(PTreeType type,
-  PCompareDataFunc func,
-  ptr_t data,
-  PDestroyFunc key_destroy,
-  PDestroyFunc value_destroy);
+P_API tree_t *
+p_tree_new_full(PTreeType type, cmp_data_fn_t func, ptr_t data,
+  destroy_fn_t key_destroy, destroy_fn_t value_destroy);
 
-/**
- * @brief Inserts a new key-value pair into a tree.
+/*!@brief Inserts a new key-value pair into a tree.
  * @param tree #PTree to insert a node in.
  * @param key Key to insert.
  * @param value Value corresponding to the given @a key.
@@ -129,12 +124,10 @@ P_API PTree *p_tree_new_full(PTreeType type,
  * key. If a value destroy function was provided it would be called on the old
  * value.
  */
-P_API void p_tree_insert(PTree *tree,
-  ptr_t key,
-  ptr_t value);
+P_API void
+p_tree_insert(tree_t *tree, ptr_t key, ptr_t value);
 
-/**
- * @brief Removes a key from a tree.
+/*!@brief Removes a key from a tree.
  * @param tree #PTree to remove a key from.
  * @param key A key to lookup.
  * @return TRUE if the key was removed, FALSE if the key was not found.
@@ -143,21 +136,19 @@ P_API void p_tree_insert(PTree *tree,
  * If a key destroy function was provided it would be called on the key. If a
  * value destroy function was provided it would be called on the old value.
  */
-P_API bool p_tree_remove(PTree *tree,
-  const_ptr_t key);
+P_API bool
+p_tree_remove(tree_t *tree, const_ptr_t key);
 
-/**
- * @brief Lookups a value by a given key.
+/*!@brief Lookups a value by a given key.
  * @param tree #PTree to lookup in.
  * @param key Key to lookup.
  * @return Value for the given @a key in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ptr_t p_tree_lookup(PTree *tree,
-  const_ptr_t key);
+P_API ptr_t
+p_tree_lookup(tree_t *tree, const_ptr_t key);
 
-/**
- * @brief Iterates in-order through the tree nodes.
+/*!@brief Iterates in-order through the tree nodes.
  * @param tree A tree to traverse.
  * @param traverse_func Function for traversing.
  * @param user_data Additional (maybe NULL) user-provided data for the
@@ -169,12 +160,10 @@ P_API ptr_t p_tree_lookup(PTree *tree,
  * can be modified along the traversing process, so keep it in mind for
  * concurrent access.
  */
-P_API void p_tree_foreach(PTree *tree,
-  PTraverseFunc traverse_func,
-  ptr_t user_data);
+P_API void
+p_tree_foreach(tree_t *tree, traverse_fn_t traverse_func, ptr_t user_data);
 
-/**
- * @brief Clears a tree.
+/*!@brief Clears a tree.
  * @param tree #PTree to clear.
  * @since 0.0.1
  * @note Modified Morris (non-recursive, non-stack) traversing algorithm is
@@ -183,28 +172,28 @@ P_API void p_tree_foreach(PTree *tree,
  * All the keys will be deleted. Key and value destroy functions would be called
  * on every node if any of them was provided.
  */
-P_API void p_tree_clear(PTree *tree);
+P_API void
+p_tree_clear(tree_t *tree);
 
-/**
- * @brief Gets a tree algorithm type.
+/*!@brief Gets a tree algorithm type.
  * @param tree #PTree object to get the type for.
  * @return Tree internal organization algorithm used for a given object.
  * @since 0.0.1
  */
-P_API PTreeType p_tree_get_type(const PTree *tree);
+P_API PTreeType
+p_tree_get_type(const tree_t *tree);
 
-/**
- * @brief Gets node count.
+/*!@brief Gets node count.
  * @param tree #PTree to get node count for.
  * @return Node count.
  * @since 0.0.1
  *
  * If the tree is empty or an invalid pointer is given it returns 0.
  */
-P_API int_t p_tree_get_nnodes(const PTree *tree);
+P_API int_t
+p_tree_get_nnodes(const tree_t *tree);
 
-/**
- * @brief Frees a previously initialized tree object.
+/*!@brief Frees a previously initialized tree object.
  * @param tree #PTree object to free.
  * @since 0.0.1
  * @note Modified Morris (non-recursive, non-stack) traversing algorithm is
@@ -213,6 +202,7 @@ P_API int_t p_tree_get_nnodes(const PTree *tree);
  * All the keys will be deleted. Key and value destroy functions would be called
  * on every node if any of them was provided.
  */
-P_API void p_tree_free(PTree *tree);
+P_API void
+p_tree_free(tree_t *tree);
 
-#endif /* P_TREE_H__ */
+#endif /* !P_TREE_H__ */

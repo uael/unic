@@ -36,11 +36,11 @@ static volatile bool is_threads_working = false;
 
 static P_HANDLE   thread1_id  = (P_HANDLE) NULL;
 static P_HANDLE   thread2_id  = (P_HANDLE) NULL;
-static PUThread * thread1_obj = NULL;
-static PUThread * thread2_obj = NULL;
+static uthread_t * thread1_obj = NULL;
+static uthread_t * thread2_obj = NULL;
 
-static PUThreadKey * tls_key      = NULL;
-static PUThreadKey * tls_key_2    = NULL;
+static uthread_key_t * tls_key      = NULL;
+static uthread_key_t * tls_key_2    = NULL;
 static volatile int_t free_counter = 0;
 
 extern "C" ptr_t pmem_alloc (size_t nbytes)
@@ -185,10 +185,10 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 {
 	p_libsys_init ();
 
-	PUThreadKey *thread_key = p_uthread_local_new (p_free);
+	uthread_key_t *thread_key = p_uthread_local_new (p_free);
 	BOOST_CHECK (thread_key != NULL);
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -199,11 +199,11 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	thread_wakes_1 = 0;
 	thread_wakes_2 = 0;
 
-	BOOST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
+	BOOST_CHECK (p_uthread_create ((uthread_fn_t) test_thread_func,
 				       (ptr_t) &thread_wakes_1,
 				       true) == NULL);
 
-	BOOST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
+	BOOST_CHECK (p_uthread_create_full ((uthread_fn_t) test_thread_func,
 					    (ptr_t) &thread_wakes_2,
 					    true,
 					    P_UTHREAD_PRIORITY_NORMAL,
@@ -274,11 +274,11 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 
 	is_threads_working = true;
 
-	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func,
+	uthread_t *thr1 = p_uthread_create ((uthread_fn_t) test_thread_func,
 					   (ptr_t) &thread_wakes_1,
 					   true);
 
-	PUThread *thr2 = p_uthread_create_full ((PUThreadFunc) test_thread_func,
+	uthread_t *thr2 = p_uthread_create_full ((uthread_fn_t) test_thread_func,
 						(ptr_t) &thread_wakes_2,
 						true,
 						P_UTHREAD_PRIORITY_NORMAL,
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 
 	p_uthread_unref (thr1);
 
-	PUThread *cur_thr = p_uthread_current ();
+	uthread_t *cur_thr = p_uthread_current ();
 	BOOST_CHECK (cur_thr != NULL);
 
 	BOOST_CHECK (p_uthread_ideal_count () > 0);
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 	thread_to_wakes    = 100;
 	is_threads_working = true;
 
-	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_nonjoinable_func,
+	uthread_t *thr1 = p_uthread_create ((uthread_fn_t) test_thread_nonjoinable_func,
 					   (ptr_t) &thread_wakes_1,
 					   false);
 
@@ -359,11 +359,11 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 
 	int_t self_thread_free = 0;
 
-	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
+	uthread_t *thr1 = p_uthread_create ((uthread_fn_t) test_thread_tls_func,
 					   (ptr_t) &self_thread_free,
 					   true);
 
-	PUThread *thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
+	uthread_t *thr2 = p_uthread_create ((uthread_fn_t) test_thread_tls_func,
 					   (ptr_t) &self_thread_free,
 					   true);
 
@@ -392,11 +392,11 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	is_threads_working = true;
 	self_thread_free   = 1;
 
-	thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
+	thr1 = p_uthread_create ((uthread_fn_t) test_thread_tls_func,
 				 (ptr_t) &self_thread_free,
 				 true);
 
-	thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
+	thr2 = p_uthread_create ((uthread_fn_t) test_thread_tls_func,
 				 (ptr_t) &self_thread_free,
 				 true);
 
@@ -425,10 +425,10 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 
 	free_counter = 0;
 
-	thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_create_func,
+	thr1 = p_uthread_create ((uthread_fn_t) test_thread_tls_create_func,
 				 NULL,
 				 true);
-	thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_create_func,
+	thr2 = p_uthread_create ((uthread_fn_t) test_thread_tls_create_func,
 				 NULL,
 				 true);
 

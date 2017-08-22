@@ -15,14 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/dir.h
+/*!@file p/dir.h
  * @brief Filesystem interface
  * @author Alexander Saprykin
  *
  * A traditional filesystem can be presented as a combination of directories and
  * files within a defined hierarchy. A directory contains the so called entries:
- * files and other directories. #PDir allows to iterate through these entries
+ * files and other directories. #dir_t allows to iterate through these entries
  * without reading their contents, thus building a filesystem hierarchy tree.
  *
  * Think of this module as an interface to the well-known `dirent` API.
@@ -35,95 +34,98 @@
  * Also some directory manipulation routines are provided to create, remove and
  * check existance.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_DIR_H__
-#define P_DIR_H__
+# define P_DIR_H__
 
 #include "p/macros.h"
 #include "p/types.h"
-#include "p/error.h"
+#include "p/err.h"
 
-/** Directory opaque data structure. */
-typedef struct p_dir p_dir_t;
+typedef enum dirent_kind dirent_kind_t;
 
-/** Directory entry types. */
-typedef enum p_dirent_kind {
-  P_DIR_ENTRY_TYPE_DIR = 1,  /**< Directory.	*/
-  P_DIR_ENTRY_TYPE_FILE = 2,  /**< File.	*/
-  P_DIR_ENTRY_TYPE_OTHER = 3  /**< Other.	*/
-} p_dirent_kind_t;
+/*!@brief Directory opaque data structure. */
+typedef struct dir dir_t;
+typedef struct dirent dirent_t;
 
-/** Structure with directory entry information. */
-typedef struct p_dirent {
-  char *name;  /**< Name.	*/
-  p_dirent_kind_t type;  /**< Type.	*/
-} p_dirent_t;
+/*!@brief Directory entry types. */
+enum dirent_kind {
 
-/**
- * @brief Creates a new #PDir object.
+  /*!@brief Directory. */
+  P_DIRENT_DIR = 1,
+
+  /*!@brief File. */
+  P_DIRENT_FILE = 2,
+
+  /*!@brief Other. */
+  P_DIRENT_OTHER = 3
+};
+
+/*!@brief Structure with directory entry information. */
+struct dirent {
+
+  /*!@brief Name. */
+  char *name;
+
+  /*!@brief Type. */
+  dirent_kind_t type;
+};
+
+/*!@brief Creates a new #dir_t object.
  * @param path Directory path.
- * @return Pointer to a newly created #PDir object in case of success, NULL
+ * @return Pointer to a newly created #dir_t object in case of success, NULL
  * otherwise.
  * @param[out] error Error report object, NULL to ignore.
  * @since 0.0.1
  * @note If you want to create a new directory on a filesystem, use
  * p_dir_create() instead.
  */
-P_API p_dir_t *p_dir_new(const byte_t *path,
-  p_err_t **error);
+P_API dir_t *
+p_dir_new(const byte_t *path, err_t **error);
 
-/**
- * @brief Creates a new directory on a filesystem.
+/*!@brief Creates a new directory on a filesystem.
  * @param path Directory path.
  * @param mode Directory permissions to use, ignored on Windows.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
- * @note Call returns TRUE if the directory @a path is already exists.
+ * @note Call returns true if the directory @a path is already exists.
  * @note On OpenVMS operating system it creates intermediate directories as
  * well.
  */
-P_API bool p_dir_create(const byte_t *path,
-  int_t mode,
-  p_err_t **error);
+P_API bool
+p_dir_create(const byte_t *path, int_t mode, err_t **error);
 
-/**
- * @brief Removes an empty directory.
+/*!@brief Removes an empty directory.
  * @param path Directory path to remove.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
  * The directory @a path should be empty to be removed successfully.
  */
-P_API bool p_dir_remove(const byte_t *path,
-  p_err_t **error);
+P_API bool
+p_dir_remove(const byte_t *path, err_t **error);
 
-/**
- * @brief Checks whether a directory exists or not.
+/*!@brief Checks whether a directory exists or not.
  * @param path Directory path.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
-P_API bool p_dir_is_exists(const byte_t *path);
+P_API bool
+p_dir_is_exists(const byte_t *path);
 
-/**
- * @brief Gets the original directory path used to create a #PDir object.
- * @param dir #PDir object to retrieve the path from.
+/*!@brief Gets the original directory path used to create a #dir_t object.
+ * @param dir #dir_t object to retrieve the path from.
  * @return The directory path in case of success, NULL otherwise.
  * @since 0.0.1
  *
  * Caller takes ownership of the returned string. Use p_free() to free memory
  * after usage.
  */
-P_API byte_t *p_dir_get_path(const p_dir_t *dir);
+P_API byte_t *
+p_dir_get_path(const dir_t *dir);
 
-/**
- * @brief Gets the next directory entry info.
+/*!@brief Gets the next directory entry info.
  * @param dir Directory to get the next entry from.
  * @param[out] error Error report object, NULL to ignore.
  * @return Info for the next entry in case of success, NULL otherwise.
@@ -135,31 +137,30 @@ P_API byte_t *p_dir_get_path(const p_dir_t *dir);
  * An error is set only if it is occurred. You should check the @a error object
  * for #P_ERR_IO_NO_MORE code.
  */
-P_API p_dirent_t *p_dir_get_next_entry(p_dir_t *dir,
-  p_err_t **error);
+P_API dirent_t *
+p_dir_get_next_entry(dir_t *dir, err_t **error);
 
-/**
- * @brief Resets a directory entry pointer.
+/*!@brief Resets a directory entry pointer.
  * @param dir Directory to reset the entry pointer.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
-P_API bool p_dir_rewind(p_dir_t *dir,
-  p_err_t **error);
+P_API bool
+p_dir_rewind(dir_t *dir, err_t **error);
 
-/**
- * @brief Frees #PDirEntry object.
- * @param entry #PDirEntry to free.
+/*!@brief Frees #dirent_t object.
+ * @param entry #dirent_t to free.
  * @since 0.0.1
  */
-P_API void p_dir_entry_free(p_dirent_t *entry);
+P_API void
+p_dir_entry_free(dirent_t *entry);
 
-/**
- * @brief Frees #PDir object.
- * @param dir #PDir to free.
+/*!@brief Frees #dir_t object.
+ * @param dir #dir_t to free.
  * @since 0.0.1
  */
-P_API void p_dir_free(p_dir_t *dir);
+P_API void
+p_dir_free(dir_t *dir);
 
-#endif /* P_DIR_H__ */
+#endif /* !P_DIR_H__ */

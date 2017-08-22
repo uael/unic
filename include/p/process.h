@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/process.h
+/*!@file p/process.h
  * @brief Process information
  * @author Alexander Saprykin
  *
@@ -26,32 +25,27 @@
  * p_process_get_current_pid(). To check whether a process with a given PID is
  * running up use p_process_is_running().
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_PROCESS_H__
-#define P_PROCESS_H__
+# define P_PROCESS_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/**
- * @brief Gets a PID of the calling process.
+/*!@brief Gets a PID of the calling process.
  * @return PID of the calling process.
  * @since 0.0.1
  */
-P_API uint32_t p_process_get_current_pid(void);
+P_API uint32_t
+p_process_get_current_pid(void);
 
-/**
- * @brief Checks whether a process with a given PID is running or not.
+/*!@brief Checks whether a process with a given PID is running or not.
  * @param pid PID to check for.
  * @return TRUE if the process with the given PID exists and is running up,
  * FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_process_is_running(uint32_t pid);
+P_API bool
+p_process_is_running(uint32_t pid);
 
-#endif /* P_PROCESS_H__ */
+#endif /* !P_PROCESS_H__ */
 

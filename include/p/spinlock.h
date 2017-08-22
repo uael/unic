@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/spinlock.h
+/*!@file p/spinlock.h
  * @brief Light-weight atomic spinlock
  * @author Alexander Saprykin
  *
@@ -43,29 +42,23 @@
  * end of the critical section. This way the critical section code is guarded
  * against concurrent access of multiple threads at once.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_SPINLOCK_H__
-#define P_SPINLOCK_H__
+# define P_SPINLOCK_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Spinlock opaque data structure. */
-typedef struct PSpinLock_ PSpinLock;
+/*!@brief Spinlock opaque data structure. */
+typedef struct spinlock spinlock_t;
 
-/**
- * @brief Creates a new #PSpinLock object.
+/*!@brief Creates a new #PSpinLock object.
  * @return Pointer to a newly created #PSpinLock object.
  * @since 0.0.1
  */
-P_API PSpinLock *p_spinlock_new(void);
+P_API spinlock_t *
+p_spinlock_new(void);
 
-/**
- * @brief Locks a spinlock.
+/*!@brief Locks a spinlock.
  * @param spinlock #PSpinLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -79,10 +72,10 @@ P_API PSpinLock *p_spinlock_new(void);
  * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
-P_API bool p_spinlock_lock(PSpinLock *spinlock);
+P_API bool
+p_spinlock_lock(spinlock_t *spinlock);
 
-/**
- * @brief Tries to lock a spinlock immediately.
+/*!@brief Tries to lock a spinlock immediately.
  * @param spinlock #PSpinLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -96,10 +89,10 @@ P_API bool p_spinlock_lock(PSpinLock *spinlock);
  * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
-P_API bool p_spinlock_trylock(PSpinLock *spinlock);
+P_API bool
+p_spinlock_trylock(spinlock_t *spinlock);
 
-/**
- * @brief Releases a locked spinlock.
+/*!@brief Releases a locked spinlock.
  * @param spinlock #PSpinLock to release.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -112,10 +105,10 @@ P_API bool p_spinlock_trylock(PSpinLock *spinlock);
  * as p_mutex_unlock(), thus it is not safe to call this routine on an unlocked
  * spinlock.
  */
-P_API bool p_spinlock_unlock(PSpinLock *spinlock);
+P_API bool
+p_spinlock_unlock(spinlock_t *spinlock);
 
-/**
- * @brief Frees #PSpinLock object.
+/*!@brief Frees #PSpinLock object.
  * @param spinlock #PSpinLock to free.
  * @since 0.0.1
  *
@@ -125,6 +118,7 @@ P_API bool p_spinlock_unlock(PSpinLock *spinlock);
  * If the atomic model is not lock-free this call will have the same effect
  * as p_mutex_free().
  */
-P_API void p_spinlock_free(PSpinLock *spinlock);
+P_API void
+p_spinlock_free(spinlock_t *spinlock);
 
-#endif /* P_SPINLOCK_H__ */
+#endif /* !P_SPINLOCK_H__ */

@@ -19,51 +19,47 @@
 #include "p/atomic.h"
 #include "p/spinlock.h"
 
-struct PSpinLock_ {
+struct spinlock {
   volatile int_t spin;
 };
 
-P_API PSpinLock *
+spinlock_t *
 p_spinlock_new(void) {
-  PSpinLock *ret;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PSpinLock))) == NULL)) {
-    P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
+  spinlock_t *ret;
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(spinlock_t))) == NULL)) {
+    P_ERROR ("spinlock_t::p_spinlock_new: failed to allocate memory");
     return NULL;
   }
-
   return ret;
 }
 
-P_API bool
-p_spinlock_lock(PSpinLock *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL))
+bool
+p_spinlock_lock(spinlock_t *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL)) {
     return false;
-
+  }
   while (p_atomic_int_compare_and_exchange(&(spinlock->spin), 0, 1) == false);
-
   return true;
 }
 
-P_API bool
-p_spinlock_trylock(PSpinLock *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL))
+bool
+p_spinlock_trylock(spinlock_t *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL)) {
     return false;
-
+  }
   return p_atomic_int_compare_and_exchange(&(spinlock->spin), 0, 1);
 }
 
-P_API bool
-p_spinlock_unlock(PSpinLock *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL))
+bool
+p_spinlock_unlock(spinlock_t *spinlock) {
+  if (P_UNLIKELY (spinlock == NULL)) {
     return false;
-
+  }
   p_atomic_int_set(&(spinlock->spin), 0);
-
   return true;
 }
 
-P_API void
-p_spinlock_free(PSpinLock *spinlock) {
+void
+p_spinlock_free(spinlock_t *spinlock) {
   p_free(spinlock);
 }

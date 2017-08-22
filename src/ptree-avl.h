@@ -15,32 +15,31 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef PLIBSYS_HEADER_PTREEAVL_H
-#define PLIBSYS_HEADER_PTREEAVL_H
+# define PLIBSYS_HEADER_PTREEAVL_H
 
 #include "p/macros.h"
 #include "p/types.h"
 #include "ptree-private.h"
 
-bool p_tree_avl_insert(PTreeBaseNode **root_node,
-  PCompareDataFunc compare_func,
+bool
+p_tree_avl_insert(PTreeBaseNode **root_node,
+  cmp_data_fn_t compare_func,
   ptr_t data,
-  PDestroyFunc key_destroy_func,
-  PDestroyFunc value_destroy_func,
+  destroy_fn_t key_destroy_func,
+  destroy_fn_t value_destroy_func,
   ptr_t key,
   ptr_t value);
 
-bool p_tree_avl_remove(PTreeBaseNode **root_node,
-  PCompareDataFunc compare_func,
+bool
+p_tree_avl_remove(PTreeBaseNode **root_node,
+  cmp_data_fn_t compare_func,
   ptr_t data,
-  PDestroyFunc key_destroy_func,
-  PDestroyFunc value_destroy_func,
+  destroy_fn_t key_destroy_func,
+  destroy_fn_t value_destroy_func,
   const_ptr_t key);
 
-void p_tree_avl_node_free(PTreeBaseNode *node);
+void
+p_tree_avl_node_free(PTreeBaseNode *node);
 
 #endif /* PLIBSYS_HEADER_PTREEAVL_H */

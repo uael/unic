@@ -17,42 +17,37 @@
 
 #include "p/condvar.h"
 
-#include <stdlib.h>
-
-struct p_condvar {
+struct condvar {
   int_t hdl;
 };
 
-P_API p_condvar_t *
+condvar_t *
 p_condvar_new(void) {
   return NULL;
 }
 
-P_API void
-p_condvar_free(p_condvar_t *cond) {
+void
+p_condvar_free(condvar_t *cond) {
   P_UNUSED (cond);
 }
 
-P_API bool
-p_condvar_wait(p_condvar_t *cond,
-  PMutex *mutex) {
+bool
+p_condvar_wait(condvar_t *cond,
+  mutex_t *mutex) {
   P_UNUSED (cond);
   P_UNUSED (mutex);
-
   return false;
 }
 
-P_API bool
-p_condvar_signal(p_condvar_t *cond) {
+bool
+p_condvar_signal(condvar_t *cond) {
   P_UNUSED (cond);
-
   return false;
 }
 
-P_API bool
-p_condvar_broadcast(p_condvar_t *cond) {
+bool
+p_condvar_broadcast(condvar_t *cond) {
   P_UNUSED (cond);
-
   return false;
 }
 

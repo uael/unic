@@ -17,19 +17,16 @@
 
 #include "p/profiler.h"
 #include "ptimeprofiler-private.h"
-
 #include <time.h>
 
 uint64_t
 p_profiler_get_ticks_internal() {
   int64_t val;
-
   if (P_UNLIKELY ((val = (int64_t) time(NULL)) == -1)) {
     P_ERROR (
       "p_profiler_t::p_profiler_get_ticks_internal: time() failed");
     return 0;
   }
-
   return (uint64_t) (val * 1000000);
 }
 

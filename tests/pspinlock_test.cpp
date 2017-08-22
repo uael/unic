@@ -32,7 +32,7 @@
 #define PSPINLOCK_MAX_VAL 10
 
 static int_t        spinlock_test_val = 0;
-static PSpinLock * global_spinlock   = NULL;
+static spinlock_t * global_spinlock   = NULL;
 
 extern "C" ptr_t pmem_alloc (size_t nbytes)
 {
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE (pspinlock_bad_input_test)
 
 BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 {
-	PUThread *thr1, *thr2;
+	uthread_t *thr1, *thr2;
 
 	p_libsys_init ();
 
@@ -121,10 +121,10 @@ BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 
 	BOOST_REQUIRE (global_spinlock != NULL);
 
-	thr1 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
+	thr1 = p_uthread_create ((uthread_fn_t) spinlock_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
+	thr2 = p_uthread_create ((uthread_fn_t) spinlock_test_thread, NULL, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);

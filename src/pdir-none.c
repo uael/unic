@@ -17,92 +17,90 @@
 
 #include "p/dir.h"
 
-#include <stdlib.h>
-
-struct p_dir {
+struct dir {
   int_t hdl;
 };
 
-P_API p_dir_t *
+dir_t *
 p_dir_new(const byte_t *path,
-  p_err_t **error) {
+  err_t **error) {
   P_UNUSED (path);
-
-  p_error_set_error_p(error,
+  p_error_set_error_p(
+    error,
     (int_t) P_ERR_IO_NOT_IMPLEMENTED,
     0,
-    "No directory implementation");
-
+    "No directory implementation"
+  );
   return NULL;
 }
 
-P_API bool
+bool
 p_dir_create(const byte_t *path,
   int_t mode,
-  p_err_t **error) {
+  err_t **error) {
   P_UNUSED (path);
   P_UNUSED (mode);
-
-  p_error_set_error_p(error,
+  p_error_set_error_p(
+    error,
     (int_t) P_ERR_IO_NOT_IMPLEMENTED,
     0,
-    "No directory implementation");
-
+    "No directory implementation"
+  );
   return false;
 }
 
-P_API bool
+bool
 p_dir_remove(const byte_t *path,
-  p_err_t **error) {
+  err_t **error) {
   P_UNUSED (path);
-
-  p_error_set_error_p(error,
+  p_error_set_error_p(
+    error,
     (int_t) P_ERR_IO_NOT_IMPLEMENTED,
     0,
-    "No directory implementation");
-
+    "No directory implementation"
+  );
   return false;
 }
 
-P_API bool
+bool
 p_dir_is_exists(const byte_t *path) {
   P_UNUSED (path);
   return false;
 }
 
-P_API byte_t *
-p_dir_get_path(const p_dir_t *dir) {
+byte_t *
+p_dir_get_path(const dir_t *dir) {
   P_UNUSED (dir);
   return NULL;
 }
 
-P_API p_dirent_t *
-p_dir_get_next_entry(p_dir_t *dir,
-  p_err_t **error) {
+dirent_t *
+p_dir_get_next_entry(dir_t *dir,
+  err_t **error) {
   P_UNUSED (dir);
-
-  p_error_set_error_p(error,
+  p_error_set_error_p(
+    error,
     (int_t) P_ERR_IO_NOT_IMPLEMENTED,
     0,
-    "No directory implementation");
-
+    "No directory implementation"
+  );
   return NULL;
 }
 
-P_API bool
-p_dir_rewind(p_dir_t *dir,
-  p_err_t **error) {
+bool
+p_dir_rewind(dir_t *dir,
+  err_t **error) {
   P_UNUSED (dir);
-
-  p_error_set_error_p(error,
+  p_error_set_error_p(
+    error,
     (int_t) P_ERR_IO_NOT_IMPLEMENTED,
     0,
-    "No directory implementation");
-
+    "No directory implementation"
+  );
   return false;
 }
 
-P_API void
-p_dir_free(p_dir_t *dir) {
+void
+p_dir_free(dir_t *dir) {
   P_UNUSED (dir);
 }

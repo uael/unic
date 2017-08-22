@@ -17,13 +17,11 @@
 
 #include "p/profiler.h"
 #include "ptimeprofiler-private.h"
-
-#include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
 
 #ifndef _POSIX_MONOTONIC_CLOCK
-#  define _POSIX_MONOTONIC_CLOCK (-1)
+# define _POSIX_MONOTONIC_CLOCK (-1)
 #endif
 
 typedef uint64_t (*PPOSIXTicksFunc)(void);
@@ -34,7 +32,8 @@ static PPOSIXTicksFunc pp_profiler_ticks_func = NULL;
 static uint64_t pp_profiler_get_ticks_clock();
 #endif
 
-static uint64_t pp_profiler_get_ticks_gtod();
+static uint64_t
+pp_profiler_get_ticks_gtod();
 
 #if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
 static uint64_t
@@ -57,13 +56,11 @@ pp_profiler_get_ticks_clock() {
 static uint64_t
 pp_profiler_get_ticks_gtod() {
   struct timeval tv;
-
   if (P_UNLIKELY (gettimeofday(&tv, NULL) != 0)) {
     P_ERROR (
       "p_profiler_t::pp_profiler_get_ticks_gtod: gettimeofday() failed");
     return 0;
   }
-
   return (uint64_t) (tv.tv_sec * 1000000 + tv.tv_usec);
 }
 

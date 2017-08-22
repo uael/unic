@@ -59,7 +59,7 @@ extern "C" void pmem_free (ptr_t block)
 
 static bool create_test_ini_file (bool last_empty_section)
 {
-	FILE *file = fopen ("." P_DIR_SEPARATOR "p_ini_test_file.ini", "w");
+	FILE *file = fopen ("." P_DIR_SEP "p_ini_test_file.ini", "w");
 
 	if (file == NULL)
 		return false;
@@ -125,10 +125,10 @@ BOOST_AUTO_TEST_CASE (pinifile_nomem_test)
 
 	BOOST_REQUIRE (create_test_ini_file (false));
 
-	PIniFile *ini = p_ini_file_new  ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
+	ini_file_t *ini = p_ini_file_new  ("." P_DIR_SEP "p_ini_test_file.ini");
 	BOOST_CHECK (ini != NULL);
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE (pinifile_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
-	BOOST_CHECK (p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini") == NULL);
+	BOOST_CHECK (p_ini_file_new ("." P_DIR_SEP "p_ini_test_file.ini") == NULL);
 	BOOST_CHECK (p_ini_file_parse (ini, NULL) == true);
 	BOOST_CHECK (p_ini_file_sections (ini) == NULL);
 
@@ -144,26 +144,26 @@ BOOST_AUTO_TEST_CASE (pinifile_nomem_test)
 
 	p_ini_file_free (ini);
 
-	ini = p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
+	ini = p_ini_file_new ("." P_DIR_SEP "p_ini_test_file.ini");
 	BOOST_CHECK (ini != NULL);
 
 	BOOST_CHECK (p_ini_file_parse (ini, NULL) == true);
-	PList *section_list = p_ini_file_sections (ini);
+	list_t *section_list = p_ini_file_sections (ini);
 	BOOST_CHECK (section_list != NULL);
 	BOOST_CHECK (p_list_length (section_list) == 4);
 
-	p_list_foreach (section_list, (PFunc) p_free, NULL);
+	p_list_foreach (section_list, (fn_t) p_free, NULL);
 	p_list_free (section_list);
 	p_ini_file_free (ini);
 
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL) == true);
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEP "p_ini_test_file.ini", NULL) == true);
 
 	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 {
-	PIniFile *ini = NULL;
+	ini_file_t *ini = NULL;
 
 	p_libsys_init ();
 
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 {
 	p_libsys_init ();
 
-	PIniFile *ini = p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
+	ini_file_t *ini = p_ini_file_new ("." P_DIR_SEP "p_ini_test_file.ini");
 	BOOST_REQUIRE (ini != NULL);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == false);
 
@@ -204,11 +204,11 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == true);
 
 	/* Test list of sections */
-	PList *list = p_ini_file_sections (ini);
+	list_t *list = p_ini_file_sections (ini);
 	BOOST_CHECK (list != NULL);
 	BOOST_CHECK (p_list_length (list) == 4);
 
-	p_list_foreach (list, (PFunc) p_free, NULL);
+	p_list_foreach (list, (fn_t) p_free, NULL);
 	p_list_free (list);
 
 	/* Test empty section */
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	/* Test numeric section */
 	list = p_ini_file_keys (ini, "numeric_section");
 	BOOST_CHECK (p_list_length (list) == 5);
-	p_list_foreach (list, (PFunc) p_free, NULL);
+	p_list_foreach (list, (fn_t) p_free, NULL);
 	p_list_free (list);
 
 	BOOST_CHECK (p_ini_file_parameter_list (ini, "numeric_section", "int_parameter_1") == NULL);
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	/* Test string section */
 	list = p_ini_file_keys (ini, "string_section");
 	BOOST_CHECK (p_list_length (list) == 8);
-	p_list_foreach (list, (PFunc) p_free, NULL);
+	p_list_foreach (list, (fn_t) p_free, NULL);
 	p_list_free (list);
 
 	byte_t *str = p_ini_file_parameter_string (ini, "string_section", "string_parameter_1", NULL);
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	/* Test boolean section */
 	list = p_ini_file_keys (ini, "boolean_section");
 	BOOST_CHECK (p_list_length (list) == 4);
-	p_list_foreach (list, (PFunc) p_free, NULL);
+	p_list_foreach (list, (fn_t) p_free, NULL);
 	p_list_free (list);
 
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_1", false) == true);
@@ -298,20 +298,20 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	/* Test list section */
 	list = p_ini_file_keys (ini, "list_section");
 	BOOST_CHECK (p_list_length (list) == 3);
-	p_list_foreach (list, (PFunc) p_free, NULL);
+	p_list_foreach (list, (fn_t) p_free, NULL);
 	p_list_free (list);
 
 	/* -- First list parameter */
-	PList *list_val = p_ini_file_parameter_list (ini, "list_section", "list_parameter_1");
+	list_t *list_val = p_ini_file_parameter_list (ini, "list_section", "list_parameter_1");
 	BOOST_CHECK (list_val != NULL);
 	BOOST_CHECK (p_list_length (list_val) == 4);
 
 	int_t int_sum = 0;
-	for (PList *iter = list_val; iter != NULL; iter = iter->next)
+	for (list_t *iter = list_val; iter != NULL; iter = iter->next)
 		int_sum +=  atoi ((const byte_t *) (iter->data));
 
 	BOOST_CHECK (int_sum == 18);
-	p_list_foreach (list_val, (PFunc) p_free, NULL);
+	p_list_foreach (list_val, (fn_t) p_free, NULL);
 	p_list_free (list_val);
 
 	/* -- Second list parameter */
@@ -320,11 +320,11 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (p_list_length (list_val) == 3);
 
 	double flt_sum = 0;
-	for (PList *iter = list_val; iter != NULL; iter = iter->next)
+	for (list_t *iter = list_val; iter != NULL; iter = iter->next)
 		flt_sum +=  atof ((const byte_t *) (iter->data));
 
 	BOOST_CHECK_CLOSE (flt_sum, 10.0, 0.0001);
-	p_list_foreach (list_val, (PFunc) p_free, NULL);
+	p_list_foreach (list_val, (fn_t) p_free, NULL);
 	p_list_free (list_val);
 
 	/* -- Third list parameter */
@@ -333,11 +333,11 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (p_list_length (list_val) == 3);
 
 	bool bool_sum = true;
-	for (PList *iter = list_val; iter != NULL; iter = iter->next)
+	for (list_t *iter = list_val; iter != NULL; iter = iter->next)
 		bool_sum = bool_sum && atoi ((const byte_t *) (iter->data));
 
 	BOOST_CHECK (bool_sum == false);
-	p_list_foreach (list_val, (PFunc) p_free, NULL);
+	p_list_foreach (list_val, (fn_t) p_free, NULL);
 	p_list_free (list_val);
 
 	/* -- False list parameter */
@@ -345,7 +345,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 
 	p_ini_file_free (ini);
 
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL) == true);
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEP "p_ini_test_file.ini", NULL) == true);
 
 	p_libsys_shutdown ();
 }

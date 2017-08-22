@@ -17,19 +17,13 @@
 
 #include "p/mem.h"
 #include "p/hash.h"
-#include "p/string.h"
-#include "psysclose-private.h"
-
-#include <stdlib.h>
-#include <string.h>
 
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
-#  include <errno.h>
-#  include <fcntl.h>
-#  include <sys/stat.h>
-#  include <sys/ipc.h>
+# include <errno.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <sys/ipc.h>
 #endif
-
 #if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 byte_t *
 p_ipc_unix_get_temp_dir(void) {
@@ -103,29 +97,25 @@ p_ipc_unix_get_ftok_key(const byte_t *file_name) {
  * a file name to use with ftok () for UNIX-like systems */
 byte_t *
 p_ipc_get_platform_key(const byte_t *name, bool posix) {
-  PCryptoHash *sha1;
+  hash_t *sha1;
   byte_t *hash_str;
-
 #if defined (P_OS_WIN) || defined (P_OS_OS2)
   P_UNUSED (posix);
 #else
   byte_t *path_name, *tmp_path;
 #endif
-
-  if (P_UNLIKELY (name == NULL))
+  if (P_UNLIKELY (name == NULL)) {
     return NULL;
-
-  if (P_UNLIKELY ((sha1 = p_crypto_hash_new(P_HASH_TYPE_SHA1)) == NULL))
+  }
+  if (P_UNLIKELY ((sha1 = p_crypto_hash_new(P_HASH_SHA1)) == NULL)) {
     return NULL;
-
+  }
   p_crypto_hash_update(sha1, (const ubyte_t *) name, strlen(name));
-
   hash_str = p_crypto_hash_get_string(sha1);
   p_crypto_hash_free(sha1);
-
-  if (P_UNLIKELY (hash_str == NULL))
+  if (P_UNLIKELY (hash_str == NULL)) {
     return NULL;
-
+  }
 #if defined (P_OS_WIN) || defined (P_OS_OS2)
   return hash_str;
 #else

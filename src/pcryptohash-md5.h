@@ -15,25 +15,32 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* MD5 interface implementation for #PCryptoHash */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
+/* MD5 interface implementation for #hash_t */
 
 #ifndef PLIBSYS_HEADER_PCRYPTOHASHMD5_H
-#define PLIBSYS_HEADER_PCRYPTOHASHMD5_H
+# define PLIBSYS_HEADER_PCRYPTOHASHMD5_H
 
 #include "p/types.h"
 #include "p/macros.h"
 
 typedef struct PHashMD5_ PHashMD5;
 
-PHashMD5 *p_crypto_hash_md5_new(void);
-void p_crypto_hash_md5_update(PHashMD5 *ctx, const ubyte_t *data, size_t len);
-void p_crypto_hash_md5_finish(PHashMD5 *ctx);
-const ubyte_t *p_crypto_hash_md5_digest(PHashMD5 *ctx);
-void p_crypto_hash_md5_reset(PHashMD5 *ctx);
-void p_crypto_hash_md5_free(PHashMD5 *ctx);
+PHashMD5 *
+p_crypto_hash_md5_new(void);
+
+void
+p_crypto_hash_md5_update(PHashMD5 *ctx, const ubyte_t *data, size_t len);
+
+void
+p_crypto_hash_md5_finish(PHashMD5 *ctx);
+
+const ubyte_t *
+p_crypto_hash_md5_digest(PHashMD5 *ctx);
+
+void
+p_crypto_hash_md5_reset(PHashMD5 *ctx);
+
+void
+p_crypto_hash_md5_free(PHashMD5 *ctx);
 
 #endif /* PLIBSYS_HEADER_PCRYPTOHASHMD5_H */

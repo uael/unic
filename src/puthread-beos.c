@@ -20,60 +20,61 @@
 #include "p/mutex.h"
 #include "p/uthread.h"
 #include "puthread-private.h"
-
-#include <stdlib.h>
-#include <string.h>
-
 #include <kernel/OS.h>
 #include <kernel/scheduler.h>
 #include <support/TLS.h>
 
 typedef thread_id puthread_hdl;
 
-struct PUThread_ {
+struct uthread {
   PUThreadBase base;
   puthread_hdl hdl;
-  PUThreadFunc proxy;
+  uthread_fn_t proxy;
 };
 
-struct PUThreadKey_ {
+struct uthread_key {
   int_t key;
-  PDestroyFunc free_func;
+  destroy_fn_t free_func;
 };
 
 typedef struct PUThreadDestructor_ PUThreadDestructor;
 
 struct PUThreadDestructor_ {
   int_t key_idx;
-  PDestroyFunc free_func;
+  destroy_fn_t free_func;
   PUThreadDestructor *next;
 };
 
 static PUThreadDestructor *volatile pp_uthread_tls_destructors = NULL;
 
-static PMutex *pp_uthread_tls_mutex = NULL;
-
-static int_t pp_uthread_get_beos_priority(PUThreadPriority prio);
-static int_t pp_uthread_get_tls_key(PUThreadKey *key);
-static void pp_uthread_clean_destructors(void);
-static int_t pp_uthread_beos_proxy(ptr_t data);
+static mutex_t *pp_uthread_tls_mutex = NULL;
 
 static int_t
-pp_uthread_get_beos_priority(PUThreadPriority prio) {
+pp_uthread_get_beos_priority(uthread_prio_t prio);
+
+static int_t
+pp_uthread_get_tls_key(uthread_key_t *key);
+
+static void
+pp_uthread_clean_destructors(void);
+
+static int_t
+pp_uthread_beos_proxy(ptr_t data);
+
+static int_t
+pp_uthread_get_beos_priority(uthread_prio_t prio) {
   switch (prio) {
     case P_UTHREAD_PRIORITY_INHERIT: {
       thread_info thr_info;
-
       memset(&thr_info, 0, sizeof(thr_info));
-
       if (P_UNLIKELY (get_thread_info(find_thread(NULL), &thr_info) != B_OK)) {
         P_WARNING (
-          "PUThread::pp_uthread_get_beos_priority: failed to get thread info");
+          "uthread_t::pp_uthread_get_beos_priority: failed to get thread info");
         return B_NORMAL_PRIORITY;
-      } else
+      } else {
         return thr_info.priority;
+      }
     }
-
     case P_UTHREAD_PRIORITY_IDLE:
       return B_LOW_PRIORITY;
     case P_UTHREAD_PRIORITY_LOWEST:
@@ -92,37 +93,30 @@ pp_uthread_get_beos_priority(PUThreadPriority prio) {
 }
 
 static int_t
-pp_uthread_get_tls_key(PUThreadKey *key) {
+pp_uthread_get_tls_key(uthread_key_t *key) {
   int_t thread_key;
-
   thread_key = p_atomic_int_get((const volatile int_t *) &key->key);
-
-  if (P_LIKELY (thread_key >= 0))
+  if (P_LIKELY (thread_key >= 0)) {
     return thread_key;
-
+  }
   p_mutex_lock(pp_uthread_tls_mutex);
-
   thread_key = key->key;
-
   if (P_LIKELY (thread_key == -1)) {
     PUThreadDestructor *destr = NULL;
-
     if (key->free_func != NULL) {
       if (P_UNLIKELY (
         (destr = p_malloc0(sizeof(PUThreadDestructor))) == NULL)) {
-        P_ERROR ("PUThread::pp_uthread_get_tls_key: failed to allocate memory");
+        P_ERROR ("uthread_t::pp_uthread_get_tls_key: failed to allocate memory");
         p_mutex_unlock(pp_uthread_tls_mutex);
         return -1;
       }
     }
-
     if (P_UNLIKELY ((thread_key = tls_allocate()) < 0)) {
-      P_ERROR ("PUThread::pp_uthread_get_tls_key: tls_allocate() failed");
+      P_ERROR ("uthread_t::pp_uthread_get_tls_key: tls_allocate() failed");
       p_free(destr);
       p_mutex_unlock(pp_uthread_tls_mutex);
       return -1;
     }
-
     if (destr != NULL) {
       destr->key_idx = thread_key;
       destr->free_func = key->free_func;
@@ -133,46 +127,38 @@ pp_uthread_get_tls_key(PUThreadKey *key) {
       if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange(
         (void *volatile *) &pp_uthread_tls_destructors,
         (void *) destr->next,
-        (void *) destr) == false)) {
+        (void *) destr
+      ) == false)) {
         P_ERROR (
-          "PUThread::pp_uthread_get_tls_key: p_atomic_pointer_compare_and_exchange() failed");
+          "uthread_t::pp_uthread_get_tls_key: p_atomic_pointer_compare_and_exchange() failed");
         p_free(destr);
         p_mutex_unlock(pp_uthread_tls_mutex);
         return -1;
       }
     }
-
     key->key = thread_key;
   }
-
   p_mutex_unlock(pp_uthread_tls_mutex);
-
   return thread_key;
 }
 
 static void
 pp_uthread_clean_destructors(void) {
   bool was_called;
-
   do {
     PUThreadDestructor *destr;
-
     was_called = false;
-
     destr = (PUThreadDestructor *) p_atomic_pointer_get(
-      (const void *volatile *) &pp_uthread_tls_destructors);
-
+      (const void *volatile *) &pp_uthread_tls_destructors
+    );
     while (destr != NULL) {
       ptr_t value;
-
       value = tls_get(destr->key_idx);
-
       if (value != NULL && destr->free_func != NULL) {
         tls_set(destr->key_idx, NULL);
         destr->free_func(value);
         was_called = true;
       }
-
       destr = destr->next;
     }
   } while (was_called);
@@ -180,38 +166,30 @@ pp_uthread_clean_destructors(void) {
 
 static int_t
 pp_uthread_beos_proxy(ptr_t data) {
-  PUThread *thread = data;
-
+  uthread_t *thread = data;
   thread->proxy(thread);
-
   pp_uthread_clean_destructors();
-
   return 0;
 }
 
 void
 p_uthread_init_internal(void) {
-  if (P_LIKELY (pp_uthread_tls_mutex == NULL))
+  if (P_LIKELY (pp_uthread_tls_mutex == NULL)) {
     pp_uthread_tls_mutex = p_mutex_new();
+  }
 }
 
 void
 p_uthread_shutdown_internal(void) {
   PUThreadDestructor *destr;
-
   pp_uthread_clean_destructors();
-
   destr = pp_uthread_tls_destructors;
-
   while (destr != NULL) {
     PUThreadDestructor *next_destr = destr->next;
-
     p_free(destr);
     destr = next_destr;
   }
-
   pp_uthread_tls_destructors = NULL;
-
   if (P_LIKELY (pp_uthread_tls_mutex != NULL)) {
     p_mutex_free(pp_uthread_tls_mutex);
     pp_uthread_tls_mutex = NULL;
@@ -222,40 +200,35 @@ void
 p_uthread_win32_thread_detach(void) {
 }
 
-PUThread *
-p_uthread_create_internal(PUThreadFunc func,
+uthread_t *
+p_uthread_create_internal(uthread_fn_t func,
   bool joinable,
-  PUThreadPriority prio,
+  uthread_prio_t prio,
   size_t stack_size) {
-  PUThread *ret;
-
+  uthread_t *ret;
   P_UNUSED (stack_size);
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThread))) == NULL)) {
-    P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(uthread_t))) == NULL)) {
+    P_ERROR ("uthread_t::p_uthread_create_internal: failed to allocate memory");
     return NULL;
   }
-
   ret->proxy = func;
-
-  if (P_UNLIKELY ((ret->hdl = spawn_thread((thread_func) pp_uthread_beos_proxy,
-    "",
-    pp_uthread_get_beos_priority(prio),
-    ret)) < B_OK)) {
-    P_ERROR ("PUThread::p_uthread_create_internal: spawn_thread() failed");
+  if (P_UNLIKELY ((
+    ret->hdl = spawn_thread((thread_func) pp_uthread_beos_proxy,
+      "",
+      pp_uthread_get_beos_priority(prio),
+      ret
+    )) < B_OK)) {
+    P_ERROR ("uthread_t::p_uthread_create_internal: spawn_thread() failed");
     p_free(ret);
     return NULL;
   }
-
   if (P_UNLIKELY (resume_thread(ret->hdl) != B_OK)) {
-    P_ERROR ("PUThread::p_uthread_create_internal: resume_thread() failed");
+    P_ERROR ("uthread_t::p_uthread_create_internal: resume_thread() failed");
     p_free(ret);
     return NULL;
   }
-
   ret->base.joinable = joinable;
   ret->base.prio = prio;
-
   return ret;
 }
 
@@ -266,115 +239,103 @@ p_uthread_exit_internal(void) {
 }
 
 void
-p_uthread_wait_internal(PUThread *thread) {
+p_uthread_wait_internal(uthread_t *thread) {
   status_t exit_value;
-
   wait_for_thread(thread->hdl, &exit_value);
 }
 
 void
-p_uthread_free_internal(PUThread *thread) {
+p_uthread_free_internal(uthread_t *thread) {
   p_free(thread);
 }
 
-P_API void
+void
 p_uthread_yield(void) {
   snooze((bigtime_t) 0);
 }
 
-P_API bool
-p_uthread_set_priority(PUThread *thread,
-  PUThreadPriority prio) {
-  if (P_UNLIKELY (thread == NULL))
+bool
+p_uthread_set_priority(uthread_t *thread,
+  uthread_prio_t prio) {
+  if (P_UNLIKELY (thread == NULL)) {
     return false;
-
+  }
   if (set_thread_priority(thread->hdl, pp_uthread_get_beos_priority(prio))
     < B_OK) {
     P_ERROR (
-      "PUThread::p_uthread_create_internal: set_thread_priority() failed");
+      "uthread_t::p_uthread_create_internal: set_thread_priority() failed");
     return false;
   }
-
   thread->base.prio = prio;
-
   return true;
 }
 
-P_API P_HANDLE
+P_HANDLE
 p_uthread_current_id(void) {
   return (P_HANDLE) ((size_t) find_thread(NULL));
 }
 
-P_API PUThreadKey *
-p_uthread_local_new(PDestroyFunc free_func) {
-  PUThreadKey *ret;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PUThreadKey))) == NULL)) {
-    P_ERROR ("PUThread::p_uthread_local_new: failed to allocate memory");
+uthread_key_t *
+p_uthread_local_new(destroy_fn_t free_func) {
+  uthread_key_t *ret;
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(uthread_key_t))) == NULL)) {
+    P_ERROR ("uthread_t::p_uthread_local_new: failed to allocate memory");
     return NULL;
   }
-
   ret->key = -1;
   ret->free_func = free_func;
-
   return ret;
 }
 
-P_API void
-p_uthread_local_free(PUThreadKey *key) {
-  if (P_UNLIKELY (key == NULL))
+void
+p_uthread_local_free(uthread_key_t *key) {
+  if (P_UNLIKELY (key == NULL)) {
     return;
-
+  }
   p_free(key);
 }
 
-P_API ptr_t
-p_uthread_get_local(PUThreadKey *key) {
+ptr_t
+p_uthread_get_local(uthread_key_t *key) {
   int_t tls_key;
-
-  if (P_UNLIKELY (key == NULL))
+  if (P_UNLIKELY (key == NULL)) {
     return NULL;
-
+  }
   tls_key = pp_uthread_get_tls_key(key);
-
-  if (P_LIKELY (tls_key >= 0))
+  if (P_LIKELY (tls_key >= 0)) {
     return tls_get(tls_key);
-
+  }
   return NULL;
 }
 
-P_API void
-p_uthread_set_local(PUThreadKey *key,
+void
+p_uthread_set_local(uthread_key_t *key,
   ptr_t value) {
   int_t tls_key;
-
-  if (P_UNLIKELY (key == NULL))
+  if (P_UNLIKELY (key == NULL)) {
     return;
-
+  }
   tls_key = pp_uthread_get_tls_key(key);
-
-  if (tls_key >= 0)
+  if (tls_key >= 0) {
     tls_set(tls_key, value);
+  }
 }
 
-P_API void
-p_uthread_replace_local(PUThreadKey *key,
+void
+p_uthread_replace_local(uthread_key_t *key,
   ptr_t value) {
   int_t tls_key;
   ptr_t old_value;
-
-  if (P_UNLIKELY (key == NULL))
+  if (P_UNLIKELY (key == NULL)) {
     return;
-
+  }
   tls_key = pp_uthread_get_tls_key(key);
-
-  if (P_UNLIKELY (tls_key < 0))
+  if (P_UNLIKELY (tls_key < 0)) {
     return;
-
+  }
   old_value = tls_get(tls_key);
-
-  if (old_value != NULL && key->free_func != NULL)
+  if (old_value != NULL && key->free_func != NULL) {
     key->free_func(old_value);
-
+  }
   tls_set(tls_key, value);
 }

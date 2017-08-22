@@ -17,37 +17,33 @@
 
 #include "p/mutex.h"
 
-#include <stdlib.h>
-
-struct PMutex_ {
+struct mutex {
   int_t hdl;
 };
 
-P_API PMutex *
+mutex_t *
 p_mutex_new(void) {
   return NULL;
 }
 
-P_API bool
-p_mutex_lock(PMutex *mutex) {
+bool
+p_mutex_lock(mutex_t *mutex) {
   return false;
 }
 
-P_API bool
-p_mutex_trylock(PMutex *mutex) {
+bool
+p_mutex_trylock(mutex_t *mutex) {
   P_UNUSED (mutex);
-
   return false;
 }
 
-P_API bool
-p_mutex_unlock(PMutex *mutex) {
+bool
+p_mutex_unlock(mutex_t *mutex) {
   P_UNUSED (mutex);
-
   return false;
 }
 
-P_API void
-p_mutex_free(PMutex *mutex) {
+void
+p_mutex_free(mutex_t *mutex) {
   P_UNUSED (mutex);
 }

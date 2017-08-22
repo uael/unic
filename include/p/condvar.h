@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/condvar.h
+/*!@file p/condvar.h
  * @brief Condition variable
  * @author Alexander Saprykin
  *
@@ -56,52 +55,45 @@
  * (when a notification from the one thread was emitted prior another thread has
  * been called for waiting), so do not rely on this behavior.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_CONDVAR_H__
-#define P_CONDVAR_H__
+# define P_CONDVAR_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 #include "p/mutex.h"
 
-/** Condition variable opaque data structure. */
-typedef struct p_condvar p_condvar_t;
+/*!@brief Condition variable opaque data structure. */
+typedef struct condvar condvar_t;
 
-/**
- * @brief Creates a new #PCondVariable.
- * @return Pointer to a newly created #PCondVariable structure, or NULL if
+/*!@brief Creates a new #condvar_t.
+ * @return Pointer to a newly created #condvar_t structure, or NULL if
  * failed.
  * @since 0.0.1
  */
-P_API p_condvar_t *p_condvar_new(void);
+P_API condvar_t *
+p_condvar_new(void);
 
-/**
- * @brief Frees #PCondVariable structure.
+/*!@brief Frees #condvar_t structure.
  * @param cond Condtion variable to free.
  * @since 0.0.1
  */
-P_API void p_condvar_free(p_condvar_t *cond);
+P_API void
+p_condvar_free(condvar_t *cond);
 
-/**
- * @brief Waits for a signal on a given condition variable.
+/*!@brief Waits for a signal on a given condition variable.
  * @param cond Condition variable to wait on.
  * @param mutex Locked mutex which will remain locked after waiting.
- * @return TRUE on success, FALSE otherwise.
+ * @return true on success, false otherwise.
  * @since 0.0.1
  *
  * The calling thread will sleep until the signal on @a cond arrived.
  */
-P_API bool p_condvar_wait(p_condvar_t *cond,
-  PMutex *mutex);
+P_API bool
+p_condvar_wait(condvar_t *cond, mutex_t *mutex);
 
-/**
- * @brief Emitts a signal on a given condition variable for one waiting thread.
+/*!@brief Emitts a signal on a given condition variable for one waiting thread.
  * @param cond Condition variable to emit the signal on.
- * @return TRUE on success, FALSE otherwise.
+ * @return true on success, false otherwise.
  * @since 0.0.1
  *
  * After emitting the signal only the one thread waiting for it will be waken
@@ -110,17 +102,18 @@ P_API bool p_condvar_wait(p_condvar_t *cond,
  * enough. Due that any thread can be waken up, even if it has just called
  * p_condvar_wait() while there are other waiting threads.
  */
-P_API bool p_condvar_signal(p_condvar_t *cond);
+P_API bool
+p_condvar_signal(condvar_t *cond);
 
-/**
- * @brief Emitts a signal on a given condition variable for all the waiting
+/*!@brief Emitts a signal on a given condition variable for all the waiting
  * threads.
  * @param cond Condition variable to emit the signal on.
- * @return TRUE on success, FALSE otherwise.
+ * @return true on success, false otherwise.
  * @since 0.0.1
  *
  * After emitting the signal all the threads waiting for it will be waken up.
  */
-P_API bool p_condvar_broadcast(p_condvar_t *cond);
+P_API bool
+p_condvar_broadcast(condvar_t *cond);
 
-#endif /* P_CONDVAR_H__ */
+#endif /* !P_CONDVAR_H__ */

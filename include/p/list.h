@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/list.h
+/*!@file p/list.h
  * @brief Singly linked list
  * @author Alexander Saprykin
  *
@@ -68,28 +67,26 @@
  * If you need to add large amount of nodes at once it is better to prepend them
  * and then reverse the list.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_LIST_H__
-#define P_LIST_H__
+# define P_LIST_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Typedef for a list node. */
-typedef struct PList_ PList;
+/*!@brief Typedef for a list node. */
+typedef struct list list_t;
 
-/** Node for a singly linked list. */
-struct PList_ {
-  ptr_t data;  /**< Pointer to the node data.	*/
-  PList *next;  /**< Next list node.		*/
+/*!@brief Node for a singly linked list. */
+struct list {
+
+  /*!@brief Pointer to the node data. */
+  ptr_t data;
+
+  /*!@brief Next list node. */
+  list_t *next;
 };
 
-/**
- * @brief Appends data to a list.
+/*!@brief Appends data to a list.
  * @param list #PList for appending the data.
  * @param data Data to append.
  * @return Pointer to the updated list in case of success, @a list otherwise.
@@ -98,11 +95,10 @@ struct PList_ {
  * Before appending the first node to the list, @a list argument must be
  * initialized with NULL. Otherwise behavior is unpredictable.
  */
-P_API PList *p_list_append(PList *list,
-  ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
+P_API list_t *
+p_list_append(list_t *list, ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
-/**
- * @brief Removes data from a list.
+/*!@brief Removes data from a list.
  * @param list List to remove the data from.
  * @param data Data to remove.
  * @return Pointer to the updated list in case of success, @a list otherwise.
@@ -112,11 +108,10 @@ P_API PList *p_list_append(PList *list,
  * that node. Note that it removes only the pointer from the @a list, not the
  * data it pointers to, so you need to free the data manually.
  */
-P_API PList *p_list_remove(PList *list,
-  ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
+P_API list_t *
+p_list_remove(list_t *list, ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
-/**
- * @brief Calls a specified function for each list node.
+/*!@brief Calls a specified function for each list node.
  * @param list List to go through.
  * @param func Pointer for the callback function.
  * @param user_data User defined data, may be NULL.
@@ -130,12 +125,10 @@ P_API PList *p_list_remove(PList *list,
  * p_list_free (list);
  * @endcode
  */
-P_API void p_list_foreach(PList *list,
-  PFunc func,
-  ptr_t user_data);
+P_API void
+p_list_foreach(list_t *list, fn_t func, ptr_t user_data);
 
-/**
- * @brief Frees list memory.
+/*!@brief Frees list memory.
  * @param list List to free.
  * @since 0.0.1
  *
@@ -143,28 +136,28 @@ P_API void p_list_foreach(PList *list,
  * pointers stored in the nodes. Don't forget to free all the data stored in the
  * list manually.
  */
-P_API void p_list_free(PList *list);
+P_API void
+p_list_free(list_t *list);
 
-/**
- * @brief Gets the last node from the list.
+/*!@brief Gets the last node from the list.
  * @param list List to get the node from.
  * @return Pointer to the last @a list node, NULL if the @a list is empty.
  * @since 0.0.1
  */
-P_API PList *p_list_last(PList *list);
+P_API list_t *
+p_list_last(list_t *list);
 
-/**
- * @brief Gets the number of list nodes.
+/*!@brief Gets the number of list nodes.
  * @param list List to count nodes in.
  * @return Number of nodes in the @a list.
  * @since 0.0.1
  * @note This function will iterate through the whole @a list, so don't use it
  * in condition of the for-loop or in the code which is repeated a lot of times.
  */
-P_API size_t p_list_length(const PList *list);
+P_API size_t
+p_list_length(const list_t *list);
 
-/**
- * @brief Prepends data to a list.
+/*!@brief Prepends data to a list.
  * @param list #PList for prepending the data.
  * @param data Data to prepend.
  * @return Pointer to the updated list in case of success, @a list otherwise.
@@ -173,15 +166,15 @@ P_API size_t p_list_length(const PList *list);
  * Before prepending the first node to the list, @a list argument must be
  * initialized with NULL. Otherwise behavior is unpredictable.
  */
-P_API PList *p_list_prepend(PList *list,
-  ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
+P_API list_t *
+p_list_prepend(list_t *list, ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
-/**
- * @brief Reverses the list order.
+/*!@brief Reverses the list order.
  * @param list #PList to reverse the order.
  * @return Pointer to the top of the reversed list.
  * @since 0.0.1
  */
-P_API PList *p_list_reverse(PList *list) P_GNUC_WARN_UNUSED_RESULT;
+P_API list_t *
+p_list_reverse(list_t *list) P_GNUC_WARN_UNUSED_RESULT;
 
-#endif /* P_LIST_H__ */
+#endif /* !P_LIST_H__ */

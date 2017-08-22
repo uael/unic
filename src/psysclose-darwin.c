@@ -55,23 +55,26 @@
 /* If the non-cancelable variants of all system calls have already been chosen,
  * do nothing. */
 #if !__DARWIN_NON_CANCELABLE
-#  if __DARWIN_UNIX03 && !__DARWIN_ONLY_UNIX_CONFORMANCE
+# if __DARWIN_UNIX03 && !__DARWIN_ONLY_UNIX_CONFORMANCE
 /* When there's a choice between UNIX2003 and pre-UNIX2003 and UNIX2003 has
  * been chosen. */
 extern int close$NOCANCEL$UNIX2003 (int fd);
-#    define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
-#  elif !__DARWIN_UNIX03 && !__DARWIN_ONLY_UNIX_CONFORMANCE
+#   define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
+# elif !__DARWIN_UNIX03 && !__DARWIN_ONLY_UNIX_CONFORMANCE
+
 /* When there's a choice between UNIX2003 and pre-UNIX2003 and pre-UNIX2003
  * has been chosen. There's no close$NOCANCEL symbol in this case, so use
  * close$NOCANCEL$UNIX2003 as the implementation. It does the same thing that
  * close$NOCANCEL would do. */
-extern int close$NOCANCEL$UNIX2003(int fd);
-#    define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
-#  else
+extern int
+close$NOCANCEL$UNIX2003(int fd);
+
+#   define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
+# else
 /* When only UNIX2003 is supported. */
 extern int close$NOCANCEL (int fd);
-#    define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL
-#  endif
+#   define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL
+# endif
 #endif
 
 #include "psysclose-private.h"

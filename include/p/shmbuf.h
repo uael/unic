@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/shmbuffer.h
+/*!@file p/shmbuffer.h
  * @brief Shared memory buffer
  * @author Alexander Saprykin
  *
@@ -58,23 +57,17 @@
  * closing. Please refer to the #PShm description to understand the intention of
  * this action.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
-#ifndef P_SHMBUFFER_H__
-#define P_SHMBUFFER_H__
+#ifndef P_SHMBUF_H__
+# define P_SHMBUF_H__
 
 #include "p/types.h"
 #include "p/macros.h"
-#include "p/error.h"
+#include "p/err.h"
 
-/** Shared memory buffer opaque data structure. */
-typedef struct PShmBuffer_ PShmBuffer;
+/*!@brief Shared memory buffer opaque data structure. */
+typedef struct shmbuf shmbuf_t;
 
-/**
- * @brief Creates a new #PShmBuffer structure.
+/*!@brief Creates a new #PShmBuffer structure.
  * @param name Unique buffer name.
  * @param size Buffer size in bytes, can't be changed later.
  * @param[out] error Error report object, NULL to ignore.
@@ -85,22 +78,20 @@ typedef struct PShmBuffer_ PShmBuffer;
  * If a buffer with the same name already exists then the @a size will be
  * ignored and the existing buffer will be returned.
  */
-P_API PShmBuffer *p_shm_buffer_new(const byte_t *name,
-  size_t size,
-  p_err_t **error);
+P_API shmbuf_t *
+p_shm_buffer_new(const byte_t *name, size_t size, err_t **error);
 
-/**
- * @brief Frees #PShmBuffer structure.
+/*!@brief Frees #PShmBuffer structure.
  * @param buf #PShmBuffer to free.
  * @since 0.0.1
  *
  * Note that a buffer will be completely removed from the system only after the
  * last instance of the buffer with the same name is closed.
  */
-P_API void p_shm_buffer_free(PShmBuffer *buf);
+P_API void
+p_shm_buffer_free(shmbuf_t *buf);
 
-/**
- * @brief Takes ownership of a shared memory buffer.
+/*!@brief Takes ownership of a shared memory buffer.
  * @param buf Shared memory buffer.
  * @since 0.0.1
  *
@@ -115,10 +106,10 @@ P_API void p_shm_buffer_free(PShmBuffer *buf);
  * space, free space). If not, take ownership of the shared memory buffer object
  * and remove it with the p_shm_buffer_free() call. After that, create it again.
  */
-P_API void p_shm_buffer_take_ownership(PShmBuffer *buf);
+P_API void
+p_shm_buffer_take_ownership(shmbuf_t *buf);
 
-/**
- * @brief Tries to read data from a shared memory buffer.
+/*!@brief Tries to read data from a shared memory buffer.
  * @param buf #PShmBuffer to read data from.
  * @param[out] storage Output buffer to put data in.
  * @param len Storage size in bytes.
@@ -127,13 +118,10 @@ P_API void p_shm_buffer_take_ownership(PShmBuffer *buf);
  * occured.
  * @since 0.0.1
  */
-P_API int_t p_shm_buffer_read(PShmBuffer *buf,
-  ptr_t storage,
-  size_t len,
-  p_err_t **error);
+P_API int_t
+p_shm_buffer_read(shmbuf_t *buf, ptr_t storage, size_t len, err_t **error);
 
-/**
- * @brief Tries to write data into a shared memory buffer.
+/*!@brief Tries to write data into a shared memory buffer.
  * @param buf #PShmBuffer to write data into.
  * @param data Data to write.
  * @param len Data size in bytes.
@@ -144,36 +132,32 @@ P_API int_t p_shm_buffer_read(PShmBuffer *buf,
  * @note Write operation is performed only if the buffer has enough space for
  * the given data size.
  */
-P_API ssize_t p_shm_buffer_write(PShmBuffer *buf,
-  ptr_t data,
-  size_t len,
-  p_err_t **error);
+P_API ssize_t
+p_shm_buffer_write(shmbuf_t *buf, ptr_t data, size_t len, err_t **error);
 
-/**
- * @brief Gets free space in the shared memory buffer.
+/*!@brief Gets free space in the shared memory buffer.
  * @param buf #PShmBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Free space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_API ssize_t p_shm_buffer_get_free_space(PShmBuffer *buf,
-  p_err_t **error);
+P_API ssize_t
+p_shm_buffer_get_free_space(shmbuf_t *buf, err_t **error);
 
-/**
- * @brief Gets used space in the shared memory buffer.
+/*!@brief Gets used space in the shared memory buffer.
  * @param buf #PShmBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Used space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_API ssize_t p_shm_buffer_get_used_space(PShmBuffer *buf,
-  p_err_t **error);
+P_API ssize_t
+p_shm_buffer_get_used_space(shmbuf_t *buf, err_t **error);
 
-/**
- * @brief Clears all data in the buffer and fills it with zeros.
+/*!@brief Clears all data in the buffer and fills it with zeros.
  * @param buf #PShmBuffer to clear.
  * @since 0.0.1
  */
-P_API void p_shm_buffer_clear(PShmBuffer *buf);
+P_API void
+p_shm_buffer_clear(shmbuf_t *buf);
 
-#endif /* P_SHMBUFFER_H__ */
+#endif /* !P_SHMBUF_H__ */

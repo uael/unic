@@ -18,137 +18,140 @@
 #include "p/atomic.h"
 
 #ifdef P_CC_SUN
-#  define PATOMIC_INT_CAST(x) (int_t *) (x)
-#  define PATOMIC_SIZE_CAST(x) (size_t *) (x)
+# define P_ATOMIC_INT_CAST(x) ((int_t *) (x))
+# define P_ATOMIC_SIZE_CAST(x) ((size_t *) (x))
 #else
-#  define PATOMIC_INT_CAST(x) x
-#  define PATOMIC_SIZE_CAST(x) x
+# define P_ATOMIC_INT_CAST(x) x
+# define P_ATOMIC_SIZE_CAST(x) x
 #endif
 
-P_API int_t
+int_t
 p_atomic_int_get(const volatile int_t *atomic) {
-  return (int_t) __atomic_load_4(PATOMIC_INT_CAST (atomic), __ATOMIC_SEQ_CST);
+  return (int_t) __atomic_load_4(P_ATOMIC_INT_CAST(atomic), __ATOMIC_SEQ_CST);
 }
 
-P_API void
-p_atomic_int_set(volatile int_t *atomic,
-  int_t val) {
-  __atomic_store_4(PATOMIC_INT_CAST (atomic), val, __ATOMIC_SEQ_CST);
+void
+p_atomic_int_set(volatile int_t *atomic, int_t val) {
+  __atomic_store_4(P_ATOMIC_INT_CAST(atomic), val, __ATOMIC_SEQ_CST);
 }
 
-P_API void
+void
 p_atomic_int_inc(volatile int_t *atomic) {
   (void) __atomic_fetch_add(atomic, 1, __ATOMIC_SEQ_CST);
 }
 
-P_API bool
+bool
 p_atomic_int_dec_and_test(volatile int_t *atomic) {
   return (__atomic_fetch_sub(atomic, 1, __ATOMIC_SEQ_CST) == 1) ? true : false;
 }
 
-P_API bool
-p_atomic_int_compare_and_exchange(volatile int_t *atomic,
-  int_t oldval,
+bool
+p_atomic_int_compare_and_exchange(volatile int_t *atomic, int_t oldval,
   int_t newval) {
   int_t tmp_int = oldval;
 
-  return (bool) __atomic_compare_exchange_n(PATOMIC_INT_CAST (atomic),
+  return (bool) __atomic_compare_exchange_n(
+    P_ATOMIC_INT_CAST(atomic),
     &tmp_int,
     newval,
     0,
     __ATOMIC_SEQ_CST,
-    __ATOMIC_SEQ_CST);
+    __ATOMIC_SEQ_CST
+  );
 }
 
-P_API int_t
-p_atomic_int_add(volatile int_t *atomic,
-  int_t val) {
+int_t
+p_atomic_int_add(volatile int_t *atomic, int_t val) {
   return (int_t) __atomic_fetch_add(atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_API uint_t
-p_atomic_int_and(volatile uint_t *atomic,
-  uint_t val) {
+uint_t
+p_atomic_int_and(volatile uint_t *atomic, uint_t val) {
   return (uint_t) __atomic_fetch_and(atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_API uint_t
-p_atomic_int_or(volatile uint_t *atomic,
-  uint_t val) {
+uint_t
+p_atomic_int_or(volatile uint_t *atomic, uint_t val) {
   return (uint_t) __atomic_fetch_or(atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_API uint_t
-p_atomic_int_xor(volatile uint_t *atomic,
-  uint_t val) {
+uint_t
+p_atomic_int_xor(volatile uint_t *atomic, uint_t val) {
   return (uint_t) __atomic_fetch_xor(atomic, val, __ATOMIC_SEQ_CST);
 }
 
-P_API ptr_t
+ptr_t
 p_atomic_pointer_get(const volatile void *atomic) {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
   return (ptr_t) __atomic_load_8(
-    PATOMIC_SIZE_CAST ((const volatile size_t *) atomic), __ATOMIC_SEQ_CST);
+    P_ATOMIC_SIZE_CAST((const volatile size_t *) atomic), __ATOMIC_SEQ_CST
+  );
 #else
-  return (ptr_t) __atomic_load_4 (PATOMIC_SIZE_CAST ((const volatile size_t *) atomic), __ATOMIC_SEQ_CST);
+  return (ptr_t) __atomic_load_4(
+    P_ATOMIC_SIZE_CAST((const volatile size_t *) atomic), __ATOMIC_SEQ_CST
+  );
 #endif
 }
 
-P_API void
-p_atomic_pointer_set(volatile void *atomic,
-  ptr_t val) {
+void
+p_atomic_pointer_set(volatile void *atomic, ptr_t val) {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-  __atomic_store_8(PATOMIC_SIZE_CAST ((volatile size_t *) atomic), (size_t) val,
-    __ATOMIC_SEQ_CST);
+  __atomic_store_8(
+    P_ATOMIC_SIZE_CAST((volatile size_t *) atomic), (size_t) val,
+    __ATOMIC_SEQ_CST
+  );
 #else
-  __atomic_store_4 (PATOMIC_SIZE_CAST ((volatile size_t *) atomic), (size_t) val, __ATOMIC_SEQ_CST);
+  __atomic_store_4(
+    P_ATOMIC_SIZE_CAST((volatile size_t *) atomic), (size_t) val,
+    __ATOMIC_SEQ_CST
+  );
 #endif
 }
 
-P_API bool
-p_atomic_pointer_compare_and_exchange(volatile void *atomic,
-  ptr_t oldval,
+bool
+p_atomic_pointer_compare_and_exchange(volatile void *atomic, ptr_t oldval,
   ptr_t newval) {
   ptr_t tmp_pointer = oldval;
 
   return (bool) __atomic_compare_exchange_n(
-    PATOMIC_SIZE_CAST ((volatile size_t *) atomic),
+    P_ATOMIC_SIZE_CAST((volatile size_t *) atomic),
     (size_t *) &tmp_pointer,
     PPOINTER_TO_PSIZE (newval),
     0,
     __ATOMIC_SEQ_CST,
-    __ATOMIC_SEQ_CST);
+    __ATOMIC_SEQ_CST
+  );
 }
 
-P_API ssize_t
-p_atomic_pointer_add(volatile void *atomic,
-  ssize_t val) {
-  return (ssize_t) __atomic_fetch_add((volatile ssize_t *) atomic, val,
-    __ATOMIC_SEQ_CST);
+ssize_t
+p_atomic_pointer_add(volatile void *atomic, ssize_t val) {
+  return (ssize_t) __atomic_fetch_add(
+    (volatile ssize_t *) atomic, val, __ATOMIC_SEQ_CST
+  );
 }
 
-P_API size_t
-p_atomic_pointer_and(volatile void *atomic,
-  size_t val) {
-  return (size_t) __atomic_fetch_and((volatile size_t *) atomic, val,
-    __ATOMIC_SEQ_CST);
+size_t
+p_atomic_pointer_and(volatile void *atomic, size_t val) {
+  return (size_t) __atomic_fetch_and(
+    (volatile size_t *) atomic, val, __ATOMIC_SEQ_CST
+  );
 }
 
-P_API size_t
-p_atomic_pointer_or(volatile void *atomic,
-  size_t val) {
-  return (size_t) __atomic_fetch_or((volatile ssize_t *) atomic, val,
-    __ATOMIC_SEQ_CST);
+size_t
+p_atomic_pointer_or(volatile void *atomic, size_t val) {
+  return (size_t) __atomic_fetch_or(
+    (volatile ssize_t *) atomic, val, __ATOMIC_SEQ_CST
+  );
 }
 
-P_API size_t
-p_atomic_pointer_xor(volatile void *atomic,
-  size_t val) {
-  return (size_t) __atomic_fetch_xor((volatile ssize_t *) atomic, val,
-    __ATOMIC_SEQ_CST);
+size_t
+p_atomic_pointer_xor(volatile void *atomic, size_t val) {
+  return (size_t) __atomic_fetch_xor(
+    (volatile ssize_t *) atomic, val, __ATOMIC_SEQ_CST
+  );
 }
 
-P_API bool
+bool
 p_atomic_is_lock_free(void) {
   return true;
 }

@@ -18,9 +18,6 @@
 #include "p/mem.h"
 #include "pcryptohash-md5.h"
 
-#include <string.h>
-#include <stdlib.h>
-
 struct PHashMD5_ {
   union buf_ {
     ubyte_t buf[64];
@@ -39,26 +36,24 @@ static const ubyte_t pp_crypto_hash_md5_pad[64] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static void pp_crypto_hash_md5_swap_bytes(uint32_t *data, uint_t words);
-static void pp_crypto_hash_md5_process(PHashMD5 *ctx, const uint32_t data[16]);
+static void
+pp_crypto_hash_md5_swap_bytes(uint32_t *data, uint_t words);
+
+static void
+pp_crypto_hash_md5_process(PHashMD5 *ctx, const uint32_t data[16]);
 
 #define P_MD5_ROTL(val, shift) ((val) << (shift) |  (val) >> (32 - (shift)))
-
 #define P_MD5_F(x, y, z) (z ^ (x & (y ^ z)))
 #define P_MD5_G(x, y, z) P_MD5_F (z, x, y)
 #define P_MD5_H(x, y, z) (x ^ y ^ z)
 #define P_MD5_I(x, y, z) (y ^ (x | (~z)))
-
-#define P_MD5_ROUND_0(a, b, c, d, k, i, s)        \
+#define P_MD5_ROUND_0(a, b, c, d, k, i, s) \
   a += P_MD5_F (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
-
-#define P_MD5_ROUND_1(a, b, c, d, k, i, s)        \
+#define P_MD5_ROUND_1(a, b, c, d, k, i, s) \
   a += P_MD5_G (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
-
-#define P_MD5_ROUND_2(a, b, c, d, k, i, s)        \
+#define P_MD5_ROUND_2(a, b, c, d, k, i, s) \
   a += P_MD5_H (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
-
-#define P_MD5_ROUND_3(a, b, c, d, k, i, s)        \
+#define P_MD5_ROUND_3(a, b, c, d, k, i, s) \
   a += P_MD5_I (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
 
 static void
@@ -79,12 +74,10 @@ static void
 pp_crypto_hash_md5_process(PHashMD5 *ctx,
   const uint32_t data[16]) {
   uint32_t A, B, C, D;
-
   A = ctx->hash[0];
   B = ctx->hash[1];
   C = ctx->hash[2];
   D = ctx->hash[3];
-
   P_MD5_ROUND_0 (A, B, C, D, 0, 0xD76AA478, 7);
   P_MD5_ROUND_0 (D, A, B, C, 1, 0xE8C7B756, 12);
   P_MD5_ROUND_0 (C, D, A, B, 2, 0x242070DB, 17);
@@ -101,7 +94,6 @@ pp_crypto_hash_md5_process(PHashMD5 *ctx,
   P_MD5_ROUND_0 (D, A, B, C, 13, 0xFD987193, 12);
   P_MD5_ROUND_0 (C, D, A, B, 14, 0xA679438E, 17);
   P_MD5_ROUND_0 (B, C, D, A, 15, 0x49B40821, 22);
-
   P_MD5_ROUND_1 (A, B, C, D, 1, 0xF61E2562, 5);
   P_MD5_ROUND_1 (D, A, B, C, 6, 0xC040B340, 9);
   P_MD5_ROUND_1 (C, D, A, B, 11, 0x265E5A51, 14);
@@ -118,7 +110,6 @@ pp_crypto_hash_md5_process(PHashMD5 *ctx,
   P_MD5_ROUND_1 (D, A, B, C, 2, 0xFCEFA3F8, 9);
   P_MD5_ROUND_1 (C, D, A, B, 7, 0x676F02D9, 14);
   P_MD5_ROUND_1 (B, C, D, A, 12, 0x8D2A4C8A, 20);
-
   P_MD5_ROUND_2 (A, B, C, D, 5, 0xFFFA3942, 4);
   P_MD5_ROUND_2 (D, A, B, C, 8, 0x8771F681, 11);
   P_MD5_ROUND_2 (C, D, A, B, 11, 0x6D9D6122, 16);
@@ -135,7 +126,6 @@ pp_crypto_hash_md5_process(PHashMD5 *ctx,
   P_MD5_ROUND_2 (D, A, B, C, 12, 0xE6DB99E5, 11);
   P_MD5_ROUND_2 (C, D, A, B, 15, 0x1FA27CF8, 16);
   P_MD5_ROUND_2 (B, C, D, A, 2, 0xC4AC5665, 23);
-
   P_MD5_ROUND_3 (A, B, C, D, 0, 0xF4292244, 6);
   P_MD5_ROUND_3 (D, A, B, C, 7, 0x432AFF97, 10);
   P_MD5_ROUND_3 (C, D, A, B, 14, 0xAB9423A7, 15);
@@ -152,7 +142,6 @@ pp_crypto_hash_md5_process(PHashMD5 *ctx,
   P_MD5_ROUND_3 (D, A, B, C, 11, 0xBD3AF235, 10);
   P_MD5_ROUND_3 (C, D, A, B, 2, 0x2AD7D2BB, 15);
   P_MD5_ROUND_3 (B, C, D, A, 9, 0xEB86D391, 21);
-
   ctx->hash[0] += A;
   ctx->hash[1] += B;
   ctx->hash[2] += C;
@@ -162,10 +151,8 @@ pp_crypto_hash_md5_process(PHashMD5 *ctx,
 void
 p_crypto_hash_md5_reset(PHashMD5 *ctx) {
   memset(ctx->buf.buf, 0, 64);
-
   ctx->len_low = 0;
   ctx->len_high = 0;
-
   ctx->hash[0] = 0x67452301;
   ctx->hash[1] = 0xEFCDAB89;
   ctx->hash[2] = 0x98BADCFE;
@@ -175,12 +162,10 @@ p_crypto_hash_md5_reset(PHashMD5 *ctx) {
 PHashMD5 *
 p_crypto_hash_md5_new(void) {
   PHashMD5 *ret;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashMD5))) == NULL))
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashMD5))) == NULL)) {
     return NULL;
-
+  }
   p_crypto_hash_md5_reset(ret);
-
   return ret;
 }
 
@@ -189,59 +174,48 @@ p_crypto_hash_md5_update(PHashMD5 *ctx,
   const ubyte_t *data,
   size_t len) {
   uint32_t left, to_fill;
-
   left = ctx->len_low & 0x3F;
   to_fill = 64 - left;
-
   ctx->len_low += (uint32_t) len;
-
-  if (ctx->len_low < (uint32_t) len)
+  if (ctx->len_low < (uint32_t) len) {
     ++ctx->len_high;
-
+  }
   if (left && (uint32_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_md5_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_md5_process(ctx, ctx->buf.buf_w);
-
     data += to_fill;
     len -= to_fill;
     left = 0;
   }
-
   while (len >= 64) {
     memcpy(ctx->buf.buf, data, 64);
     pp_crypto_hash_md5_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_md5_process(ctx, ctx->buf.buf_w);
-
     data += 64;
     len -= 64;
   }
-
-  if (len > 0)
+  if (len > 0) {
     memcpy(ctx->buf.buf + left, data, len);
+  }
 }
 
 void
 p_crypto_hash_md5_finish(PHashMD5 *ctx) {
   uint32_t high, low;
   int_t left, last;
-
   left = ctx->len_low & 0x3F;
   last = (left < 56) ? (56 - left) : (120 - left);
-
   low = ctx->len_low << 3;
   high = ctx->len_high << 3
     | ctx->len_low >> 29;
-
-  if (last > 0)
+  if (last > 0) {
     p_crypto_hash_md5_update(ctx, pp_crypto_hash_md5_pad, (size_t) last);
-
+  }
   ctx->buf.buf_w[14] = low;
   ctx->buf.buf_w[15] = high;
-
   pp_crypto_hash_md5_swap_bytes(ctx->buf.buf_w, 14);
   pp_crypto_hash_md5_process(ctx, ctx->buf.buf_w);
-
   pp_crypto_hash_md5_swap_bytes(ctx->hash, 4);
 }
 

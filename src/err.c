@@ -15,833 +15,767 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/error.h"
+#include "p/err.h"
 #include "p/mem.h"
 #include "p/string.h"
 #include "perror-private.h"
 
 #ifndef P_OS_WIN
-#  if defined (P_OS_OS2)
-#    define INCL_DOSERRORS
-#    include <os2.h>
-#    include <sys/socket.h>
-#  endif
-#  include <errno.h>
+# if defined (P_OS_OS2)
+#   define INCL_DOSERRORS
+#   include <os2.h>
+#   include <sys/socket.h>
+# endif
+# include <errno.h>
 #endif
 
-struct p_err {
+struct err {
   int_t code;
   int_t native_code;
   byte_t *message;
 };
 
-p_err_io_t
+err_io_t
 p_error_get_io_from_system(int_t err_code) {
   switch (err_code) {
     case 0:
       return P_ERR_IO_NONE;
 #if defined (P_OS_WIN)
-#  ifdef WSAEADDRINUSE
+# ifdef WSAEADDRINUSE
     case WSAEADDRINUSE:
       return P_ERR_IO_ADDRESS_IN_USE;
-#  endif
-#  ifdef WSAEWOULDBLOCK
+# endif
+# ifdef WSAEWOULDBLOCK
     case WSAEWOULDBLOCK:
       return P_ERR_IO_WOULD_BLOCK;
-#  endif
-#  ifdef WSAEACCES
+# endif
+# ifdef WSAEACCES
     case WSAEACCES:
       return P_ERR_IO_ACCESS_DENIED;
-#  endif
-#  ifdef WSA_INVALID_HANDLE
+# endif
+# ifdef WSA_INVALID_HANDLE
     case WSA_INVALID_HANDLE:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef WSA_INVALID_PARAMETER
+# endif
+# ifdef WSA_INVALID_PARAMETER
     case WSA_INVALID_PARAMETER:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef WSAEBADF
+# endif
+# ifdef WSAEBADF
     case WSAEBADF:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef WSAENOTSOCK
+# endif
+# ifdef WSAENOTSOCK
     case WSAENOTSOCK:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef WSAEINVAL
+# endif
+# ifdef WSAEINVAL
     case WSAEINVAL:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef WSAESOCKTNOSUPPORT
+# endif
+# ifdef WSAESOCKTNOSUPPORT
     case WSAESOCKTNOSUPPORT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-#  ifdef WSAEOPNOTSUPP
+# endif
+# ifdef WSAEOPNOTSUPP
     case WSAEOPNOTSUPP:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-#  ifdef WSAEPFNOSUPPORT
+# endif
+# ifdef WSAEPFNOSUPPORT
     case WSAEPFNOSUPPORT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-#  ifdef WSAEAFNOSUPPORT
+# endif
+# ifdef WSAEAFNOSUPPORT
     case WSAEAFNOSUPPORT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-#  ifdef WSAEPROTONOSUPPORT
+# endif
+# ifdef WSAEPROTONOSUPPORT
     case WSAEPROTONOSUPPORT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-#  ifdef WSAECANCELLED
+# endif
+# ifdef WSAECANCELLED
     case WSAECANCELLED:
       return P_ERR_IO_ABORTED;
-#  endif
-#  ifdef ERROR_ALREADY_EXISTS
+# endif
+# ifdef ERROR_ALREADY_EXISTS
     case ERROR_ALREADY_EXISTS:
       return P_ERR_IO_EXISTS;
-#  endif
-#  ifdef ERROR_FILE_NOT_FOUND
+# endif
+# ifdef ERROR_FILE_NOT_FOUND
     case ERROR_FILE_NOT_FOUND:
       return P_ERR_IO_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_NO_MORE_FILES
+# endif
+# ifdef ERROR_NO_MORE_FILES
     case ERROR_NO_MORE_FILES:
       return P_ERR_IO_NO_MORE;
-#  endif
-#  ifdef ERROR_ACCESS_DENIED
+# endif
+# ifdef ERROR_ACCESS_DENIED
     case ERROR_ACCESS_DENIED:
       return P_ERR_IO_ACCESS_DENIED;
-#  endif
-#  ifdef ERROR_OUTOFMEMORY
+# endif
+# ifdef ERROR_OUTOFMEMORY
     case ERROR_OUTOFMEMORY:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_NOT_ENOUGH_MEMORY
+# endif
+# ifdef ERROR_NOT_ENOUGH_MEMORY
     case ERROR_NOT_ENOUGH_MEMORY:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_INVALID_HANDLE
-#    if !defined(WSA_INVALID_HANDLE) || (ERROR_INVALID_HANDLE != WSA_INVALID_HANDLE)
+# endif
+# ifdef ERROR_INVALID_HANDLE
+#   if !defined(WSA_INVALID_HANDLE) || (ERROR_INVALID_HANDLE != WSA_INVALID_HANDLE)
     case ERROR_INVALID_HANDLE:
       return P_ERR_IO_INVALID_ARGUMENT;
-#    endif
-#  endif
-#  ifdef ERROR_INVALID_PARAMETER
-#    if !defined(WSA_INVALID_PARAMETER) || (ERROR_INVALID_PARAMETER != WSA_INVALID_PARAMETER)
+#   endif
+# endif
+# ifdef ERROR_INVALID_PARAMETER
+# if !defined(WSA_INVALID_PARAMETER) || (ERROR_INVALID_PARAMETER != WSA_INVALID_PARAMETER)
     case ERROR_INVALID_PARAMETER:
       return P_ERR_IO_INVALID_ARGUMENT;
-#    endif
-#  endif
-#  ifdef ERROR_NOT_SUPPORTED
+#   endif
+# endif
+# ifdef ERROR_NOT_SUPPORTED
     case ERROR_NOT_SUPPORTED:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
+# endif
 #elif defined (P_OS_OS2)
-#  ifdef ERROR_FILE_NOT_FOUND
+# ifdef ERROR_FILE_NOT_FOUND
     case ERROR_FILE_NOT_FOUND:
       return P_ERR_IO_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_PATH_NOT_FOUND
+# endif
+# ifdef ERROR_PATH_NOT_FOUND
     case ERROR_PATH_NOT_FOUND:
       return P_ERR_IO_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_TOO_MANY_OPEN_FILES
+# endif
+# ifdef ERROR_TOO_MANY_OPEN_FILES
     case ERROR_TOO_MANY_OPEN_FILES:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_NOT_ENOUGH_MEMORY
+# endif
+# ifdef ERROR_NOT_ENOUGH_MEMORY
     case ERROR_NOT_ENOUGH_MEMORY:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_ACCESS_DENIED
+# endif
+# ifdef ERROR_ACCESS_DENIED
     case ERROR_ACCESS_DENIED:
       return P_ERR_IO_ACCESS_DENIED;
-#  endif
-#  ifdef ERROR_INVALID_HANDLE
+# endif
+# ifdef ERROR_INVALID_HANDLE
     case ERROR_INVALID_HANDLE:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_INVALID_PARAMETER
+# endif
+# ifdef ERROR_INVALID_PARAMETER
     case ERROR_INVALID_PARAMETER:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_INVALID_ADDRESS
+# endif
+# ifdef ERROR_INVALID_ADDRESS
     case ERROR_INVALID_ADDRESS:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_NO_MORE_FILES
+# endif
+# ifdef ERROR_NO_MORE_FILES
     case ERROR_NO_MORE_FILES:
       return P_ERR_IO_NO_MORE;
-#  endif
-#  ifdef ERROR_NOT_SUPPORTED
+# endif
+# ifdef ERROR_NOT_SUPPORTED
     case ERROR_NOT_SUPPORTED:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-#  ifdef ERROR_FILE_EXISTS
+# endif
+# ifdef ERROR_FILE_EXISTS
     case ERROR_FILE_EXISTS:
       return P_ERR_IO_EXISTS;
-#  endif
+# endif
 #else /* !P_OS_WIN && !P_OS_OS2 */
-#  ifdef EACCES
+# ifdef EACCES
     case EACCES:
       return P_ERR_IO_ACCESS_DENIED;
-#  endif
-
-#  ifdef EPERM
+# endif
+# ifdef EPERM
     case EPERM:
       return P_ERR_IO_ACCESS_DENIED;
-#  endif
-
-#  ifdef ENOMEM
+# endif
+# ifdef ENOMEM
     case ENOMEM:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-
-#  ifdef ENOSR
+# endif
+# ifdef ENOSR
     case ENOSR:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-
-#  ifdef ENOBUFS
+# endif
+# ifdef ENOBUFS
     case ENOBUFS:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-
-#  ifdef ENFILE
+# endif
+# ifdef ENFILE
     case ENFILE:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-
-#  ifdef ENOSPC
+# endif
+# ifdef ENOSPC
     case ENOSPC:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-
-#  ifdef EMFILE
+# endif
+# ifdef EMFILE
     case EMFILE:
       return P_ERR_IO_NO_RESOURCES;
-#  endif
-
-#  ifdef EINVAL
+# endif
+# ifdef EINVAL
     case EINVAL:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef EBADF
+# endif
+# ifdef EBADF
     case EBADF:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef ENOTSOCK
+# endif
+# ifdef ENOTSOCK
     case ENOTSOCK:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef EFAULT
+# endif
+# ifdef EFAULT
     case EFAULT:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef EPROTOTYPE
+# endif
+# ifdef EPROTOTYPE
     case EPROTOTYPE:
       return P_ERR_IO_INVALID_ARGUMENT;
-#  endif
-
+# endif
       /* On Linux these errors can have same codes */
-#  if defined(ENOTSUP) && (!defined(EOPNOTSUPP) || ENOTSUP != EOPNOTSUPP)
+# if defined(ENOTSUP) && (!defined(EOPNOTSUPP) || ENOTSUP != EOPNOTSUPP)
     case ENOTSUP:
         return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-
-#  ifdef ENOPROTOOPT
+# endif
+# ifdef ENOPROTOOPT
     case ENOPROTOOPT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-
-#  ifdef EPROTONOSUPPORT
+# endif
+# ifdef EPROTONOSUPPORT
     case EPROTONOSUPPORT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-
-#  ifdef EAFNOSUPPORT
+# endif
+# ifdef EAFNOSUPPORT
     case EAFNOSUPPORT:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-
-#  ifdef EOPNOTSUPP
+# endif
+# ifdef EOPNOTSUPP
     case EOPNOTSUPP:
       return P_ERR_IO_NOT_SUPPORTED;
-#  endif
-
-#  ifdef EADDRNOTAVAIL
+# endif
+# ifdef EADDRNOTAVAIL
     case EADDRNOTAVAIL:
       return P_ERR_IO_NOT_AVAILABLE;
-#  endif
-
-#  ifdef ENETUNREACH
+# endif
+# ifdef ENETUNREACH
     case ENETUNREACH:
       return P_ERR_IO_NOT_AVAILABLE;
-#  endif
-
-#  ifdef ENETDOWN
+# endif
+# ifdef ENETDOWN
     case ENETDOWN:
       return P_ERR_IO_NOT_AVAILABLE;
-#  endif
-
-#  ifdef EHOSTDOWN
+# endif
+# ifdef EHOSTDOWN
     case EHOSTDOWN:
       return P_ERR_IO_NOT_AVAILABLE;
-#  endif
-
-#  ifdef ENONET
+# endif
+# ifdef ENONET
     case ENONET:
       return P_ERR_IO_NOT_AVAILABLE;
-#  endif
-
-#  ifdef EHOSTUNREACH
+# endif
+# ifdef EHOSTUNREACH
     case EHOSTUNREACH:
       return P_ERR_IO_NOT_AVAILABLE;
-#  endif
-
-#  ifdef EINPROGRESS
+# endif
+# ifdef EINPROGRESS
     case EINPROGRESS:
       return P_ERR_IO_IN_PROGRESS;
-#  endif
-
-#  ifdef EALREADY
+# endif
+# ifdef EALREADY
     case EALREADY:
       return P_ERR_IO_IN_PROGRESS;
-#  endif
-
-#  ifdef EISCONN
+# endif
+# ifdef EISCONN
     case EISCONN:
       return P_ERR_IO_CONNECTED;
-#  endif
-
-#  ifdef ECONNREFUSED
+# endif
+# ifdef ECONNREFUSED
     case ECONNREFUSED:
       return P_ERR_IO_CONNECTION_REFUSED;
-#  endif
-
-#  ifdef ENOTCONN
+# endif
+# ifdef ENOTCONN
     case ENOTCONN:
       return P_ERR_IO_NOT_CONNECTED;
-#  endif
-
-#  ifdef ECONNABORTED
+# endif
+# ifdef ECONNABORTED
     case ECONNABORTED:
       return P_ERR_IO_ABORTED;
-#  endif
-
-#  ifdef EADDRINUSE
+# endif
+# ifdef EADDRINUSE
     case EADDRINUSE:
       return P_ERR_IO_ADDRESS_IN_USE;
-#  endif
-
-#  ifdef ETIMEDOUT
+# endif
+# ifdef ETIMEDOUT
     case ETIMEDOUT:
       return P_ERR_IO_TIMED_OUT;
-#  endif
-
-#  ifdef EDQUOT
+# endif
+# ifdef EDQUOT
     case EDQUOT:
       return P_ERR_IO_QUOTA;
-#  endif
-
-#  ifdef EISDIR
+# endif
+# ifdef EISDIR
     case EISDIR:
       return P_ERR_IO_IS_DIRECTORY;
-#  endif
-
-#  ifdef ENOTDIR
+# endif
+# ifdef ENOTDIR
     case ENOTDIR:
       return P_ERR_IO_NOT_DIRECTORY;
-#  endif
-
-#  ifdef EEXIST
+# endif
+# ifdef EEXIST
     case EEXIST:
       return P_ERR_IO_EXISTS;
-#  endif
-
-#  ifdef ENOENT
+# endif
+# ifdef ENOENT
     case ENOENT:
       return P_ERR_IO_NOT_EXISTS;
-#  endif
-
-#  ifdef ENAMETOOLONG
+# endif
+# ifdef ENAMETOOLONG
     case ENAMETOOLONG:
       return P_ERR_IO_NAMETOOLONG;
-#  endif
-
-#  ifdef ENOSYS
+# endif
+# ifdef ENOSYS
     case ENOSYS:
       return P_ERR_IO_NOT_IMPLEMENTED;
-#  endif
-
+# endif
       /* Some magic to deal with EWOULDBLOCK and EAGAIN.
        * Apparently on HP-UX these are actually defined to different values,
        * but on Linux, for example, they are the same. */
-#  if defined(EWOULDBLOCK) && defined(EAGAIN) && EWOULDBLOCK == EAGAIN
+# if defined(EWOULDBLOCK) && defined(EAGAIN) && EWOULDBLOCK == EAGAIN
       /* We have both and they are the same: only emit one case. */
     case EAGAIN:
       return P_ERR_IO_WOULD_BLOCK;
-#  else
+# else
     /* Else: consider each of them separately. This handles both the
      * case of having only one and the case where they are different values. */
-#    ifdef EAGAIN
+#   ifdef EAGAIN
     case EAGAIN:
       return P_ERR_IO_WOULD_BLOCK;
-#    endif
-
-#    ifdef EWOULDBLOCK
+#   endif
+#   ifdef EWOULDBLOCK
     case EWOULDBLOCK:
       return P_ERR_IO_WOULD_BLOCK;
-#    endif
-#  endif
+#   endif
+# endif
 #endif /* !P_OS_WIN */
     default:
       return P_ERR_IO_FAILED;
   }
 }
 
-p_err_io_t
+err_io_t
 p_error_get_last_io(void) {
   return p_error_get_io_from_system(p_error_get_last_system());
 }
 
-p_err_ipc_t
+err_ipc_t
 p_error_get_ipc_from_system(int_t err_code) {
   switch (err_code) {
     case 0:
       return P_ERR_IPC_NONE;
 #ifdef P_OS_WIN
-#  ifdef ERROR_ALREADY_EXISTS
+# ifdef ERROR_ALREADY_EXISTS
     case ERROR_ALREADY_EXISTS:
       return P_ERR_IPC_EXISTS;
-#  endif
-#  ifdef ERROR_SEM_OWNER_DIED
+# endif
+# ifdef ERROR_SEM_OWNER_DIED
     case ERROR_SEM_OWNER_DIED:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_SEM_NOT_FOUND
+# endif
+# ifdef ERROR_SEM_NOT_FOUND
     case ERROR_SEM_NOT_FOUND:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_SEM_USER_LIMIT
+# endif
+# ifdef ERROR_SEM_USER_LIMIT
     case ERROR_SEM_USER_LIMIT:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_TOO_MANY_SEMAPHORES
+# endif
+# ifdef ERROR_TOO_MANY_SEMAPHORES
     case ERROR_TOO_MANY_SEMAPHORES:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_ACCESS_DENIED
+# endif
+# ifdef ERROR_ACCESS_DENIED
     case ERROR_ACCESS_DENIED:
       return P_ERR_IPC_ACCESS;
-#  endif
-#  ifdef ERROR_EXCL_SEM_ALREADY_OWNED
+# endif
+# ifdef ERROR_EXCL_SEM_ALREADY_OWNED
     case ERROR_EXCL_SEM_ALREADY_OWNED:
       return P_ERR_IPC_ACCESS;
-#  endif
-#  ifdef ERROR_TOO_MANY_SEM_REQUESTS
+# endif
+# ifdef ERROR_TOO_MANY_SEM_REQUESTS
     case ERROR_TOO_MANY_SEM_REQUESTS:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_TOO_MANY_POSTS
+# endif
+# ifdef ERROR_TOO_MANY_POSTS
     case ERROR_TOO_MANY_POSTS:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_OUTOFMEMORY
+# endif
+# ifdef ERROR_OUTOFMEMORY
     case ERROR_OUTOFMEMORY:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_NOT_ENOUGH_MEMORY
+# endif
+# ifdef ERROR_NOT_ENOUGH_MEMORY
     case ERROR_NOT_ENOUGH_MEMORY:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_INVALID_HANDLE
+# endif
+# ifdef ERROR_INVALID_HANDLE
     case ERROR_INVALID_HANDLE:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_INVALID_PARAMETER
+# endif
+# ifdef ERROR_INVALID_PARAMETER
     case ERROR_INVALID_PARAMETER:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_NOT_SUPPORTED
+# endif
+# ifdef ERROR_NOT_SUPPORTED
     case ERROR_NOT_SUPPORTED:
       return P_ERR_IPC_NOT_IMPLEMENTED;
-#  endif
+# endif
 #elif defined (P_OS_OS2)
-#  ifdef ERROR_NOT_ENOUGH_MEMORY
+# ifdef ERROR_NOT_ENOUGH_MEMORY
     case ERROR_NOT_ENOUGH_MEMORY:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_INVALID_PARAMETER
+# endif
+# ifdef ERROR_INVALID_PARAMETER
     case ERROR_INVALID_PARAMETER:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_INVALID_NAME
+# endif
+# ifdef ERROR_INVALID_NAME
     case ERROR_INVALID_NAME:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_INVALID_HANDLE
+# endif
+# ifdef ERROR_INVALID_HANDLE
     case ERROR_INVALID_HANDLE:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_FILE_NOT_FOUND
+# endif
+# ifdef ERROR_FILE_NOT_FOUND
     case ERROR_FILE_NOT_FOUND:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_INVALID_ADDRESS
+# endif
+# ifdef ERROR_INVALID_ADDRESS
     case ERROR_INVALID_ADDRESS:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-#  ifdef ERROR_GEN_FAILURE
+# endif
+# ifdef ERROR_GEN_FAILURE
     case ERROR_GEN_FAILURE:
       return P_ERR_IPC_FAILED;
-#  endif
-#  ifdef ERROR_LOCKED
+# endif
+# ifdef ERROR_LOCKED
     case ERROR_LOCKED:
       return P_ERR_IPC_ACCESS;
-#  endif
-#  ifdef ERROR_DUPLICATE_NAME
+# endif
+# ifdef ERROR_DUPLICATE_NAME
     case ERROR_DUPLICATE_NAME:
       return P_ERR_IPC_EXISTS;
-#  endif
-#  ifdef ERROR_TOO_MANY_HANDLES
+# endif
+# ifdef ERROR_TOO_MANY_HANDLES
     case ERROR_TOO_MANY_HANDLES:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_TOO_MANY_OPENS
+# endif
+# ifdef ERROR_TOO_MANY_OPENS
     case ERROR_TOO_MANY_OPENS:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_TOO_MANY_SEM_REQUESTS
+# endif
+# ifdef ERROR_TOO_MANY_SEM_REQUESTS
     case ERROR_TOO_MANY_SEM_REQUESTS:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-#  ifdef ERROR_SEM_OWNER_DIED
+# endif
+# ifdef ERROR_SEM_OWNER_DIED
     case ERROR_SEM_OWNER_DIED:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
-#  ifdef ERROR_NOT_OWNER
+# endif
+# ifdef ERROR_NOT_OWNER
     case ERROR_NOT_OWNER:
       return P_ERR_IPC_ACCESS;
-#  endif
-#  ifdef ERROR_SEM_NOT_FOUND
+# endif
+# ifdef ERROR_SEM_NOT_FOUND
     case ERROR_SEM_NOT_FOUND:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
+# endif
 #else /* !P_OS_WINDOWS && !P_OS_OS2 */
-#  ifdef EACCES
+# ifdef EACCES
     case EACCES:
       return P_ERR_IPC_ACCESS;
-#  endif
-
-#  ifdef EPERM
+# endif
+# ifdef EPERM
     case EPERM:
       return P_ERR_IPC_ACCESS;
-#  endif
-
-#  ifdef EEXIST
+# endif
+# ifdef EEXIST
     case EEXIST:
       return P_ERR_IPC_EXISTS;
-#  endif
-
-#  ifdef E2BIG
+# endif
+# ifdef E2BIG
     case E2BIG:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef EFAULT
+# endif
+# ifdef EFAULT
     case EFAULT:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef EFBIG
+# endif
+# ifdef EFBIG
     case EFBIG:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef EINVAL
+# endif
+# ifdef EINVAL
     case EINVAL:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef ELOOP
+# endif
+# ifdef ELOOP
     case ELOOP:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef ERANGE
+# endif
+# ifdef ERANGE
     case ERANGE:
       return P_ERR_IPC_INVALID_ARGUMENT;
-#  endif
-
-#  ifdef ENOMEM
+# endif
+# ifdef ENOMEM
     case ENOMEM:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-
-#  ifdef EMFILE
+# endif
+# ifdef EMFILE
     case EMFILE:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-
-#  ifdef ENFILE
+# endif
+# ifdef ENFILE
     case ENFILE:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-
-#  ifdef ENOSPC
+# endif
+# ifdef ENOSPC
     case ENOSPC:
       return P_ERR_IPC_NO_RESOURCES;
-#  endif
-
-#  ifdef EIDRM
+# endif
+# ifdef EIDRM
     case EIDRM:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
-
-#  ifdef ENOENT
+# endif
+# ifdef ENOENT
     case ENOENT:
       return P_ERR_IPC_NOT_EXISTS;
-#  endif
-
-#  ifdef EOVERFLOW
+# endif
+# ifdef EOVERFLOW
     case EOVERFLOW:
       return P_ERR_IPC_OVERFLOW;
-#  endif
-
-#  ifdef ENOSYS
+# endif
+# ifdef ENOSYS
     case ENOSYS:
       return P_ERR_IPC_NOT_IMPLEMENTED;
-#  endif
-
-#  ifdef EDEADLK
+# endif
+# ifdef EDEADLK
     case EDEADLK:
       return P_ERR_IPC_DEADLOCK;
-#  endif
-
-#  ifdef ENAMETOOLONG
+# endif
+# ifdef ENAMETOOLONG
     case ENAMETOOLONG:
       return P_ERR_IPC_NAMETOOLONG;
-#  endif
+# endif
 #endif /* !P_OS_WIN */
     default:
       return P_ERR_IPC_FAILED;
   }
 }
 
-p_err_ipc_t
+err_ipc_t
 p_error_get_last_ipc(void) {
   return p_error_get_ipc_from_system(p_error_get_last_system());
 }
 
-P_API p_err_t *
+err_t *
 p_error_new(void) {
-  p_err_t *ret;
+  err_t *ret;
 
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_err_t))) == NULL))
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(err_t))) == NULL)) {
     return NULL;
-
+  }
   return ret;
 }
 
-P_API p_err_t *
-p_error_new_literal(int_t code,
-  int_t native_code,
-  const byte_t *message) {
-  p_err_t *ret;
+err_t *
+p_error_new_literal(int_t code, int_t native_code, const byte_t *message) {
+  err_t *ret;
 
-  if (P_UNLIKELY ((ret = p_error_new()) == NULL))
+  if (P_UNLIKELY ((ret = p_error_new()) == NULL)) {
     return NULL;
-
+  }
   ret->code = code;
   ret->native_code = native_code;
   ret->message = p_strdup(message);
-
   return ret;
 }
 
-P_API const byte_t *
-p_error_get_message(p_err_t *error) {
-  if (P_UNLIKELY (error == NULL))
+const byte_t *
+p_error_get_message(err_t *err) {
+  if (P_UNLIKELY (err == NULL)) {
     return NULL;
-
-  return error->message;
+  }
+  return err->message;
 }
 
-P_API int_t
-p_error_get_code(p_err_t *error) {
-  if (P_UNLIKELY (error == NULL))
+int_t
+p_error_get_code(err_t *err) {
+  if (P_UNLIKELY (err == NULL)) {
     return 0;
-
-  return error->code;
+  }
+  return err->code;
 }
 
-P_API int_t
-p_error_get_native_code(p_err_t *error) {
-  if (P_UNLIKELY (error == NULL))
+int_t
+p_error_get_native_code(err_t *err) {
+  if (P_UNLIKELY (err == NULL)) {
     return 0;
-
-  return error->native_code;
+  }
+  return err->native_code;
 }
 
-P_API p_err_domain_t
-p_error_get_domain(p_err_t *error) {
-  if (P_UNLIKELY (error == NULL))
+err_domain_t
+p_error_get_domain(err_t *err) {
+  if (P_UNLIKELY (err == NULL)) {
     return P_ERR_DOMAIN_NONE;
-
-  if (error->code >= (int_t) P_ERR_DOMAIN_IPC)
+  }
+  if (err->code >= (int_t) P_ERR_DOMAIN_IPC) {
     return P_ERR_DOMAIN_IPC;
-  else if (error->code >= (int_t) P_ERR_DOMAIN_IO)
+  } else if (err->code >= (int_t) P_ERR_DOMAIN_IO) {
     return P_ERR_DOMAIN_IO;
-  else
+  } else {
     return P_ERR_DOMAIN_NONE;
+  }
 }
 
-P_API p_err_t *
-p_error_copy(p_err_t *error) {
-  p_err_t *ret;
+err_t *
+p_error_copy(err_t *err) {
+  err_t *ret;
 
-  if (P_UNLIKELY (error == NULL))
+  if (P_UNLIKELY (err == NULL)) {
     return NULL;
-
-  if (P_UNLIKELY ((ret = p_error_new_literal(error->code,
-    error->native_code,
-    error->message)) == NULL))
+  }
+  if (P_UNLIKELY ((
+    ret = p_error_new_literal(
+      err->code,
+      err->native_code,
+      err->message
+    )) == NULL)) {
     return NULL;
-
+  }
   return ret;
 }
 
-P_API void
-p_error_set_error(p_err_t *error,
-  int_t code,
-  int_t native_code,
-  const byte_t *message) {
-  if (P_UNLIKELY (error == NULL))
+void
+p_error_set_error(err_t *err, int_t code, int_t ncode, const byte_t *msg) {
+  if (P_UNLIKELY (err == NULL)) {
     return;
-
-  if (error->message != NULL)
-    p_free(error->message);
-
-  error->code = code;
-  error->native_code = native_code;
-  error->message = p_strdup(message);
+  }
+  if (err->message != NULL) {
+    p_free(err->message);
+  }
+  err->code = code;
+  err->native_code = ncode;
+  err->message = p_strdup(msg);
 }
 
-P_API void
-p_error_set_error_p(p_err_t **error,
-  int_t code,
-  int_t native_code,
-  const byte_t *message) {
-  if (error == NULL || *error != NULL)
+void
+p_error_set_error_p(err_t **err, int_t code, int_t ncode, const byte_t *msg) {
+  if (err == NULL || *err != NULL) {
     return;
-
-  *error = p_error_new_literal(code, native_code, message);
+  }
+  *err = p_error_new_literal(code, ncode, msg);
 }
 
-P_API void
-p_error_set_code(p_err_t *error,
-  int_t code) {
-  if (P_UNLIKELY (error == NULL))
+void
+p_error_set_code(err_t *err, int_t code) {
+  if (P_UNLIKELY (err == NULL)) {
     return;
-
-  error->code = code;
+  }
+  err->code = code;
 }
 
-P_API void
-p_error_set_native_code(p_err_t *error,
-  int_t native_code) {
-  if (P_UNLIKELY (error == NULL))
+void
+p_error_set_native_code(err_t *err, int_t ncode) {
+  if (P_UNLIKELY (err == NULL)) {
     return;
-
-  error->native_code = native_code;
+  }
+  err->native_code = ncode;
 }
 
-P_API void
-p_error_set_message(p_err_t *error,
-  const byte_t *message) {
-  if (P_UNLIKELY (error == NULL))
+void
+p_error_set_message(err_t *err, const byte_t *msg) {
+  if (P_UNLIKELY (err == NULL)) {
     return;
-
-  if (error->message != NULL)
-    p_free(error->message);
-
-  error->message = p_strdup(message);
+  }
+  if (err->message != NULL) {
+    p_free(err->message);
+  }
+  err->message = p_strdup(msg);
 }
 
-P_API void
-p_error_clear(p_err_t *error) {
-  if (P_UNLIKELY (error == NULL))
+void
+p_error_clear(err_t *err) {
+  if (P_UNLIKELY (err == NULL)) {
     return;
-
-  if (error->message != NULL)
-    p_free(error->message);
-
-  error->message = NULL;
-  error->code = 0;
-  error->native_code = 0;
+  }
+  if (err->message != NULL) {
+    p_free(err->message);
+  }
+  err->message = NULL;
+  err->code = 0;
+  err->native_code = 0;
 }
 
-P_API void
-p_error_free(p_err_t *error) {
-  if (P_UNLIKELY (error == NULL))
+void
+p_error_free(err_t *err) {
+  if (P_UNLIKELY (err == NULL)) {
     return;
-
-  if (error->message != NULL)
-    p_free(error->message);
-
-  p_free(error);
+  }
+  if (err->message != NULL) {
+    p_free(err->message);
+  }
+  p_free(err);
 }
 
-P_API int_t
+int_t
 p_error_get_last_system(void) {
 #ifdef P_OS_WIN
-  return (int_t) GetLastError ();
+  return (int_t) GetLastError();
 #else
-#  ifdef P_OS_VMS
+# ifdef P_OS_VMS
   int_t error_code = errno;
 
   if (error_code == EVMSERR)
     return vaxc$errno;
   else
     return error_code;
-#  else
+# else
   return errno;
-#  endif
+# endif
 #endif
 }
 
-P_API int_t
+int_t
 p_error_get_last_net(void) {
 #if defined (P_OS_WIN)
-  return WSAGetLastError ();
+  return WSAGetLastError();
 #elif defined (P_OS_OS2)
-  return sock_errno ();
+  return sock_errno();
 #else
   return p_error_get_last_system();
 #endif
 }
 
-P_API void
+void
 p_error_set_last_system(int_t code) {
 #ifdef P_OS_WIN
-  SetLastError (code);
+  SetLastError((DWORD) code);
 #else
   errno = code;
 #endif
 }
 
-P_API void
+void
 p_error_set_last_net(int_t code) {
 #if defined (P_OS_WIN)
-  WSASetLastError (code);
+  WSASetLastError(code);
 #elif defined (P_OS_OS2)
-  P_UNUSED (code);
+  P_UNUSED(code);
 #else
   errno = code;
 #endif

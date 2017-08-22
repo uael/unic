@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/mem.h
+/*!@file p/mem.h
  * @brief Memory management
  * @author Alexander Saprykin
  *
@@ -55,58 +54,58 @@
  * unify the behaviour, on OS/2 all memory mapped allocations are already
  * committed to the backing storage.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_MEM_H__
-#define P_MEM_H__
+# define P_MEM_H__
 
 #include "types.h"
 #include "macros.h"
-#include "error.h"
+#include "err.h"
 
-/** Memory management table. */
-typedef struct PMemVTable_ {
-  ptr_t (*malloc)(size_t n_bytes);  /**< malloc() implementation.	*/
-  ptr_t (*realloc)(ptr_t mem,
-    size_t n_bytes);  /**< realloc() implementation.	*/
-  void (*free)(ptr_t mem);    /**< free() implementation.	*/
-} PMemVTable;
+typedef struct mem_vtable mem_vtable_t;
 
-/**
- * @brief Allocates a memory block for the specified number of bytes.
+/*!@brief Memory management table. */
+struct mem_vtable {
+
+  /*!@brief malloc() implementation. */
+  ptr_t (*malloc)(size_t n_bytes);
+
+  /*!@brief realloc() implementation. */
+  ptr_t (*realloc)(ptr_t mem, size_t n_bytes);
+
+  /*!@brief free() implementation. */
+  void (*free)(ptr_t mem);
+};
+
+/*!@brief Allocates a memory block for the specified number of bytes.
  * @param n_bytes Size of the memory block in bytes.
  * @return Pointer to a newly allocated memory block in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */
-P_API ptr_t p_malloc(size_t n_bytes);
+P_API ptr_t
+p_malloc(size_t n_bytes);
 
-/**
- * @brief Allocates a memory block for the specified number of bytes and fills
+/*!@brief Allocates a memory block for the specified number of bytes and fills
  * it with zeros.
  * @param n_bytes Size of the memory block in bytes.
  * @return Pointer to a newly allocated memory block filled with zeros in case
  * of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ptr_t p_malloc0(size_t n_bytes);
+P_API ptr_t
+p_malloc0(size_t n_bytes);
 
-/**
- * @brief Changes the memory block size.
+/*!@brief Changes the memory block size.
  * @param mem Pointer to the memory block.
  * @param n_bytes New size for @a mem block.
  * @return Pointer to a newlly allocated memory block in case of success (if
  * @a mem is NULL then it acts like p_malloc()), NULL otherwise.
  * @since 0.0.1
  */
-P_API ptr_t p_realloc(ptr_t mem,
-  size_t n_bytes);
+P_API ptr_t
+p_realloc(ptr_t mem, size_t n_bytes);
 
-/**
- * @brief Frees a memory block by its pointer.
+/*!@brief Frees a memory block by its pointer.
  * @param mem Pointer to the memory block to free.
  * @since 0.0.1
  *
@@ -116,10 +115,10 @@ P_API ptr_t p_realloc(ptr_t mem,
  *
  * Checks the pointer for the NULL value.
  */
-P_API void p_free(ptr_t mem);
+P_API void
+p_free(ptr_t mem);
 
-/**
- * @brief Sets custom memory management routines.
+/*!@brief Sets custom memory management routines.
  * @param table Table of the memory routines to use.
  * @return TRUE if the table was accepted, FALSE otherwise.
  * @note All members of @a table must be non-NULL.
@@ -132,19 +131,19 @@ P_API void p_free(ptr_t mem);
  * In most cases you do not need to use this function. Use it only when you know
  * what are you doing!
  */
-P_API bool p_mem_set_vtable(const PMemVTable *table);
+P_API bool
+p_mem_set_vtable(const mem_vtable_t *table);
 
-/**
- * @brief Restores system memory management routines.
+/*!@brief Restores system memory management routines.
  * @note This call is not thread-safe.
  * @since 0.0.1
  *
  * The following system routines are restored: malloc(), free(), realloc().
  */
-P_API void p_mem_restore_vtable(void);
+P_API void
+p_mem_restore_vtable(void);
 
-/**
- * @brief Gets a memory mapped block from the system.
+/*!@brief Gets a memory mapped block from the system.
  * @param n_bytes Size of the memory block in bytes.
  * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to the allocated memory block in case of success, NULL
@@ -160,11 +159,10 @@ P_API void p_mem_restore_vtable(void);
  * @warning On OS/2 returned memory is mapped to physical storage and can be
  * swapped.
  */
-P_API ptr_t p_mem_mmap(size_t n_bytes,
-  p_err_t **error);
+P_API ptr_t
+p_mem_mmap(size_t n_bytes, err_t **error);
 
-/**
- * @brief Unmaps memory back to the system.
+/*!@brief Unmaps memory back to the system.
  * @param mem Pointer to a memory block previously allocated using the
  * p_mem_mmap() call.
  * @param n_bytes Size of the memory block in bytes.
@@ -172,8 +170,7 @@ P_API ptr_t p_mem_mmap(size_t n_bytes,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_mem_munmap(ptr_t mem,
-  size_t n_bytes,
-  p_err_t **error);
+P_API bool
+p_mem_munmap(ptr_t mem, size_t n_bytes, err_t **error);
 
-#endif /* P_MEM_H__ */
+#endif /* !P_MEM_H__ */

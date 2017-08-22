@@ -18,62 +18,54 @@
 #include "p/mem.h"
 #include "p/mutex.h"
 
-#include <stdlib.h>
-
 typedef CRITICAL_SECTION mutex_hdl;
 
-struct PMutex_ {
+struct mutex {
   mutex_hdl hdl;
 };
 
-P_API PMutex *
+mutex_t *
 p_mutex_new(void) {
-  PMutex *ret;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PMutex))) == NULL)) {
-    P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
+  mutex_t *ret;
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(mutex_t))) == NULL)) {
+    P_ERROR ("mutex_t::p_mutex_new: failed to allocate memory");
     return NULL;
   }
-
   InitializeCriticalSection(&ret->hdl);
-
   return ret;
 }
 
-P_API bool
-p_mutex_lock(PMutex *mutex) {
-  if (P_UNLIKELY (mutex == NULL))
+bool
+p_mutex_lock(mutex_t *mutex) {
+  if (P_UNLIKELY (mutex == NULL)) {
     return false;
-
+  }
   EnterCriticalSection(&mutex->hdl);
-
   return true;
 }
 
-P_API bool
-p_mutex_trylock(PMutex *mutex) {
-  if (P_UNLIKELY (mutex == NULL))
+bool
+p_mutex_trylock(mutex_t *mutex) {
+  if (P_UNLIKELY (mutex == NULL)) {
     return false;
-
+  }
   return TryEnterCriticalSection(&mutex->hdl) != 0 ? true : false;
 }
 
-P_API bool
-p_mutex_unlock(PMutex *mutex) {
-  if (P_UNLIKELY (mutex == NULL))
+bool
+p_mutex_unlock(mutex_t *mutex) {
+  if (P_UNLIKELY (mutex == NULL)) {
     return false;
-
+  }
   LeaveCriticalSection(&mutex->hdl);
-
   return true;
 }
 
-P_API void
-p_mutex_free(PMutex *mutex) {
-  if (P_UNLIKELY (mutex == NULL))
+void
+p_mutex_free(mutex_t *mutex) {
+  if (P_UNLIKELY (mutex == NULL)) {
     return;
-
+  }
   DeleteCriticalSection(&mutex->hdl);
-
   p_free(mutex);
 }

@@ -30,21 +30,38 @@ typedef struct PTreeRBNode_ {
   PTreeRBColor color;
 } PTreeRBNode;
 
-static bool pp_tree_rb_is_black(PTreeRBNode *node);
-static bool pp_tree_rb_is_red(PTreeRBNode *node);
-static PTreeRBNode *pp_tree_rb_get_gparent(PTreeRBNode *node);
-static PTreeRBNode *pp_tree_rb_get_uncle(PTreeRBNode *node);
-static PTreeRBNode *pp_tree_rb_get_sibling(PTreeRBNode *node);
-static void pp_tree_rb_rotate_left(PTreeRBNode *node, PTreeBaseNode **root);
-static void pp_tree_rb_rotate_right(PTreeRBNode *node, PTreeBaseNode **root);
-static void pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root);
-static void pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root);
+static bool
+pp_tree_rb_is_black(PTreeRBNode *node);
+
+static bool
+pp_tree_rb_is_red(PTreeRBNode *node);
+
+static PTreeRBNode *
+pp_tree_rb_get_gparent(PTreeRBNode *node);
+
+static PTreeRBNode *
+pp_tree_rb_get_uncle(PTreeRBNode *node);
+
+static PTreeRBNode *
+pp_tree_rb_get_sibling(PTreeRBNode *node);
+
+static void
+pp_tree_rb_rotate_left(PTreeRBNode *node, PTreeBaseNode **root);
+
+static void
+pp_tree_rb_rotate_right(PTreeRBNode *node, PTreeBaseNode **root);
+
+static void
+pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root);
+
+static void
+pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root);
 
 static bool
 pp_tree_rb_is_black(PTreeRBNode *node) {
-  if (node == NULL)
+  if (node == NULL) {
     return true;
-
+  }
   return ((node->color) & P_TREE_RB_COLOR_BLACK) > 0 ? true : false;
 }
 
@@ -61,78 +78,72 @@ pp_tree_rb_get_gparent(PTreeRBNode *node) {
 static PTreeRBNode *
 pp_tree_rb_get_uncle(PTreeRBNode *node) {
   PTreeRBNode *gparent = pp_tree_rb_get_gparent(node);
-
-  if ((PTreeRBNode *) gparent->base.left == node->parent)
+  if ((PTreeRBNode *) gparent->base.left == node->parent) {
     return (PTreeRBNode *) gparent->base.right;
-  else
+  } else {
     return (PTreeRBNode *) gparent->base.left;
+  }
 }
 
 static PTreeRBNode *
 pp_tree_rb_get_sibling(PTreeRBNode *node) {
-  if (node->parent->base.left == (PTreeBaseNode *) node)
+  if (node->parent->base.left == (PTreeBaseNode *) node) {
     return (PTreeRBNode *) node->parent->base.right;
-  else
+  } else {
     return (PTreeRBNode *) node->parent->base.left;
+  }
 }
 
 static void
 pp_tree_rb_rotate_left(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeBaseNode *tmp_node;
-
   tmp_node = node->base.right;
-
   if (P_LIKELY (node->parent != NULL)) {
-    if (node->parent->base.left == (PTreeBaseNode *) node)
+    if (node->parent->base.left == (PTreeBaseNode *) node) {
       node->parent->base.left = tmp_node;
-    else
+    } else {
       node->parent->base.right = tmp_node;
+    }
   }
-
   node->base.right = tmp_node->left;
-
-  if (tmp_node->left != NULL)
+  if (tmp_node->left != NULL) {
     ((PTreeRBNode *) tmp_node->left)->parent = node;
-
+  }
   tmp_node->left = (PTreeBaseNode *) node;
   ((PTreeRBNode *) tmp_node)->parent = node->parent;
   node->parent = (PTreeRBNode *) tmp_node;
-
-  if (P_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL))
+  if (P_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL)) {
     *root = tmp_node;
+  }
 }
 
 static void
 pp_tree_rb_rotate_right(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeBaseNode *tmp_node;
-
   tmp_node = node->base.left;
-
   if (P_LIKELY (node->parent != NULL)) {
-    if (node->parent->base.left == (PTreeBaseNode *) node)
+    if (node->parent->base.left == (PTreeBaseNode *) node) {
       node->parent->base.left = tmp_node;
-    else
+    } else {
       node->parent->base.right = tmp_node;
+    }
   }
-
   node->base.left = tmp_node->right;
-
-  if (tmp_node->right != NULL)
+  if (tmp_node->right != NULL) {
     ((PTreeRBNode *) tmp_node->right)->parent = node;
-
+  }
   tmp_node->right = (PTreeBaseNode *) node;
   ((PTreeRBNode *) tmp_node)->parent = node->parent;
   node->parent = (PTreeRBNode *) tmp_node;
-
-  if (P_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL))
+  if (P_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL)) {
     *root = tmp_node;
+  }
 }
 
 static void
 pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeRBNode *uncle;
   PTreeRBNode *gparent;
-
   while (true) {
     /* Case 1: We are at the root  */
     if (P_UNLIKELY (node->parent == NULL)) {
@@ -141,9 +152,9 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
     }
 
     /* Case 2: We have a black parent */
-    if (pp_tree_rb_is_black(node->parent) == true)
+    if (pp_tree_rb_is_black(node->parent) == true) {
       break;
-
+    }
     uncle = pp_tree_rb_get_uncle(node);
     gparent = pp_tree_rb_get_gparent(node);
 
@@ -164,7 +175,6 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
       node = gparent;
       continue;
     }
-
     if (node->parent == (PTreeRBNode *) gparent->base.left) {
       if (node == (PTreeRBNode *) node->parent->base.right) {
         /* Case 4a: Left rotate at parent
@@ -172,14 +182,12 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
          *      G             G
          *     / \           / \
          *    p   U  -->    n   U
-         *     \           /
+         * \           /
          *      n         p
          */
         pp_tree_rb_rotate_left(node->parent, root);
-
         node = (PTreeRBNode *) node->base.left;
       }
-
       gparent->color = P_TREE_RB_COLOR_RED;
       node->parent->color = P_TREE_RB_COLOR_BLACK;
 
@@ -188,26 +196,22 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
        *        G           P
        *       / \         / \
        *      p   U  -->  n   g
-       *     /                 \
+       *     / \
        *    n                   U
        */
       pp_tree_rb_rotate_right(gparent, root);
-
       break;
     } else {
       if (node == (PTreeRBNode *) node->parent->base.left) {
         /* Case 4b: Right rotate at parent */
         pp_tree_rb_rotate_right(node->parent, root);
-
         node = (PTreeRBNode *) node->base.right;
       }
-
       gparent->color = P_TREE_RB_COLOR_RED;
       node->parent->color = P_TREE_RB_COLOR_BLACK;
 
       /* Case 5b: Left rotate at gparent*/
       pp_tree_rb_rotate_left(gparent, root);
-
       break;
     }
   }
@@ -216,14 +220,12 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
 static void
 pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeRBNode *sibling;
-
   while (true) {
     /* Case 1: We are at the root */
-    if (P_UNLIKELY (node->parent == NULL))
+    if (P_UNLIKELY (node->parent == NULL)) {
       break;
-
+    }
     sibling = pp_tree_rb_get_sibling(node);
-
     if (pp_tree_rb_is_red(sibling) == true) {
       /*
        * Case 2: Left (right) rotate at parent
@@ -236,12 +238,11 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
        */
       node->parent->color = P_TREE_RB_COLOR_RED;
       sibling->color = P_TREE_RB_COLOR_BLACK;
-
-      if ((PTreeBaseNode *) node == node->parent->base.left)
+      if ((PTreeBaseNode *) node == node->parent->base.left) {
         pp_tree_rb_rotate_left(node->parent, root);
-      else
+      } else {
         pp_tree_rb_rotate_right(node->parent, root);
-
+      }
       sibling = pp_tree_rb_get_sibling(node);
     }
 
@@ -257,7 +258,6 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
     if (pp_tree_rb_is_black((PTreeRBNode *) sibling->base.left) == true &&
       pp_tree_rb_is_black((PTreeRBNode *) sibling->base.right) == true) {
       sibling->color = P_TREE_RB_COLOR_RED;
-
       if (pp_tree_rb_is_black(node->parent) == true) {
         node = node->parent;
         continue;
@@ -273,26 +273,22 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
      *   (p)           (p)
      *   / \           / \
      *  N   S    -->  N   Sl
-     *     / \             \
+     *     / \ \
      *    sl  Sr            s
-     *                       \
+     * \
      *                        Sr
      */
     if ((PTreeBaseNode *) node == node->parent->base.left &&
       pp_tree_rb_is_black((PTreeRBNode *) sibling->base.right) == true) {
       sibling->color = P_TREE_RB_COLOR_RED;
       ((PTreeRBNode *) sibling->base.left)->color = P_TREE_RB_COLOR_BLACK;
-
       pp_tree_rb_rotate_right(sibling, root);
-
       sibling = pp_tree_rb_get_sibling(node);
     } else if ((PTreeBaseNode *) node == node->parent->base.right &&
       pp_tree_rb_is_black((PTreeRBNode *) sibling->base.left) == true) {
       sibling->color = P_TREE_RB_COLOR_RED;
       ((PTreeRBNode *) sibling->base.right)->color = P_TREE_RB_COLOR_BLACK;
-
       pp_tree_rb_rotate_left(sibling, root);
-
       sibling = pp_tree_rb_get_sibling(node);
     }
 
@@ -307,7 +303,6 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
      */
     sibling->color = node->parent->color;
     node->parent->color = P_TREE_RB_COLOR_BLACK;
-
     if ((PTreeBaseNode *) node == node->parent->base.left) {
       ((PTreeRBNode *) sibling->base.right)->color = P_TREE_RB_COLOR_BLACK;
       pp_tree_rb_rotate_left(node->parent, root);
@@ -315,116 +310,105 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
       ((PTreeRBNode *) sibling->base.left)->color = P_TREE_RB_COLOR_BLACK;
       pp_tree_rb_rotate_right(node->parent, root);
     }
-
     break;
   }
 }
 
 bool
 p_tree_rb_insert(PTreeBaseNode **root_node,
-  PCompareDataFunc compare_func,
+  cmp_data_fn_t compare_func,
   ptr_t data,
-  PDestroyFunc key_destroy_func,
-  PDestroyFunc value_destroy_func,
+  destroy_fn_t key_destroy_func,
+  destroy_fn_t value_destroy_func,
   ptr_t key,
   ptr_t value) {
   PTreeBaseNode **cur_node;
   PTreeBaseNode *parent_node;
   int_t cmp_result;
-
   cur_node = root_node;
   parent_node = *root_node;
 
   /* Find where to insert the node */
   while (*cur_node != NULL) {
     cmp_result = compare_func(key, (*cur_node)->key, data);
-
     if (cmp_result < 0) {
       parent_node = *cur_node;
       cur_node = &(*cur_node)->left;
     } else if (cmp_result > 0) {
       parent_node = *cur_node;
       cur_node = &(*cur_node)->right;
-    } else
+    } else {
       break;
+    }
   }
 
   /* If we have existing one - replace a key-value pair */
   if (*cur_node != NULL) {
-    if (key_destroy_func != NULL)
+    if (key_destroy_func != NULL) {
       key_destroy_func((*cur_node)->key);
-
-    if (value_destroy_func != NULL)
+    }
+    if (value_destroy_func != NULL) {
       value_destroy_func((*cur_node)->value);
-
+    }
     (*cur_node)->key = key;
     (*cur_node)->value = value;
-
     return false;
   }
-
-  if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeRBNode))) == NULL))
+  if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeRBNode))) == NULL)) {
     return false;
-
+  }
   (*cur_node)->key = key;
   (*cur_node)->value = value;
-
   ((PTreeRBNode *) *cur_node)->color = P_TREE_RB_COLOR_RED;
   ((PTreeRBNode *) *cur_node)->parent = (PTreeRBNode *) parent_node;
 
   /* Balance the tree */
   pp_tree_rb_balance_insert((PTreeRBNode *) *cur_node, root_node);
-
   return true;
 }
 
 bool
 p_tree_rb_remove(PTreeBaseNode **root_node,
-  PCompareDataFunc compare_func,
+  cmp_data_fn_t compare_func,
   ptr_t data,
-  PDestroyFunc key_destroy_func,
-  PDestroyFunc value_destroy_func,
+  destroy_fn_t key_destroy_func,
+  destroy_fn_t value_destroy_func,
   const_ptr_t key) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   PTreeBaseNode *child_node;
   PTreeRBNode *child_parent;
   int_t cmp_result;
-
   cur_node = *root_node;
-
   while (cur_node != NULL) {
     cmp_result = compare_func(key, cur_node->key, data);
-
-    if (cmp_result < 0)
+    if (cmp_result < 0) {
       cur_node = cur_node->left;
-    else if (cmp_result > 0)
+    } else if (cmp_result > 0) {
       cur_node = cur_node->right;
-    else
+    } else {
       break;
+    }
   }
-
-  if (P_UNLIKELY (cur_node == NULL))
+  if (P_UNLIKELY (cur_node == NULL)) {
     return false;
-
+  }
   if (cur_node->left != NULL && cur_node->right != NULL) {
     prev_node = cur_node->left;
-
-    while (prev_node->right != NULL)
+    while (prev_node->right != NULL) {
       prev_node = prev_node->right;
-
+    }
     cur_node->key = prev_node->key;
     cur_node->value = prev_node->value;
 
     /* Mark node for removal */
     cur_node = prev_node;
   }
-
   child_node = cur_node->left == NULL ? cur_node->right : cur_node->left;
-
   if (child_node == NULL
-    && pp_tree_rb_is_black((PTreeRBNode *) cur_node) == true)
-    pp_tree_rb_balance_remove((PTreeRBNode *) cur_node, root_node);
+    && pp_tree_rb_is_black((PTreeRBNode *) cur_node) == true) {
+      pp_tree_rb_balance_remove((PTreeRBNode *) cur_node, root_node);
+  }
 
   /* Replace node with its child */
   if (cur_node == *root_node) {
@@ -432,30 +416,29 @@ p_tree_rb_remove(PTreeBaseNode **root_node,
     child_parent = NULL;
   } else {
     child_parent = ((PTreeRBNode *) cur_node)->parent;
-
-    if (child_parent->base.left == cur_node)
+    if (child_parent->base.left == cur_node) {
       child_parent->base.left = child_node;
-    else
+    } else {
       child_parent->base.right = child_node;
+    }
   }
-
   if (child_node != NULL) {
     ((PTreeRBNode *) child_node)->parent = child_parent;
 
     /* Check if we need to repaint the node */
-    if (pp_tree_rb_is_black((PTreeRBNode *) cur_node) == true)
+    if (pp_tree_rb_is_black((PTreeRBNode *) cur_node) == true) {
       ((PTreeRBNode *) child_node)->color = P_TREE_RB_COLOR_BLACK;
+    }
   }
 
   /* Free unused node */
-  if (key_destroy_func != NULL)
+  if (key_destroy_func != NULL) {
     key_destroy_func(cur_node->key);
-
-  if (value_destroy_func != NULL)
+  }
+  if (value_destroy_func != NULL) {
     value_destroy_func(cur_node->value);
-
+  }
   p_free(cur_node);
-
   return true;
 }
 

@@ -71,14 +71,13 @@ set(PLIBSYS_PUBLIC_HDRS
   ${PLIBSYS_INCLUDE_DIR}/p/os.h
   ${PLIBSYS_INCLUDE_DIR}/p/condvar.h
   ${PLIBSYS_INCLUDE_DIR}/p/hash.h
-  ${PLIBSYS_INCLUDE_DIR}/p/error.h
   ${PLIBSYS_INCLUDE_DIR}/p/err.h
   ${PLIBSYS_INCLUDE_DIR}/p/dir.h
   ${PLIBSYS_INCLUDE_DIR}/p/file.h
   ${PLIBSYS_INCLUDE_DIR}/p/htable.h
   ${PLIBSYS_INCLUDE_DIR}/p/inifile.h
   ${PLIBSYS_INCLUDE_DIR}/plib.h
-  ${PLIBSYS_INCLUDE_DIR}/p/libloader.h
+  ${PLIBSYS_INCLUDE_DIR}/p/dl.h
   ${PLIBSYS_INCLUDE_DIR}/p/list.h
   ${PLIBSYS_INCLUDE_DIR}/p/main.h
   ${PLIBSYS_INCLUDE_DIR}/p/mem.h
@@ -87,7 +86,7 @@ set(PLIBSYS_PUBLIC_HDRS
   ${PLIBSYS_INCLUDE_DIR}/p/rwlock.h
   ${PLIBSYS_INCLUDE_DIR}/p/sem.h
   ${PLIBSYS_INCLUDE_DIR}/p/shm.h
-  ${PLIBSYS_INCLUDE_DIR}/p/shmbuffer.h
+  ${PLIBSYS_INCLUDE_DIR}/p/shmbuf.h
   ${PLIBSYS_INCLUDE_DIR}/p/socket.h
   ${PLIBSYS_INCLUDE_DIR}/p/socketaddr.h
   ${PLIBSYS_INCLUDE_DIR}/p/spinlock.h
@@ -125,7 +124,7 @@ set(PLIBSYS_SRCS
   pcryptohash-sha2-512.c
   pcryptohash-sha3.c
   dir.c
-  error.c
+  err.c
   file.c
   htable.c
   inifile.c
@@ -133,7 +132,7 @@ set(PLIBSYS_SRCS
   main.c
   mem.c
   process.c
-  shmbuffer.c
+  shmbuf.c
   socket.c
   socketaddr.c
   string.c

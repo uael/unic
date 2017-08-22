@@ -24,21 +24,24 @@
 #include "pcryptohash-sha2-512.h"
 #include "pcryptohash-sha3.h"
 
-#include <string.h>
-
 #define P_HASH_FUNCS(ctx, type) \
-  ctx->create = (void * (*) (void)) p_crypto_hash_##type##_new;        \
-  ctx->update = (void (*) (void *, const ubyte_t *, size_t)) p_crypto_hash_##type##_update;  \
-  ctx->finish = (void (*) (void *)) p_crypto_hash_##type##_finish;      \
-  ctx->digest = (const ubyte_t * (*) (void *)) p_crypto_hash_##type##_digest;    \
-  ctx->reset = (void (*) (void *)) p_crypto_hash_##type##_reset;        \
-  ctx->free = (void (*) (void *)) p_crypto_hash_##type##_free;
+  do { \
+    (ctx)->create = (void * (*) (void)) p_crypto_hash_##type##_new; \
+    (ctx)->update = (void (*) (void *, const ubyte_t *, size_t)) \
+      p_crypto_hash_##type##_update; \
+    (ctx)->finish = (void (*) (void *)) p_crypto_hash_##type##_finish; \
+    (ctx)->digest = (const ubyte_t * (*) (void *)) \
+      p_crypto_hash_##type##_digest; \
+    (ctx)->reset = (void (*) (void *)) p_crypto_hash_##type##_reset; \
+    (ctx)->free = (void (*) (void *)) p_crypto_hash_##type##_free; \
+  } while (0)
 
-struct PCryptoHash_ {
-  PCryptoHashType type;
+struct hash {
+  hash_kind_t type;
   ptr_t context;
   uint_t hash_len;
   bool closed;
+
   ptr_t (*create)(void);
   void (*update)(void *hash, const ubyte_t *data, size_t len);
   void (*finish)(void *hash);
@@ -50,9 +53,6 @@ struct PCryptoHash_ {
 static byte_t pp_crypto_hash_hex_str[] = "0123456789abcdef";
 
 static void
-pp_crypto_hash_digest_to_hex(const ubyte_t *digest, uint_t len, byte_t *out);
-
-static void
 pp_crypto_hash_digest_to_hex(const ubyte_t *digest, uint_t len, byte_t *out) {
   uint_t i;
 
@@ -62,172 +62,162 @@ pp_crypto_hash_digest_to_hex(const ubyte_t *digest, uint_t len, byte_t *out) {
   }
 }
 
-P_API PCryptoHash *
-p_crypto_hash_new(PCryptoHashType type) {
-  PCryptoHash *ret;
+hash_t *
+p_crypto_hash_new(hash_kind_t type) {
+  hash_t *ret;
 
-  if (type < P_HASH_TYPE_MD5 || type > P_HASH_TYPE_GOST)
-    return NULL;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PCryptoHash))) == NULL)) {
-    P_ERROR ("PCryptoHash::p_crypto_hash_new: failed to allocate memory");
+  if (type < P_HASH_MD5 || type > P_HASH_GOST) {
     return NULL;
   }
-
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(hash_t))) == NULL)) {
+    P_ERROR ("hash_t::p_crypto_hash_new: failed to allocate memory");
+    return NULL;
+  }
   switch (type) {
-    case P_HASH_TYPE_MD5:
+    case P_HASH_MD5:
     P_HASH_FUNCS (ret, md5);
       ret->hash_len = 16;
       break;
-    case P_HASH_TYPE_SHA1:
+    case P_HASH_SHA1:
     P_HASH_FUNCS (ret, sha1);
       ret->hash_len = 20;
       break;
-    case P_HASH_TYPE_SHA2_224:
+    case P_HASH_SHA2_224:
     P_HASH_FUNCS (ret, sha2_224);
       ret->hash_len = 28;
       break;
-    case P_HASH_TYPE_SHA2_256:
+    case P_HASH_SHA2_256:
     P_HASH_FUNCS (ret, sha2_256);
       ret->hash_len = 32;
       break;
-    case P_HASH_TYPE_SHA2_384:
+    case P_HASH_SHA2_384:
     P_HASH_FUNCS (ret, sha2_384);
       ret->hash_len = 48;
       break;
-    case P_HASH_TYPE_SHA2_512:
+    case P_HASH_SHA2_512:
     P_HASH_FUNCS (ret, sha2_512);
       ret->hash_len = 64;
       break;
-    case P_HASH_TYPE_SHA3_224:
+    case P_HASH_SHA3_224:
     P_HASH_FUNCS (ret, sha3_224);
       ret->hash_len = 28;
       break;
-    case P_HASH_TYPE_SHA3_256:
+    case P_HASH_SHA3_256:
     P_HASH_FUNCS (ret, sha3_256);
       ret->hash_len = 32;
       break;
-    case P_HASH_TYPE_SHA3_384:
+    case P_HASH_SHA3_384:
     P_HASH_FUNCS (ret, sha3_384);
       ret->hash_len = 48;
       break;
-    case P_HASH_TYPE_SHA3_512:
+    case P_HASH_SHA3_512:
     P_HASH_FUNCS (ret, sha3_512);
       ret->hash_len = 64;
       break;
-    case P_HASH_TYPE_GOST:
+    case P_HASH_GOST:
     P_HASH_FUNCS (ret, gost3411);
       ret->hash_len = 32;
       break;
   }
-
   ret->type = type;
   ret->closed = false;
-
   if (P_UNLIKELY ((ret->context = ret->create()) == NULL)) {
     p_free(ret);
     return NULL;
   }
-
   return ret;
 }
 
-P_API void
-p_crypto_hash_update(PCryptoHash *hash, const ubyte_t *data, size_t len) {
-  if (P_UNLIKELY (hash == NULL || data == NULL || len == 0))
+void
+p_crypto_hash_update(hash_t *hash, const ubyte_t *data, size_t len) {
+  if (P_UNLIKELY (hash == NULL || data == NULL || len == 0)) {
     return;
-
-  if (P_UNLIKELY (hash->closed))
+  }
+  if (P_UNLIKELY (hash->closed)) {
     return;
-
+  }
   hash->update(hash->context, data, len);
 }
 
-P_API void
-p_crypto_hash_reset(PCryptoHash *hash) {
-  if (P_UNLIKELY (hash == NULL))
+void
+p_crypto_hash_reset(hash_t *hash) {
+  if (P_UNLIKELY (hash == NULL)) {
     return;
-
+  }
   hash->reset(hash->context);
   hash->closed = false;
 }
 
-P_API byte_t *
-p_crypto_hash_get_string(PCryptoHash *hash) {
+byte_t *
+p_crypto_hash_get_string(hash_t *hash) {
   byte_t *ret;
   const ubyte_t *digest;
 
-  if (P_UNLIKELY (hash == NULL))
+  if (P_UNLIKELY (hash == NULL)) {
     return NULL;
-
+  }
   if (!hash->closed) {
     hash->finish(hash->context);
     hash->closed = true;
   }
-
-  if (P_UNLIKELY ((digest = hash->digest(hash->context)) == NULL))
+  if (P_UNLIKELY ((digest = hash->digest(hash->context)) == NULL)) {
     return NULL;
-
-  if (P_UNLIKELY ((ret = p_malloc0(hash->hash_len * 2 + 1)) == NULL))
+  }
+  if (P_UNLIKELY ((ret = p_malloc0(hash->hash_len * 2 + 1)) == NULL)) {
     return NULL;
-
+  }
   pp_crypto_hash_digest_to_hex(digest, hash->hash_len, ret);
-
   return ret;
 }
 
-P_API void
-p_crypto_hash_get_digest(PCryptoHash *hash, ubyte_t *buf, size_t *len) {
+void
+p_crypto_hash_get_digest(hash_t *hash, ubyte_t *buf, size_t *len) {
   const ubyte_t *digest;
 
-  if (P_UNLIKELY (len == NULL))
+  if (P_UNLIKELY (len == NULL)) {
     return;
-
+  }
   if (P_UNLIKELY (hash == NULL || buf == NULL)) {
     *len = 0;
     return;
   }
-
   if (P_UNLIKELY (hash->hash_len > *len)) {
     *len = 0;
     return;
   }
-
   if (!hash->closed) {
     hash->finish(hash->context);
     hash->closed = true;
   }
-
   if (P_UNLIKELY ((digest = hash->digest(hash->context)) == NULL)) {
     *len = 0;
     return;
   }
-
   memcpy(buf, digest, hash->hash_len);
   *len = hash->hash_len;
 }
 
-P_API ssize_t
-p_crypto_hash_get_length(const PCryptoHash *hash) {
-  if (P_UNLIKELY (hash == NULL))
+ssize_t
+p_crypto_hash_get_length(const hash_t *hash) {
+  if (P_UNLIKELY (hash == NULL)) {
     return 0;
-
+  }
   return hash->hash_len;
 }
 
-P_API PCryptoHashType
-p_crypto_hash_get_type(const PCryptoHash *hash) {
-  if (P_UNLIKELY (hash == NULL))
-    return (PCryptoHashType) -1;
-
+hash_kind_t
+p_crypto_hash_get_type(const hash_t *hash) {
+  if (P_UNLIKELY (hash == NULL)) {
+    return (hash_kind_t) -1;
+  }
   return hash->type;
 }
 
-P_API void
-p_crypto_hash_free(PCryptoHash *hash) {
-  if (P_UNLIKELY (hash == NULL))
+void
+p_crypto_hash_free(hash_t *hash) {
+  if (P_UNLIKELY (hash == NULL)) {
     return;
-
+  }
   hash->free(hash->context);
   p_free(hash);
 }

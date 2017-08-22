@@ -16,7 +16,6 @@
  */
 
 #include <string.h>
-
 #include "p/mem.h"
 #include "pcryptohash-sha1.h"
 
@@ -38,51 +37,48 @@ static const ubyte_t pp_crypto_hash_sha1_pad[64] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static void pp_crypto_hash_sha1_swap_bytes(uint32_t *data, uint_t words);
-static void pp_crypto_hash_sha1_process(PHashSHA1 *ctx, const uint32_t data[16]);
+static void
+pp_crypto_hash_sha1_swap_bytes(uint32_t *data, uint_t words);
+
+static void
+pp_crypto_hash_sha1_process(PHashSHA1 *ctx, const uint32_t data[16]);
 
 #define P_SHA1_ROTL(val, shift) ((val) << (shift) |  (val) >> (32 - (shift)))
-
 #define P_SHA1_F1(x, y, z) ((x & y) | ((~x) & z))
 #define P_SHA1_F2(x, y, z) (x ^ y ^ z)
 #define P_SHA1_F3(x, y, z) ((x & y) | (x & z) | (y & z))
-
-#define P_SHA1_W(W, i)          \
-(              \
-  (W)[i & 0x0F] = P_SHA1_ROTL (      \
-        (W)[(i - 3)  & 0x0F]  \
-            ^ (W)[(i - 8)  & 0x0F]  \
-            ^ (W)[(i - 14) & 0x0F]  \
-            ^ (W)[(i - 16) & 0x0F],  \
-            1)      \
+#define P_SHA1_W(W, i) \
+( \
+  (W)[i & 0x0F] = P_SHA1_ROTL ( \
+        (W)[(i - 3)  & 0x0F] \
+            ^ (W)[(i - 8)  & 0x0F] \
+            ^ (W)[(i - 14) & 0x0F] \
+            ^ (W)[(i - 16) & 0x0F], \
+            1) \
 )
-
-#define P_SHA1_ROUND_0(a, b, c, d, e, w)    \
-{              \
-  e += P_SHA1_ROTL (a, 5) + P_SHA1_F1 (b, c, d)  \
-     + 0x5A827999 + w;        \
-  b = P_SHA1_ROTL (b, 30);      \
+#define P_SHA1_ROUND_0(a, b, c, d, e, w) \
+{ \
+  e += P_SHA1_ROTL (a, 5) + P_SHA1_F1 (b, c, d) \
+     + 0x5A827999 + w; \
+  b = P_SHA1_ROTL (b, 30); \
 }
-
-#define P_SHA1_ROUND_1(a, b, c, d, e, w)    \
-{              \
-  e += P_SHA1_ROTL (a, 5) + P_SHA1_F2 (b, c, d)  \
-     + 0x6ED9EBA1 + w;        \
-  b = P_SHA1_ROTL (b, 30);      \
+#define P_SHA1_ROUND_1(a, b, c, d, e, w) \
+{ \
+  e += P_SHA1_ROTL (a, 5) + P_SHA1_F2 (b, c, d) \
+     + 0x6ED9EBA1 + w; \
+  b = P_SHA1_ROTL (b, 30); \
 }
-
-#define P_SHA1_ROUND_2(a, b, c, d, e, w)    \
-{              \
-  e += P_SHA1_ROTL (a, 5) + P_SHA1_F3 (b, c, d)  \
-     + 0x8F1BBCDC + w;        \
-  b = P_SHA1_ROTL (b, 30);      \
+#define P_SHA1_ROUND_2(a, b, c, d, e, w) \
+{ \
+  e += P_SHA1_ROTL (a, 5) + P_SHA1_F3 (b, c, d) \
+     + 0x8F1BBCDC + w; \
+  b = P_SHA1_ROTL (b, 30); \
 }
-
-#define P_SHA1_ROUND_3(a, b, c, d, e, w)    \
-{              \
-  e += P_SHA1_ROTL (a, 5) + P_SHA1_F2 (b, c, d)  \
-     + 0xCA62C1D6 + w;        \
-  b = P_SHA1_ROTL (b, 30);      \
+#define P_SHA1_ROUND_3(a, b, c, d, e, w) \
+{ \
+  e += P_SHA1_ROTL (a, 5) + P_SHA1_F2 (b, c, d) \
+     + 0xCA62C1D6 + w; \
+  b = P_SHA1_ROTL (b, 30); \
 }
 
 static void
@@ -103,18 +99,15 @@ static void
 pp_crypto_hash_sha1_process(PHashSHA1 *ctx,
   const uint32_t data[16]) {
   uint32_t W[16], A, B, C, D, E;
-
-  if (P_UNLIKELY (ctx == NULL))
+  if (P_UNLIKELY (ctx == NULL)) {
     return;
-
+  }
   memcpy(W, data, 64);
-
   A = ctx->hash[0];
   B = ctx->hash[1];
   C = ctx->hash[2];
   D = ctx->hash[3];
   E = ctx->hash[4];
-
   P_SHA1_ROUND_0 (A, B, C, D, E, W[0]);
   P_SHA1_ROUND_0 (E, A, B, C, D, W[1]);
   P_SHA1_ROUND_0 (D, E, A, B, C, W[2]);
@@ -135,7 +128,6 @@ pp_crypto_hash_sha1_process(PHashSHA1 *ctx,
   P_SHA1_ROUND_0 (D, E, A, B, C, P_SHA1_W(W, 17));
   P_SHA1_ROUND_0 (C, D, E, A, B, P_SHA1_W(W, 18));
   P_SHA1_ROUND_0 (B, C, D, E, A, P_SHA1_W(W, 19));
-
   P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W(W, 20));
   P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W(W, 21));
   P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W(W, 22));
@@ -156,7 +148,6 @@ pp_crypto_hash_sha1_process(PHashSHA1 *ctx,
   P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W(W, 37));
   P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W(W, 38));
   P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W(W, 39));
-
   P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W(W, 40));
   P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W(W, 41));
   P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W(W, 42));
@@ -177,7 +168,6 @@ pp_crypto_hash_sha1_process(PHashSHA1 *ctx,
   P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W(W, 57));
   P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W(W, 58));
   P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W(W, 59));
-
   P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W(W, 60));
   P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W(W, 61));
   P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W(W, 62));
@@ -198,7 +188,6 @@ pp_crypto_hash_sha1_process(PHashSHA1 *ctx,
   P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W(W, 77));
   P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W(W, 78));
   P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W(W, 79));
-
   ctx->hash[0] += A;
   ctx->hash[1] += B;
   ctx->hash[2] += C;
@@ -209,10 +198,8 @@ pp_crypto_hash_sha1_process(PHashSHA1 *ctx,
 void
 p_crypto_hash_sha1_reset(PHashSHA1 *ctx) {
   memset(ctx->buf.buf, 0, 64);
-
   ctx->len_low = 0;
   ctx->len_high = 0;
-
   ctx->hash[0] = 0x67452301;
   ctx->hash[1] = 0xEFCDAB89;
   ctx->hash[2] = 0x98BADCFE;
@@ -223,12 +210,10 @@ p_crypto_hash_sha1_reset(PHashSHA1 *ctx) {
 PHashSHA1 *
 p_crypto_hash_sha1_new(void) {
   PHashSHA1 *ret;
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashSHA1))) == NULL))
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashSHA1))) == NULL)) {
     return NULL;
-
+  }
   p_crypto_hash_sha1_reset(ret);
-
   return ret;
 }
 
@@ -237,59 +222,48 @@ p_crypto_hash_sha1_update(PHashSHA1 *ctx,
   const ubyte_t *data,
   size_t len) {
   uint32_t left, to_fill;
-
   left = ctx->len_low & 0x3F;
   to_fill = 64 - left;
-
   ctx->len_low += (uint32_t) len;
-
-  if (ctx->len_low < (uint32_t) len)
+  if (ctx->len_low < (uint32_t) len) {
     ++ctx->len_high;
-
+  }
   if (left && (uint32_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_sha1_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_sha1_process(ctx, ctx->buf.buf_w);
-
     data += to_fill;
     len -= to_fill;
     left = 0;
   }
-
   while (len >= 64) {
     memcpy(ctx->buf.buf, data, 64);
     pp_crypto_hash_sha1_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_sha1_process(ctx, ctx->buf.buf_w);
-
     data += 64;
     len -= 64;
   }
-
-  if (len > 0)
+  if (len > 0) {
     memcpy(ctx->buf.buf + left, data, len);
+  }
 }
 
 void
 p_crypto_hash_sha1_finish(PHashSHA1 *ctx) {
   uint32_t high, low;
   int_t left, last;
-
   left = ctx->len_low & 0x3F;
   last = (left < 56) ? (56 - left) : (120 - left);
-
   low = ctx->len_low << 3;
   high = ctx->len_high << 3
     | ctx->len_low >> 29;
-
-  if (last > 0)
+  if (last > 0) {
     p_crypto_hash_sha1_update(ctx, pp_crypto_hash_sha1_pad, (size_t) last);
-
+  }
   ctx->buf.buf_w[14] = high;
   ctx->buf.buf_w[15] = low;
-
   pp_crypto_hash_sha1_swap_bytes(ctx->buf.buf_w, 14);
   pp_crypto_hash_sha1_process(ctx, ctx->buf.buf_w);
-
   pp_crypto_hash_sha1_swap_bytes(ctx->hash, 5);
 }
 

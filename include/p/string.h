@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/string.h
+/*!@file p/string.h
  * @brief String manipulation routines
  * @author Alexander Saprykin
  *
@@ -25,37 +24,31 @@
  *
  * Some useful string manipulation routines are represented here.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_STRING_H__
-#define P_STRING_H__
+# define P_STRING_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/**
- * @brief Copies a string.
+/*!@brief Copies a string.
  * @param str String with the trailing zero to copy.
  * @return Copy of the @a str in case of success, NULL otherwise. The caller
  * takes ownership of the returned string.
  * @since 0.0.1
  */
-P_API byte_t *p_strdup(const byte_t *str);
+P_API byte_t *
+p_strdup(const byte_t *str);
 
-/**
- * @brief Removes trailing and leading whitespaces.
+/*!@brief Removes trailing and leading whitespaces.
  * @param str String with the trailing zero to process.
  * @return Newlly allocated string in case of success, NULL otherwise. The
  * caller takes ownership of the returned string.
  * @since 0.0.1
  */
-P_API byte_t *p_strchomp(const byte_t *str);
+P_API byte_t *
+p_strchomp(const byte_t *str);
 
-/**
- * @brief Tokenizes a string by given delimiters.
+/*!@brief Tokenizes a string by given delimiters.
  * @param[in,out] str String to tokenize.
  * @param delim List of delimiters to split the string.
  * @param buf Context to store tokenize info.
@@ -86,12 +79,10 @@ P_API byte_t *p_strchomp(const byte_t *str);
  * Some platforms do not support the third parameter and it can be remained
  * unused. In that case this call wouldn't be thread-safe.
  */
-P_API byte_t *p_strtok(byte_t *str,
-  const byte_t *delim,
-  byte_t **buf);
+P_API byte_t *
+p_strtok(byte_t *str, const byte_t *delim, byte_t **buf);
 
-/**
- * @brief Converts a string to @a double without a locale dependency.
+/*!@brief Converts a string to @a double without a locale dependency.
  * @param str String to convert.
  * @return Floating point value in case of success, 0 otherwise.
  * @since 0.0.1
@@ -100,6 +91,7 @@ P_API byte_t *p_strtok(byte_t *str,
  * convert string variables to @a double values. The decimal point is '.' as in
  * the 'C' locale.
  */
-P_API double p_strtod(const byte_t *str);
+P_API double
+p_strtod(const byte_t *str);
 
-#endif /* P_STRING_H__ */
+#endif /* !P_STRING_H__ */

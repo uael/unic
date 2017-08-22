@@ -55,7 +55,7 @@ extern "C" void pmem_free (ptr_t block)
 }
 
 static void
-general_hash_test (PCryptoHashType	type,
+general_hash_test (hash_kind_t	type,
 		   size_t		hash_len,
 		   const byte_t		*msg1,
 		   const byte_t		*msg2,
@@ -67,7 +67,7 @@ general_hash_test (PCryptoHashType	type,
 		   const byte_t		*hash3,
 		   const byte_t		*hash_stress)
 {
-	PCryptoHash	*crypto_hash;
+	hash_t	*crypto_hash;
 	size_t		dig_len;
 	byte_t		*hash_str;
 	byte_t		*long_str;
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -188,9 +188,9 @@ BOOST_AUTO_TEST_CASE (pcryptohash_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == true);
 
-	BOOST_CHECK (p_crypto_hash_new (P_HASH_TYPE_MD5) == NULL);
-	BOOST_CHECK (p_crypto_hash_new (P_HASH_TYPE_SHA1) == NULL);
-	BOOST_CHECK (p_crypto_hash_new (P_HASH_TYPE_GOST) == NULL);
+	BOOST_CHECK (p_crypto_hash_new (P_HASH_MD5) == NULL);
+	BOOST_CHECK (p_crypto_hash_new (P_HASH_SHA1) == NULL);
+	BOOST_CHECK (p_crypto_hash_new (P_HASH_GOST) == NULL);
 
 	p_mem_restore_vtable ();
 
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_nomem_test)
 
 BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 {
-	PCryptoHash	*hash;
+	hash_t	*hash;
 	size_t		len;
 	ssize_t		md5_len;
 	byte_t		*hash_str;
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 
 	p_libsys_init ();
 
-	BOOST_CHECK (p_crypto_hash_new ((PCryptoHashType) -1) == NULL);
+	BOOST_CHECK (p_crypto_hash_new ((hash_kind_t) -1) == NULL);
 	BOOST_CHECK (p_crypto_hash_get_length (NULL) == 0);
 	BOOST_CHECK (p_crypto_hash_get_string (NULL) == NULL);
 	BOOST_CHECK ((int_t) p_crypto_hash_get_type (NULL) == -1);
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 
 	p_crypto_hash_reset (NULL);
 
-	hash = p_crypto_hash_new (P_HASH_TYPE_MD5);
+	hash = p_crypto_hash_new (P_HASH_MD5);
 	BOOST_CHECK (hash != NULL);
 
 	md5_len = p_crypto_hash_get_length (hash);
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE (md5_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_MD5,
+	general_hash_test (P_HASH_MD5,
 			   16,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA1,
+	general_hash_test (P_HASH_SHA1,
 			   20,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE (sha2_224_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA2_224,
+	general_hash_test (P_HASH_SHA2_224,
 			   28,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -354,7 +354,7 @@ BOOST_AUTO_TEST_CASE (sha2_256_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA2_256,
+	general_hash_test (P_HASH_SHA2_256,
 			   32,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE (sha2_384_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA2_384,
+	general_hash_test (P_HASH_SHA2_384,
 			   48,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -430,7 +430,7 @@ BOOST_AUTO_TEST_CASE (sha2_512_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA2_512,
+	general_hash_test (P_HASH_SHA2_512,
 			   64,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE (sha3_224_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA3_224,
+	general_hash_test (P_HASH_SHA3_224,
 			   28,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE (sha3_256_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA3_256,
+	general_hash_test (P_HASH_SHA3_256,
 			   32,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -523,7 +523,7 @@ BOOST_AUTO_TEST_CASE (sha3_384_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA3_384,
+	general_hash_test (P_HASH_SHA3_384,
 			   48,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -567,7 +567,7 @@ BOOST_AUTO_TEST_CASE (sha3_512_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_SHA3_512,
+	general_hash_test (P_HASH_SHA3_512,
 			   64,
 			   "abc",
 			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -584,7 +584,7 @@ BOOST_AUTO_TEST_CASE (sha3_512_test)
 
 BOOST_AUTO_TEST_CASE (gost3411_94_test)
 {
-	PCryptoHash	*gost3411_94_hash;
+	hash_t	*gost3411_94_hash;
 	byte_t		*hash_str;
 	const ubyte_t	hash_etalon_1[] = {177, 196, 102, 211, 117,  25, 184,  46,
 					   131,  25, 129, 159, 243,  37, 149, 224,
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 
 	p_libsys_init ();
 
-	general_hash_test (P_HASH_TYPE_GOST,
+	general_hash_test (P_HASH_GOST,
 			   32,
 			   "This is message, length=32 bytes",
 			   "Suppose the original message has length = 50 bytes",
@@ -613,7 +613,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 			   "5c00ccc2734cdd3332d3d4749576e3c1a7dbaf0e7ea74e9fa602413c90a129fa",
 			   "110ddcb6697d508710c64a62f39e7f202d1ffa20314011a0ebaad1281583d77e");
 
-	gost3411_94_hash = p_crypto_hash_new (P_HASH_TYPE_GOST);
+	gost3411_94_hash = p_crypto_hash_new (P_HASH_GOST);
 
 	BOOST_REQUIRE (gost3411_94_hash != NULL);
 

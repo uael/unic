@@ -34,7 +34,7 @@
 static int_t semaphore_test_val = 0;
 static int_t is_thread_exit     = 0;
 
-static void clean_error (p_err_t **error)
+static void clean_error (err_t **error)
 {
 	if (error == NULL || *error == NULL)
 		return;
@@ -45,7 +45,7 @@ static void clean_error (p_err_t **error)
 
 static void * semaphore_test_thread (void *)
 {
-	PSemaphore	*sem;
+	sem_t	*sem;
 	int_t		i;
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN, NULL);
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -129,8 +129,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
-	PSemaphore	*sem = NULL;
-	p_err_t		*error = NULL;
+	sem_t	*sem = NULL;
+	err_t		*error = NULL;
 	int_t		i;
 
 	p_libsys_init ();
@@ -176,8 +176,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 
 BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 {
-	PUThread	*thr1, *thr2;
-	PSemaphore	*sem = NULL;
+	uthread_t	*thr1, *thr2;
+	sem_t	*sem = NULL;
 
 	p_libsys_init ();
 
@@ -190,10 +190,10 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	is_thread_exit     = 0;
 	semaphore_test_val = PSEMAPHORE_MAX_VAL;
 
-	thr1 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
+	thr1 = p_uthread_create ((uthread_fn_t) semaphore_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
+	thr2 = p_uthread_create ((uthread_fn_t) semaphore_test_thread, NULL, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);

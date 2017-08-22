@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/mutex.h
+/*!@file p/mutex.h
  * @brief Mutex routines
  * @author Alexander Saprykin
  *
@@ -50,29 +49,23 @@
  * mutex outside the process adress space, but you can share it between the
  * threads of the same process.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_MUTEX_H__
-#define P_MUTEX_H__
+# define P_MUTEX_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
-/** Mutex opaque data structure. */
-typedef struct PMutex_ PMutex;
+/*!@brief Mutex opaque data structure. */
+typedef struct mutex mutex_t;
 
-/**
- * @brief Creates a new #PMutex object.
+/*!@brief Creates a new #PMutex object.
  * @return Pointer to a newly created #PMutex object.
  * @since 0.0.1
  */
-P_API PMutex *p_mutex_new(void);
+P_API mutex_t *
+p_mutex_new(void);
 
-/**
- * @brief Locks a mutex.
+/*!@brief Locks a mutex.
  * @param mutex #PMutex to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -82,10 +75,10 @@ P_API PMutex *p_mutex_new(void);
  * Forces the calling thread to sleep until @a mutex becomes available for
  * locking.
  */
-P_API bool p_mutex_lock(PMutex *mutex);
+P_API bool
+p_mutex_lock(mutex_t *mutex);
 
-/**
- * @brief Tries to lock a mutex immediately.
+/*!@brief Tries to lock a mutex immediately.
  * @param mutex #PMutex to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -95,10 +88,10 @@ P_API bool p_mutex_lock(PMutex *mutex);
  * Tries to lock @a mutex and returns immediately if it is not available for
  * locking.
  */
-P_API bool p_mutex_trylock(PMutex *mutex);
+P_API bool
+p_mutex_trylock(mutex_t *mutex);
 
-/**
- * @brief Releases a locked mutex.
+/*!@brief Releases a locked mutex.
  * @param mutex #PMutex to release.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -110,15 +103,16 @@ P_API bool p_mutex_trylock(PMutex *mutex);
  * It's implementation dependent whether only the same thread can lock and
  * unlock the same mutex.
  */
-P_API bool p_mutex_unlock(PMutex *mutex);
+P_API bool
+p_mutex_unlock(mutex_t *mutex);
 
-/**
- * @brief Frees #PMutex object.
+/*!@brief Frees #PMutex object.
  * @param mutex #PMutex to free.
  * @since 0.0.1
  * @warning It doesn't unlock @a mutex before freeing memory, so you should do
  * it manually.
  */
-P_API void p_mutex_free(PMutex *mutex);
+P_API void
+p_mutex_free(mutex_t *mutex);
 
-#endif /* P_MUTEX_H__ */
+#endif /* !P_MUTEX_H__ */

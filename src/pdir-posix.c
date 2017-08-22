@@ -19,157 +19,159 @@
 #include "p/mem.h"
 #include "p/string.h"
 #include "perror-private.h"
-
-#include <stdlib.h>
-#include <string.h>
 #include <dirent.h>
-#include <unistd.h>
 #include <sys/stat.h>
 
 #if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
     defined(P_OS_IRIX) || defined(P_OS_HAIKU)
-#  define P_DIR_NEED_BUF_ALLOC 1
+# define P_DIR_NEED_BUF_ALLOC 1
 #endif
-
 #ifdef P_DIR_NEED_BUF_ALLOC
-#  if defined(P_OS_SCO)
-#    define P_DIR_NEED_SIMPLE_R 1
-#  endif
+# if defined(P_OS_SCO)
+#   define P_DIR_NEED_SIMPLE_R 1
+# endif
 #else
-#  if defined(P_OS_BEOS)
-#    define P_DIR_NON_REENTRANT 1
-#  endif
+# if defined(P_OS_BEOS)
+#   define P_DIR_NON_REENTRANT 1
+# endif
 #endif
-
-struct p_dir {
+struct dir {
   DIR *dir;
   struct dirent *dir_result;
   byte_t *path;
   byte_t *orig_path;
 };
 
-P_API p_dir_t *
+dir_t *
 p_dir_new(const byte_t *path,
-  p_err_t **error) {
-  p_dir_t *ret;
+  err_t **error) {
+  dir_t *ret;
   DIR *dir;
   byte_t *pathp;
-
   if (P_UNLIKELY (path == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return NULL;
   }
-
   if (P_UNLIKELY ((dir = opendir(path)) == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
-      "Failed to call opendir() to open directory stream");
+      "Failed to call opendir() to open directory stream"
+    );
     return NULL;
   }
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_dir_t))) == NULL)) {
-    p_error_set_error_p(error,
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(dir_t))) == NULL)) {
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_NO_RESOURCES,
       0,
-      "Failed to allocate memory for directory structure");
+      "Failed to allocate memory for directory structure"
+    );
     closedir(dir);
     return NULL;
   }
-
   ret->dir = dir;
   ret->path = p_strdup(path);
   ret->orig_path = p_strdup(path);
-
   pathp = ret->path + strlen(ret->path) - 1;
-
-  if (*pathp == '/' || *pathp == '\\')
+  if (*pathp == '/' || *pathp == '\\') {
     *pathp = '\0';
-
+  }
   return ret;
 }
 
-P_API bool
+bool
 p_dir_create(const byte_t *path,
   int_t mode,
-  p_err_t **error) {
+  err_t **error) {
   if (P_UNLIKELY (path == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return false;
   }
-
-  if (p_dir_is_exists(path))
+  if (p_dir_is_exists(path)) {
     return true;
-
+  }
   if (P_UNLIKELY (mkdir(path, (mode_t) mode) != 0)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
-      "Failed to call mkdir() to create directory");
+      "Failed to call mkdir() to create directory"
+    );
     return false;
-  } else
+  } else {
     return true;
+  }
 }
 
-P_API bool
+bool
 p_dir_remove(const byte_t *path,
-  p_err_t **error) {
+  err_t **error) {
   if (P_UNLIKELY (path == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return false;
   }
-
   if (!p_dir_is_exists(path)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_NOT_EXISTS,
       0,
-      "Specified directory doesn't exist");
+      "Specified directory doesn't exist"
+    );
     return false;
   }
-
   if (P_UNLIKELY (rmdir(path) != 0)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
-      "Failed to call rmdir() to remove directory");
+      "Failed to call rmdir() to remove directory"
+    );
     return false;
-  } else
+  } else {
     return true;
+  }
 }
 
-P_API bool
+bool
 p_dir_is_exists(const byte_t *path) {
   struct stat sb;
-
-  if (P_UNLIKELY (path == NULL))
+  if (P_UNLIKELY (path == NULL)) {
     return false;
-
+  }
   return (stat(path, &sb) == 0 && S_ISDIR (sb.st_mode)) ? true : false;
 }
 
-P_API byte_t *
-p_dir_get_path(const p_dir_t *dir) {
-  if (P_UNLIKELY (dir == NULL))
+byte_t *
+p_dir_get_path(const dir_t *dir) {
+  if (P_UNLIKELY (dir == NULL)) {
     return NULL;
-
+  }
   return p_strdup(dir->orig_path);
 }
 
-P_API p_dirent_t *
-p_dir_get_next_entry(p_dir_t *dir,
-  p_err_t **error) {
-  p_dirent_t *ret;
+dirent_t *
+p_dir_get_next_entry(dir_t *dir,
+  err_t **error) {
+  dirent_t *ret;
 #ifdef P_DIR_NEED_BUF_ALLOC
-  struct dirent	*dirent_st;
+  struct dirent *dirent_st;
 #elif !defined(P_DIR_NON_REENTRANT)
   struct dirent dirent_st;
 #endif
@@ -177,17 +179,17 @@ p_dir_get_next_entry(p_dir_t *dir,
   byte_t *entry_path;
   size_t path_len;
 #ifdef P_DIR_NEED_BUF_ALLOC
-  int_t		name_max;
+  int_t  name_max;
 #endif
-
   if (P_UNLIKELY (dir == NULL || dir->dir == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return NULL;
   }
-
 #if defined(P_OS_SOLARIS)
   name_max = (int_t) (FILENAME_MAX);
 #elif defined(P_OS_SCO) || defined(P_OS_IRIX)
@@ -207,7 +209,6 @@ p_dir_get_next_entry(p_dir_t *dir,
 #elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_HAIKU)
   name_max = (int_t) (NAME_MAX);
 #endif
-
 #ifdef P_DIR_NEED_BUF_ALLOC
   if (P_UNLIKELY ((dirent_st = p_malloc0 (sizeof (struct dirent) + name_max + 1)) == NULL)) {
     p_error_set_error_p (error,
@@ -217,7 +218,7 @@ p_dir_get_next_entry(p_dir_t *dir,
     return NULL;
   }
 
-#  ifdef P_DIR_NEED_SIMPLE_R
+# ifdef P_DIR_NEED_SIMPLE_R
   p_error_set_last_system (0);
 
   if ((dir->dir_result = readdir_r (dir->dir, dirent_st)) == NULL) {
@@ -230,7 +231,7 @@ p_dir_get_next_entry(p_dir_t *dir,
       return NULL;
     }
   }
-#  else
+# else
   if (P_UNLIKELY (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0)) {
     p_error_set_error_p (error,
              (int_t) p_error_get_last_io (),
@@ -239,9 +240,9 @@ p_dir_get_next_entry(p_dir_t *dir,
     p_free (dirent_st);
     return NULL;
   }
-#  endif
+# endif
 #else
-#  ifdef P_DIR_NON_REENTRANT
+# ifdef P_DIR_NON_REENTRANT
   p_error_set_last_system (0);
 
   if ((dir->dir_result = readdir (dir->dir)) == NULL) {
@@ -253,105 +254,99 @@ p_dir_get_next_entry(p_dir_t *dir,
       return NULL;
     }
   }
-#  else
+# else
   if (P_UNLIKELY (readdir_r(dir->dir, &dirent_st, &dir->dir_result) != 0)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) p_error_get_last_io(),
       p_error_get_last_system(),
-      "Failed to call readdir_r() to read directory stream");
+      "Failed to call readdir_r() to read directory stream"
+    );
     return NULL;
   }
-#  endif
+# endif
 #endif
-
   if (dir->dir_result == NULL) {
 #ifdef P_DIR_NEED_BUF_ALLOC
     p_free (dirent_st);
 #endif
     return NULL;
   }
-
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_dirent_t))) == NULL)) {
-    p_error_set_error_p(error,
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(dirent_t))) == NULL)) {
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_NO_RESOURCES,
       0,
-      "Failed to allocate memory for directory entry");
+      "Failed to allocate memory for directory entry"
+    );
 #ifdef P_DIR_NEED_BUF_ALLOC
     p_free (dirent_st);
 #endif
     return NULL;
   }
-
 #ifdef P_DIR_NEED_BUF_ALLOC
   ret->name = p_strdup (dirent_st->d_name);
   p_free (dirent_st);
 #else
-#  ifdef P_DIR_NON_REENTRANT
+# ifdef P_DIR_NON_REENTRANT
   ret->name = p_strdup (dir->dir_result->d_name);
-#  else
+# else
   ret->name = p_strdup(dirent_st.d_name);
-#  endif
+# endif
 #endif
-
   path_len = strlen(dir->path);
-
   if (P_UNLIKELY (
     (entry_path = p_malloc0(path_len + strlen(ret->name) + 2)) == NULL)) {
     P_WARNING (
-      "p_dir_t::p_dir_get_next_entry: failed to allocate memory for stat()");
-    ret->type = P_DIR_ENTRY_TYPE_OTHER;
+      "dir_t::p_dir_get_next_entry: failed to allocate memory for stat()");
+    ret->type = P_DIRENT_OTHER;
     return ret;
   }
-
   strcat(entry_path, dir->path);
   *(entry_path + path_len) = '/';
   strcat(entry_path + path_len + 1, ret->name);
-
   if (P_UNLIKELY (stat(entry_path, &sb) != 0)) {
-    P_WARNING ("p_dir_t::p_dir_get_next_entry: stat() failed");
-    ret->type = P_DIR_ENTRY_TYPE_OTHER;
+    P_WARNING ("dir_t::p_dir_get_next_entry: stat() failed");
+    ret->type = P_DIRENT_OTHER;
     p_free(entry_path);
     return ret;
   }
-
   p_free(entry_path);
-
-  if (S_ISDIR (sb.st_mode))
-    ret->type = P_DIR_ENTRY_TYPE_DIR;
-  else if (S_ISREG (sb.st_mode))
-    ret->type = P_DIR_ENTRY_TYPE_FILE;
-  else
-    ret->type = P_DIR_ENTRY_TYPE_OTHER;
-
+  if (S_ISDIR (sb.st_mode)) {
+    ret->type = P_DIRENT_DIR;
+  } else if (S_ISREG (sb.st_mode)) {
+    ret->type = P_DIRENT_FILE;
+  } else {
+    ret->type = P_DIRENT_OTHER;
+  }
   return ret;
 }
 
-P_API bool
-p_dir_rewind(p_dir_t *dir,
-  p_err_t **error) {
+bool
+p_dir_rewind(dir_t *dir,
+  err_t **error) {
   if (P_UNLIKELY (dir == NULL || dir->dir == NULL)) {
-    p_error_set_error_p(error,
+    p_error_set_error_p(
+      error,
       (int_t) P_ERR_IO_INVALID_ARGUMENT,
       0,
-      "Invalid input argument");
+      "Invalid input argument"
+    );
     return false;
   }
-
   rewinddir(dir->dir);
-
   return true;
 }
 
-P_API void
-p_dir_free(p_dir_t *dir) {
-  if (P_UNLIKELY (dir == NULL))
+void
+p_dir_free(dir_t *dir) {
+  if (P_UNLIKELY (dir == NULL)) {
     return;
-
+  }
   if (P_LIKELY (dir->dir != NULL)) {
     if (P_UNLIKELY (closedir(dir->dir) != 0))
-      P_ERROR ("p_dir_t::p_dir_free: closedir() failed");
+      P_ERROR ("dir_t::p_dir_free: closedir() failed");
   }
-
   p_free(dir->path);
   p_free(dir->orig_path);
   p_free(dir);

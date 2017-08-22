@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (plist_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE (plist_invalid_test)
 
 BOOST_AUTO_TEST_CASE (plist_general_test)
 {
-	PList		*list = NULL;
+	list_t		*list = NULL;
 	TestData	test_data;
 
 	p_libsys_init ();
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	BOOST_REQUIRE (test_data.test_array[2] == 0);
 	BOOST_REQUIRE (test_data.index == 0);
 
-	p_list_foreach (list, (PFunc) foreach_test_func, (ptr_t) &test_data);
+	p_list_foreach (list, (fn_t) foreach_test_func, (ptr_t) &test_data);
 
 	BOOST_CHECK (test_data.index == 3);
 	BOOST_CHECK (test_data.test_array[0] == 128);
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	BOOST_REQUIRE (test_data.test_array[2] == 0);
 	BOOST_REQUIRE (test_data.index == 0);
 
-	p_list_foreach (list, (PFunc) foreach_test_func, (ptr_t) &test_data);
+	p_list_foreach (list, (fn_t) foreach_test_func, (ptr_t) &test_data);
 
 	BOOST_CHECK (test_data.index == 3);
 	BOOST_CHECK (test_data.test_array[0] == 64);

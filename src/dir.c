@@ -18,11 +18,11 @@
 #include "p/mem.h"
 #include "p/dir.h"
 
-P_API void
-p_dir_entry_free(p_dirent_t *entry) {
-  if (P_UNLIKELY (entry == NULL))
+void
+p_dir_entry_free(dirent_t *entry) {
+  if (P_UNLIKELY(entry == NULL)) {
     return;
-
+  }
   p_free(entry->name);
   p_free(entry);
 }

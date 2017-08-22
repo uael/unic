@@ -15,60 +15,54 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef PLIBSYS_HEADER_PLIBSYS_PRIVATE_H
-#define PLIBSYS_HEADER_PLIBSYS_PRIVATE_H
+# define PLIBSYS_HEADER_PLIBSYS_PRIVATE_H
 
 #include "p/macros.h"
 #include "p/types.h"
 
 #ifndef PLIBSYS_HAS_SOCKLEN_T
-#  ifdef P_OS_VMS
+# ifdef P_OS_VMS
 typedef unsigned int socklen_t;
-#  else
+# else
 typedef int socklen_t;
-#  endif
+# endif
 #endif
-
 #ifndef PLIBSYS_HAS_SOCKADDR_STORAGE
 /* According to RFC 2553 */
-#  define _PLIBSYS_SS_MAXSIZE  128
-#  define _PLIBSYS_SS_ALIGNSIZE  (sizeof (int64_t))
+# define _PLIBSYS_SS_MAXSIZE  128
+# define _PLIBSYS_SS_ALIGNSIZE  (sizeof (int64_t))
 
-#  ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
-#    define _PLIBSYS_SS_PAD1SIZE	(_PLIBSYS_SS_ALIGNSIZE - (sizeof (ubyte_t) + sizeof (ubyte_t)))
-#  else
-#    define _PLIBSYS_SS_PAD1SIZE  (_PLIBSYS_SS_ALIGNSIZE - sizeof (ubyte_t))
-#  endif
+# ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
+#   define _PLIBSYS_SS_PAD1SIZE (_PLIBSYS_SS_ALIGNSIZE - (sizeof (ubyte_t) + sizeof (ubyte_t)))
+# else
+#   define _PLIBSYS_SS_PAD1SIZE  (_PLIBSYS_SS_ALIGNSIZE - sizeof (ubyte_t))
+# endif
 
-#  define _PLIBSYS_SS_PAD2SIZE  (_PLIBSYS_SS_MAXSIZE - (sizeof (ubyte_t) + _PLIBSYS_SS_PAD1SIZE + _PLIBSYS_SS_ALIGNSIZE))
+# define _PLIBSYS_SS_PAD2SIZE  (_PLIBSYS_SS_MAXSIZE - (sizeof (ubyte_t) + _PLIBSYS_SS_PAD1SIZE + _PLIBSYS_SS_ALIGNSIZE))
 
 struct sockaddr_storage {
-#  ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
-  ubyte_t		ss_len;
-#  endif
-#  ifdef PLIBSYS_SIZEOF_SAFAMILY_T
-#    if (PLIBSYS_SIZEOF_SAFAMILY_T == 1)
-  ubyte_t		ss_family;
-#    elif (PLIBSYS_SIZEOF_SAFAMILY_T == 2)
+# ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
+  ubyte_t  ss_len;
+# endif
+# ifdef PLIBSYS_SIZEOF_SAFAMILY_T
+#   if (PLIBSYS_SIZEOF_SAFAMILY_T == 1)
+  ubyte_t  ss_family;
+#   elif (PLIBSYS_SIZEOF_SAFAMILY_T == 2)
   ushort_t ss_family;
-#    else
-  uint_t		ss_family;
-#    endif
-#  else
-#    ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
-  ubyte_t		ss_family;
-#    else
-  ushort_t		ss_family;
-#    endif
-#  endif
+#   else
+  uint_t  ss_family;
+#   endif
+# else
+#   ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
+  ubyte_t  ss_family;
+#   else
+  ushort_t  ss_family;
+#   endif
+# endif
   byte_t __ss_pad1[_PLIBSYS_SS_PAD1SIZE];
   int64_t __ss_align;
   byte_t __ss_pad2[_PLIBSYS_SS_PAD2SIZE];
 };
 #endif
-
 #endif /* PLIBSYS_HEADER_PLIBSYS_PRIVATE_H */

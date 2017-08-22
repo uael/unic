@@ -33,9 +33,9 @@
 
 static int_t              thread_wakeups   = 0;
 static int_t              thread_queue     = 0;
-static p_condvar_t *   queue_empty_cond = NULL;
-static p_condvar_t *   queue_full_cond  = NULL;
-static PMutex *          cond_mutex       = NULL;
+static condvar_t *   queue_empty_cond = NULL;
+static condvar_t *   queue_full_cond  = NULL;
+static mutex_t *          cond_mutex       = NULL;
 volatile static bool is_working       = true;
 
 extern "C" ptr_t pmem_alloc (size_t nbytes)
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE (pcondvariable_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE (pcondvariable_bad_input_test)
 
 BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 {
-	PUThread *thr1, *thr2, *thr3;
+	uthread_t *thr1, *thr2, *thr3;
 
 	p_libsys_init ();
 
@@ -189,13 +189,13 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 	thread_wakeups = 0;
 	thread_queue   = 0;
 
-	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, true);
+	thr1 = p_uthread_create ((uthread_fn_t) producer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, true);
+	thr2 = p_uthread_create ((uthread_fn_t) consumer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
-	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, true);
+	thr3 = p_uthread_create ((uthread_fn_t) consumer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr3 != NULL);
 
 	BOOST_REQUIRE (p_condvar_broadcast (queue_empty_cond) == true);

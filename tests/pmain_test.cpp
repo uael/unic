@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE (pmain_double_test)
 
 BOOST_AUTO_TEST_CASE (pmain_vtable_test)
 {
-	PMemVTable	vtable;
+	mem_vtable_t	vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;

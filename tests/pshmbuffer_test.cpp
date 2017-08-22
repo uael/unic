@@ -41,7 +41,7 @@ volatile static bool is_working = false;
 
 static void * shm_buffer_test_write_thread (void *)
 {
-	PShmBuffer *buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
+	shmbuf_t *buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
 
 	if (buffer == NULL)
 		p_uthread_exit (1);
@@ -95,7 +95,7 @@ static void * shm_buffer_test_write_thread (void *)
 
 static void * shm_buffer_test_read_thread (void *)
 {
-	PShmBuffer	*buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
+	shmbuf_t	*buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
 	byte_t		test_buf[sizeof (test_str)];
 
 	if (buffer == NULL)
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 	BOOST_CHECK (p_shm_buffer_get_free_space (NULL, NULL) == -1);
 	BOOST_CHECK (p_shm_buffer_get_used_space (NULL, NULL) == -1);
 
-	PShmBuffer *buf = p_shm_buffer_new ("pshm_invalid_buffer", 0, NULL);
+	shmbuf_t *buf = p_shm_buffer_new ("pshm_invalid_buffer", 0, NULL);
 	p_shm_buffer_take_ownership (buf);
 	p_shm_buffer_free (buf);
 
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 
 	byte_t		test_buf[sizeof (test_str)];
 	byte_t		*large_buf;
-	PShmBuffer	*buffer = NULL;
+	shmbuf_t	*buffer = NULL;
 
 	/* Buffer may be from the previous test on UNIX systems */
 	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
@@ -265,8 +265,8 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 {
 	p_libsys_init ();
 
-	PShmBuffer	*buffer = NULL;
-	PUThread	*thr1, *thr2;
+	shmbuf_t	*buffer = NULL;
+	uthread_t	*thr1, *thr2;
 
 	/* Buffer may be from the previous test on UNIX systems */
 	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
@@ -282,10 +282,10 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
 	BOOST_REQUIRE (buffer != NULL);
 
-	thr1 = p_uthread_create ((PUThreadFunc) shm_buffer_test_write_thread, NULL, true);
+	thr1 = p_uthread_create ((uthread_fn_t) shm_buffer_test_write_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) shm_buffer_test_read_thread, NULL, true);
+	thr2 = p_uthread_create ((uthread_fn_t) shm_buffer_test_read_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
 	p_uthread_sleep (5000);

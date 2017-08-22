@@ -37,12 +37,12 @@ static void * shm_test_thread (void *arg)
 	int_t		rand_num;
 	size_t		shm_size;
 	ptr_t	addr;
-	PShm		*shm;
+	shm_t		*shm;
 
 	if (arg == NULL)
 		p_uthread_exit (1);
 
-	shm = (PShm *) arg;
+	shm = (shm_t *) arg;
 	rand_num = rand () % 127;
 	shm_size = p_shm_get_size (shm);
 	addr = p_shm_get_address (shm);
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE (pshm_nomem_test)
 {
 	p_libsys_init ();
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -114,11 +114,11 @@ BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 	BOOST_CHECK (p_shm_get_size (NULL) == 0);
 	p_shm_take_ownership (NULL);
 
-	PShm *shm = p_shm_new ("p_shm_invalid_test", 0, P_SHM_ACCESS_READWRITE, NULL);
+	shm_t *shm = p_shm_new ("p_shm_invalid_test", 0, P_SHM_ACCESS_READWRITE, NULL);
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
-	shm = p_shm_new ("p_shm_invalid_test", 10, (PShmAccessPerms) -1, NULL);
+	shm = p_shm_new ("p_shm_invalid_test", 10, (shm_access_t) -1, NULL);
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
@@ -127,9 +127,9 @@ BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 
 BOOST_AUTO_TEST_CASE (pshm_general_test)
 {
-	PShm		*shm = NULL;
+	shm_t		*shm = NULL;
 #ifndef P_OS_HPUX
-	PShm		*shm2 = NULL;
+	shm_t		*shm2 = NULL;
 #endif
 	ptr_t	addr, addr2;
 	int_t		i;
@@ -241,8 +241,8 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 BOOST_AUTO_TEST_CASE (pshm_thread_test)
 {
-	PShm		*shm;
-	PUThread	*thr1, *thr2, *thr3;
+	shm_t		*shm;
+	uthread_t	*thr1, *thr2, *thr3;
 	ptr_t	addr;
 	int_t		i, val;
 	bool	test_ok;
@@ -270,13 +270,13 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	addr = p_shm_get_address (shm);
 	BOOST_REQUIRE (addr != NULL);
 
-	thr1 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ptr_t) shm, true);
+	thr1 = p_uthread_create ((uthread_fn_t) shm_test_thread, (ptr_t) shm, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ptr_t) shm, true);
+	thr2 = p_uthread_create ((uthread_fn_t) shm_test_thread, (ptr_t) shm, true);
 	BOOST_REQUIRE (thr2 != NULL);
 
-	thr3 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ptr_t) shm, true);
+	thr3 = p_uthread_create ((uthread_fn_t) shm_test_thread, (ptr_t) shm, true);
 	BOOST_REQUIRE (thr3 != NULL);
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);

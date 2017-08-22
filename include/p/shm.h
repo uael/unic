@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/shm.h
+/*!@file p/shm.h
  * @brief Shared memory
  * @author Alexander Saprykin
  *
@@ -74,29 +73,29 @@
  * You can take ownership of the shared memory segment with
  * p_shm_take_ownership() to explicitly remove it from the system after closing.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_SHM_H__
-#define P_SHM_H__
+# define P_SHM_H__
 
 #include "p/macros.h"
 #include "p/types.h"
-#include "p/error.h"
+#include "p/err.h"
 
-/** Enum with shared memory access permissions. */
-typedef enum PShmAccessPerms_ {
-  P_SHM_ACCESS_READONLY = 0,  /**< Read-only access.	*/
-  P_SHM_ACCESS_READWRITE = 1  /**< Read/write access.	*/
-} PShmAccessPerms;
+typedef enum shm_access shm_access_t;
 
-/** Shared memory opaque data structure. */
-typedef struct PShm_ PShm;
+/*!@brief Shared memory opaque data structure. */
+typedef struct shm shm_t;
 
-/**
- * @brief Creates a new #PShm object.
+/*!@brief Enum with shared memory access permissions. */
+enum shm_access {
+
+  /*!@brief Read-only access. */
+  P_SHM_ACCESS_READONLY = 0,
+
+  /*!@brief Read/write access. */
+  P_SHM_ACCESS_READWRITE = 1
+};
+
+/*!@brief Creates a new #PShm object.
  * @param name Shared memory name.
  * @param size Size of the memory segment in bytes, can't be changed later.
  * @param perms Memory segment permissions, see #PShmAccessPerms.
@@ -105,13 +104,10 @@ typedef struct PShm_ PShm;
  * otherwise.
  * @since 0.0.1
  */
-P_API PShm *p_shm_new(const byte_t *name,
-  size_t size,
-  PShmAccessPerms perms,
-  p_err_t **error);
+P_API shm_t *
+p_shm_new(const byte_t *name, size_t size, shm_access_t perms, err_t **error);
 
-/**
- * @brief Takes ownership of a shared memory segment.
+/*!@brief Takes ownership of a shared memory segment.
  * @param shm Shared memory segment.
  * @since 0.0.1
  *
@@ -126,20 +122,20 @@ P_API PShm *p_shm_new(const byte_t *name,
  * size, the data). If not, take ownership of the shared memory object and
  * remove it with the p_shm_free() call. After that, create it again.
  */
-P_API void p_shm_take_ownership(PShm *shm);
+P_API void
+p_shm_take_ownership(shm_t *shm);
 
-/**
- * @brief Frees #PShm object.
+/*!@brief Frees #PShm object.
  * @param shm #PShm to free.
  * @since 0.0.1
  *
  * It doesn't unlock a given shared memory segment, be careful to not to make a
  * deadlock or a segfault while freeing the memory segment which is under usage.
  */
-P_API void p_shm_free(PShm *shm);
+P_API void
+p_shm_free(shm_t *shm);
 
-/**
- * @brief Locks #PShm object for usage.
+/*!@brief Locks #PShm object for usage.
  * @param shm #PShm to lock.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
@@ -148,29 +144,27 @@ P_API void p_shm_free(PShm *shm);
  * If the object is already locked then the thread will be suspended until the
  * object becomes unlocked.
  */
-P_API bool p_shm_lock(PShm *shm,
-  p_err_t **error);
+P_API bool
+p_shm_lock(shm_t *shm, err_t **error);
 
-/**
- * @brief Unlocks #PShm object.
+/*!@brief Unlocks #PShm object.
  * @param shm #PShm to unlock.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_shm_unlock(PShm *shm,
-  p_err_t **error);
+P_API bool
+p_shm_unlock(shm_t *shm, err_t **error);
 
-/**
- * @brief Gets a starting address of a #PShm memory segment.
+/*!@brief Gets a starting address of a #PShm memory segment.
  * @param shm #PShm to get the address for.
  * @return Pointer to the starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ptr_t p_shm_get_address(const PShm *shm);
+P_API ptr_t
+p_shm_get_address(const shm_t *shm);
 
-/**
- * @brief Gets the size of a #PShm memory segment.
+/*!@brief Gets the size of a #PShm memory segment.
  * @param shm #PShm to get the size for.
  * @return Size of the given memory segment in case of success, 0 otherwise.
  * @since 0.0.1
@@ -178,6 +172,7 @@ P_API ptr_t p_shm_get_address(const PShm *shm);
  * Note that the returned size would be a slightly larger than specified during
  * the p_shm_new() call due to service information stored inside.
  */
-P_API size_t p_shm_get_size(const PShm *shm);
+P_API size_t
+p_shm_get_size(const shm_t *shm);
 
-#endif /* P_SHM_H__ */
+#endif /* !P_SHM_H__ */

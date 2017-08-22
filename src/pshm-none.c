@@ -17,63 +17,56 @@
 
 #include "p/shm.h"
 
-#include <stdlib.h>
-
-struct PShm_ {
+struct shm {
   int_t hdl;
 };
 
-P_API PShm *
+shm_t *
 p_shm_new(const byte_t *name,
   size_t size,
-  PShmAccessPerms perms,
-  p_err_t **error) {
+  shm_access_t perms,
+  err_t **error) {
   P_UNUSED (name);
   P_UNUSED (size);
   P_UNUSED (perms);
   P_UNUSED (error);
-
   return NULL;
 }
 
-P_API void
-p_shm_take_ownership(PShm *shm) {
+void
+p_shm_take_ownership(shm_t *shm) {
   P_UNUSED (shm);
 }
 
-P_API void
-p_shm_free(PShm *shm) {
+void
+p_shm_free(shm_t *shm) {
   P_UNUSED (shm);
 }
 
-P_API bool
-p_shm_lock(PShm *shm,
-  p_err_t **error) {
+bool
+p_shm_lock(shm_t *shm,
+  err_t **error) {
   P_UNUSED (shm);
   P_UNUSED (error);
-
   return false;
 }
 
-P_API bool
-p_shm_unlock(PShm *shm,
-  p_err_t **error) {
+bool
+p_shm_unlock(shm_t *shm,
+  err_t **error) {
   P_UNUSED (shm);
   P_UNUSED (error);
-
   return false;
 }
 
-P_API ptr_t
-p_shm_get_address(const PShm *shm) {
+ptr_t
+p_shm_get_address(const shm_t *shm) {
   P_UNUSED (shm);
-
   return NULL;
 }
 
-P_API size_t
-p_shm_get_size(const PShm *shm) {
+size_t
+p_shm_get_size(const shm_t *shm) {
   P_UNUSED (shm);
-
   return 0;
 }

@@ -63,10 +63,10 @@ BOOST_AUTO_TEST_CASE (phashtable_nomem_test)
 {
 	p_libsys_init ();
 
-	PHashTable *table = p_hash_table_new ();
+	htable_t *table = p_hash_table_new ();
 	BOOST_CHECK (table != NULL);
 
-	PMemVTable vtable;
+	mem_vtable_t vtable;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;
@@ -103,8 +103,8 @@ BOOST_AUTO_TEST_CASE (phashtable_invalid_test)
 
 BOOST_AUTO_TEST_CASE (phashtable_general_test)
 {
-	PHashTable	*table = NULL;
-	PList		*list = NULL;
+	htable_t	*table = NULL;
+	list_t		*list = NULL;
 
 	p_libsys_init ();
 
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 
 	list = p_hash_table_lookup_by_value (table,
 					     PINT_TO_POINTER (19),
-					     (PCompareFunc) test_hash_table_values);
+					     (cmp_fn_t) test_hash_table_values);
 	BOOST_REQUIRE (list != NULL);
 	BOOST_REQUIRE (p_list_length (list) == 3);
 	BOOST_REQUIRE (PPOINTER_TO_INT (list->data) +
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 {
 	p_libsys_init ();
 
-	PHashTable *table = p_hash_table_new ();
+	htable_t *table = p_hash_table_new ();
 	BOOST_REQUIRE (table != NULL);
 
 	srand ((unsigned int) time (NULL));

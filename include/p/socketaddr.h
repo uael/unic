@@ -15,8 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file p/socketaddress.h
+/*!@file p/socketaddress.h
  * @brief Socket address wrapper
  * @author Alexander Saprykin
  *
@@ -36,56 +35,58 @@
  * the system to make it working.
  *
  * Convenient methods to create special addresses are provided: for the loopback
- * interface use p_socket_address_new_loopback(), for the any-address interface
- * use p_socket_address_new_any().
+ * interface use p_socketaddr_new_loopback(), for the any-address interface
+ * use p_socketaddr_new_any().
  *
  * If you want to get the underlying native address structure for further usage
- * in system calls use p_socket_address_to_native(), and
- * p_socket_address_new_from_native() for a vice versa conversion.
+ * in system calls use p_socketaddr_to_native(), and
+ * p_socketaddr_new_from_native() for a vice versa conversion.
  */
-
-#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
-#endif
-
 #ifndef P_SOCKETADDR_H__
-#define P_SOCKETADDR_H__
+# define P_SOCKETADDR_H__
 
 #include "p/macros.h"
 #include "p/types.h"
 
 #ifndef P_OS_WIN
-#  include <sys/types.h>
-#  include <sys/socket.h>
-#  include <netinet/in.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
 #endif
 
-/** Socket address family. */
-typedef enum PSocketFamily_ {
-  P_SOCKET_FAMILY_UNKNOWN = 0,    /**< Unknown family.	*/
-  P_SOCKET_FAMILY_INET = AF_INET,  /**< IPv4 family.	*/
+typedef enum socket_family socket_family_t;
+
+/*!@brief Socket address opaque structure. */
+typedef struct socketaddr socketaddr_t;
+
+/*!@brief Socket address family. */
+enum socket_family {
+
+  /*!@brief Unknown family. */
+  P_SOCKET_FAMILY_UNKNOWN = 0,
+
+  /*!@brief IPv4 family. */
+  P_SOCKET_FAMILY_INET = AF_INET,
+
 #ifdef AF_INET6
-  P_SOCKET_FAMILY_INET6 = AF_INET6  /**< IPv6 family.	*/
+  /*!@brief IPv6 family. */
+  P_SOCKET_FAMILY_INET6 = AF_INET6
 #else
-  P_SOCKET_FAMILY_INET6	= -1		/**< No IPv6 family.	*/
+  /*!@brief No IPv6 family. */
+  P_SOCKET_FAMILY_INET6 = -1
 #endif
-} PSocketFamily;
+};
 
-/** Socket address opaque structure. */
-typedef struct PSocketAddress_ PSocketAddress;
-
-/**
- * @brief Creates new #PSocketAddress from the native socket address raw data.
+/*!@brief Creates new #PSocketAddress from the native socket address raw data.
  * @param native Pointer to the native socket address raw data.
  * @param len Raw data length, in bytes.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API PSocketAddress *p_socket_address_new_from_native(const_ptr_t native,
-  size_t len);
+P_API socketaddr_t *
+p_socketaddr_new_from_native(const_ptr_t native, size_t len);
 
-/**
- * @brief Creates new #PSocketAddress.
+/*!@brief Creates new #PSocketAddress.
  * @param address String representation of an address (i.e. "172.146.45.5").
  * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
@@ -97,11 +98,10 @@ P_API PSocketAddress *p_socket_address_new_from_native(const_ptr_t native,
  * correctly parse such an address though some old operating systems may fail in
  * case of lack of the getaddrinfo() call.
  */
-P_API PSocketAddress *p_socket_address_new(const byte_t *address,
-  uint16_t port);
+P_API socketaddr_t *
+p_socketaddr_new(const byte_t *address, uint16_t port);
 
-/**
- * @brief Creates new #PSocketAddress for the any-address representation.
+/*!@brief Creates new #PSocketAddress for the any-address representation.
  * @param family Socket family.
  * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
@@ -109,13 +109,12 @@ P_API PSocketAddress *p_socket_address_new(const byte_t *address,
  * @note This call creates a network address for the set of all possible
  * addresses, so you can't use it for receiving or sending data on a particular
  * network address. If you need to bind a socket to the specific address
- * (i.e. 127.0.0.1) use p_socket_address_new() instead.
+ * (i.e. 127.0.0.1) use p_socketaddr_new() instead.
  */
-P_API PSocketAddress *p_socket_address_new_any(PSocketFamily family,
-  uint16_t port);
+P_API socketaddr_t *
+p_socketaddr_new_any(socket_family_t family, uint16_t port);
 
-/**
- * @brief Creates new #PSocketAddress for the loopback interface.
+/*!@brief Creates new #PSocketAddress for the loopback interface.
  * @param family Socket family.
  * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
@@ -123,150 +122,147 @@ P_API PSocketAddress *p_socket_address_new_any(PSocketFamily family,
  * @note This call creates a network address for the entire loopback network
  * interface, so you can't use it for receiving or sending data on a particular
  * network address. If you need to bind a socket to the specific address
- * (i.e. 127.0.0.1) use p_socket_address_new() instead.
+ * (i.e. 127.0.0.1) use p_socketaddr_new() instead.
  */
-P_API PSocketAddress *p_socket_address_new_loopback(PSocketFamily family,
-  uint16_t port);
+P_API socketaddr_t *
+p_socketaddr_new_loopback(socket_family_t family, uint16_t port);
 
-/**
- * @brief Converts #PSocketAddress to the native socket address raw data.
+/*!@brief Converts #PSocketAddress to the native socket address raw data.
  * @param addr #PSocketAddress to convert.
  * @param[out] dest Output buffer for raw data.
  * @param destlen Length in bytes of the @a dest buffer.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_socket_address_to_native(const PSocketAddress *addr,
-  ptr_t dest,
+P_API bool
+p_socketaddr_to_native(const socketaddr_t *addr, ptr_t dest,
   size_t destlen);
 
-/**
- * @brief Gets the size of the native socket address raw data, in bytes.
+/*!@brief Gets the size of the native socket address raw data, in bytes.
  * @param addr #PSocketAddress to get the size of native address raw data for.
  * @return Size of the native socket address raw data in case of success, 0
  * otherwise.
  * @since 0.0.1
  */
-P_API size_t p_socket_address_get_native_size(const PSocketAddress *addr);
+P_API size_t
+p_socketaddr_get_native_size(const socketaddr_t *addr);
 
-/**
- * @brief Gets a family of a socket address.
+/*!@brief Gets a family of a socket address.
  * @param addr #PSocketAddress to get the family for.
  * @return #PSocketFamily of the socket address.
  * @since 0.0.1
  */
-P_API PSocketFamily p_socket_address_get_family(const PSocketAddress *addr);
+P_API socket_family_t
+p_socketaddr_get_family(const socketaddr_t *addr);
 
-/**
- * @brief Gets a socket address in a string representation, i.e. "172.146.45.5".
+/*!@brief Gets a socket address in a string representation, i.e. "172.146.45.5".
  * @param addr #PSocketAddress to get address string for.
  * @return Pointer to the string representation of the socket address in case of
  * success, NULL otherwise. The caller takes ownership of the returned pointer.
  * @since 0.0.1
  */
-P_API byte_t *p_socket_address_get_address(const PSocketAddress *addr);
+P_API byte_t *
+p_socketaddr_get_address(const socketaddr_t *addr);
 
-/**
- * @brief Gets a port number of a socket address.
+/*!@brief Gets a port number of a socket address.
  * @param addr #PSocketAddress to get the port number for.
  * @return Port number in case of success, 0 otherwise.
  * @since 0.0.1
  */
-P_API uint16_t p_socket_address_get_port(const PSocketAddress *addr);
+P_API uint16_t
+p_socketaddr_get_port(const socketaddr_t *addr);
 
-/**
- * @brief Gets IPv6 traffic class and flow information.
+/*!@brief Gets IPv6 traffic class and flow information.
  * @param addr #PSocketAddress to get flow information for.
  * @return IPv6 traffic class and flow information.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
  * @note Some operating systems may not support this property.
- * @sa p_socket_address_is_flow_info_supported()
+ * @sa p_socketaddr_is_flow_info_supported()
  */
-P_API uint32_t p_socket_address_get_flow_info(const PSocketAddress *addr);
+P_API uint32_t
+p_socketaddr_get_flow_info(const socketaddr_t *addr);
 
-/**
- * @brief Gets an IPv6 set of interfaces for a scope.
+/*!@brief Gets an IPv6 set of interfaces for a scope.
  * @param addr #PSocketAddress to get the set of interfaces for.
  * @return Index that identifies the set of interfaces for a scope.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
  * @note Some operating systems may not support this property.
- * @sa p_socket_address_is_scope_id_supported()
+ * @sa p_socketaddr_is_scope_id_supported()
  */
-P_API uint32_t p_socket_address_get_scope_id(const PSocketAddress *addr);
+P_API uint32_t
+p_socketaddr_get_scope_id(const socketaddr_t *addr);
 
-/**
- * @brief Sets IPv6 traffic class and flow information.
+/*!@brief Sets IPv6 traffic class and flow information.
  * @param addr #PSocketAddress to set flow information for.
  * @param flowinfo Flow information to set.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address.
  * @note Some operating systems may not support this property.
- * @sa p_socket_address_is_flow_info_supported()
+ * @sa p_socketaddr_is_flow_info_supported()
  */
-P_API void p_socket_address_set_flow_info(PSocketAddress *addr,
-  uint32_t flowinfo);
+P_API void
+p_socketaddr_set_flow_info(socketaddr_t *addr, uint32_t flowinfo);
 
-/**
- * @brief Sets an IPv6 set of interfaces for a scope.
+/*!@brief Sets an IPv6 set of interfaces for a scope.
  * @param addr #PSocketAddress to set the set of interfaces for.
  * @param scope_id Index that identifies the set of interfaces for a scope.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address.
  * @note Some operating systems may not support this property.
- * @sa p_socket_address_is_scope_id_supported()
+ * @sa p_socketaddr_is_scope_id_supported()
  */
-P_API void p_socket_address_set_scope_id(PSocketAddress *addr,
-  uint32_t scope_id);
+P_API void
+p_socketaddr_set_scope_id(socketaddr_t *addr, uint32_t scope_id);
 
-/**
- * @brief Checks whether flow information is supported in IPv6.
+/*!@brief Checks whether flow information is supported in IPv6.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_socket_address_is_flow_info_supported(void);
+P_API bool
+p_socketaddr_is_flow_info_supported(void);
 
-/**
- * @brief Checks whether a set of interfaces for a scope is supported in IPv6.
+/*!@brief Checks whether a set of interfaces for a scope is supported in IPv6.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_API bool p_socket_address_is_scope_id_supported(void);
+P_API bool
+p_socketaddr_is_scope_id_supported(void);
 
-/**
- * @brief Checks whether IPv6 protocol is supported.
+/*!@brief Checks whether IPv6 protocol is supported.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.3
  */
-P_API bool p_socket_address_is_ipv6_supported(void);
+P_API bool
+p_socketaddr_is_ipv6_supported(void);
 
-/**
- * @brief Checks whether a given socket address is an any-address
+/*!@brief Checks whether a given socket address is an any-address
  * representation. Such an address is a 0.0.0.0.
  * @param addr #PSocketAddress to check.
  * @return TRUE if the @a addr is the any-address representation, FALSE
  * otherwise.
  * @since 0.0.1
- * @sa p_socket_address_new_any()
+ * @sa p_socketaddr_new_any()
  */
-P_API bool p_socket_address_is_any(const PSocketAddress *addr);
+P_API bool
+p_socketaddr_is_any(const socketaddr_t *addr);
 
-/**
- * @brief Checks whether a given socket address is for the loopback interface.
+/*!@brief Checks whether a given socket address is for the loopback interface.
  * Such an address is a 127.x.x.x.
  * @param addr #PSocketAddress to check.
  * @return TRUE if the @a addr is for the loopback interface, FALSE otherwise.
  * @since 0.0.1
- * @sa p_socket_address_new_loopback()
+ * @sa p_socketaddr_new_loopback()
  */
-P_API bool p_socket_address_is_loopback(const PSocketAddress *addr);
+P_API bool
+p_socketaddr_is_loopback(const socketaddr_t *addr);
 
-/**
- * @brief Frees a socket address structure and its resources.
+/*!@brief Frees a socket address structure and its resources.
  * @param addr #PSocketAddress to free.
  * @since 0.0.1
  */
-P_API void p_socket_address_free(PSocketAddress *addr);
+P_API void
+p_socketaddr_free(socketaddr_t *addr);
 
-#endif /* P_SOCKETADDR_H__ */
+#endif /* !P_SOCKETADDR_H__ */

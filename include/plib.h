@@ -16,20 +16,18 @@
  */
 
 #ifndef P_H__
-#define P_H__
-
-#define PLIBSYS_H_INSIDE
+# define P_H__
 
 #include "plibsysconfig.h"
 #include "p/atomic.h"
 #include "p/condvar.h"
 #include "p/hash.h"
 #include "p/dir.h"
-#include "p/error.h"
+#include "p/err.h"
 #include "p/file.h"
 #include "p/htable.h"
 #include "p/inifile.h"
-#include "p/libloader.h"
+#include "p/dl.h"
 #include "p/list.h"
 #include "p/macros.h"
 #include "p/cc.h"
@@ -42,7 +40,7 @@
 #include "p/rwlock.h"
 #include "p/sem.h"
 #include "p/shm.h"
-#include "p/shmbuffer.h"
+#include "p/shmbuf.h"
 #include "p/socket.h"
 #include "p/socketaddr.h"
 #include "p/spinlock.h"
@@ -52,4 +50,4 @@
 #include "p/types.h"
 #include "p/uthread.h"
 
-#endif /* P_H__ */
+#endif /* !P_H__ */

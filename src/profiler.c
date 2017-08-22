@@ -19,41 +19,41 @@
 #include "p/profiler.h"
 #include "ptimeprofiler-private.h"
 
-extern uint64_t p_profiler_get_ticks_internal(void);
-extern uint64_t p_profiler_elapsed_usecs_internal(
+extern uint64_t
+p_profiler_get_ticks_internal(void);
+
+extern uint64_t
+p_profiler_elapsed_usecs_internal(
   const p_profiler_t *profiler);
 
-P_API p_profiler_t *
+p_profiler_t *
 p_profiler_new() {
   p_profiler_t *ret;
-
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_profiler_t))) == NULL)) {
     P_ERROR ("p_profiler_t: failed to allocate memory");
     return NULL;
   }
-
   ret->counter = p_profiler_get_ticks_internal();
-
   return ret;
 }
 
-P_API void
+void
 p_profiler_reset(p_profiler_t *profiler) {
-  if (P_UNLIKELY (profiler == NULL))
+  if (P_UNLIKELY (profiler == NULL)) {
     return;
-
+  }
   profiler->counter = p_profiler_get_ticks_internal();
 }
 
-P_API uint64_t
+uint64_t
 p_profiler_elapsed_usecs(const p_profiler_t *profiler) {
-  if (P_UNLIKELY (profiler == NULL))
+  if (P_UNLIKELY (profiler == NULL)) {
     return 0;
-
+  }
   return p_profiler_elapsed_usecs_internal(profiler);
 }
 
-P_API void
+void
 p_profiler_free(p_profiler_t *profiler) {
   p_free(profiler);
 }

@@ -15,111 +15,102 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/error.h"
+#include "p/err.h"
 #include "p/file.h"
-#include "p/libloader.h"
+#include "p/dl.h"
 #include "p/mem.h"
 #include "p/string.h"
-
 #include <dlfcn.h>
 
 /* FreeBSD may cause a segfault: https://reviews.freebsd.org/D5112,
  * DragonFlyBSD as well, so we need to check a file size before calling dlopen()
  */
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
-#  include <unistd.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
+# include <unistd.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 #endif
 
 typedef ptr_t plibrary_handle;
 
-struct PLibraryLoader_ {
+struct dl {
   plibrary_handle handle;
 };
 
-static void pp_library_loader_clean_handle(plibrary_handle handle);
+static void
+pp_dl_clean_handle(plibrary_handle handle);
 
 static void
-pp_library_loader_clean_handle(plibrary_handle handle) {
+pp_dl_clean_handle(plibrary_handle handle) {
   if (P_UNLIKELY (dlclose(handle) != 0))
     P_ERROR (
-      "PLibraryLoader::pp_library_loader_clean_handle: dlclose() failed");
+      "dl_t::pp_dl_clean_handle: dlclose() failed");
 }
 
-P_API PLibraryLoader *
-p_library_loader_new(const byte_t *path) {
-  PLibraryLoader *loader = NULL;
+dl_t *
+p_dl_new(const byte_t *path) {
+  dl_t *loader = NULL;
   plibrary_handle handle;
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
-  struct stat	stat_buf;
+  struct stat stat_buf;
 #endif
-
-  if (!p_file_is_exists(path))
+  if (!p_file_is_exists(path)) {
     return NULL;
-
+  }
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
   if (P_UNLIKELY (stat (path, &stat_buf) != 0)) {
-    P_ERROR ("PLibraryLoader::p_library_loader_new: stat() failed");
+    P_ERROR ("dl_t::p_dl_new: stat() failed");
     return NULL;
   }
 
   if (P_UNLIKELY (stat_buf.st_size == 0)) {
-    P_ERROR ("PLibraryLoader::p_library_loader_new: unable to handle zero-size file");
+    P_ERROR ("dl_t::p_dl_new: unable to handle zero-size file");
     return NULL;
   }
 #endif
-
   if (P_UNLIKELY ((handle = dlopen(path, RTLD_NOW)) == NULL)) {
-    P_ERROR ("PLibraryLoader::p_library_loader_new: dlopen() failed");
+    P_ERROR ("dl_t::p_dl_new: dlopen() failed");
     return NULL;
   }
-
-  if (P_UNLIKELY ((loader = p_malloc0(sizeof(PLibraryLoader))) == NULL)) {
-    P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
-    pp_library_loader_clean_handle(handle);
+  if (P_UNLIKELY ((loader = p_malloc0(sizeof(dl_t))) == NULL)) {
+    P_ERROR ("dl_t::p_dl_new: failed to allocate memory");
+    pp_dl_clean_handle(handle);
     return NULL;
   }
-
   loader->handle = handle;
-
   return loader;
 }
 
-P_API PFuncAddr
-p_library_loader_get_symbol(PLibraryLoader *loader, const byte_t *sym) {
-  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
+PFuncAddr
+p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
+  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
-
+  }
   return (PFuncAddr) dlsym(loader->handle, sym);
 }
 
-P_API void
-p_library_loader_free(PLibraryLoader *loader) {
-  if (P_UNLIKELY (loader == NULL))
+void
+p_dl_free(dl_t *loader) {
+  if (P_UNLIKELY (loader == NULL)) {
     return;
-
-  pp_library_loader_clean_handle(loader->handle);
-
+  }
+  pp_dl_clean_handle(loader->handle);
   p_free(loader);
 }
 
-P_API byte_t *
-p_library_loader_get_last_error(PLibraryLoader *loader) {
+byte_t *
+p_dl_get_last_error(dl_t *loader) {
   byte_t *res = NULL;
   byte_t *msg;
-
   P_UNUSED (loader);
-
   msg = dlerror();
-
-  if (msg != NULL)
+  if (msg != NULL) {
     res = p_strdup(msg);
-
+  }
   return res;
 }
 
-P_API bool
-p_library_loader_is_ref_counted(void) {
+bool
+p_dl_is_ref_counted(void) {
   return true;
 }
