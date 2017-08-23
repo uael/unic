@@ -161,7 +161,7 @@ CUTEST(rwlock, general) {
   ASSERT(reader_thr2 != NULL);
   ASSERT(writer_thr1 != NULL);
   ASSERT(writer_thr2 != NULL);
-  p_uthread_sleep(10);
+  p_uthread_sleep(100);
   is_threads_working = false;
   ASSERT(p_uthread_join(reader_thr1) > 0);
   ASSERT(p_uthread_join(reader_thr2) > 0);
