@@ -49,21 +49,20 @@ pmem_free(ptr_t block) {
 
 static bool
 create_test_ini_file(bool last_empty_section) {
-  FILE *file = fopen("." P_DIR_SEP "p_ini_test_file.ini", "w");
+  FILE *file;
+  byte_t *buf;
+  int i;
 
+  file = fopen("." P_DIR_SEP "p_ini_test_file.ini", "w");
   if (file == NULL) {
     return false;
   }
-
-  byte_t *buf = (byte_t *) p_malloc0(PINIFILE_STRESS_LINE + 1);
-
-  for (int i = 0; i < PINIFILE_STRESS_LINE; ++i) {
+  buf = (byte_t *) p_malloc0(PINIFILE_STRESS_LINE + 1);
+  for (i = 0; i < PINIFILE_STRESS_LINE; ++i) {
     buf[i] = (byte_t) (97 + i % 20);
   }
-
   /* Empty section */
   fprintf(file, "[empty_section]\n");
-
   /* Numeric section */
   fprintf(file, "[numeric_section]\n");
   fprintf(file, "int_parameter_1 = 4\n");
@@ -106,28 +105,22 @@ create_test_ini_file(bool last_empty_section) {
   }
 
   p_free(buf);
-
   return fclose(file) == 0;
 }
 
 CUTEST(inifile, nomem) {
+  ini_file_t *ini;
+  mem_vtable_t vtable;
+  list_t *section_list;
 
   ASSERT(create_test_ini_file(false));
-
-  ini_file_t *ini = p_inifile_new("." P_DIR_SEP "p_ini_test_file.ini");
+  ini = p_inifile_new("." P_DIR_SEP "p_ini_test_file.ini");
   ASSERT(ini != NULL);
-
-  mem_vtable_t vtable;
-
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
-  ASSERT(p_inifile_new("."
-    P_DIR_SEP
-    "p_ini_test_file.ini") == NULL);
+  ASSERT(p_inifile_new("."P_DIR_SEP"p_ini_test_file.ini") == NULL);
   ASSERT(p_inifile_parse(ini, NULL) == true);
   ASSERT(p_inifile_sections(ini) == NULL);
 
@@ -139,7 +132,7 @@ CUTEST(inifile, nomem) {
   ASSERT(ini != NULL);
 
   ASSERT(p_inifile_parse(ini, NULL) == true);
-  list_t *section_list = p_inifile_sections(ini);
+  section_list = p_inifile_sections(ini);
   ASSERT(section_list != NULL);
   ASSERT(p_list_length(section_list) == 4);
 
@@ -147,23 +140,22 @@ CUTEST(inifile, nomem) {
   p_list_free(section_list);
   p_inifile_free(ini);
 
-  ASSERT(p_file_remove("."
-    P_DIR_SEP
-    "p_ini_test_file.ini", NULL) == true);
+  ASSERT(p_file_remove("."P_DIR_SEP"p_ini_test_file.ini", NULL) == true);
 
   return CUTE_SUCCESS;
 }
 
 CUTEST(inifile, bad_input) {
-  ini_file_t *ini = NULL;
+  ini_file_t *ini;
 
+  ini = NULL;
   p_inifile_free(ini);
   ASSERT(p_inifile_new(NULL) == NULL);
   ASSERT(p_inifile_parse(ini, NULL) == false);
   ASSERT(p_inifile_is_parsed(ini) == false);
   ASSERT(
-    p_inifile_is_key_exists(ini, "string_section", "string_paramter_1")
-      == false);
+    p_inifile_is_key_exists(ini, "string_section", "string_paramter_1") == false
+  );
   ASSERT(p_inifile_sections(ini) == NULL);
   ASSERT(p_inifile_keys(ini, "string_section") == NULL);
   ASSERT(
@@ -198,18 +190,22 @@ CUTEST(inifile, bad_input) {
 }
 
 CUTEST(inifile, read) {
+  ini_file_t *ini;
+  byte_t *str;
+  list_t *list;
+  list_t *iter;
+  list_t *list_val;
 
-  ini_file_t *ini = p_inifile_new("." P_DIR_SEP "p_ini_test_file.ini");
+  ini = p_inifile_new("." P_DIR_SEP "p_ini_test_file.ini");
   ASSERT(ini != NULL);
   ASSERT(p_inifile_is_parsed(ini) == false);
-
   ASSERT(p_inifile_parse(ini, NULL) == true);
   ASSERT(p_inifile_is_parsed(ini) == true);
   ASSERT(p_inifile_parse(ini, NULL) == true);
   ASSERT(p_inifile_is_parsed(ini) == true);
 
   /* Test list of sections */
-  list_t *list = p_inifile_sections(ini);
+  list = p_inifile_sections(ini);
   ASSERT(list != NULL);
   ASSERT(p_list_length(list) == 4);
 
@@ -272,11 +268,9 @@ CUTEST(inifile, read) {
   ASSERT(p_list_length(list) == 8);
   p_list_foreach(list, (fn_t) p_free, NULL);
   p_list_free(list);
-
-  byte_t *str =
-    p_inifile_parameter_string(
-      ini, "string_section", "string_parameter_1",
-      NULL);
+  str = p_inifile_parameter_string(
+        ini, "string_section", "string_parameter_1",
+        NULL);
   ASSERT(str != NULL);
   ASSERT(strcmp(str, "Test string") == 0);
   p_free(str);
@@ -379,13 +373,12 @@ CUTEST(inifile, read) {
   p_list_free(list);
 
   /* -- First list parameter */
-  list_t *list_val =
-    p_inifile_parameter_list(ini, "list_section", "list_parameter_1");
+  list_val = p_inifile_parameter_list(ini, "list_section", "list_parameter_1");
   ASSERT(list_val != NULL);
   ASSERT(p_list_length(list_val) == 4);
 
   int int_sum = 0;
-  for (list_t *iter = list_val; iter != NULL; iter = iter->next) {
+  for (iter = list_val; iter != NULL; iter = iter->next) {
     int_sum += atoi((const byte_t *) (iter->data));
   }
 
@@ -399,7 +392,7 @@ CUTEST(inifile, read) {
   ASSERT(p_list_length(list_val) == 3);
 
   double flt_sum = 0;
-  for (list_t *iter = list_val; iter != NULL; iter = iter->next) {
+  for (iter = list_val; iter != NULL; iter = iter->next) {
     flt_sum += atof((const byte_t *) (iter->data));
   }
 
@@ -413,7 +406,7 @@ CUTEST(inifile, read) {
   ASSERT(p_list_length(list_val) == 3);
 
   bool bool_sum = true;
-  for (list_t *iter = list_val; iter != NULL; iter = iter->next) {
+  for (iter = list_val; iter != NULL; iter = iter->next) {
     bool_sum = bool_sum && atoi((const byte_t *) (iter->data));
   }
 
@@ -428,9 +421,7 @@ CUTEST(inifile, read) {
 
   p_inifile_free(ini);
 
-  ASSERT(p_file_remove("."
-    P_DIR_SEP
-    "p_ini_test_file.ini", NULL) == true);
+  ASSERT(p_file_remove("."P_DIR_SEP"p_ini_test_file.ini", NULL) == true);
 
   return CUTE_SUCCESS;
 }

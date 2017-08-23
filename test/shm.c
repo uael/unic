@@ -30,7 +30,7 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 
 static void *
 shm_test_thread(void *arg) {
-  int rand_num;
+  int i, rand_num;
   size_t shm_size;
   ptr_t addr;
   shm_t *shm;
@@ -52,7 +52,7 @@ shm_test_thread(void *arg) {
     p_uthread_exit(1);
   }
 
-  for (uint_t i = 0; i < shm_size; ++i) {
+  for (i = 0; i < shm_size; ++i) {
     *(((byte_t *) addr) + i) = (byte_t) rand_num;
   }
 
@@ -84,7 +84,6 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(shm, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;
@@ -103,6 +102,7 @@ CUTEST(shm, nomem) {
 }
 
 CUTEST(shm, invalid) {
+  shm_t *shm;
 
   ASSERT(p_shm_new(NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
   ASSERT(p_shm_lock(NULL, NULL) == false);
@@ -110,8 +110,7 @@ CUTEST(shm, invalid) {
   ASSERT(p_shm_get_address(NULL) == NULL);
   ASSERT(p_shm_get_size(NULL) == 0);
   p_shm_take_ownership(NULL);
-
-  shm_t *shm = p_shm_new("p_shm_invalid_test", 0, P_SHM_ACCESS_READWRITE, NULL);
+  shm = p_shm_new("p_shm_invalid_test", 0, P_SHM_ACCESS_READWRITE, NULL);
   p_shm_take_ownership(shm);
   p_shm_free(shm);
 
@@ -123,9 +122,9 @@ CUTEST(shm, invalid) {
 }
 
 CUTEST(shm, general) {
-  shm_t *shm = NULL;
+  shm_t *shm;
 #ifndef P_OS_HPUX
-  shm_t *shm2 = NULL;
+  shm_t *shm2;
 #endif
   ptr_t addr, addr2;
   int i;

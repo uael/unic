@@ -145,7 +145,6 @@ consumer_test_thread(void *a) {
 }
 
 CUTEST(condvar, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;

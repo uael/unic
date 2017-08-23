@@ -45,7 +45,6 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(profiler, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;

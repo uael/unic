@@ -94,9 +94,11 @@ reader_thread_func(void *data) {
 
 static void *
 writer_thread_func(void *data) {
-  int string_num = PPOINTER_TO_INT(data);
-  int counter = 0;
+  int string_num;
+  int counter;
 
+  string_num = PPOINTER_TO_INT(data);
+  counter = 0;
   while (is_threads_working == true) {
     p_uthread_sleep(10);
 
@@ -125,7 +127,6 @@ writer_thread_func(void *data) {
 }
 
 CUTEST(rwlock, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;

@@ -48,30 +48,29 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(error, nomem) {
-
-  err_t *error = p_err_new_literal(0, 0, NULL);
-  ASSERT(error != NULL);
-
+  err_t *error;
   mem_vtable_t vtable;
+
+  error = p_err_new_literal(0, 0, NULL);
+  ASSERT(error != NULL);
 
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
 
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
   ASSERT(p_err_new() == NULL);
   ASSERT(p_err_new_literal(0, 0, NULL) == NULL);
   ASSERT(p_err_copy(error) == NULL);
 
   p_mem_restore_vtable();
-
   p_err_free(error);
 
   return CUTE_SUCCESS;
 }
 
 CUTEST(error, invalid) {
+  err_t *error;
 
   ASSERT(p_err_get_message(NULL) == NULL);
   ASSERT(p_err_get_code(NULL) == 0);
@@ -79,7 +78,7 @@ CUTEST(error, invalid) {
   ASSERT(p_err_get_domain(NULL) == P_ERR_DOMAIN_NONE);
   ASSERT(p_err_copy(NULL) == NULL);
 
-  err_t *error = (err_t *) 0x1;
+  error = (err_t *) 0x1;
 
   p_err_set_code(NULL, 0);
   p_err_set_native_code(NULL, 0);
@@ -98,16 +97,17 @@ CUTEST(error, invalid) {
 }
 
 CUTEST(error, general) {
+  err_t *error;
+  err_t *copy_error;
 
   /* Empty initialization test */
-  err_t *error = p_err_new();
+  error = p_err_new();
 
   ASSERT(error != NULL);
   ASSERT(p_err_get_code(error) == 0);
   ASSERT(p_err_get_domain(error) == P_ERR_DOMAIN_NONE);
   ASSERT(p_err_get_message(error) == NULL);
-
-  err_t *copy_error = p_err_copy(error);
+  copy_error = p_err_copy(error);
 
   ASSERT(copy_error != NULL);
   ASSERT(p_err_get_code(copy_error) == 0);
@@ -115,7 +115,6 @@ CUTEST(error, general) {
   ASSERT(p_err_get_message(copy_error) == NULL);
 
   p_err_free(copy_error);
-  copy_error = NULL;
 
   p_err_set_error(error, (int) P_ERR_DOMAIN_IO, -10, PERROR_TEST_MESSAGE);
 
@@ -146,11 +145,9 @@ CUTEST(error, general) {
   ASSERT(p_err_get_domain(error) == P_ERR_DOMAIN_NONE);
   ASSERT(p_err_get_native_code(copy_error) == -10);
 
-  ASSERT(
-    strcmp(p_err_get_message(copy_error), PERROR_TEST_MESSAGE) == 0);
+  ASSERT(strcmp(p_err_get_message(copy_error), PERROR_TEST_MESSAGE) == 0);
 
   p_err_free(copy_error);
-  copy_error = NULL;
 
   p_err_set_error(error, 20, -20, PERROR_TEST_MESSAGE_2);
 
@@ -167,7 +164,6 @@ CUTEST(error, general) {
   ASSERT(p_err_get_message(error) == NULL);
 
   p_err_free(error);
-  error = NULL;
 
   /* Literal initialization test */
   error = p_err_new_literal(30, -30, PERROR_TEST_MESSAGE);
@@ -183,8 +179,7 @@ CUTEST(error, general) {
   ASSERT(p_err_get_code(copy_error) == 30);
   ASSERT(p_err_get_native_code(copy_error) == -30);
   ASSERT(p_err_get_domain(error) == P_ERR_DOMAIN_NONE);
-  ASSERT(
-    strcmp(p_err_get_message(copy_error), PERROR_TEST_MESSAGE) == 0);
+  ASSERT(strcmp(p_err_get_message(copy_error), PERROR_TEST_MESSAGE) == 0);
 
   p_err_free(copy_error);
   p_err_free(error);

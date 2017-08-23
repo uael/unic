@@ -51,7 +51,7 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(dir, nomem) {
-
+  dir_t *dir;
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;
@@ -67,14 +67,13 @@ CUTEST(dir, nomem) {
   ASSERT(p_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
   ASSERT(p_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
 
-  ASSERT(p_dir_new(PDIR_TEST_DIR
-    "/", NULL) == NULL);
+  ASSERT(p_dir_new(PDIR_TEST_DIR "/", NULL) == NULL);
 
   /* Revert memory management back */
   p_mem_restore_vtable();
 
   /* Try out of memory when iterating */
-  dir_t *dir = p_dir_new(PDIR_TEST_DIR"/", NULL);
+  dir = p_dir_new(PDIR_TEST_DIR"/", NULL);
   ASSERT(dir != NULL);
 
   vtable.free = pmem_free;
@@ -97,6 +96,14 @@ CUTEST(dir, nomem) {
 }
 
 CUTEST(dir, general) {
+  FILE *file;
+  byte_t *orig_path;
+  dir_t *dir;
+  int dir_count;
+  int file_count;
+  dirent_t *entry;
+  int dir_count_2;
+  int file_count_2;
 
   ASSERT(p_dir_new(NULL, NULL) == NULL);
   ASSERT(p_dir_new("."
@@ -133,8 +140,7 @@ CUTEST(dir, general) {
   ASSERT(p_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
   ASSERT(p_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
   ASSERT(p_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
-
-  FILE *file = fopen(PDIR_TEST_FILE, "w");
+  file = fopen(PDIR_TEST_FILE, "w");
   ASSERT(file != NULL);
   ASSERT(p_file_is_exists(PDIR_TEST_FILE) == true);
 
@@ -145,16 +151,13 @@ CUTEST(dir, general) {
   ASSERT(p_dir_is_exists(PDIR_TEST_DIR) == true);
   ASSERT(p_dir_is_exists(PDIR_TEST_DIR_IN) == true);
 
-  dir_t *dir = p_dir_new(PDIR_TEST_DIR"/", NULL);
-
+  dir = p_dir_new(PDIR_TEST_DIR"/", NULL);
   ASSERT(dir != NULL);
 
-  int dir_count = 0;
-  int file_count = 0;
+  dir_count = 0;
+  file_count = 0;
   bool has_entry_dir = false;
   bool has_entry_file = false;
-
-  dirent_t *entry;
 
   while ((entry = p_dir_get_next_entry(dir, NULL)) != NULL) {
     ASSERT(entry->name != NULL);
@@ -187,8 +190,8 @@ CUTEST(dir, general) {
 
   ASSERT(p_dir_rewind(dir, NULL) == true);
 
-  int dir_count_2 = 0;
-  int file_count_2 = 0;
+  dir_count_2 = 0;
+  file_count_2 = 0;
   has_entry_dir = false;
   has_entry_file = false;
 
@@ -233,10 +236,8 @@ CUTEST(dir, general) {
 
   ASSERT(p_dir_is_exists(PDIR_TEST_DIR_IN) == false);
   ASSERT(p_dir_is_exists(PDIR_TEST_DIR) == false);
-
-  byte_t *orig_path = p_dir_get_path(dir);
-  ASSERT(strcmp(orig_path, PDIR_TEST_DIR
-    "/") == 0);
+  orig_path = p_dir_get_path(dir);
+  ASSERT(strcmp(orig_path, PDIR_TEST_DIR "/") == 0);
   p_free(orig_path);
 
   p_dir_free(dir);

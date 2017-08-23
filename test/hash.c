@@ -64,6 +64,7 @@ general_hash_test(hash_kind_t type,
   byte_t *hash_str;
   byte_t *long_str;
   ubyte_t *hash_dig;
+  int i;
 
   crypto_hash = p_crypto_hash_new(type);
 
@@ -80,8 +81,7 @@ general_hash_test(hash_kind_t type,
 
   long_str = (byte_t *) p_malloc0(PCRYPTO_STRESS_LENGTH);
   ASSERT(long_str != NULL);
-
-  for (int i = 0; i < PCRYPTO_STRESS_LENGTH; ++i) {
+  for (i = 0; i < PCRYPTO_STRESS_LENGTH; ++i) {
     long_str[i] = (byte_t) (97 + i % 20);
   }
 
@@ -102,7 +102,7 @@ general_hash_test(hash_kind_t type,
 
   ASSERT(dig_len == hash_len);
 
-  for (unsigned int i = 0; i < hash_len; ++i)
+  for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon1[i]);
 
   p_crypto_hash_reset(crypto_hash);
@@ -124,7 +124,7 @@ general_hash_test(hash_kind_t type,
 
   ASSERT(dig_len == hash_len);
 
-  for (unsigned int i = 0; i < hash_len; ++i)
+  for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon2[i]);
 
   p_crypto_hash_reset(crypto_hash);
@@ -132,7 +132,7 @@ general_hash_test(hash_kind_t type,
   /* Case 3 */
 
   /* Check string */
-  for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
+  for (i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
     p_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
   }
 
@@ -145,14 +145,14 @@ general_hash_test(hash_kind_t type,
 
   /* Check digest */
   dig_len = hash_len;
-  for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
+  for (i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
     p_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
   }
 
   p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
   ASSERT(dig_len == hash_len);
 
-  for (unsigned int i = 0; i < hash_len; ++i)
+  for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon3[i]);
 
   p_crypto_hash_reset(crypto_hash);

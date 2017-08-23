@@ -107,7 +107,6 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(sema, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;
@@ -115,9 +114,7 @@ CUTEST(sema, nomem) {
   vtable.realloc = pmem_realloc;
 
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
-  ASSERT(
-    p_sema_new("p_sema_test_object", 1, P_SEMA_CREATE, NULL) == NULL);
+  ASSERT(p_sema_new("p_sema_test_object", 1, P_SEMA_CREATE, NULL) == NULL);
 
   p_mem_restore_vtable();
 
@@ -170,7 +167,7 @@ CUTEST(sema, general) {
 
 CUTEST(sema, thread) {
   uthread_t *thr1, *thr2;
-  sema_t *sem = NULL;
+  sema_t *sem;
 
   sem = p_sema_new("p_sema_test_object", 10, P_SEMA_CREATE, NULL);
   ASSERT(sem != NULL);

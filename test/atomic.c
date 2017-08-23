@@ -30,9 +30,12 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
  * threads, but at least we can test the sanity of operations */
 
 CUTEST(atomic, general) {
-  (void) p_atomic_is_lock_free();
+  ptr_t atomic_pointer;
+  int atomic_int;
+  int i;
 
-  int atomic_int = 0;
+  (void) p_atomic_is_lock_free();
+  atomic_int = 0;
   p_atomic_int_set(&atomic_int, 10);
 
   ASSERT(p_atomic_int_add(&atomic_int, 5) == 10);
@@ -69,16 +72,14 @@ CUTEST(atomic, general) {
 
   p_atomic_int_set(&atomic_int, 51);
   ASSERT(p_atomic_int_get(&atomic_int) == 51);
-
-  for (int i = 51; i > 1; --i) {
+  for (i = 51; i > 1; --i) {
     ASSERT(p_atomic_int_dec_and_test(&atomic_int) == false);
     ASSERT(p_atomic_int_get(&atomic_int) == (i - 1));
   }
 
   ASSERT(p_atomic_int_dec_and_test(&atomic_int) == true);
   ASSERT(p_atomic_int_get(&atomic_int) == 0);
-
-  ptr_t atomic_pointer = NULL;
+  atomic_pointer = NULL;
   p_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (P_MAXSIZE));
   ASSERT(
     p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(P_MAXSIZE)

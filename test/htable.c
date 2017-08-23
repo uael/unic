@@ -54,32 +54,25 @@ test_htable_values(const_ptr_t a, const_ptr_t b) {
 }
 
 CUTEST(htable, nomem) {
-
-  htable_t *table = p_htable_new();
-  ASSERT(table != NULL);
-
+  htable_t *table;
   mem_vtable_t vtable;
 
+  table = p_htable_new();
+  ASSERT(table != NULL);
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
   ASSERT(p_htable_new() == NULL);
   p_htable_insert(table, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
   ASSERT(p_htable_keys(table) == NULL);
   ASSERT(p_htable_values(table) == NULL);
-
   p_mem_restore_vtable();
-
   p_htable_free(table);
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(htable, invalid) {
-
   ASSERT(p_htable_keys(NULL) == NULL);
   ASSERT(p_htable_values(NULL) == NULL);
   ASSERT(p_htable_lookup(NULL, NULL) == NULL);
@@ -87,13 +80,12 @@ CUTEST(htable, invalid) {
   p_htable_insert(NULL, NULL, NULL);
   p_htable_remove(NULL, NULL);
   p_htable_free(NULL);
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(htable, general) {
-  htable_t *table = NULL;
-  list_t *list = NULL;
+  htable_t *table;
+  list_t *list;
 
   table = p_htable_new();
   ASSERT(table != NULL);
@@ -168,12 +160,9 @@ CUTEST(htable, general) {
     PPOINTER_TO_INT(list->next->next->data) == 6);
   p_list_free(list);
 
-  ASSERT(
-    PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(1))) == 15);
-  ASSERT(
-    PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(2))) == 20);
-  ASSERT(
-    PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(3))) == 30);
+  ASSERT(PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(1))) == 15);
+  ASSERT(PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(2))) == 20);
+  ASSERT(PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(3))) == 30);
   ASSERT(p_htable_lookup(table, PINT_TO_POINTER(4)) == (ptr_t) -1);
   p_htable_insert(table, PINT_TO_POINTER (22), PINT_TO_POINTER (20));
 
@@ -189,18 +178,14 @@ CUTEST(htable, general) {
     PPOINTER_TO_INT(list->next->next->data) == 27);
   p_list_free(list);
 
-  list = p_htable_lookup_by_value(
-    table,
-    PINT_TO_POINTER (20),
-    NULL);
+  list = p_htable_lookup_by_value(table, PINT_TO_POINTER (20), NULL);
   ASSERT(list != NULL);
   ASSERT(p_list_length(list) == 2);
   ASSERT(PPOINTER_TO_INT(list->data) +
     PPOINTER_TO_INT(list->next->data) == 24);
   p_list_free(list);
 
-  ASSERT(
-    PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(22))) == 20);
+  ASSERT(PPOINTER_TO_INT(p_htable_lookup(table, PINT_TO_POINTER(22))) == 20);
 
   p_htable_remove(table, PINT_TO_POINTER (1));
   p_htable_remove(table, PINT_TO_POINTER (2));
@@ -234,26 +219,30 @@ CUTEST(htable, general) {
 }
 
 CUTEST(htable, stress) {
+  htable_t *table;
+  int counter;
+  int *keys;
+  int *values;
+  int rand_number;
+  int i;
 
-  htable_t *table = p_htable_new();
+  table = p_htable_new();
   ASSERT(table != NULL);
 
   srand((unsigned int) time(NULL));
-
-  int counter = 0;
-
-  int *keys = (int *) p_malloc0(PHASHTABLE_STRESS_COUNT * sizeof(int));
-  int *values = (int *) p_malloc0(PHASHTABLE_STRESS_COUNT * sizeof(int));
+  counter = 0;
+  keys = (int *) p_malloc0(PHASHTABLE_STRESS_COUNT * sizeof(int));
+  values = (int *) p_malloc0(PHASHTABLE_STRESS_COUNT * sizeof(int));
 
   ASSERT(keys != NULL);
   ASSERT(values != NULL);
 
   while (counter != PHASHTABLE_STRESS_COUNT) {
-    int rand_number = rand();
+    rand_number = rand();
 
     if (p_htable_lookup(table, PINT_TO_POINTER (rand_number))
       != (ptr_t) (-1)) {
-        continue;
+      continue;
     }
 
     keys[counter] = rand_number;
@@ -266,8 +255,7 @@ CUTEST(htable, stress) {
 
     ++counter;
   }
-
-  for (int i = 0; i < PHASHTABLE_STRESS_COUNT; ++i) {
+  for (i = 0; i < PHASHTABLE_STRESS_COUNT; ++i) {
     ASSERT(p_htable_lookup(table, PINT_TO_POINTER(keys[i])) ==
       PINT_TO_POINTER(values[i]));
 
@@ -291,10 +279,9 @@ CUTEST(htable, stress) {
   counter = 0;
 
   while (counter != PHASHTABLE_STRESS_COUNT) {
-    int rand_number = rand();
+    rand_number = rand();
 
-    if (p_htable_lookup(table, PINT_TO_POINTER (rand_number))
-      != (ptr_t) (-1)) {
+    if (p_htable_lookup(table, PINT_TO_POINTER (rand_number)) != (ptr_t) (-1)) {
         continue;
     }
 

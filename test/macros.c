@@ -44,6 +44,9 @@ global_api_test() {
 }
 
 CUTEST(macros, general) {
+  int rand_number;
+  int unused;
+  int result;
 
   /* Test OS detection macros */
 #if !defined (P_OS_DARWIN) && !defined (P_OS_MAC9) && !defined (P_OS_BSD4) && \
@@ -570,10 +573,10 @@ CUTEST(macros, general) {
 #endif
 
   /* Test other macros */
-  int unused = 8;
-  P_UNUSED (unused);
 
-  int result = unused_result_test_func();
+  unused = 8;
+  P_UNUSED (unused);
+  result = unused_result_test_func();
 
   ASSERT(internal_api_test() == 0);
   ASSERT(global_api_test() == 0);
@@ -583,8 +586,7 @@ CUTEST(macros, general) {
   P_DEBUG ("Test debug output");
 
   srand((unsigned int) time(NULL));
-
-  int rand_number = rand();
+  rand_number = rand();
 
   if (P_LIKELY (rand_number > 0))
     P_DEBUG ("Likely condition triggered");

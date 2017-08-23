@@ -51,22 +51,20 @@ pmem_free(ptr_t block) {
 
 static void
 foreach_test_func(ptr_t data, ptr_t user_data) {
+  TestData *test_data;
+
   if (user_data == NULL) {
     return;
   }
-
-  TestData *test_data = (TestData *) user_data;
-
+  test_data = (TestData *) user_data;
   if (test_data->index < 0 || test_data->index > 2) {
     return;
   }
-
   test_data->test_array[test_data->index] = P_POINTER_TO_INT (data);
   ++test_data->index;
 }
 
 CUTEST(list, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;

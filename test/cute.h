@@ -37,7 +37,6 @@
 # define CUTE_FORCEINLINE inline __attribute__((__always_inline__))
 # define CUTE_CONSTCALL __attribute__((__const__))
 #else
-# warning Unknown compiler
 # define CUTE_FORCEINLINE
 # define CUTE_CONSTCALL
 #endif

@@ -106,10 +106,10 @@ test_thread_func(void *data) {
 static void *
 test_thread_nonjoinable_func(void *data) {
   int *counter = (int *) (data);
+  int i;
 
   is_threads_working = true;
-
-  for (int i = thread_to_wakes; i > 0; --i) {
+  for (i = thread_to_wakes; i > 0; --i) {
     p_uthread_sleep(10);
     ++(*counter);
     p_uthread_yield();

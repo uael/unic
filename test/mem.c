@@ -86,11 +86,11 @@ CUTEST(mem, general) {
   ptr = p_malloc(1024);
   ASSERT(ptr != NULL);
 
-  for (int i = 0; i < 1024; ++i) {
+  for (i = 0; i < 1024; ++i) {
     *(((byte_t *) ptr) + i) = (byte_t) (i % 127);
   }
 
-  for (int i = 0; i < 1024; ++i)
+  for (i = 0; i < 1024; ++i)
     ASSERT(*(((byte_t *) ptr) + i) == (byte_t) (i % 127));
 
   p_free(ptr);
@@ -98,14 +98,14 @@ CUTEST(mem, general) {
   ptr = p_malloc0(2048);
   ASSERT(ptr != NULL);
 
-  for (int i = 0; i < 2048; ++i)
+  for (i = 0; i < 2048; ++i)
     ASSERT(*(((byte_t *) ptr) + i) == 0);
 
-  for (int i = 0; i < 2048; ++i) {
+  for (i = 0; i < 2048; ++i) {
     *(((byte_t *) ptr) + i) = (byte_t) (i % 127);
   }
 
-  for (int i = 0; i < 2048; ++i)
+  for (i = 0; i < 2048; ++i)
     ASSERT(*(((byte_t *) ptr) + i) == (byte_t) (i % 127));
 
   p_free(ptr);
@@ -113,20 +113,20 @@ CUTEST(mem, general) {
   ptr = p_realloc(NULL, 1024);
   ASSERT(ptr != NULL);
 
-  for (int i = 0; i < 1024; ++i) {
+  for (i = 0; i < 1024; ++i) {
     *(((byte_t *) ptr) + i) = (byte_t) (i % 127);
   }
 
   ptr = p_realloc(ptr, 2048);
 
-  for (int i = 1024; i < 2048; ++i) {
+  for (i = 1024; i < 2048; ++i) {
     *(((byte_t *) ptr) + i) = (byte_t) ((i - 1) % 127);
   }
 
-  for (int i = 0; i < 1024; ++i)
+  for (i = 0; i < 1024; ++i)
     ASSERT(*(((byte_t *) ptr) + i) == (byte_t) (i % 127));
 
-  for (int i = 1024; i < 2048; ++i)
+  for (i = 1024; i < 2048; ++i)
     ASSERT(*(((byte_t *) ptr) + i) == (byte_t) ((i - 1) % 127));
 
   p_free(ptr);
@@ -145,7 +145,7 @@ CUTEST(mem, general) {
   ASSERT(ptr != NULL);
 
   for (i = 0; i < 1024; ++i) {
-    *(((byte_t *) ptr) + i) = i % 127;
+    *(((byte_t *) ptr) + i) = (byte_t) (i % 127);
   }
 
   for (i = 0; i < 1024; ++i)

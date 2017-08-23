@@ -62,6 +62,8 @@ CUTEST(main, double) {
 
 CUTEST(main, vtable) {
   mem_vtable_t vtable;
+  byte_t *buf;
+  byte_t *new_buf;
 
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
@@ -72,9 +74,8 @@ CUTEST(main, vtable) {
   alloc_counter = 0;
   realloc_counter = 0;
   free_counter = 0;
-
-  byte_t *buf = (byte_t *) p_malloc0(10);
-  byte_t *new_buf = (byte_t *) p_realloc((ptr_t) buf, 20);
+  buf = (byte_t *) p_malloc0(10);
+  new_buf = (byte_t *) p_realloc((ptr_t) buf, 20);
 
   ASSERT(new_buf != NULL);
 

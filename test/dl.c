@@ -22,8 +22,7 @@ CUTEST_DATA {
   int ac;
   char **av;
 
-  void
-  (*st_fn)(void);
+  void (*st_fn)(void);
 };
 
 CUTEST_SETUP { p_libsys_init(); }
@@ -60,19 +59,18 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(dl, nomem) {
+  FILE *file;
+  mem_vtable_t vtable;
 
   if (P_UNLIKELY (p_dl_is_ref_counted() == false)) {
     return CUTE_SUCCESS;
   }
-
   /* Cleanup from previous run */
   p_file_remove("." P_DIR_SEP "p_empty_file.txt", NULL);
+  file = fopen("." P_DIR_SEP "p_empty_file.txt", "w");
 
-  FILE *file = fopen("." P_DIR_SEP "p_empty_file.txt", "w");
   ASSERT(file != NULL);
   ASSERT(fclose(file) == 0);
-
-  mem_vtable_t vtable;
 
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
@@ -84,21 +82,15 @@ CUTEST(dl, nomem) {
   SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
 
-  int argCount = self->ac;
-
-  ASSERT(p_dl_new("."
-    P_DIR_SEP
-    "p_empty_file.txt") == NULL);
-  ASSERT(p_dl_new(self->av[argCount - 1]) == NULL);
+  ASSERT(p_dl_new("."P_DIR_SEP"p_empty_file.txt") == NULL);
+  ASSERT(p_dl_new(self->av[self->ac - 1]) == NULL);
 
 #ifdef P_OS_WIN
   SetErrorMode(0);
 #endif
 
   p_mem_restore_vtable();
-  ASSERT(p_file_remove("."
-    P_DIR_SEP
-    "p_empty_file.txt", NULL) == true);
+  ASSERT(p_file_remove("."P_DIR_SEP"p_empty_file.txt", NULL) == true);
 
   return CUTE_SUCCESS;
 }
@@ -106,8 +98,7 @@ CUTEST(dl, nomem) {
 CUTEST(dl, general) {
   dl_t *loader;
   byte_t *err_msg;
-  void
-  (*shutdown_func)(void);
+  void (*shutdown_func)(void);
 
 
   /* We assume that 3rd argument is ourself library path */
@@ -127,7 +118,7 @@ CUTEST(dl, general) {
 #if !defined (P_OS_HPUX)
   ASSERT(p_dl_is_ref_counted() == true);
 #else
-  p_dl_is_ref_counted ();
+  p_dl_is_ref_counted();
 #endif
 
   err_msg = p_dl_get_last_error(NULL);
@@ -137,10 +128,8 @@ CUTEST(dl, general) {
     return CUTE_SUCCESS;
   }
 
-  int argCount = self->ac;
-
   loader = p_dl_new(
-    self->av[argCount - 1]
+    self->av[self->ac - 1]
   );
   ASSERT(loader != NULL);
 

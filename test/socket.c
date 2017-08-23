@@ -68,14 +68,18 @@ clean_error(err_t **error) {
 
 static bool
 test_socketaddr_directly(const socketaddr_t *addr, u16_t port) {
+  size_t remote_size;
+  socket_family_t remote_family;
+  byte_t *addr_str;
+  u16_t remote_port;
+
   if (addr == NULL) {
     return false;
   }
-
-  byte_t *addr_str = p_socketaddr_get_address(addr);
-  socket_family_t remote_family = p_socketaddr_get_family(addr);
-  u16_t remote_port = p_socketaddr_get_port(addr);
-  size_t remote_size = p_socketaddr_get_native_size(addr);
+  addr_str = p_socketaddr_get_address(addr);
+  remote_family = p_socketaddr_get_family(addr);
+  remote_port = p_socketaddr_get_port(addr);
+  remote_size = p_socketaddr_get_native_size(addr);
 
   bool ret =
     (
@@ -92,110 +96,96 @@ test_socketaddr_directly(const socketaddr_t *addr, u16_t port) {
 
 static bool
 test_socketaddr(socket_t *socket, u16_t port) {
-  /* Test remote address */
-  socketaddr_t *remote_addr = p_socket_get_remote_address(socket, NULL);
+  socketaddr_t *remote_addr;
 
+  /* Test remote address */
+  remote_addr = p_socket_get_remote_address(socket, NULL);
   if (remote_addr == NULL) {
     return false;
   }
-
   bool ret = test_socketaddr_directly(remote_addr, port);
-
   p_socketaddr_free(remote_addr);
-
   return ret;
 }
 
 static bool
 compare_socketaddres(const socketaddr_t *addr1, const socketaddr_t *addr2) {
+  byte_t *addr_str1;
+  byte_t *addr_str2;
+
   if (addr1 == NULL || addr2 == NULL) {
     return false;
   }
-
-  byte_t *addr_str1 = p_socketaddr_get_address(addr1);
-  byte_t *addr_str2 = p_socketaddr_get_address(addr2);
-
+  addr_str1 = p_socketaddr_get_address(addr1);
+  addr_str2 = p_socketaddr_get_address(addr2);
   if (addr_str1 == NULL || addr_str2 == NULL) {
     p_free(addr_str1);
     p_free(addr_str2);
-
     return false;
   }
-
   bool addr_cmp = (strcmp(addr_str1, addr_str2) == 0 ? true : false);
-
   p_free(addr_str1);
   p_free(addr_str2);
-
   if (addr_cmp == false) {
     return false;
   }
-
   if (p_socketaddr_get_family(addr1) != p_socketaddr_get_family(addr2)) {
     return false;
   }
-
   if (p_socketaddr_get_native_size(addr1)
     != p_socketaddr_get_native_size(addr2)) {
-      return false;
+    return false;
   }
-
   return true;
 }
 
 static void *
 udp_socket_sender_thread(void *arg) {
-  int send_counter = 0;
+  int send_counter;
+  SocketTestData *data;
+  socket_t *skt_sender;
+  socketaddr_t *addr_sender;
+  socketaddr_t *local_addr;
+  socketaddr_t *remote_addr;
+  socketaddr_t *addr_receiver;
 
+  send_counter = 0;
   if (arg == NULL) {
     p_uthread_exit(-1);
   }
-
-  SocketTestData *data = (SocketTestData *) (arg);
-
+  data = (SocketTestData *) (arg);
   /* Create sender socket */
-  socket_t *skt_sender = p_socket_new(
+  skt_sender = p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_DATAGRAM,
     P_SOCKET_PROTOCOL_UDP,
     NULL
   );
-
   if (skt_sender == NULL) {
     p_uthread_exit(-1);
   }
-
-  socketaddr_t *addr_sender = p_socketaddr_new("127.0.0.1", data->sender_port);
-
+  addr_sender = p_socketaddr_new("127.0.0.1", data->sender_port);
   if (addr_sender == NULL) {
     p_socket_free(skt_sender);
     p_uthread_exit(-1);
   }
-
   if (p_socket_bind(skt_sender, addr_sender, false, NULL) == false) {
     p_socket_free(skt_sender);
     p_socketaddr_free(addr_sender);
     p_uthread_exit(-1);
   } else {
     p_socketaddr_free(addr_sender);
-
-    socketaddr_t *local_addr = p_socket_get_local_address(skt_sender, NULL);
-
+    local_addr = p_socket_get_local_address(skt_sender, NULL);
     if (local_addr == NULL) {
       p_socket_free(skt_sender);
       p_uthread_exit(-1);
     }
-
     data->sender_port = p_socketaddr_get_port(local_addr);
-
     p_socketaddr_free(local_addr);
   }
-
   p_socket_set_timeout(skt_sender, 50);
-
   /* Test that remote address is NULL */
-  socketaddr_t *remote_addr = p_socket_get_remote_address(skt_sender, NULL);
-
+  remote_addr = p_socket_get_remote_address(skt_sender, NULL);
   if (remote_addr != NULL) {
     if (p_socketaddr_is_any(remote_addr) == false) {
       p_socketaddr_free(remote_addr);
@@ -203,32 +193,24 @@ udp_socket_sender_thread(void *arg) {
       p_uthread_exit(-1);
     } else {
       p_socketaddr_free(remote_addr);
-      remote_addr = NULL;
     }
   }
-
   /* Test that we are not connected */
   if (p_socket_is_connected(skt_sender) == true) {
     p_socket_free(skt_sender);
     p_uthread_exit(-1);
   }
-
   while (is_sender_working == true && data->receiver_port == 0) {
     p_uthread_sleep(1);
-    continue;
   }
-
-  socketaddr_t *addr_receiver = NULL;
-
+  addr_receiver = NULL;
   if (data->receiver_port != 0) {
     addr_receiver = p_socketaddr_new("127.0.0.1", data->receiver_port);
   }
-
   while (is_sender_working == true) {
     if (data->receiver_port == 0) {
       break;
     }
-
     if (p_socket_send_to(
       skt_sender,
       addr_receiver,
@@ -238,74 +220,63 @@ udp_socket_sender_thread(void *arg) {
     ) == sizeof(socket_data)) {
       ++send_counter;
     }
-
     p_uthread_sleep(1);
   }
-
   p_socketaddr_free(addr_receiver);
   p_socket_free(skt_sender);
   p_uthread_exit(send_counter);
-
   return NULL;
 }
 
 static void *
 udp_socket_receiver_thread(void *arg) {
   byte_t recv_buffer[sizeof(socket_data) * 3];
-  int recv_counter = 0;
+  int recv_counter;
+  SocketTestData *data;
+  socket_t *skt_receiver;
+  socketaddr_t *addr_receiver;
+  socketaddr_t *local_addr;
+  socketaddr_t *remote_addr;
+  ssize_t received;
 
+  recv_counter = 0;
   if (arg == NULL) {
     p_uthread_exit(-1);
   }
-
-  SocketTestData *data = (SocketTestData *) (arg);
-
+  data = (SocketTestData *) (arg);
   /* Create receiving socket */
-  socket_t *skt_receiver = p_socket_new(
+  skt_receiver = p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_DATAGRAM,
     P_SOCKET_PROTOCOL_UDP,
     NULL
   );
-
   if (skt_receiver == NULL) {
     p_uthread_exit(-1);
   }
-
   p_socket_set_blocking(skt_receiver, false);
-
-  socketaddr_t
-    *addr_receiver = p_socketaddr_new("127.0.0.1", data->receiver_port);
-
+  addr_receiver = p_socketaddr_new("127.0.0.1", data->receiver_port);
   if (addr_receiver == NULL) {
     p_socket_free(skt_receiver);
     p_uthread_exit(-1);
   }
-
   if (p_socket_bind(skt_receiver, addr_receiver, true, NULL) == false) {
     p_socket_free(skt_receiver);
     p_socketaddr_free(addr_receiver);
     p_uthread_exit(-1);
   } else {
     p_socketaddr_free(addr_receiver);
-
-    socketaddr_t *local_addr = p_socket_get_local_address(skt_receiver, NULL);
-
+    local_addr = p_socket_get_local_address(skt_receiver, NULL);
     if (local_addr == NULL) {
       p_socket_free(skt_receiver);
       p_uthread_exit(-1);
     }
-
     data->receiver_port = p_socketaddr_get_port(local_addr);
-
     p_socketaddr_free(local_addr);
   }
-
   p_socket_set_timeout(skt_receiver, 50);
-
   /* Test that remote address is NULL */
-  socketaddr_t *remote_addr = p_socket_get_remote_address(skt_receiver, NULL);
-
+  remote_addr = p_socket_get_remote_address(skt_receiver, NULL);
   if (remote_addr != NULL) {
     if (p_socketaddr_is_any(remote_addr) == false) {
       p_socketaddr_free(remote_addr);
@@ -313,131 +284,106 @@ udp_socket_receiver_thread(void *arg) {
       p_uthread_exit(-1);
     } else {
       p_socketaddr_free(remote_addr);
-      remote_addr = NULL;
     }
   }
-
   /* Test that we are not connected */
   if (p_socket_is_connected(skt_receiver) == true) {
     p_socket_free(skt_receiver);
     p_uthread_exit(-1);
   }
-
   while (is_receiver_working == true) {
-    socketaddr_t *remote_addr = NULL;
-
-    ssize_t received = p_socket_receive_from(
+    remote_addr = NULL;
+    received = p_socket_receive_from(
       skt_receiver,
       &remote_addr,
       recv_buffer,
       sizeof(recv_buffer),
       NULL
     );
-
     if (remote_addr != NULL
       && test_socketaddr_directly(remote_addr, data->sender_port) == false) {
       p_socketaddr_free(remote_addr);
       break;
     }
-
     p_socketaddr_free(remote_addr);
-
     if (received == sizeof(socket_data)) {
       ++recv_counter;
     } else if (received > 0) {
       p_socket_free(skt_receiver);
       p_uthread_exit(-1);
     }
-
     p_uthread_sleep(1);
   }
-
   p_socket_free(skt_receiver);
   p_uthread_exit(recv_counter);
-
   return NULL;
 }
 
 static void *
 tcp_socket_sender_thread(void *arg) {
-  int send_counter = 0;
+  int send_counter;
   size_t send_total;
   ssize_t send_now;
-  bool is_connected = false;
+  bool is_connected;
+  SocketTestData *data;
+  socket_t *skt_sender;
+  socketaddr_t *addr_sender;
+  socketaddr_t *addr_receiver;
+  socketaddr_t *local_addr;
 
+  send_counter = 0;
+  is_connected = false;
   if (arg == NULL) {
     p_uthread_exit(-1);
   }
-
-  SocketTestData *data = (SocketTestData *) (arg);
-
+  data = (SocketTestData *) (arg);
   /* Create sender socket */
-  socket_t *skt_sender = p_socket_new(
+  skt_sender = p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_STREAM,
     P_SOCKET_PROTOCOL_DEFAULT,
     NULL
   );
-
   if (skt_sender == NULL) {
     p_uthread_exit(-1);
   }
-
   p_socket_set_timeout(skt_sender, 2000);
-
   if (p_socket_get_fd(skt_sender) < 0) {
     p_socket_free(skt_sender);
     p_uthread_exit(-1);
   }
-
   while (is_sender_working == true && data->receiver_port == 0) {
     p_uthread_sleep(1);
-    continue;
   }
-
-  socketaddr_t *addr_sender = p_socketaddr_new("127.0.0.1", data->sender_port);
-
+  addr_sender = p_socketaddr_new("127.0.0.1", data->sender_port);
   if (addr_sender == NULL) {
     p_socket_free(skt_sender);
     p_uthread_exit(-1);
   }
-
   if (p_socket_bind(skt_sender, addr_sender, false, NULL) == false) {
     p_socket_free(skt_sender);
     p_socketaddr_free(addr_sender);
     p_uthread_exit(-1);
   } else {
     p_socketaddr_free(addr_sender);
-
-    socketaddr_t *local_addr = p_socket_get_local_address(skt_sender, NULL);
-
+    local_addr = p_socket_get_local_address(skt_sender, NULL);
     if (local_addr == NULL) {
       p_socket_free(skt_sender);
       p_uthread_exit(-1);
     }
-
     data->sender_port = p_socketaddr_get_port(local_addr);
-
     p_socketaddr_free(local_addr);
   }
-
   send_total = 0;
-  send_now = 0;
-
   while (is_sender_working == true && data->receiver_port == 0) {
     p_uthread_sleep(1);
-    continue;
   }
-
-  socketaddr_t *addr_receiver = NULL;
-
+  addr_receiver = NULL;
   /* Try to connect in non-blocking mode */
   p_socket_set_blocking(skt_sender, false);
-
   if (data->receiver_port != 0) {
     addr_receiver = p_socketaddr_new("127.0.0.1", data->receiver_port);
     is_connected = p_socket_connect(skt_sender, addr_receiver, NULL);
-
     if (is_connected == false) {
       if (p_socket_io_condition_wait(
         skt_sender, P_SOCKET_IO_CONDITION_POLLOUT,
@@ -449,9 +395,7 @@ tcp_socket_sender_thread(void *arg) {
         p_uthread_exit(-1);
       }
     }
-
     is_connected = p_socket_is_connected(skt_sender);
-
     if (is_connected == true && p_socket_shutdown(
       skt_sender,
       false,
@@ -461,97 +405,83 @@ tcp_socket_sender_thread(void *arg) {
       is_connected = false;
     }
   }
-
   if (data->shutdown_channel == true
     && p_socket_is_closed(skt_sender) == true) {
     p_socketaddr_free(addr_receiver);
     p_socket_free(skt_sender);
     p_uthread_exit(-1);
   }
-
   p_socket_set_blocking(skt_sender, true);
-
   while (is_sender_working == true) {
     if (data->receiver_port == 0 || is_connected == false) {
       break;
     }
-
     if (test_socketaddr(skt_sender, data->receiver_port) == false) {
       break;
     }
-
     if (data->shutdown_channel == false
       && p_socket_is_connected(skt_sender) == false) {
       p_socketaddr_free(addr_receiver);
       p_socket_free(skt_sender);
       p_uthread_exit(-1);
     }
-
     send_now = p_socket_send(
       skt_sender,
       socket_data + send_total,
       sizeof(socket_data) - send_total,
       NULL
     );
-
     if (send_now > 0) {
       send_total += (size_t) send_now;
     }
-
     if (send_total == sizeof(socket_data)) {
       send_total = 0;
       ++send_counter;
     }
-
     p_uthread_sleep(1);
   }
-
   if (p_socket_close(skt_sender, NULL) == false) {
     send_counter = -1;
   }
-
   p_socketaddr_free(addr_receiver);
   p_socket_free(skt_sender);
   p_uthread_exit(send_counter);
-
   return NULL;
 }
 
 static void *
 tcp_socket_receiver_thread(void *arg) {
   byte_t recv_buffer[sizeof(socket_data)];
-  int recv_counter = 0;
+  int recv_counter;
   size_t recv_total;
   ssize_t recv_now;
+  SocketTestData *data;
+  socket_t *skt_receiver;
+  socketaddr_t *addr_receiver;
+  socketaddr_t *local_addr;
+  socket_t *conn_socket;
 
+  recv_counter = 0;
   if (arg == NULL) {
     p_uthread_exit(-1);
   }
-
-  SocketTestData *data = (SocketTestData *) (arg);
-
+  data = (SocketTestData *) (arg);
   /* Create receiving socket */
-  socket_t *skt_receiver = p_socket_new(
+  skt_receiver = p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_STREAM,
     P_SOCKET_PROTOCOL_TCP,
     NULL
   );
-
   if (skt_receiver == NULL) {
     p_uthread_exit(-1);
   }
-
-  socketaddr_t
-    *addr_receiver = p_socketaddr_new("127.0.0.1", data->receiver_port);
-
+  addr_receiver = p_socketaddr_new("127.0.0.1", data->receiver_port);
   if (addr_receiver == NULL) {
     p_socket_free(skt_receiver);
     p_uthread_exit(-1);
   }
-
   p_socket_set_timeout(skt_receiver, 2000);
-
   if (p_socket_bind(skt_receiver, addr_receiver, true, NULL) == false ||
     p_socket_listen(skt_receiver, NULL) == false) {
     p_socket_free(skt_receiver);
@@ -559,27 +489,19 @@ tcp_socket_receiver_thread(void *arg) {
     p_uthread_exit(-1);
   } else {
     p_socketaddr_free(addr_receiver);
-
-    socketaddr_t *local_addr = p_socket_get_local_address(skt_receiver, NULL);
-
+    local_addr = p_socket_get_local_address(skt_receiver, NULL);
     if (local_addr == NULL) {
       p_socket_free(skt_receiver);
       p_uthread_exit(-1);
     }
-
     data->receiver_port = p_socketaddr_get_port(local_addr);
-
     p_socketaddr_free(local_addr);
   }
-
-  socket_t *conn_socket = NULL;
+  conn_socket = NULL;
   recv_total = 0;
-  recv_now = 0;
-
   while (is_receiver_working == true) {
     if (conn_socket == NULL) {
       conn_socket = p_socket_accept(skt_receiver, NULL);
-
       if (conn_socket == NULL) {
         p_uthread_sleep(1);
         continue;
@@ -591,16 +513,13 @@ tcp_socket_receiver_thread(void *arg) {
           break;
         }
 #endif
-
         if (p_socket_shutdown(conn_socket, data->shutdown_channel, false, NULL)
           == false) {
             break;
         }
-
         p_socket_set_timeout(conn_socket, 2000);
       }
     }
-
     if ((
       data->shutdown_channel == false
         && p_socket_is_connected(conn_socket) == false
@@ -613,75 +532,58 @@ tcp_socket_receiver_thread(void *arg) {
       p_socket_free(skt_receiver);
       p_uthread_exit(-1);
     }
-
     recv_now = p_socket_receive(
       conn_socket,
       recv_buffer + recv_total,
       sizeof(recv_buffer) - recv_total,
       NULL
     );
-
     if (recv_now > 0) {
       recv_total += (size_t) recv_now;
     }
-
     if (recv_total == sizeof(recv_buffer)) {
       recv_total = 0;
-
       if (strncmp(recv_buffer, socket_data, sizeof(recv_buffer)) == 0) {
         ++recv_counter;
       }
-
       memset(recv_buffer, 0, sizeof(recv_buffer));
     }
-
     p_uthread_sleep(1);
   }
-
   if (p_socket_close(skt_receiver, NULL) == false) {
     recv_counter = -1;
   }
-
   p_socket_free(conn_socket);
   p_socket_free(skt_receiver);
-
   p_uthread_exit(recv_counter);
-
   return NULL;
 }
 
 CUTEST(socket, nomem) {
+  socket_t *socket;
+  socketaddr_t *sock_addr;
+  mem_vtable_t vtable;
 
-  socket_t *socket = p_socket_new(
+  socket = p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_DATAGRAM,
     P_SOCKET_PROTOCOL_UDP,
     NULL
   );
   ASSERT(socket != NULL);
-
-  socketaddr_t *sock_addr = p_socketaddr_new("127.0.0.1", 32211);
-
+  sock_addr = p_socketaddr_new("127.0.0.1", 32211);
   ASSERT(sock_addr != NULL);
   ASSERT(p_socket_bind(socket, sock_addr, true, NULL) == true);
-
   p_socketaddr_free(sock_addr);
-
   p_socket_set_timeout(socket, 1000);
   sock_addr = p_socketaddr_new("127.0.0.1", 32215);
   ASSERT(sock_addr != NULL);
   ASSERT(p_socket_connect(socket, sock_addr, NULL) == true);
-
   p_socketaddr_free(sock_addr);
-
-  mem_vtable_t vtable;
-
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
   ASSERT(p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_DATAGRAM,
@@ -691,23 +593,19 @@ CUTEST(socket, nomem) {
   ASSERT(p_socket_new_from_fd(p_socket_get_fd(socket), NULL) == NULL);
   ASSERT(p_socket_get_local_address(socket, NULL) == NULL);
   ASSERT(p_socket_get_remote_address(socket, NULL) == NULL);
-
   p_mem_restore_vtable();
-
   p_socket_close(socket, NULL);
   p_socket_free(socket);
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(socket, bad_input) {
+  err_t *error;
 
-  err_t *error = NULL;
-
+  error = NULL;
   ASSERT(p_socket_new_from_fd(-1, &error) == NULL);
   ASSERT(error != NULL);
   clean_error(&error);
-
   ASSERT(p_socket_new(
     P_SOCKET_FAMILY_INET,
     (socket_kind_t) - 1,
@@ -731,7 +629,6 @@ CUTEST(socket, bad_input) {
   ASSERT(p_socket_new_from_fd(1, NULL) == NULL);
   ASSERT(error != NULL);
   clean_error(&error);
-
   ASSERT(p_socket_get_fd(NULL) == -1);
   ASSERT(p_socket_get_family(NULL) == P_SOCKET_FAMILY_UNKNOWN);
   ASSERT(p_socket_get_type(NULL) == P_SOCKET_UNKNOWN);
@@ -823,15 +720,20 @@ CUTEST(socket, bad_input) {
 }
 
 CUTEST(socket, general_udp) {
+  socket_t *socket;
+  socketaddr_t *remote_addr;
+  socketaddr_t *sock_addr;
+  socket_t *fd_socket;
+  socketaddr_t *addr;
+  byte_t sock_buf[10];
 
   /* Test UDP socket */
-  socket_t *socket = p_socket_new(
-    P_SOCKET_FAMILY_INET,
-    P_SOCKET_DATAGRAM,
-    P_SOCKET_PROTOCOL_UDP,
-    NULL
-  );
-
+  socket = p_socket_new(
+      P_SOCKET_FAMILY_INET,
+      P_SOCKET_DATAGRAM,
+      P_SOCKET_PROTOCOL_UDP,
+      NULL
+    );
   ASSERT(socket != NULL);
   ASSERT(p_socket_get_family(socket) == P_SOCKET_FAMILY_INET);
   ASSERT(p_socket_get_fd(socket) >= 0);
@@ -839,12 +741,11 @@ CUTEST(socket, general_udp) {
   ASSERT(p_socket_get_timeout(socket) == 0);
 
   /* On some operating systems (i.e. OpenVMS) remote address is not NULL */
-  socketaddr_t *remote_addr = p_socket_get_remote_address(socket, NULL);
+  remote_addr = p_socket_get_remote_address(socket, NULL);
 
   if (remote_addr != NULL) {
     ASSERT(p_socketaddr_is_any(remote_addr) == true);
     p_socketaddr_free(remote_addr);
-    remote_addr = NULL;
   }
 
   ASSERT(p_socket_get_protocol(socket) == P_SOCKET_PROTOCOL_UDP);
@@ -860,14 +761,13 @@ CUTEST(socket, general_udp) {
 
   ASSERT(p_socket_get_listen_backlog(socket) == 12);
   ASSERT(p_socket_get_timeout(socket) == 10);
-
-  socketaddr_t *sock_addr = p_socketaddr_new("127.0.0.1", 32111);
+  sock_addr = p_socketaddr_new("127.0.0.1", 32111);
   ASSERT(sock_addr != NULL);
 
   ASSERT(p_socket_bind(socket, sock_addr, true, NULL) == true);
 
   /* Test creating socket from descriptor */
-  socket_t *fd_socket = p_socket_new_from_fd(p_socket_get_fd(socket), NULL);
+  fd_socket = p_socket_new_from_fd(p_socket_get_fd(socket), NULL);
   ASSERT(fd_socket != NULL);
   ASSERT(p_socket_get_family(fd_socket) == P_SOCKET_FAMILY_INET);
   ASSERT(p_socket_get_fd(fd_socket) >= 0);
@@ -879,7 +779,6 @@ CUTEST(socket, general_udp) {
   if (remote_addr != NULL) {
     ASSERT(p_socketaddr_is_any(remote_addr) == true);
     p_socketaddr_free(remote_addr);
-    remote_addr = NULL;
   }
 
   ASSERT(p_socket_get_protocol(fd_socket) == P_SOCKET_PROTOCOL_UDP);
@@ -896,7 +795,7 @@ CUTEST(socket, general_udp) {
   ASSERT(p_socket_get_keepalive(fd_socket) == false);
 
   /* Test UDP local address */
-  socketaddr_t *addr = p_socket_get_local_address(socket, NULL);
+  addr = p_socket_get_local_address(socket, NULL);
   ASSERT(addr != NULL);
 
   ASSERT(compare_socketaddres(sock_addr, addr) == true);
@@ -943,8 +842,6 @@ CUTEST(socket, general_udp) {
   ASSERT(p_socket_is_connected(socket) == true);
   ASSERT(p_socket_close(socket, NULL) == true);
 
-  byte_t sock_buf[10];
-
   ASSERT(p_socket_bind(socket, sock_addr, true, NULL) == false);
   ASSERT(p_socket_connect(socket, addr, NULL) == false);
   ASSERT(p_socket_listen(socket, NULL) == false);
@@ -990,9 +887,13 @@ CUTEST(socket, general_udp) {
 }
 
 CUTEST(socket, general_tcp) {
+  socket_t *socket;
+  socketaddr_t *sock_addr;
+  socketaddr_t *addr;
+  byte_t sock_buf[10];
 
   /* Test TCP socket */
-  socket_t *socket = p_socket_new(
+  socket = p_socket_new(
     P_SOCKET_FAMILY_INET,
     P_SOCKET_STREAM,
     P_SOCKET_PROTOCOL_TCP,
@@ -1000,7 +901,6 @@ CUTEST(socket, general_tcp) {
   );
   p_socket_set_blocking(socket, false);
   p_socket_set_listen_backlog(socket, 11);
-
   p_socket_set_timeout(socket, -12);
   ASSERT(p_socket_get_timeout(socket) == 0);
   p_socket_set_timeout(socket, 12);
@@ -1023,13 +923,11 @@ CUTEST(socket, general_tcp) {
   p_socket_set_keepalive(socket, true);
   p_socket_set_keepalive(socket, false);
   ASSERT(p_socket_get_keepalive(socket) == false);
-
-  socketaddr_t *sock_addr = p_socketaddr_new("127.0.0.1", 0);
+  sock_addr = p_socketaddr_new("127.0.0.1", 0);
   ASSERT(sock_addr != NULL);
 
   ASSERT(p_socket_bind(socket, sock_addr, true, NULL) == true);
-
-  socketaddr_t *addr = p_socket_get_local_address(socket, NULL);
+  addr = p_socket_get_local_address(socket, NULL);
   ASSERT(addr != NULL);
 
   ASSERT(compare_socketaddres(sock_addr, addr) == true);
@@ -1045,8 +943,6 @@ CUTEST(socket, general_tcp) {
   ASSERT(p_socket_is_connected(socket) == false);
   ASSERT(p_socket_check_connect_result(socket, NULL) == true);
   ASSERT(p_socket_close(socket, NULL) == true);
-
-  byte_t sock_buf[10];
 
   ASSERT(p_socket_bind(socket, sock_addr, true, NULL) == false);
   ASSERT(p_socket_connect(socket, addr, NULL) == false);
@@ -1092,23 +988,26 @@ CUTEST(socket, general_tcp) {
 }
 
 CUTEST(socket, udp) {
+  SocketTestData data;
+  uthread_t *receiver_thr;
+  uthread_t *sender_thr;
+  int send_counter;
+  int recv_counter;
 
   is_sender_working = true;
   is_receiver_working = true;
 
-  SocketTestData data;
   data.receiver_port = 0;
   data.sender_port = 0;
   data.shutdown_channel = false;
-
-  uthread_t *receiver_thr =
-    p_uthread_create((uthread_fn_t) udp_socket_receiver_thread, (ptr_t) & data,
-      true
-    );
-  uthread_t *sender_thr =
-    p_uthread_create((uthread_fn_t) udp_socket_sender_thread, (ptr_t) & data,
-      true
-    );
+  receiver_thr = p_uthread_create((uthread_fn_t) udp_socket_receiver_thread,
+    (ptr_t) & data,
+    true
+  );
+  sender_thr = p_uthread_create((uthread_fn_t) udp_socket_sender_thread,
+    (ptr_t) & data,
+    true
+  );
 
   ASSERT(sender_thr != NULL);
   ASSERT(receiver_thr != NULL);
@@ -1116,12 +1015,12 @@ CUTEST(socket, udp) {
   p_uthread_sleep(8000);
 
   is_sender_working = false;
-  int send_counter = p_uthread_join(sender_thr);
+  send_counter = p_uthread_join(sender_thr);
 
   p_uthread_sleep(2000);
 
   is_receiver_working = false;
-  int recv_counter = p_uthread_join(receiver_thr);
+  recv_counter = p_uthread_join(receiver_thr);
 
   ASSERT(send_counter > 0);
   ASSERT(recv_counter > 0);
@@ -1133,20 +1032,24 @@ CUTEST(socket, udp) {
 }
 
 CUTEST(socket, tcp) {
+  SocketTestData data;
+  uthread_t *receiver_thr;
+  uthread_t *sender_thr;
+  int send_counter;
+  int recv_counter;
 
   is_sender_working = true;
   is_receiver_working = true;
 
-  SocketTestData data;
   data.receiver_port = 0;
   data.sender_port = 0;
   data.shutdown_channel = false;
 
-  uthread_t *receiver_thr =
+  receiver_thr =
     p_uthread_create((uthread_fn_t) tcp_socket_receiver_thread, (ptr_t) & data,
       true
     );
-  uthread_t *sender_thr =
+  sender_thr =
     p_uthread_create((uthread_fn_t) tcp_socket_sender_thread, (ptr_t) & data,
       true
     );
@@ -1157,12 +1060,12 @@ CUTEST(socket, tcp) {
   p_uthread_sleep(8000);
 
   is_sender_working = false;
-  int send_counter = p_uthread_join(sender_thr);
+  send_counter = p_uthread_join(sender_thr);
 
   p_uthread_sleep(2000);
 
   is_receiver_working = false;
-  int recv_counter = p_uthread_join(receiver_thr);
+  recv_counter = p_uthread_join(receiver_thr);
 
   ASSERT(send_counter > 0);
   ASSERT(recv_counter > 0);
@@ -1174,20 +1077,24 @@ CUTEST(socket, tcp) {
 }
 
 CUTEST(socket, shutdown) {
+  SocketTestData data;
+  uthread_t *receiver_thr;
+  uthread_t *sender_thr;
+  int send_counter;
+  int recv_counter;
 
   is_sender_working = true;
   is_receiver_working = true;
 
-  SocketTestData data;
   data.receiver_port = 0;
   data.sender_port = 0;
   data.shutdown_channel = true;
 
-  uthread_t *receiver_thr =
+  receiver_thr =
     p_uthread_create((uthread_fn_t) tcp_socket_receiver_thread, (ptr_t) & data,
       true
     );
-  uthread_t *sender_thr =
+  sender_thr =
     p_uthread_create((uthread_fn_t) tcp_socket_sender_thread, (ptr_t) & data,
       true
     );
@@ -1198,12 +1105,12 @@ CUTEST(socket, shutdown) {
   p_uthread_sleep(8000);
 
   is_sender_working = false;
-  int send_counter = p_uthread_join(sender_thr);
+  send_counter = p_uthread_join(sender_thr);
 
   p_uthread_sleep(2000);
 
   is_receiver_working = false;
-  int recv_counter = p_uthread_join(receiver_thr);
+  recv_counter = p_uthread_join(receiver_thr);
 
   ASSERT(send_counter == 0);
   ASSERT(recv_counter == 0);

@@ -40,16 +40,16 @@ volatile static bool is_working = false;
 
 static void *
 shmbuf_test_write_thread(void) {
-  shmbuf_t *buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  shmbuf_t *buffer;
+  ssize_t op_result;
 
+  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
   if (buffer == NULL) {
     p_uthread_exit(1);
   }
-
   while (is_working == true) {
     p_uthread_sleep(3);
-
-    ssize_t op_result = p_shmbuf_get_free_space(buffer, NULL);
+    op_result = p_shmbuf_get_free_space(buffer, NULL);
 
     if (op_result < 0) {
       if (is_thread_exit > 0) {
@@ -97,17 +97,18 @@ shmbuf_test_write_thread(void) {
 
 static void *
 shmbuf_test_read_thread(void) {
-  shmbuf_t *buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  ssize_t op_result;
+  shmbuf_t *buffer;
   byte_t test_buf[sizeof(test_str)];
 
+  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
   if (buffer == NULL) {
     p_uthread_exit(1);
   }
 
   while (is_working == true) {
     p_uthread_sleep(3);
-
-    ssize_t op_result = p_shmbuf_get_used_space(buffer, NULL);
+    op_result = p_shmbuf_get_used_space(buffer, NULL);
 
     if (op_result < 0) {
       if (is_thread_exit > 0) {
@@ -180,7 +181,6 @@ pmem_free(ptr_t block) {
 }
 
 CUTEST(shmbuf, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;
@@ -197,17 +197,16 @@ CUTEST(shmbuf, nomem) {
 }
 
 CUTEST(shmbuf, bad_input) {
+  shmbuf_t *buf;
 
   ASSERT(p_shmbuf_new(NULL, 0, NULL) == NULL);
   ASSERT(p_shmbuf_read(NULL, NULL, 0, NULL) == -1);
   ASSERT(p_shmbuf_write(NULL, NULL, 0, NULL) == -1);
   ASSERT(p_shmbuf_get_free_space(NULL, NULL) == -1);
   ASSERT(p_shmbuf_get_used_space(NULL, NULL) == -1);
-
-  shmbuf_t *buf = p_shmbuf_new("shm_invalid_buffer", 0, NULL);
+  buf = p_shmbuf_new("shm_invalid_buffer", 0, NULL);
   p_shmbuf_take_ownership(buf);
   p_shmbuf_free(buf);
-
   p_shmbuf_clear(NULL);
   p_shmbuf_free(NULL);
 
@@ -215,10 +214,9 @@ CUTEST(shmbuf, bad_input) {
 }
 
 CUTEST(shmbuf, general) {
-
   byte_t test_buf[sizeof(test_str)];
   byte_t *large_buf;
-  shmbuf_t *buffer = NULL;
+  shmbuf_t *buffer;
 
   /* Buffer may be from the previous test on UNIX systems */
   buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
@@ -267,8 +265,7 @@ CUTEST(shmbuf, general) {
 #ifndef P_OS_HPUX
 
 CUTEST(shmbuf, thread) {
-
-  shmbuf_t *buffer = NULL;
+  shmbuf_t *buffer;
   uthread_t *thr1, *thr2;
 
   /* Buffer may be from the previous test on UNIX systems */
