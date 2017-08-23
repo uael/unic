@@ -27,24 +27,26 @@
 
 #define P_SEM_SUFFIX    "_p_sem_object"
 
-typedef sem_t psem_hdl;
+typedef sem_t sema_hdl_t;
 
 /* On some HP-UX versions it may not be defined */
 #ifndef SEM_FAILED
 # define SEM_FAILED ((sema_t *) -1)
 #endif
+
 #ifdef P_OS_SOLARIS
 # define P_SEM_INVALID_HDL (sema_t *) -1
 #else
 # define P_SEM_INVALID_HDL  SEM_FAILED
 #endif
+
 struct sema {
   bool sem_created;
   byte_t *platform_key;
 #if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
 # pragma __pointer_size 64
 #endif
-  psem_hdl *sem_hdl;
+  sema_hdl_t *sem_hdl;
 #if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
 # pragma __pointer_size 32
 #endif
@@ -59,8 +61,7 @@ static void
 pp_sema_clean_handle(sema_t *sem);
 
 static bool
-pp_sema_create_handle(sema_t *sem,
-  err_t **error) {
+pp_sema_create_handle(sema_t *sem, err_t **error) {
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
     p_err_set_err_p(
       error,
@@ -124,12 +125,10 @@ pp_sema_clean_handle(sema_t *sem) {
 }
 
 sema_t *
-p_sema_new(const byte_t *name,
-  int init_val,
-  sema_access_t mode,
-  err_t **error) {
+p_sema_new(const byte_t *name, int init_val, sema_access_t mod, err_t **error) {
   sema_t *ret;
   byte_t *new_name;
+
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
     p_err_set_err_p(
       error,
@@ -163,12 +162,12 @@ p_sema_new(const byte_t *name,
   strcat(new_name, P_SEM_SUFFIX);
 #if defined (P_OS_IRIX) || defined (P_OS_TRU64)
   /* IRIX and Tru64 prefer filename styled IPC names */
-  ret->platform_key = p_ipc_get_platform_key (new_name, false);
+  ret->platform_key = p_ipc_get_platform_key(new_name, false);
 #else
   ret->platform_key = p_ipc_get_platform_key(new_name, true);
 #endif
   ret->init_val = init_val;
-  ret->mode = mode;
+  ret->mode = mod;
   p_free(new_name);
   if (P_UNLIKELY (pp_sema_create_handle(ret, error) == false)) {
     p_sema_free(ret);

@@ -103,7 +103,7 @@ typedef enum sema_access sema_access_t;
 /*!@brief Creates a new #PSemaphore object.
  * @param name Semaphore name.
  * @param init_val Initial semaphore value.
- * @param mode Creation mode.
+ * @param mod Creation mode.
  * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to a newly created #PSemaphore object in case of success,
  * NULL otherwise.
@@ -116,7 +116,7 @@ typedef enum sema_access sema_access_t;
  * process can open that semaphore passing the same name.
  */
 P_API sema_t *
-p_sema_new(const byte_t *name, int init_val, sema_access_t mode, err_t **error);
+p_sema_new(const byte_t *name, int init_val, sema_access_t mod, err_t **error);
 
 /*!@brief Takes ownership of a semaphore.
  * @param sem Semaphore to take ownership.

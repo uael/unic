@@ -25,11 +25,11 @@
 #define P_SEM_SUFFIX    "_p_sem_object"
 #define P_SEM_INVALID_HDL  NULL
 
-typedef HANDLE psem_hdl;
+typedef HANDLE sema_hdl_t;
 
 struct sema {
   byte_t *platform_key;
-  psem_hdl sem_hdl;
+  sema_hdl_t sem_hdl;
   int init_val;
 };
 

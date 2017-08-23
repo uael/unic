@@ -39,14 +39,14 @@ typedef union p_semun_ {
   ushort_t *array;
 } p_semun;
 
-typedef int psem_hdl;
+typedef int sema_hdl_t;
 
 struct sema {
   bool file_created;
   bool sem_created;
   key_t unix_key;
   byte_t *platform_key;
-  psem_hdl sem_hdl;
+  sema_hdl_t sem_hdl;
   sema_access_t mode;
   int init_val;
 };

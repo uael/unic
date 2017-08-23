@@ -56,9 +56,9 @@ p_file_remove(const byte_t *file, err_t **error) {
     return false;
   }
 #ifdef P_OS_WIN
-  result = (DeleteFileA((LPCSTR) file) != 0);
+  result = (bool) (DeleteFileA((LPCSTR) file) != 0);
 #else
-  result = (unlink(file) == 0);
+  result = (bool) (unlink(file) == 0);
 #endif
   if (P_UNLIKELY (!result)) {
     p_err_set_err_p(
@@ -68,5 +68,5 @@ p_file_remove(const byte_t *file, err_t **error) {
       "Failed to remove file"
     );
   }
-  return result;
+  return result ? true : false;
 }
