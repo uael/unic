@@ -290,7 +290,7 @@ CUTEST(shmbuf, thread) {
     p_uthread_create((uthread_fn_t) shmbuf_test_read_thread, NULL, true);
   ASSERT(thr1 != NULL);
 
-  p_uthread_sleep(5);
+  p_uthread_sleep(50);
 
   is_working = false;
 
