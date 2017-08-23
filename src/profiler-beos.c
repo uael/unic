@@ -26,7 +26,7 @@ p_profiler_get_ticks_internal() {
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   return ((u64_t) system_time()) - profiler->counter;
 }
 

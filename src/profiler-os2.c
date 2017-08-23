@@ -45,7 +45,7 @@ p_profiler_get_ticks_internal() {
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   u64_t ticks;
 #if PLIBSYS_HAS_LLDIV
   lldiv_t ldres;

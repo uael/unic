@@ -72,7 +72,7 @@ p_profiler_get_ticks_internal() {
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   return pp_profiler_ticks_func() - profiler->counter;
 }
 
