@@ -93,15 +93,7 @@ matrix:
             - llvm-toolchain-trusty-3.6
           packages:
             - clang-3.6
-    - os: linux
-      compiler: clang-3.7
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.7
-          packages:
-            - clang-3.7
+    # clang 3.7 is a disallowed source - skip
     - os: linux
       compiler: clang-3.8
       addons:
