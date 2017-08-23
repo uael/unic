@@ -98,7 +98,7 @@ if (PLIBSYS_TESTS)
   plibsys_add_test_executable(types_test test/types.c)
   plibsys_add_test_executable(uthread_test test/uthread.c)
 
-  add_custom_target(tests ALL
+  add_custom_target(tests
     DEPENDS ${UNIT_TEST_TARGETS}
   )
   add_custom_command(TARGET tests
