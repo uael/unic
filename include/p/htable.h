@@ -39,7 +39,7 @@
  * several values belong to the same key.
  *
  * Note that #PHashTable stores keys and values only as pointers, so you need
- * to free used memory manually, p_hash_table_free() will not do it in any way.
+ * to free used memory manually, p_htable_free() will not do it in any way.
  *
  * Integers (up to 32 bits) can be stored in pointers using #P_POINTER_TO_INT
  * and #P_INT_TO_POINTER macros.
@@ -58,10 +58,10 @@ typedef struct htable htable_t;
  * @return Pointer to a  newly initialized #PHashTable structure in case of
  * success, NULL otherwise.
  * @since 0.0.1
- * @note Free with p_hash_table_free() after usage.
+ * @note Free with p_htable_free() after usage.
  */
 P_API htable_t *
-p_hash_table_new(void);
+p_htable_new(void);
 
 /*!@brief Inserts a new key-value pair into a hash table.
  * @param table Initialized hash table.
@@ -73,7 +73,7 @@ p_hash_table_new(void);
  * data after using the hash table.
  */
 P_API void
-p_hash_table_insert(htable_t *table, ptr_t key, ptr_t value);
+p_htable_insert(htable_t *table, ptr_t key, ptr_t value);
 
 /*!@brief Searches for a specifed key in the hash table.
  * @param table Hash table to lookup in.
@@ -83,7 +83,7 @@ p_hash_table_insert(htable_t *table, ptr_t key, ptr_t value);
  * @since 0.0.1
  */
 P_API ptr_t
-p_hash_table_lookup(const htable_t *table, const_ptr_t key);
+p_htable_lookup(const htable_t *table, const_ptr_t key);
 
 /*!@brief Gives a list of all the stored keys in the hash table.
  * @param table Hash table to collect the keys from.
@@ -94,7 +94,7 @@ p_hash_table_lookup(const htable_t *table, const_ptr_t key);
  * using it.
  */
 P_API list_t *
-p_hash_table_keys(const htable_t *table);
+p_htable_keys(const htable_t *table);
 
 /*!@brief Gives a list of all the stored values in the hash table.
  * @param table Hash table to collect the values from.
@@ -105,14 +105,14 @@ p_hash_table_keys(const htable_t *table);
  * using it.
  */
 P_API list_t *
-p_hash_table_values(const htable_t *table);
+p_htable_values(const htable_t *table);
 
 /*!@brief Frees a previously initialized #PHashTable.
  * @param table Hash table to free.
  * @since 0.0.1
  */
 P_API void
-p_hash_table_free(htable_t *table);
+p_htable_free(htable_t *table);
 
 /*!@brief Removes @a key from a hash table.
  * @param table Hash table to remove the key from.
@@ -120,7 +120,7 @@ p_hash_table_free(htable_t *table);
  * @since 0.0.1
  */
 P_API void
-p_hash_table_remove(htable_t *table, const_ptr_t key);
+p_htable_remove(htable_t *table, const_ptr_t key);
 
 /*!@brief Searches for a specifed key in the hash table by its value.
  * @param table Hash table to lookup in.
@@ -138,7 +138,7 @@ p_hash_table_remove(htable_t *table, const_ptr_t key);
  * parameter), and -1 or 1 otherwise.
  */
 P_API list_t *
-p_hash_table_lookup_by_value(const htable_t *table, const_ptr_t val,
+p_htable_lookup_by_value(const htable_t *table, const_ptr_t val,
   cmp_fn_t func);
 
 #endif /* !P_HTABLE_H__ */

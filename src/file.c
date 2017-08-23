@@ -17,7 +17,7 @@
 
 #include "p/err.h"
 #include "p/file.h"
-#include "perror-private.h"
+#include "err-private.h"
 
 #ifndef P_OS_WIN
 # include <unistd.h>
@@ -47,9 +47,9 @@ p_file_remove(const byte_t *file, err_t **error) {
   bool result;
 
   if (P_UNLIKELY (file == NULL)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) P_ERR_IO_INVALID_ARGUMENT,
+      (int) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
@@ -61,10 +61,10 @@ p_file_remove(const byte_t *file, err_t **error) {
   result = (unlink(file) == 0);
 #endif
   if (P_UNLIKELY (!result)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to remove file"
     );
   }

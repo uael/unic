@@ -17,9 +17,9 @@
 
 #include "p/mem.h"
 #include "p/tree.h"
-#include "ptree-avl.h"
-#include "ptree-bst.h"
-#include "ptree-rb.h"
+#include "tree-avl.h"
+#include "tree-bst.h"
+#include "tree-rb.h"
 
 typedef bool  (*PTreeInsertNode)(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
@@ -48,7 +48,7 @@ struct tree {
   cmp_data_fn_t compare_func;
   ptr_t data;
   tree_kind_t type;
-  int_t nnodes;
+  int nnodes;
 };
 
 tree_t *
@@ -146,7 +146,7 @@ p_tree_remove(tree_t *tree, const_ptr_t key) {
 ptr_t
 p_tree_lookup(tree_t *tree, const_ptr_t key) {
   PTreeBaseNode *cur_node;
-  int_t cmp_result;
+  int cmp_result;
 
   if (P_UNLIKELY (tree == NULL)) {
     return NULL;
@@ -169,7 +169,7 @@ void
 p_tree_foreach(tree_t *tree, traverse_fn_t traverse_func, ptr_t user_data) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
-  int_t mod_counter;
+  int mod_counter;
   bool need_stop;
 
   if (P_UNLIKELY (tree == NULL || traverse_func == NULL)) {
@@ -263,7 +263,7 @@ p_tree_get_type(const tree_t *tree) {
   return tree->type;
 }
 
-int_t
+int
 p_tree_get_nnodes(const tree_t *tree) {
   if (P_UNLIKELY (tree == NULL)) {
     return 0;

@@ -190,7 +190,7 @@ p_tree_get_type(const tree_t *tree);
  *
  * If the tree is empty or an invalid pointer is given it returns 0.
  */
-P_API int_t
+P_API int
 p_tree_get_nnodes(const tree_t *tree);
 
 /*!@brief Frees a previously initialized tree object.

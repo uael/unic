@@ -27,7 +27,7 @@
  *
  * if (error != NULL) {
  *   ...
- *   p_error_free (error);
+ *   p_err_free (error);
  * }
  * @endcode
  * Note that you should not initialize a new #err_t object before passing the
@@ -37,8 +37,8 @@
  * Most operating systems store the last error code of the most system calls in
  * a thread-specific variable. Moreover, Windows stores the error code of the
  * last socket related call in a separate variable. Use
- * p_error_get_last_system() and p_error_set_last_system() to access the last
- * system error code, p_error_get_last_net() and p_error_set_last_net() to
+ * p_err_get_last_system() and p_err_set_last_system() to access the last
+ * system error code, p_err_get_last_net() and p_err_set_last_net() to
  * access the last network error code.
  *
  * All error codes are splitted into the several domains. Every error should
@@ -192,7 +192,7 @@ typedef enum err_ipc err_ipc_t;
  * @since 0.0.1
  */
 P_API err_t *
-p_error_new(void);
+p_err_new(void);
 
 /*!@brief Initializes a new #err_t with data.
  * @param code Error code.
@@ -202,7 +202,7 @@ p_error_new(void);
  * @since 0.0.1
  */
 P_API err_t *
-p_error_new_literal(int_t code, int_t native_code, const byte_t *message);
+p_err_new_literal(int code, int native_code, const byte_t *message);
 
 /*!@brief Gets an error message.
  * @param err #err_t object to get the message from.
@@ -210,15 +210,15 @@ p_error_new_literal(int_t code, int_t native_code, const byte_t *message);
  * @since 0.0.1
  */
 P_API const byte_t *
-p_error_get_message(err_t *err);
+p_err_get_message(err_t *err);
 
 /*!@brief Gets an error code.
  * @param err #err_t object to get the code from.
  * @return Error code in case of success, 0 otherwise.
  * @since 0.0.1
  */
-P_API int_t
-p_error_get_code(err_t *err);
+P_API int
+p_err_get_code(err_t *err);
 
 /*!@brief Gets a platform native error code, if any.
  * @param err #err_t object to get the native code from.
@@ -227,8 +227,8 @@ p_error_get_code(err_t *err);
  * @note In some situations there can be no native code error, i.e. when an
  * internal library call failed. Do not rely on this code.
  */
-P_API int_t
-p_error_get_native_code(err_t *err);
+P_API int
+p_err_get_native_code(err_t *err);
 
 /*!@brief Gets an error domain.
  * @param err #err_t object to get the domain from.
@@ -236,7 +236,7 @@ p_error_get_native_code(err_t *err);
  * @since 0.0.1
  */
 P_API err_domain_t
-p_error_get_domain(err_t *err);
+p_err_get_domain(err_t *err);
 
 /*!@brief Creates a copy of a #err_t object.
  * @param err #err_t object to copy.
@@ -246,7 +246,7 @@ p_error_get_domain(err_t *err);
  * usage.
  */
 P_API err_t *
-p_error_copy(err_t *err);
+p_err_copy(err_t *err);
 
 /*!@brief Sets error data.
  * @param err #err_t object to set the data for.
@@ -256,7 +256,7 @@ p_error_copy(err_t *err);
  * @since 0.0.1
  */
 P_API void
-p_error_set_error(err_t *err, int_t code, int_t ncode, const byte_t *msg);
+p_err_set_error(err_t *err, int code, int ncode, const byte_t *msg);
 
 /*!@brief Sets error data through a double pointer.
  * @param err #err_t object to set the data for.
@@ -271,7 +271,7 @@ p_error_set_error(err_t *err, int_t code, int_t ncode, const byte_t *msg);
  * memory of the created object after usage.
  */
 P_API void
-p_error_set_error_p(err_t **err, int_t code, int_t ncode, const byte_t *msg);
+p_err_set_err_p(err_t **err, int code, int ncode, const byte_t *msg);
 
 /*!@brief Sets an error code.
  * @param err #err_t object to set the code for.
@@ -279,7 +279,7 @@ p_error_set_error_p(err_t **err, int_t code, int_t ncode, const byte_t *msg);
  * @since 0.0.1
  */
 P_API void
-p_error_set_code(err_t *err, int_t code);
+p_err_set_code(err_t *err, int code);
 
 /*!@brief Sets a platform native error code.
  * @param err #err_t object to set the native error code for.
@@ -287,7 +287,7 @@ p_error_set_code(err_t *err, int_t code);
  * @since 0.0.1
  */
 P_API void
-p_error_set_native_code(err_t *err, int_t ncode);
+p_err_set_native_code(err_t *err, int ncode);
 
 /*!@brief Sets an error message.
  * @param err #err_t object to set the message for.
@@ -295,7 +295,7 @@ p_error_set_native_code(err_t *err, int_t ncode);
  * @since 0.0.1
  */
 P_API void
-p_error_set_message(err_t *err, const byte_t *msg);
+p_err_set_message(err_t *err, const byte_t *msg);
 
 /*!@brief Clears error data.
  * @param err #err_t object to clear the data for.
@@ -303,54 +303,54 @@ p_error_set_message(err_t *err, const byte_t *msg);
  * @note Error code is reseted to 0.
  */
 P_API void
-p_error_clear(err_t *err);
+p_err_clear(err_t *err);
 
 /*!@brief Frees a previously initialized error object.
  * @param err #err_t object to free.
  * @since 0.0.1
  */
 P_API void
-p_error_free(err_t *err);
+p_err_free(err_t *err);
 
 /*!@brief Gets the last system native error code.
  * @return Last system native error code.
  * @since 0.0.2
- * @sa p_error_get_last_net(), p_error_set_last_system(),
- * p_error_set_last_net()
+ * @sa p_err_get_last_net(), p_err_set_last_system(),
+ * p_err_set_last_net()
  * @note If you want get an error code for socket-related calls, use
- * p_error_get_last_net() instead.
+ * p_err_get_last_net() instead.
  */
 
-P_API int_t
-p_error_get_last_system(void);
+P_API int
+p_err_get_last_system(void);
 
 /*!@brief Gets the last network native error code.
  * @return Last network native error code.
  * @since 0.0.2
- * @sa p_error_get_last_system(), p_error_set_last_net(),
- * p_error_set_last_system()
+ * @sa p_err_get_last_system(), p_err_set_last_net(),
+ * p_err_set_last_system()
  */
-P_API int_t
-p_error_get_last_net(void);
+P_API int
+p_err_get_last_net(void);
 
 /*!@brief Sets the last system native error code.
  * @param code Error code to set.
  * @since 0.0.2
- * @sa p_error_set_last_net(), p_error_get_last_system(),
- * p_error_get_last_net()
+ * @sa p_err_set_last_net(), p_err_get_last_system(),
+ * p_err_get_last_net()
  * @note If you want set an error code for socket-related calls, use
- * p_error_set_last_net() instead.
+ * p_err_set_last_net() instead.
  */
 P_API void
-p_error_set_last_system(int_t code);
+p_err_set_last_system(int code);
 
 /*!@brief Sets the last network native error code.
  * @param code Error code to set.
  * @since 0.0.2
- * @sa p_error_set_last_system(), p_error_get_last_net(),
- * p_error_get_last_system()
+ * @sa p_err_set_last_system(), p_err_get_last_net(),
+ * p_err_get_last_system()
  */
 P_API void
-p_error_set_last_net(int_t code);
+p_err_set_last_net(int code);
 
 #endif /* !P_ERROR_H__ */

@@ -45,30 +45,30 @@
 #include "p/types.h"
 #include "p/macros.h"
 
-/*!@brief Gets #int_t value from @a atomic.
- * @param atomic Pointer to #int_t to get the value from.
+/*!@brief Gets #int value from @a atomic.
+ * @param atomic Pointer to #int to get the value from.
  * @return Integer value.
  * @since 0.0.1
  *
  * This call acts as a full compiler and hardware memory barrier (before the
  * get).
  */
-P_API int_t
-p_atomic_int_get(const volatile int_t *atomic);
+P_API int
+p_atomic_int_get(const volatile int *atomic);
 
-/*!@brief Sets #int_t value to @a atomic.
- * @param[out] atomic Pointer to #int_t to set the value for.
- * @param val New #int_t value.
+/*!@brief Sets #int value to @a atomic.
+ * @param[out] atomic Pointer to #int to set the value for.
+ * @param val New #int value.
  * @since 0.0.1
  *
  * This call acts as a full compiler and hardware memory barrier (after the
  * set).
  */
 P_API void
-p_atomic_int_set(volatile int_t *atomic, int_t val);
+p_atomic_int_set(volatile int *atomic, int val);
 
-/*!@brief Increments #int_t value from @a atomic by 1.
- * @param[in,out] atomic Pointer to #int_t to increment the value.
+/*!@brief Increments #int value from @a atomic by 1.
+ * @param[in,out] atomic Pointer to #int to increment the value.
  * @since 0.0.1
  *
  * Think of this operation as an atomic version of `{ *atomic += 1; }`.
@@ -76,11 +76,11 @@ p_atomic_int_set(volatile int_t *atomic, int_t val);
  * This call acts as a full compiler and hardware memory barrier.
  */
 P_API void
-p_atomic_int_inc(volatile int_t *atomic);
+p_atomic_int_inc(volatile int *atomic);
 
-/*!@brief Decrements #int_t value from @a atomic by 1 and tests the result for
+/*!@brief Decrements #int value from @a atomic by 1 and tests the result for
  * zero.
- * @param[in,out] atomic Pointer to #int_t to decrement the value.
+ * @param[in,out] atomic Pointer to #int to decrement the value.
  * @return true if the new value is equal to zero, false otherwise.
  * @since 0.0.1
  *
@@ -90,13 +90,13 @@ p_atomic_int_inc(volatile int_t *atomic);
  * This call acts as a full compiler and hardware memory barrier.
  */
 P_API bool
-p_atomic_int_dec_and_test(volatile int_t *atomic);
+p_atomic_int_dec_and_test(volatile int *atomic);
 
 /*!@brief Compares @a oldval with the value pointed to by @a atomic and if
  * they are equal, atomically exchanges the value of @a atomic with @a newval.
- * @param[in,out] atomic Pointer to #int_t.
- * @param oldval Old #int_t value.
- * @param newval New #int_t value.
+ * @param[in,out] atomic Pointer to #int.
+ * @param oldval Old #int value.
+ * @param newval New #int value.
  * @return true if @a atomic value was equal @a oldval, false otherwise.
  * @since 0.0.1
  *
@@ -109,11 +109,11 @@ p_atomic_int_dec_and_test(volatile int_t *atomic);
  * This call acts as a full compiler and hardware memory barrier.
  */
 P_API bool
-p_atomic_int_compare_and_exchange(volatile int_t *atomic, int_t oldval,
-  int_t newval);
+p_atomic_int_compare_and_exchange(volatile int *atomic, int oldval,
+  int newval);
 
-/*!@brief Atomically adds #int_t value to @a atomic value.
- * @param[in,out] atomic Pointer to #int_t.
+/*!@brief Atomically adds #int value to @a atomic value.
+ * @param[in,out] atomic Pointer to #int.
  * @param val Integer to add to @a atomic value.
  * @return Old value before the addition.
  * @since 0.0.1
@@ -123,8 +123,8 @@ p_atomic_int_compare_and_exchange(volatile int_t *atomic, int_t oldval,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_API int_t
-p_atomic_int_add(volatile int_t *atomic, int_t val);
+P_API int
+p_atomic_int_add(volatile int *atomic, int val);
 
 /*!@brief Atomically performs the bitwise 'and' operation of @a atomic value
  * and @a val storing the result back in @a atomic.

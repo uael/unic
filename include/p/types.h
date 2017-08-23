@@ -104,15 +104,6 @@ typedef const void *const_ptr_t;
 /*!@brief Type for a char. */
 typedef char byte_t;
 
-/*!@brief Type for a short. */
-typedef short short_t;
-
-/*!@brief Type for an int. */
-typedef int int_t;
-
-/*!@brief Type for a long. */
-typedef long long_t;
-
 /*!@brief Type for an unsigned char. */
 typedef unsigned char ubyte_t;
 
@@ -124,12 +115,6 @@ typedef unsigned int uint_t;
 
 /*!@brief Type for an unsigned long. */
 typedef unsigned long ulong_t;
-
-/*!@brief Type for a float. */
-typedef float float_t;
-
-/*!@brief Type for a double precision float. */
-typedef double double_t;
 
 #ifndef __cplusplus
 # if defined (P_CC_MSVC) && _MSC_VER < 1900
@@ -300,16 +285,16 @@ typedef int64_t poffset;
 #if PLIBSYS_SIZEOF_VOID_P == 8
 # define P_INT_TO_POINTER(i) ((void *) (long long) (i))
 # define P_POINTER_TO_INT(p) ((int) (long long) (p))
-# define PPOINTER_TO_INT(p) ((int_t) ((int64_t) (p)))
+# define PPOINTER_TO_INT(p) ((int) ((int64_t) (p)))
 # define PPOINTER_TO_UINT(p) ((uint_t) ((uint64_t) (p)))
 # define PINT_TO_POINTER(i) ((ptr_t) (int64_t) (i))
 # define PUINT_TO_POINTER(u) ((ptr_t) (uint64_t) (u))
 #else
 # define P_INT_TO_POINTER(i) ((void *) (long) (i))
 # define P_POINTER_TO_INT(p) ((int) (long) (p))
-# define PPOINTER_TO_INT(p) ((int_t) ((long_t) (p)))
+# define PPOINTER_TO_INT(p) ((int) ((long) (p)))
 # define PPOINTER_TO_UINT(p) ((uint_t) ((ulong_t) (p)))
-# define PINT_TO_POINTER(i) ((ptr_t) (long_t) (i))
+# define PINT_TO_POINTER(i) ((ptr_t) (long) (i))
 # define PUINT_TO_POINTER(u) ((ptr_t) (ulong_t) (u))
 #endif
 
@@ -671,14 +656,14 @@ typedef int64_t poffset;
 #define PINT64_TO_BE(val) ((int64_t) PUINT64_SWAP_BYTES(val))
 #define PUINT64_TO_BE(val) (PUINT64_SWAP_BYTES(val))
 # if PLIBSYS_SIZEOF_LONG == 8
-#   define PLONG_TO_LE(val) ((long_t) PINT64_TO_LE(val))
+#   define PLONG_TO_LE(val) ((long) PINT64_TO_LE(val))
 #   define PULONG_TO_LE(val) ((ulong_t) PUINT64_TO_LE(val))
-#   define PLONG_TO_BE(val) ((long_t) PINT64_TO_BE(val))
+#   define PLONG_TO_BE(val) ((long) PINT64_TO_BE(val))
 #   define PULONG_TO_BE(val) ((ulong_t) PUINT64_TO_BE(val))
 # else
-#   define PLONG_TO_LE(val) ((long_t) PINT32_TO_LE(val))
+#   define PLONG_TO_LE(val) ((long) PINT32_TO_LE(val))
 #   define PULONG_TO_LE(val) ((ulong_t) PUINT32_TO_LE(val))
-#   define PLONG_TO_BE(val) ((long_t) PINT32_TO_BE(val))
+#   define PLONG_TO_BE(val) ((long) PINT32_TO_BE(val))
 #   define PULONG_TO_BE(val) ((ulong_t) PUINT32_TO_BE(val))
 # endif
 # if PLIBSYS_SIZEOF_SIZE_T == 8
@@ -692,9 +677,9 @@ typedef int64_t poffset;
 #   define PSIZE_TO_BE(val) ((size_t) PUINT32_TO_BE(val))
 #   define PSSIZE_TO_BE(val) ((ssize_t) PINT32_TO_BE(val))
 # endif
-# define PINT_TO_LE(val) ((int_t) PINT32_TO_LE(val))
+# define PINT_TO_LE(val) ((int) PINT32_TO_LE(val))
 # define PUINT_TO_LE(val) ((uint_t) PUINT32_TO_LE(val))
-# define PINT_TO_BE(val) ((int_t) PINT32_TO_BE(val))
+# define PINT_TO_BE(val) ((int) PINT32_TO_BE(val))
 # define PUINT_TO_BE(val) ((uint_t) PUINT32_TO_BE(val))
 #else
 # define PINT16_TO_LE(val) ((int16_t) PUINT16_SWAP_BYTES(val))
@@ -710,14 +695,14 @@ typedef int64_t poffset;
 # define PINT64_TO_BE(val) ((int64_t)(val))
 # define PUINT64_TO_BE(val) ((uint64_t)(val))
 # if PLIBSYS_SIZEOF_LONG == 8
-#   define PLONG_TO_LE(val) ((long_t) PINT64_TO_LE(val))
+#   define PLONG_TO_LE(val) ((long) PINT64_TO_LE(val))
 #   define PULONG_TO_LE(val) ((ulong_t) PUINT64_TO_LE(val))
-#   define PLONG_TO_BE(val) ((long_t) PINT64_TO_BE(val))
+#   define PLONG_TO_BE(val) ((long) PINT64_TO_BE(val))
 #   define PULONG_TO_BE(val) ((ulong_t) PUINT64_TO_BE(val))
 # else
-#   define PLONG_TO_LE(val) ((long_t) PINT32_TO_LE(val))
+#   define PLONG_TO_LE(val) ((long) PINT32_TO_LE(val))
 #   define PULONG_TO_LE(val) ((ulong_t) PUINT32_TO_LE(val))
-#   define PLONG_TO_BE(val) ((long_t) PINT32_TO_BE(val))
+#   define PLONG_TO_BE(val) ((long) PINT32_TO_BE(val))
 #   define PULONG_TO_BE(val) ((ulong_t) PUINT32_TO_BE(val))
 # endif
 # if PLIBSYS_SIZEOF_SIZE_T == 8
@@ -731,9 +716,9 @@ typedef int64_t poffset;
 #   define PSIZE_TO_BE(val) ((size_t) PUINT32_TO_BE(val))
 #   define PSSIZE_TO_BE(val) ((ssize_t) PINT32_TO_BE(val))
 # endif
-#   define PINT_TO_LE(val) ((int_t) PINT32_TO_LE(val))
+#   define PINT_TO_LE(val) ((int) PINT32_TO_LE(val))
 #   define PUINT_TO_LE(val) ((uint_t) PUINT32_TO_LE(val))
-#   define PINT_TO_BE(val) ((int_t) PINT32_TO_BE(val))
+#   define PINT_TO_BE(val) ((int) PINT32_TO_BE(val))
 #   define PUINT_TO_BE(val) ((uint_t) PUINT32_TO_BE(val))
 #endif
 
@@ -1014,7 +999,7 @@ typedef void (*destroy_fn_t)(ptr_t data);
  * is greater than the second, 0 otherwise.
  * @since 0.0.1
  */
-typedef int_t (*cmp_fn_t)(const_ptr_t a, const_ptr_t b);
+typedef int (*cmp_fn_t)(const_ptr_t a, const_ptr_t b);
 
 /*!@brief Compares two values with additional data.
  * @param a First value to compare.
@@ -1024,7 +1009,7 @@ typedef int_t (*cmp_fn_t)(const_ptr_t a, const_ptr_t b);
  * is greater than the second, 0 otherwise.
  * @since 0.0.1
  */
-typedef int_t(*cmp_data_fn_t)(const_ptr_t a, const_ptr_t b, ptr_t data);
+typedef int(*cmp_data_fn_t)(const_ptr_t a, const_ptr_t b, ptr_t data);
 
 #include <stdlib.h>
 #include <stddef.h>

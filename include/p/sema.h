@@ -44,8 +44,8 @@
  * instead if you do not need to cross a process boundary.
  *
  * A process-wide semaphore is identified by its name across the system, thus it
- * is also called a named semaphore. Use p_semaphore_new() to open the named
- * semaphore and p_semaphore_free() to close it.
+ * is also called a named semaphore. Use p_sema_new() to open the named
+ * semaphore and p_sema_free() to close it.
  *
  * Please note the following platform specific differences:
  *
@@ -73,9 +73,9 @@
  *
  * - BeOS lacks support for process-wide named semaphores.
  *
- * Use the third argument as #P_SEMA_CREATE in p_semaphore_new() to reset
+ * Use the third argument as #P_SEMA_CREATE in p_sema_new() to reset
  * a semaphore value while opening it. This argument is ignored on Windows. You
- * can also take ownership of the semaphore with p_semaphore_take_ownership() to
+ * can also take ownership of the semaphore with p_sema_take_ownership() to
  * explicitly remove it from the system after closing.
  */
 #ifndef P_SEM_H__
@@ -116,25 +116,24 @@ typedef enum sema_access sema_access_t;
  * process can open that semaphore passing the same name.
  */
 P_API sema_t *
-p_sema_new(const byte_t *name, int_t init_val, sema_access_t mode,
-  err_t **error);
+p_sema_new(const byte_t *name, int init_val, sema_access_t mode, err_t **error);
 
 /*!@brief Takes ownership of a semaphore.
  * @param sem Semaphore to take ownership.
  * @since 0.0.1
  *
- * If you take ownership of a semaphore object, p_semaphore_free() will try to
+ * If you take ownership of a semaphore object, p_sema_free() will try to
  * completely unlink it and remove from the system. This is useful on UNIX
  * systems where the semaphore can survive an application crash. On the Windows
  * platform this call has no effect.
  *
  * The common usage of this call is upon application startup to ensure that the
  * semaphore from the previous crash will be unlinked from the system. To do
- * that, call p_semaphore_new(), take ownership of the semaphore object and
- * remove it with the p_semaphore_free() call. After that, create it again.
+ * that, call p_sema_new(), take ownership of the semaphore object and
+ * remove it with the p_sema_free() call. After that, create it again.
  *
  * You can also do the same thing upon semaphore creation passing
- * #P_SEMA_CREATE to p_semaphore_new(). The only difference is that you
+ * #P_SEMA_CREATE to p_sema_new(). The only difference is that you
  * should already know whether this semaphore object is from the previous crash
  * or not.
  */

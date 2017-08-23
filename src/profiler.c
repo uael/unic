@@ -17,7 +17,7 @@
 
 #include "p/mem.h"
 #include "p/profiler.h"
-#include "ptimeprofiler-private.h"
+#include "profiler-private.h"
 
 extern uint64_t
 p_profiler_get_ticks_internal(void);

@@ -18,7 +18,7 @@
 #include "p/err.h"
 #include "p/mem.h"
 #include "p/string.h"
-#include "perror-private.h"
+#include "err-private.h"
 
 #ifndef P_OS_WIN
 # if defined (P_OS_OS2)
@@ -30,13 +30,13 @@
 #endif
 
 struct err {
-  int_t code;
-  int_t native_code;
+  int code;
+  int native_code;
   byte_t *message;
 };
 
 err_io_t
-p_error_get_io_from_system(int_t err_code) {
+p_err_get_io_from_system(int err_code) {
   switch (err_code) {
     case 0:
       return P_ERR_IO_NONE;
@@ -366,12 +366,12 @@ p_error_get_io_from_system(int_t err_code) {
 }
 
 err_io_t
-p_error_get_last_io(void) {
-  return p_error_get_io_from_system(p_error_get_last_system());
+p_err_get_last_io(void) {
+  return p_err_get_io_from_system(p_err_get_last_system());
 }
 
 err_ipc_t
-p_error_get_ipc_from_system(int_t err_code) {
+p_err_get_ipc_from_system(int err_code) {
   switch (err_code) {
     case 0:
       return P_ERR_IPC_NONE;
@@ -577,12 +577,12 @@ p_error_get_ipc_from_system(int_t err_code) {
 }
 
 err_ipc_t
-p_error_get_last_ipc(void) {
-  return p_error_get_ipc_from_system(p_error_get_last_system());
+p_err_get_last_ipc(void) {
+  return p_err_get_ipc_from_system(p_err_get_last_system());
 }
 
 err_t *
-p_error_new(void) {
+p_err_new(void) {
   err_t *ret;
 
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(err_t))) == NULL)) {
@@ -592,10 +592,10 @@ p_error_new(void) {
 }
 
 err_t *
-p_error_new_literal(int_t code, int_t native_code, const byte_t *message) {
+p_err_new_literal(int code, int native_code, const byte_t *message) {
   err_t *ret;
 
-  if (P_UNLIKELY ((ret = p_error_new()) == NULL)) {
+  if (P_UNLIKELY ((ret = p_err_new()) == NULL)) {
     return NULL;
   }
   ret->code = code;
@@ -605,23 +605,23 @@ p_error_new_literal(int_t code, int_t native_code, const byte_t *message) {
 }
 
 const byte_t *
-p_error_get_message(err_t *err) {
+p_err_get_message(err_t *err) {
   if (P_UNLIKELY (err == NULL)) {
     return NULL;
   }
   return err->message;
 }
 
-int_t
-p_error_get_code(err_t *err) {
+int
+p_err_get_code(err_t *err) {
   if (P_UNLIKELY (err == NULL)) {
     return 0;
   }
   return err->code;
 }
 
-int_t
-p_error_get_native_code(err_t *err) {
+int
+p_err_get_native_code(err_t *err) {
   if (P_UNLIKELY (err == NULL)) {
     return 0;
   }
@@ -629,13 +629,13 @@ p_error_get_native_code(err_t *err) {
 }
 
 err_domain_t
-p_error_get_domain(err_t *err) {
+p_err_get_domain(err_t *err) {
   if (P_UNLIKELY (err == NULL)) {
     return P_ERR_DOMAIN_NONE;
   }
-  if (err->code >= (int_t) P_ERR_DOMAIN_IPC) {
+  if (err->code >= (int) P_ERR_DOMAIN_IPC) {
     return P_ERR_DOMAIN_IPC;
-  } else if (err->code >= (int_t) P_ERR_DOMAIN_IO) {
+  } else if (err->code >= (int) P_ERR_DOMAIN_IO) {
     return P_ERR_DOMAIN_IO;
   } else {
     return P_ERR_DOMAIN_NONE;
@@ -643,14 +643,14 @@ p_error_get_domain(err_t *err) {
 }
 
 err_t *
-p_error_copy(err_t *err) {
+p_err_copy(err_t *err) {
   err_t *ret;
 
   if (P_UNLIKELY (err == NULL)) {
     return NULL;
   }
   if (P_UNLIKELY ((
-    ret = p_error_new_literal(
+    ret = p_err_new_literal(
       err->code,
       err->native_code,
       err->message
@@ -661,7 +661,7 @@ p_error_copy(err_t *err) {
 }
 
 void
-p_error_set_error(err_t *err, int_t code, int_t ncode, const byte_t *msg) {
+p_err_set_error(err_t *err, int code, int ncode, const byte_t *msg) {
   if (P_UNLIKELY (err == NULL)) {
     return;
   }
@@ -674,15 +674,15 @@ p_error_set_error(err_t *err, int_t code, int_t ncode, const byte_t *msg) {
 }
 
 void
-p_error_set_error_p(err_t **err, int_t code, int_t ncode, const byte_t *msg) {
+p_err_set_err_p(err_t **err, int code, int ncode, const byte_t *msg) {
   if (err == NULL || *err != NULL) {
     return;
   }
-  *err = p_error_new_literal(code, ncode, msg);
+  *err = p_err_new_literal(code, ncode, msg);
 }
 
 void
-p_error_set_code(err_t *err, int_t code) {
+p_err_set_code(err_t *err, int code) {
   if (P_UNLIKELY (err == NULL)) {
     return;
   }
@@ -690,7 +690,7 @@ p_error_set_code(err_t *err, int_t code) {
 }
 
 void
-p_error_set_native_code(err_t *err, int_t ncode) {
+p_err_set_native_code(err_t *err, int ncode) {
   if (P_UNLIKELY (err == NULL)) {
     return;
   }
@@ -698,7 +698,7 @@ p_error_set_native_code(err_t *err, int_t ncode) {
 }
 
 void
-p_error_set_message(err_t *err, const byte_t *msg) {
+p_err_set_message(err_t *err, const byte_t *msg) {
   if (P_UNLIKELY (err == NULL)) {
     return;
   }
@@ -709,7 +709,7 @@ p_error_set_message(err_t *err, const byte_t *msg) {
 }
 
 void
-p_error_clear(err_t *err) {
+p_err_clear(err_t *err) {
   if (P_UNLIKELY (err == NULL)) {
     return;
   }
@@ -722,7 +722,7 @@ p_error_clear(err_t *err) {
 }
 
 void
-p_error_free(err_t *err) {
+p_err_free(err_t *err) {
   if (P_UNLIKELY (err == NULL)) {
     return;
   }
@@ -732,13 +732,13 @@ p_error_free(err_t *err) {
   p_free(err);
 }
 
-int_t
-p_error_get_last_system(void) {
+int
+p_err_get_last_system(void) {
 #ifdef P_OS_WIN
-  return (int_t) GetLastError();
+  return (int) GetLastError();
 #else
 # ifdef P_OS_VMS
-  int_t error_code = errno;
+  int error_code = errno;
 
   if (error_code == EVMSERR)
     return vaxc$errno;
@@ -750,19 +750,19 @@ p_error_get_last_system(void) {
 #endif
 }
 
-int_t
-p_error_get_last_net(void) {
+int
+p_err_get_last_net(void) {
 #if defined (P_OS_WIN)
   return WSAGetLastError();
 #elif defined (P_OS_OS2)
   return sock_errno();
 #else
-  return p_error_get_last_system();
+  return p_err_get_last_system();
 #endif
 }
 
 void
-p_error_set_last_system(int_t code) {
+p_err_set_last_system(int code) {
 #ifdef P_OS_WIN
   SetLastError((DWORD) code);
 #else
@@ -771,7 +771,7 @@ p_error_set_last_system(int_t code) {
 }
 
 void
-p_error_set_last_net(int_t code) {
+p_err_set_last_net(int code) {
 #if defined (P_OS_WIN)
   WSASetLastError(code);
 #elif defined (P_OS_OS2)

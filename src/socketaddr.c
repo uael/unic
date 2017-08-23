@@ -146,7 +146,7 @@ p_socketaddr_new(const byte_t *address, uint16_t port) {
 # ifdef AF_INET6
   struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) &sa;
 # endif /* AF_INET6 */
-  int_t len;
+  int len;
 #endif /* P_OS_WIN */
 
   if (P_UNLIKELY (address == NULL)) {

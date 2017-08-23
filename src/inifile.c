@@ -19,7 +19,7 @@
 #include "p/inifile.h"
 #include "p/mem.h"
 #include "p/string.h"
-#include "perror-private.h"
+#include "err-private.h"
 
 #define  P_INI_FILE_MAX_LINE  1024
 
@@ -40,24 +40,24 @@ struct ini_file {
 };
 
 static PIniParameter *
-pp_ini_file_parameter_new(const byte_t *name,
+pp_inifile_parameter_new(const byte_t *name,
   const byte_t *val);
 
 static void
-pp_ini_file_parameter_free(PIniParameter *param);
+pp_inifile_parameter_free(PIniParameter *param);
 
 static PIniSection *
-pp_ini_file_section_new(const byte_t *name);
+pp_inifile_section_new(const byte_t *name);
 
 static void
-pp_ini_file_section_free(PIniSection *section);
+pp_inifile_section_free(PIniSection *section);
 
 static byte_t *
-pp_ini_file_find_parameter(const ini_file_t *file,
+pp_inifile_find_parameter(const ini_file_t *file,
   const byte_t *section, const byte_t *key);
 
 static PIniParameter *
-pp_ini_file_parameter_new(const byte_t *name,
+pp_inifile_parameter_new(const byte_t *name,
   const byte_t *val) {
   PIniParameter *ret;
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PIniParameter))) == NULL)) {
@@ -76,14 +76,14 @@ pp_ini_file_parameter_new(const byte_t *name,
 }
 
 static void
-pp_ini_file_parameter_free(PIniParameter *param) {
+pp_inifile_parameter_free(PIniParameter *param) {
   p_free(param->name);
   p_free(param->value);
   p_free(param);
 }
 
 static PIniSection *
-pp_ini_file_section_new(const byte_t *name) {
+pp_inifile_section_new(const byte_t *name) {
   PIniSection *ret;
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(PIniSection))) == NULL)) {
     return NULL;
@@ -96,15 +96,15 @@ pp_ini_file_section_new(const byte_t *name) {
 }
 
 static void
-pp_ini_file_section_free(PIniSection *section) {
-  p_list_foreach(section->keys, (fn_t) pp_ini_file_parameter_free, NULL);
+pp_inifile_section_free(PIniSection *section) {
+  p_list_foreach(section->keys, (fn_t) pp_inifile_parameter_free, NULL);
   p_list_free(section->keys);
   p_free(section->name);
   p_free(section);
 }
 
 static byte_t *
-pp_ini_file_find_parameter(const ini_file_t *file, const byte_t *section,
+pp_inifile_find_parameter(const ini_file_t *file, const byte_t *section,
   const byte_t *key) {
   list_t *item;
   if (P_UNLIKELY (
@@ -130,7 +130,7 @@ pp_ini_file_find_parameter(const ini_file_t *file, const byte_t *section,
 }
 
 ini_file_t *
-p_ini_file_new(const byte_t *path) {
+p_inifile_new(const byte_t *path) {
   ini_file_t *ret;
   if (P_UNLIKELY (path == NULL)) {
     return NULL;
@@ -147,18 +147,18 @@ p_ini_file_new(const byte_t *path) {
 }
 
 void
-p_ini_file_free(ini_file_t *file) {
+p_inifile_free(ini_file_t *file) {
   if (P_UNLIKELY (file == NULL)) {
     return;
   }
-  p_list_foreach(file->sections, (fn_t) pp_ini_file_section_free, NULL);
+  p_list_foreach(file->sections, (fn_t) pp_inifile_section_free, NULL);
   p_list_free(file->sections);
   p_free(file->path);
   p_free(file);
 }
 
 bool
-p_ini_file_parse(ini_file_t *file,
+p_inifile_parse(ini_file_t *file,
   err_t **error) {
   PIniSection *section;
   PIniParameter *param;
@@ -167,11 +167,11 @@ p_ini_file_parse(ini_file_t *file,
   byte_t src_line[P_INI_FILE_MAX_LINE + 1],
     key[P_INI_FILE_MAX_LINE + 1],
     value[P_INI_FILE_MAX_LINE + 1];
-  int_t bom_shift;
+  int bom_shift;
   if (P_UNLIKELY (file == NULL)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) P_ERR_IO_INVALID_ARGUMENT,
+      (int) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
@@ -181,10 +181,10 @@ p_ini_file_parse(ini_file_t *file,
     return true;
   }
   if (P_UNLIKELY ((in_file = fopen(file->path, "r")) == NULL)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to open file for reading"
     );
     return false;
@@ -232,12 +232,12 @@ p_ini_file_parse(ini_file_t *file,
         p_free(tmp_str);
         if (section != NULL) {
           if (section->keys == NULL) {
-            pp_ini_file_section_free(section);
+            pp_inifile_section_free(section);
           } else {
             file->sections = p_list_prepend(file->sections, section);
           }
         }
-        section = pp_ini_file_section_new(key);
+        section = pp_inifile_section_new(key);
       }
     } else if (sscanf(dst_line, "%[^=] = \"%[^\"]\"", key, value) == 2 ||
       sscanf(dst_line, "%[^=] = '%[^\']'", key, value) == 2 ||
@@ -261,7 +261,7 @@ p_ini_file_parse(ini_file_t *file,
             value[0] = '\0';
           }
           if (section != NULL
-            && (param = pp_ini_file_parameter_new(key, value)) != NULL) {
+            && (param = pp_inifile_parameter_new(key, value)) != NULL) {
               section->keys = p_list_prepend(section->keys, param);
           }
         }
@@ -272,19 +272,19 @@ p_ini_file_parse(ini_file_t *file,
   }
   if (section != NULL) {
     if (section->keys == NULL) {
-      pp_ini_file_section_free(section);
+      pp_inifile_section_free(section);
     } else {
       file->sections = p_list_append(file->sections, section);
     }
   }
   if (P_UNLIKELY (fclose(in_file) != 0))
-    P_WARNING ("ini_file_t::p_ini_file_parse: fclose() failed");
+    P_WARNING ("ini_file_t::p_inifile_parse: fclose() failed");
   file->is_parsed = true;
   return true;
 }
 
 bool
-p_ini_file_is_parsed(const ini_file_t *file) {
+p_inifile_is_parsed(const ini_file_t *file) {
   if (P_UNLIKELY (file == NULL)) {
     return false;
   }
@@ -292,7 +292,7 @@ p_ini_file_is_parsed(const ini_file_t *file) {
 }
 
 list_t *
-p_ini_file_sections(const ini_file_t *file) {
+p_inifile_sections(const ini_file_t *file) {
   list_t *ret;
   list_t *sec;
   if (P_UNLIKELY (file == NULL || file->is_parsed == false)) {
@@ -306,7 +306,7 @@ p_ini_file_sections(const ini_file_t *file) {
 }
 
 list_t *
-p_ini_file_keys(const ini_file_t *file,
+p_inifile_keys(const ini_file_t *file,
   const byte_t *section) {
   list_t *ret;
   list_t *item;
@@ -331,7 +331,7 @@ p_ini_file_keys(const ini_file_t *file,
 }
 
 bool
-p_ini_file_is_key_exists(const ini_file_t *file,
+p_inifile_is_key_exists(const ini_file_t *file,
   const byte_t *section,
   const byte_t *key) {
   list_t *item;
@@ -358,25 +358,25 @@ p_ini_file_is_key_exists(const ini_file_t *file,
 }
 
 byte_t *
-p_ini_file_parameter_string(const ini_file_t *file,
+p_inifile_parameter_string(const ini_file_t *file,
   const byte_t *section,
   const byte_t *key,
   const byte_t *default_val) {
   byte_t *val;
-  if ((val = pp_ini_file_find_parameter(file, section, key)) == NULL) {
+  if ((val = pp_inifile_find_parameter(file, section, key)) == NULL) {
     return p_strdup(default_val);
   }
   return val;
 }
 
-int_t
-p_ini_file_parameter_int(const ini_file_t *file,
+int
+p_inifile_parameter_int(const ini_file_t *file,
   const byte_t *section,
   const byte_t *key,
-  int_t default_val) {
+  int default_val) {
   byte_t *val;
-  int_t ret;
-  if ((val = pp_ini_file_find_parameter(file, section, key)) == NULL) {
+  int ret;
+  if ((val = pp_inifile_find_parameter(file, section, key)) == NULL) {
     return default_val;
   }
   ret = atoi(val);
@@ -385,13 +385,13 @@ p_ini_file_parameter_int(const ini_file_t *file,
 }
 
 double
-p_ini_file_parameter_double(const ini_file_t *file,
+p_inifile_parameter_double(const ini_file_t *file,
   const byte_t *section,
   const byte_t *key,
   double default_val) {
   byte_t *val;
-  double_t ret;
-  if ((val = pp_ini_file_find_parameter(file, section, key)) == NULL) {
+  double ret;
+  if ((val = pp_inifile_find_parameter(file, section, key)) == NULL) {
     return default_val;
   }
   ret = p_strtod(val);
@@ -400,13 +400,13 @@ p_ini_file_parameter_double(const ini_file_t *file,
 }
 
 bool
-p_ini_file_parameter_boolean(const ini_file_t *file,
+p_inifile_parameter_boolean(const ini_file_t *file,
   const byte_t *section,
   const byte_t *key,
   bool default_val) {
   byte_t *val;
   bool ret;
-  if ((val = pp_ini_file_find_parameter(file, section, key)) == NULL) {
+  if ((val = pp_inifile_find_parameter(file, section, key)) == NULL) {
     return default_val;
   }
   if (strcmp(val, "true") == 0 || strcmp(val, "true") == 0) {
@@ -423,14 +423,14 @@ p_ini_file_parameter_boolean(const ini_file_t *file,
 }
 
 list_t *
-p_ini_file_parameter_list(const ini_file_t *file,
+p_inifile_parameter_list(const ini_file_t *file,
   const byte_t *section,
   const byte_t *key) {
   list_t *ret = NULL;
   byte_t *val, *str;
   byte_t buf[P_INI_FILE_MAX_LINE + 1];
   size_t len, buf_cnt;
-  if ((val = pp_ini_file_find_parameter(file, section, key)) == NULL) {
+  if ((val = pp_inifile_find_parameter(file, section, key)) == NULL) {
     return NULL;
   }
   len = strlen(val);

@@ -181,25 +181,38 @@
 #define P_UNUSED(a) ((void) (a))
 
 /*!@def P_WARNING
- * @brief Prints a warning message.
+ * @brief Prints a warning message when debugging.
  * @param msg Message to print.
  * @since 0.0.1
  */
-#define P_WARNING(msg) printf ("** Warning: %s **\n", msg)
+#ifndef NDEBUG
+# define P_WARNING(msg) fprintf(stderr, "** Warning: %s **\n", msg)
+#else
+# define P_WARNING(msg)
+#endif
 
 /*!@def P_ERROR
- * @brief Prints an error message.
+ * @brief Prints an error message when debugging.
  * @param msg Message to print.
  * @since 0.0.1
  */
-#define P_ERROR(msg) printf ("** Error: %s **\n", msg)
+#ifndef NDEBUG
+# define P_ERROR(msg) fprintf(stderr, "** Error: %s **\n", msg)
+#else
+# define P_ERROR(msg)
+#endif
 
 /*!@def P_DEBUG
- * @brief Prints a debug message.
+ * @brief Prints a debug message when debugging.
  * @param msg Message to print.
  * @since 0.0.1
  */
-#define P_DEBUG(msg) printf ("** Debug: %s **\n", msg)
+#ifndef NDEBUG
+# define P_DEBUG(msg) fprintf(stderr, "** Debug: %s **\n", msg)
+#else
+# define P_DEBUG(msg)
+#endif
+
 #ifdef DOXYGEN
 # define PLIBSYS_VERSION_MAJOR
 # define PLIBSYS_VERSION_MINOR

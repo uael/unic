@@ -27,7 +27,7 @@
 #include "p/spinlock.h"
 #include "p/uthread.h"
 #include "p/string.h"
-#include "puthread-private.h"
+#include "uthread-private.h"
 
 #ifdef P_OS_OS2
 # define INCL_DOSPROCESS
@@ -112,7 +112,7 @@ pp_uthread_proxy(ptr_t data);
 
 #ifndef P_OS_WIN
 # if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
-static int_t pp_uthread_nanosleep (uint32_t msec);
+static int pp_uthread_nanosleep (uint32_t msec);
 # endif
 #endif
 
@@ -206,7 +206,7 @@ p_uthread_create(uthread_fn_t func,
 }
 
 void
-p_uthread_exit(int_t code) {
+p_uthread_exit(int code) {
   PUThreadBase *base_thread = (PUThreadBase *) p_uthread_current();
   if (P_UNLIKELY (base_thread == NULL)) {
     return;
@@ -220,7 +220,7 @@ p_uthread_exit(int_t code) {
   p_uthread_exit_internal();
 }
 
-int_t
+int
 p_uthread_join(uthread_t *thread) {
   PUThreadBase *base_thread;
   if (P_UNLIKELY (thread == NULL)) {
@@ -248,7 +248,7 @@ p_uthread_current(void) {
   return (uthread_t *) base_thread;
 }
 
-int_t
+int
 p_uthread_ideal_count(void) {
 #if defined (P_OS_WIN)
   SYSTEM_INFO sys_info;
@@ -269,18 +269,18 @@ p_uthread_ideal_count(void) {
     return 1;
   }
   sys_info_func(&sys_info);
-  return (int_t) sys_info.dwNumberOfProcessors;
+  return (int) sys_info.dwNumberOfProcessors;
 #elif defined (P_OS_HPUX)
   struct pst_dynamic psd;
 
   if (P_LIKELY (pstat_getdynamic (&psd, sizeof (psd), 1, 0) != -1))
-    return (int_t) psd.psd_proc_cnt;
+    return (int) psd.psd_proc_cnt;
   else {
     P_WARNING ("uthread_t::p_uthread_ideal_count: failed to call pstat_getdynamic()");
     return 1;
   }
 #elif defined (P_OS_IRIX)
-  int_t cores;
+  int cores;
 
   cores = sysconf (_SC_NPROC_ONLN);
 
@@ -291,8 +291,8 @@ p_uthread_ideal_count(void) {
 
   return cores;
 #elif defined (P_OS_BSD4)
-  int_t cores;
-  int_t mib[2];
+  int cores;
+  int mib[2];
   size_t len = sizeof (cores);
 
   mib[0] = CTL_HW;
@@ -303,10 +303,10 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (int_t) cores;
+  return (int) cores;
 #elif defined (P_OS_VMS)
-  int_t cores;
-  int_t status;
+  int cores;
+  int status;
   uint_t efn;
   IOSB iosb;
 # if (PLIBSYS_SIZEOF_VOID_P == 4)
@@ -363,15 +363,15 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (int_t) cores;
+  return (int) cores;
 #elif defined (P_OS_QNX6)
-  return (int_t) _syspage_ptr->num_cpu;
+  return (int) _syspage_ptr->num_cpu;
 #elif defined (P_OS_BEOS)
   system_info sys_info;
 
   get_system_info (&sys_info);
 
-  return (int_t) sys_info.cpu_count;
+  return (int) sys_info.cpu_count;
 #elif defined (P_OS_SYLLABLE)
   system_info sys_info;
 
@@ -380,7 +380,7 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (int_t) sys_info.nCPUCount;
+  return (int) sys_info.nCPUCount;
 #elif defined (P_OS_SCO) && !defined (_SC_NPROCESSORS_ONLN)
   struct scoutsname utsn;
 
@@ -389,11 +389,11 @@ p_uthread_ideal_count(void) {
     return 1;
   }
 
-  return (int_t) utsn.numcpu;
+  return (int) utsn.numcpu;
 #elif defined (_SC_NPROCESSORS_ONLN)
-  int_t cores;
+  int cores;
 
-  cores = (int_t) sysconf(_SC_NPROCESSORS_ONLN);
+  cores = (int) sysconf(_SC_NPROCESSORS_ONLN);
 
   if (P_UNLIKELY (cores == -1)) {
     P_WARNING (
@@ -435,9 +435,9 @@ p_uthread_unref(uthread_t *thread) {
 # if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
 #   include <sys/select.h>
 #   include <sys/time.h>
-static int_t pp_uthread_nanosleep (uint32_t msec)
+static int pp_uthread_nanosleep (uint32_t msec)
 {
-  int_t  rc;
+  int  rc;
   struct timeval tstart, tstop, tremain, time2wait;
 
   time2wait.tv_sec  = msec / 1000;
@@ -450,7 +450,7 @@ static int_t pp_uthread_nanosleep (uint32_t msec)
 
   while (rc != 0) {
     if (P_UNLIKELY ((rc = select (0, NULL, NULL, NULL, &time2wait)) != 0)) {
-      if (p_error_get_last_system () == EINTR) {
+      if (p_err_get_last_system () == EINTR) {
         if (gettimeofday (&tstop, NULL) != 0)
           return -1;
 
@@ -470,7 +470,7 @@ static int_t pp_uthread_nanosleep (uint32_t msec)
 # endif
 #endif
 
-int_t
+int
 p_uthread_sleep(uint32_t msec) {
 #if defined (P_OS_WIN)
   Sleep(msec);
@@ -478,7 +478,7 @@ p_uthread_sleep(uint32_t msec) {
 #elif defined (P_OS_OS2)
   return (DosSleep (msec) == NO_ERROR) ? 0 : -1;
 #elif defined (PLIBSYS_HAS_CLOCKNANOSLEEP) || defined (PLIBSYS_HAS_NANOSLEEP)
-  int_t result;
+  int result;
   struct timespec time_req;
   struct timespec time_rem;
 
@@ -497,7 +497,7 @@ p_uthread_sleep(uint32_t msec) {
 # else
       if (P_UNLIKELY ((result = nanosleep (&time_req, &time_rem)) != 0)) {
 # endif
-      if (p_error_get_last_system() == EINTR)
+      if (p_err_get_last_system() == EINTR)
         time_req = time_rem;
       else
         return -1;

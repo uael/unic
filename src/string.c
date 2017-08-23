@@ -101,8 +101,9 @@ p_strtod(const byte_t *str) {
   double scale;
   double pow10;
   uint_t expon;
-  int_t frac;
+  int frac;
   byte_t *orig_str, *strp;
+
   orig_str = p_strchomp(str);
   if (P_UNLIKELY (orig_str == NULL)) {
     return 0.0;
@@ -117,7 +118,7 @@ p_strtod(const byte_t *str) {
   }
 
   /* Get digits before decimal point or exponent, if any */
-  for (value = 0.0; isdigit((int_t) *strp); strp += 1) {
+  for (value = 0.0; isdigit((int) *strp); strp += 1) {
     value = value * 10.0 + (*strp - '0');
   }
 
@@ -125,7 +126,7 @@ p_strtod(const byte_t *str) {
   if (*strp == '.') {
     pow10 = 10.0;
     strp += 1;
-    while (isdigit((int_t) *strp)) {
+    while (isdigit((int) *strp)) {
       value += (*strp - '0') / pow10;
       pow10 *= 10.0;
       strp += 1;
@@ -146,7 +147,7 @@ p_strtod(const byte_t *str) {
     }
 
     /* Get digits of exponent, if any */
-    for (expon = 0; isdigit((int_t) *strp); strp += 1) {
+    for (expon = 0; isdigit((int) *strp); strp += 1) {
       expon = expon * 10 + (uint_t) ((*strp - '0'));
     }
     if (P_UNLIKELY (expon > P_STR_MAX_EXPON)) {

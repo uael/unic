@@ -93,7 +93,7 @@ p_dir_new(const byte_t *path, err_t **error);
  * well.
  */
 P_API bool
-p_dir_create(const byte_t *path, int_t mode, err_t **error);
+p_dir_create(const byte_t *path, int mode, err_t **error);
 
 /*!@brief Removes an empty directory.
  * @param path Directory path to remove.

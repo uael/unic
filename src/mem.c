@@ -20,7 +20,7 @@
 
 #include "p/err.h"
 #include "p/mem.h"
-#include "perror-private.h"
+#include "err-private.h"
 
 #ifndef P_OS_WIN
 # if defined (P_OS_BEOS)
@@ -139,9 +139,9 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
 #endif
 
   if (P_UNLIKELY (n_bytes == 0)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) P_ERR_IO_INVALID_ARGUMENT,
+      (int) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
@@ -157,10 +157,10 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
       (DWORD) n_bytes,
       NULL
     )) == NULL)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to call CreateFileMapping() to create file mapping"
     );
     return NULL;
@@ -173,20 +173,20 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
       0,
       n_bytes
     )) == NULL)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to call MapViewOfFile() to map file view"
     );
     CloseHandle(hdl);
     return NULL;
   }
   if (P_UNLIKELY (!CloseHandle(hdl))) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to call CloseHandle() to close file mapping"
     );
     UnmapViewOfFile(addr);
@@ -199,9 +199,9 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
   area = create_area ("", &addr, B_ANY_ADDRESS, n_bytes, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
 
   if (P_UNLIKELY (area < B_NO_ERROR)) {
-    p_error_set_error_p (error,
-             (int_t) p_error_get_last_io (),
-             p_error_get_last_system (),
+    p_err_set_err_p (error,
+             (int) p_err_get_last_io (),
+             p_err_get_last_system (),
              "Failed to call create_area() to create memory area");
     return NULL;
   }
@@ -214,8 +214,8 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
     if (P_UNLIKELY ((ulrc = DosAllocMem ((PPVOID) &addr,
                  (ULONG) n_bytes,
                  PAG_READ | PAG_WRITE)) != NO_ERROR)) {
-      p_error_set_error_p (error,
-               (int_t) p_error_get_io_from_system ((int_t) ulrc),
+      p_err_set_err_p (error,
+               (int) p_err_get_io_from_system ((int) ulrc),
                ulrc,
                "Failed to call DosAllocMemory() to alocate memory");
       return NULL;
@@ -224,9 +224,9 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
 #else
 # if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
   if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
-    p_error_set_error_p (error,
-             (int_t) p_error_get_last_io (),
-             p_error_get_last_system (),
+    p_err_set_err_p (error,
+             (int) p_err_get_last_io (),
+             p_err_get_last_system (),
              "Failed to open /dev/zero for file mapping");
     return NULL;
   }
@@ -246,9 +246,9 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
     map_flags,
     fd,
     0)) == (void *) -1)) {
-    p_error_set_error_p(error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+    p_err_set_err_p(error,
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to call mmap() to create file mapping");
 # if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
     if (P_UNLIKELY (p_sys_close (fd) != 0))
@@ -259,9 +259,9 @@ p_mem_mmap(size_t n_bytes, err_t **error) {
 
 # if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
   if (P_UNLIKELY (p_sys_close (fd) != 0)) {
-    p_error_set_error_p (error,
-             (int_t) p_error_get_last_io (),
-             p_error_get_last_system (),
+    p_err_set_err_p (error,
+             (int) p_err_get_last_io (),
+             p_err_get_last_system (),
              "Failed to close /dev/zero handle");
     munmap (addr, n_bytes);
     return NULL;
@@ -280,9 +280,9 @@ p_mem_munmap(ptr_t mem, size_t n_bytes, err_t **error) {
 #endif
 
   if (P_UNLIKELY (mem == NULL || n_bytes == 0)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) P_ERR_IO_INVALID_ARGUMENT,
+      (int) P_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
@@ -290,37 +290,37 @@ p_mem_munmap(ptr_t mem, size_t n_bytes, err_t **error) {
   }
 #if defined (P_OS_WIN)
   if (P_UNLIKELY (UnmapViewOfFile(mem) == 0)) {
-    p_error_set_error_p(
+    p_err_set_err_p(
       error,
-      (int_t) p_error_get_last_io(),
-      p_error_get_last_system(),
+      (int) p_err_get_last_io(),
+      p_err_get_last_system(),
       "Failed to call UnmapViewOfFile() to remove file mapping"
     );
 #elif defined (P_OS_BEOS)
     if (P_UNLIKELY ((area = area_for (mem)) == B_ERROR)) {
-      p_error_set_error_p (error,
-               (int_t) p_error_get_last_io (),
-               p_error_get_last_system (),
+      p_err_set_err_p (error,
+               (int) p_err_get_last_io (),
+               p_err_get_last_system (),
                "Failed to call area_for() to find allocated memory area");
       return false;
     }
 
     if (P_UNLIKELY ((delete_area (area)) != B_OK)) {
-      p_error_set_error_p (error,
-               (int_t) p_error_get_last_io (),
-               p_error_get_last_system (),
+      p_err_set_err_p (error,
+               (int) p_err_get_last_io (),
+               p_err_get_last_system (),
                "Failed to call delete_area() to remove memory area");
 #elif defined (P_OS_OS2)
     if (P_UNLIKELY ((ulrc = DosFreeMem ((PVOID) mem)) != NO_ERROR)) {
-      p_error_set_error_p (error,
-               (int_t) p_error_get_io_from_system ((int_t) ulrc),
+      p_err_set_err_p (error,
+               (int) p_err_get_io_from_system ((int) ulrc),
                ulrc,
                "Failed to call DosFreeMem() to free memory");
 #else
     if (P_UNLIKELY (munmap(mem, n_bytes) != 0)) {
-      p_error_set_error_p(error,
-        (int_t) p_error_get_last_io(),
-        p_error_get_last_system(),
+      p_err_set_err_p(error,
+        (int) p_err_get_last_io(),
+        p_err_get_last_system(),
         "Failed to call munmap() to remove file mapping");
 #endif
     return false;

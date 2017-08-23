@@ -124,7 +124,7 @@
  * p/shm.h Shared memory
  * @endlink
  * - @link
- * p/shmbuffer.h Shared memory buffer
+ * p/shmbuf.h Shared memory buffer
  * @endlink
  *
  * Networking

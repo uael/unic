@@ -152,7 +152,7 @@ p_uthread_create(uthread_fn_t func, ptr_t data, bool joinable);
  * @since 0.0.1
  */
 P_API void
-p_uthread_exit(int_t code);
+p_uthread_exit(int code);
 
 /*!@brief Waits for the selected thread to become finished.
  * @param thread Thread to wait for.
@@ -160,7 +160,7 @@ p_uthread_exit(int_t code);
  * @since 0.0.1
  * @note Thread must be joinable to return the non-negative result.
  */
-P_API int_t
+P_API int
 p_uthread_join(uthread_t *thread);
 
 /*!@brief Sleeps the current thread (caller) for a specified amount of time.
@@ -168,7 +168,7 @@ p_uthread_join(uthread_t *thread);
  * @return 0 in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_API int_t
+P_API int
 p_uthread_sleep(uint32_t msec);
 
 /*!@brief Sets a thread priority.
@@ -218,7 +218,7 @@ p_uthread_current(void);
  * @return Ideal number of threads, 1 in case of failed detection.
  * @since 0.0.3
  */
-P_API int_t
+P_API int
 p_uthread_ideal_count(void);
 
 /*!@brief Increments a thread reference counter

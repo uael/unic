@@ -97,32 +97,32 @@ set(PLIBSYS_PUBLIC_HDRS
   )
 
 set(PLIBSYS_PRIVATE_HDRS
-  pcryptohash-gost3411.h
-  pcryptohash-md5.h
-  pcryptohash-sha1.h
-  pcryptohash-sha2-256.h
-  pcryptohash-sha2-512.h
-  pcryptohash-sha3.h
-  perror-private.h
-  plibsys-private.h
-  psysclose-private.h
-  ptimeprofiler-private.h
-  ptree-avl.h
-  ptree-bst.h
-  ptree-rb.h
-  ptree-private.h
-  puthread-private.h
+  hash-gost3411.h
+  hash-md5.h
+  hash-sha1.h
+  hash-sha2-256.h
+  hash-sha2-512.h
+  hash-sha3.h
+  err-private.h
+  plib-private.h
+  sysclose-private.h
+  profiler-private.h
+  tree-avl.h
+  tree-bst.h
+  tree-rb.h
+  tree-private.h
+  uthread-private.h
   ${CMAKE_BINARY_DIR}/plibsysconfig.h
   )
 
 set(PLIBSYS_SRCS
   hash.c
-  pcryptohash-gost3411.c
-  pcryptohash-md5.c
-  pcryptohash-sha1.c
-  pcryptohash-sha2-256.c
-  pcryptohash-sha2-512.c
-  pcryptohash-sha3.c
+  hash-gost3411.c
+  hash-md5.c
+  hash-sha1.c
+  hash-sha2-256.c
+  hash-sha2-512.c
+  hash-sha3.c
   dir.c
   err.c
   file.c
@@ -138,9 +138,9 @@ set(PLIBSYS_SRCS
   string.c
   profiler.c
   tree.c
-  ptree-avl.c
-  ptree-bst.c
-  ptree-rb.c
+  tree-avl.c
+  tree-bst.c
+  tree-rb.c
   uthread.c
   )
 
@@ -173,20 +173,20 @@ if (PLIBSYS_LIBRARYLOADER_MODEL STREQUAL "")
 endif ()
 
 set(PLIBSYS_PLATFORM_SRCS
-  pcondvariable-${PLIBSYS_THREAD_MODEL}.c
-  pmutex-${PLIBSYS_THREAD_MODEL}.c
-  psemaphore-${PLIBSYS_IPC_MODEL}.c
-  pshm-${PLIBSYS_IPC_MODEL}.c
-  psysclose-${PLIBSYS_CLOSE_MODEL}.c
-  puthread-${PLIBSYS_THREAD_MODEL}.c
-  ptimeprofiler-${PLIBSYS_TIME_PROFILER_MODEL}.c
-  pdir-${PLIBSYS_DIR_MODEL}.c
-  plibraryloader-${PLIBSYS_LIBRARYLOADER_MODEL}.c
+  condvar-${PLIBSYS_THREAD_MODEL}.c
+  mutex-${PLIBSYS_THREAD_MODEL}.c
+  sema-${PLIBSYS_IPC_MODEL}.c
+  shm-${PLIBSYS_IPC_MODEL}.c
+  sysclose-${PLIBSYS_CLOSE_MODEL}.c
+  uthread-${PLIBSYS_THREAD_MODEL}.c
+  profiler-${PLIBSYS_TIME_PROFILER_MODEL}.c
+  dir-${PLIBSYS_DIR_MODEL}.c
+  dl-${PLIBSYS_LIBRARYLOADER_MODEL}.c
   )
 
 if (NOT PLIBSYS_IPC_MODEL STREQUAL none)
-  list(APPEND PLIBSYS_PRIVATE_HDRS pipc-private.h)
-  list(APPEND PLIBSYS_SRCS pipc.c)
+  list(APPEND PLIBSYS_PRIVATE_HDRS ipc-private.h)
+  list(APPEND PLIBSYS_SRCS ipc.c)
 endif ()
 
 # Save compiler flags
@@ -263,8 +263,8 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
 endif ()
 
 list(APPEND PLIBSYS_SRCS
-  patomic-${PLIBSYS_ATOMIC_MODEL}.c
-  pspinlock-${PLIBSYS_ATOMIC_MODEL}.c
+  atomic-${PLIBSYS_ATOMIC_MODEL}.c
+  spinlock-${PLIBSYS_ATOMIC_MODEL}.c
   )
 
 if (EXISTS PLIBSYS_CONFIG_FILE)
@@ -525,7 +525,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix AND
   endif ()
 endif ()
 
-list(APPEND PLIBSYS_PLATFORM_SRCS prwlock-${PLIBSYS_RWLOCK_MODEL}.c)
+list(APPEND PLIBSYS_PLATFORM_SRCS rwlock-${PLIBSYS_RWLOCK_MODEL}.c)
 
 if (PLIBSYS_NATIVE_WINDOWS)
   set(PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>

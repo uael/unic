@@ -397,15 +397,15 @@ $ else
 $     cc_link_params = "/NODEBUG/NOTRACEBACK"
 $ endif
 $!
-$ plibsys_src = "patomic-decc.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
-$ plibsys_src = plibsys_src + " pcryptohash-sha1.c pcryptohash-sha2-256.c pcryptohash-sha2-512.c"
-$ plibsys_src = plibsys_src + " pcryptohash-sha3.c pcryptohash.c pdir-posix.c pdir.c"
-$ plibsys_src = plibsys_src + " perror.c pfile.c phashtable.c pinifile.c pipc.c plibraryloader-posix.c"
-$ plibsys_src = plibsys_src + " plist.c pmain.c pmem.c pmutex-posix.c pprocess.c prwlock-posix.c"
-$ plibsys_src = plibsys_src + " psemaphore-posix.c pshm-posix.c pshmbuffer.c psocket.c"
-$ plibsys_src = plibsys_src + " psocketaddress.c pspinlock-decc.c pstring.c psysclose-unix.c"
-$ plibsys_src = plibsys_src + " ptimeprofiler-posix.c ptimeprofiler.c ptree-avl.c ptree-bst.c"
-$ plibsys_src = plibsys_src + " ptree-rb.c ptree.c puthread-posix.c puthread.c"
+$ plibsys_src = "patomic-decc.c condvar-posix.c hash-gost3411.c hash-md5.c"
+$ plibsys_src = plibsys_src + " hash-sha1.c hash-sha2-256.c hash-sha2-512.c"
+$ plibsys_src = plibsys_src + " hash-sha3.c hash.c dir-posix.c dir.c"
+$ plibsys_src = plibsys_src + " err.c file.c htable.c inifile.c ipc.c dl-posix.c"
+$ plibsys_src = plibsys_src + " list.c main.c mem.c mutex-posix.c process.c rwlock-posix.c"
+$ plibsys_src = plibsys_src + " sema-posix.c shm-posix.c shmbuf.c socket.c"
+$ plibsys_src = plibsys_src + " socketaddr.c spinlock-decc.c string.c sysclose-unix.c"
+$ plibsys_src = plibsys_src + " profiler-posix.c profiler.c tree-avl.c tree-bst.c"
+$ plibsys_src = plibsys_src + " tree-rb.c tree.c uthread-posix.c uthread.c"
 $!
 $! Inform about building
 $! ---------------------
@@ -461,11 +461,11 @@ $! Testing area
 $! ------------
 $!
 $ build_tests:
-$ test_list_full = "patomic pcondvariable pcryptohash pdir"
-$ test_list_full = test_list_full + " perror pfile phashtable pinifile plibraryloader plist"
-$ test_list_full = test_list_full + " pmacros pmain pmem pmutex pprocess prwlock psemaphore"
-$ test_list_full = test_list_full + " pshm pshmbuffer psocket psocketaddress pspinlock pstring"
-$ test_list_full = test_list_full + " ptimeprofiler ptree ptypes puthread"
+$ test_list_full = "atomic condvar hash dir"
+$ test_list_full = test_list_full + " err file htable inifile dl list"
+$ test_list_full = test_list_full + " macros main mem mutex process rwlock sema"
+$ test_list_full = test_list_full + " shm shmbuf socket socketaddr spinlock string"
+$ test_list_full = test_list_full + " profiler tree types uthread"
 $!
 $ if is_tests .eqs. "0"
 $ then

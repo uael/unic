@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/*!@file p/shmbuffer.h
+/*!@file p/shmbuf.h
  * @brief Shared memory buffer
  * @author Alexander Saprykin
  *
@@ -27,7 +27,7 @@
  *
  * The shared memory buffer is process-wide and identified by its name across
  * the system, thus it can be opened by any process if it knows its name. Use
- * p_shm_buffer_new() to open the shared memory buffer and p_shm_buffer_free()
+ * p_shmbuf_new() to open the shared memory buffer and p_shmbuf_free()
  * to close it.
  *
  * All read/write operations are completely thread- and process-safe, which
@@ -42,18 +42,18 @@
  * case of successful check. After reading the data used space in the buffer is
  * marked as free and any subsequent write operation may overwrite it. Thus you
  * couldn't read the same data twice. The read operation is performed with the
- * p_shm_buffer_read() call.
+ * p_shmbuf_read() call.
  *
  * The write operation checks whether there is enough free space available and
  * writes a given memory block only if the buffer has enough free space.
  * Otherwise no data is written. The write operation is performed with the
- * p_shm_buffer_write() call.
+ * p_shmbuf_write() call.
  *
  * Data can be read and written into the buffer only sequentially. There is no
  * way to access an arbitrary address inside the buffer.
  *
  * You can take ownership of the shared memory buffer with
- * p_shm_buffer_take_ownership() to explicitly remove it from the system after
+ * p_shmbuf_take_ownership() to explicitly remove it from the system after
  * closing. Please refer to the #PShm description to understand the intention of
  * this action.
  */
@@ -79,7 +79,7 @@ typedef struct shmbuf shmbuf_t;
  * ignored and the existing buffer will be returned.
  */
 P_API shmbuf_t *
-p_shm_buffer_new(const byte_t *name, size_t size, err_t **error);
+p_shmbuf_new(const byte_t *name, size_t size, err_t **error);
 
 /*!@brief Frees #PShmBuffer structure.
  * @param buf #PShmBuffer to free.
@@ -89,25 +89,25 @@ p_shm_buffer_new(const byte_t *name, size_t size, err_t **error);
  * last instance of the buffer with the same name is closed.
  */
 P_API void
-p_shm_buffer_free(shmbuf_t *buf);
+p_shmbuf_free(shmbuf_t *buf);
 
 /*!@brief Takes ownership of a shared memory buffer.
  * @param buf Shared memory buffer.
  * @since 0.0.1
  *
- * If you take ownership of the shared memory buffer, p_shm_buffer_free() will
+ * If you take ownership of the shared memory buffer, p_shmbuf_free() will
  * try to completely unlink it and remove from the system. This is useful on
  * UNIX systems, where shared memory can survive an application crash. On the
  * Windows and OS/2 platforms this call has no effect.
  *
  * The common usage of this call is upon application startup to ensure that the
  * memory segment from the previous crash can be removed from the system. To do
- * that, call p_shm_buffer_new() and check if its condition is normal (used
+ * that, call p_shmbuf_new() and check if its condition is normal (used
  * space, free space). If not, take ownership of the shared memory buffer object
- * and remove it with the p_shm_buffer_free() call. After that, create it again.
+ * and remove it with the p_shmbuf_free() call. After that, create it again.
  */
 P_API void
-p_shm_buffer_take_ownership(shmbuf_t *buf);
+p_shmbuf_take_ownership(shmbuf_t *buf);
 
 /*!@brief Tries to read data from a shared memory buffer.
  * @param buf #PShmBuffer to read data from.
@@ -118,8 +118,8 @@ p_shm_buffer_take_ownership(shmbuf_t *buf);
  * occured.
  * @since 0.0.1
  */
-P_API int_t
-p_shm_buffer_read(shmbuf_t *buf, ptr_t storage, size_t len, err_t **error);
+P_API int
+p_shmbuf_read(shmbuf_t *buf, ptr_t storage, size_t len, err_t **error);
 
 /*!@brief Tries to write data into a shared memory buffer.
  * @param buf #PShmBuffer to write data into.
@@ -133,7 +133,7 @@ p_shm_buffer_read(shmbuf_t *buf, ptr_t storage, size_t len, err_t **error);
  * the given data size.
  */
 P_API ssize_t
-p_shm_buffer_write(shmbuf_t *buf, ptr_t data, size_t len, err_t **error);
+p_shmbuf_write(shmbuf_t *buf, ptr_t data, size_t len, err_t **error);
 
 /*!@brief Gets free space in the shared memory buffer.
  * @param buf #PShmBuffer to check space in.
@@ -142,7 +142,7 @@ p_shm_buffer_write(shmbuf_t *buf, ptr_t data, size_t len, err_t **error);
  * @since 0.0.1
  */
 P_API ssize_t
-p_shm_buffer_get_free_space(shmbuf_t *buf, err_t **error);
+p_shmbuf_get_free_space(shmbuf_t *buf, err_t **error);
 
 /*!@brief Gets used space in the shared memory buffer.
  * @param buf #PShmBuffer to check space in.
@@ -151,13 +151,13 @@ p_shm_buffer_get_free_space(shmbuf_t *buf, err_t **error);
  * @since 0.0.1
  */
 P_API ssize_t
-p_shm_buffer_get_used_space(shmbuf_t *buf, err_t **error);
+p_shmbuf_get_used_space(shmbuf_t *buf, err_t **error);
 
 /*!@brief Clears all data in the buffer and fills it with zeros.
  * @param buf #PShmBuffer to clear.
  * @since 0.0.1
  */
 P_API void
-p_shm_buffer_clear(shmbuf_t *buf);
+p_shmbuf_clear(shmbuf_t *buf);
 
 #endif /* !P_SHMBUF_H__ */

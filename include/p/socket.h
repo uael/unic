@@ -220,7 +220,7 @@ typedef enum socket_io_cond socket_io_cond_t;
  * #PSocket object.
  */
 P_API socket_t *
-p_socket_new_from_fd(int_t fd, err_t **error);
+p_socket_new_from_fd(int fd, err_t **error);
 
 /*!@brief Creates a new #PSocket object.
  * @param family Socket family.
@@ -248,7 +248,7 @@ p_socket_new(socket_family_t family, socket_kind_t type,
  * @since 0.0.1
  * @sa p_socket_new_from_fd()
  */
-P_API int_t
+P_API int
 p_socket_get_fd(const socket_t *socket);
 
 /*!@brief Gets a @a socket address family.
@@ -336,7 +336,7 @@ p_socket_get_blocking(socket_t *socket);
  * Some systems may not allow to set it to high values. By default #PSocket
  * attempts to set it to 5.
  */
-P_API int_t
+P_API int
 p_socket_get_listen_backlog(const socket_t *socket);
 
 /*!@brief Gets a @a socket timeout for blocking I/O operations.
@@ -357,7 +357,7 @@ p_socket_get_listen_backlog(const socket_t *socket);
  * Zero timeout means that the operation which requires a time to complete
  * network I/O will be blocked until the operation finishes or error occurres.
  */
-P_API int_t
+P_API int
 p_socket_get_timeout(const socket_t *socket);
 
 /*!@brief Gets a @a socket local (bound) address.
@@ -479,7 +479,7 @@ p_socket_set_blocking(socket_t *socket, bool blocking);
  * option.
  */
 P_API void
-p_socket_set_listen_backlog(socket_t *socket, int_t backlog);
+p_socket_set_listen_backlog(socket_t *socket, int backlog);
 
 /*!@brief Sets a @a socket timeout value for blocking I/O operations.
  * @param socket #PSocket to set the @a timeout for.
@@ -490,7 +490,7 @@ p_socket_set_listen_backlog(socket_t *socket, int_t backlog);
  * See p_socket_get_timeout() documentation for a description of this option.
  */
 P_API void
-p_socket_set_timeout(socket_t *socket, int_t timeout);
+p_socket_set_timeout(socket_t *socket, int timeout);
 
 /*!@brief Binds a @a socket to a given local address.
  * @param socket #PSocket to bind.

@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/*!@file p/socketaddress.h
+/*!@file p/socketaddr.h
  * @brief Socket address wrapper
  * @author Alexander Saprykin
  *

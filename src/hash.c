@@ -19,12 +19,12 @@
 
 #include "p/mem.h"
 #include "p/hash.h"
-#include "pcryptohash-gost3411.h"
-#include "pcryptohash-md5.h"
-#include "pcryptohash-sha1.h"
-#include "pcryptohash-sha2-256.h"
-#include "pcryptohash-sha2-512.h"
-#include "pcryptohash-sha3.h"
+#include "hash-gost3411.h"
+#include "hash-md5.h"
+#include "hash-sha1.h"
+#include "hash-sha2-256.h"
+#include "hash-sha2-512.h"
+#include "hash-sha3.h"
 
 #define P_HASH_FUNCS(ctx, type) \
   do { \
