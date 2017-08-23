@@ -120,6 +120,7 @@ CUTEST(types, modifiers) {
   u64_t puint64_val;
   i64_t pint64_val;
   offset_t poffset_val;
+  u16_t puint16_val;
 
   size_val = 256;
   printf("%#" PSIZE_MODIFIER "x\n", size_val);
@@ -129,7 +130,6 @@ CUTEST(types, modifiers) {
   printf("%#" PINTPTR_MODIFIER "x\n", puintptr_val);
   pintptr_val = -512;
   printf("%#" PINTPTR_MODIFIER "x\n", pintptr_val);
-  u16_t puint16_val;
   puint16_val = 1024;
   printf("%#" PINT16_MODIFIER "x\n", puint16_val);
   pint16_val = -1024;
