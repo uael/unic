@@ -144,8 +144,10 @@ CUTEST(dl, general) {
 
 int
 main(int ac, char **av) {
-  CUTEST_DATA test = {ac, av, NULL};
+  CUTEST_DATA test = {};
 
+  test.ac = ac;
+  test.av = av;
   CUTEST_PASS(dl, nomem);
   CUTEST_PASS(dl, general);
   return EXIT_SUCCESS;
