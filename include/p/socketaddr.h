@@ -99,7 +99,7 @@ p_socketaddr_new_from_native(const_ptr_t native, size_t len);
  * case of lack of the getaddrinfo() call.
  */
 P_API socketaddr_t *
-p_socketaddr_new(const byte_t *address, uint16_t port);
+p_socketaddr_new(const byte_t *address, u16_t port);
 
 /*!@brief Creates new #PSocketAddress for the any-address representation.
  * @param family Socket family.
@@ -112,7 +112,7 @@ p_socketaddr_new(const byte_t *address, uint16_t port);
  * (i.e. 127.0.0.1) use p_socketaddr_new() instead.
  */
 P_API socketaddr_t *
-p_socketaddr_new_any(socket_family_t family, uint16_t port);
+p_socketaddr_new_any(socket_family_t family, u16_t port);
 
 /*!@brief Creates new #PSocketAddress for the loopback interface.
  * @param family Socket family.
@@ -125,7 +125,7 @@ p_socketaddr_new_any(socket_family_t family, uint16_t port);
  * (i.e. 127.0.0.1) use p_socketaddr_new() instead.
  */
 P_API socketaddr_t *
-p_socketaddr_new_loopback(socket_family_t family, uint16_t port);
+p_socketaddr_new_loopback(socket_family_t family, u16_t port);
 
 /*!@brief Converts #PSocketAddress to the native socket address raw data.
  * @param addr #PSocketAddress to convert.
@@ -169,7 +169,7 @@ p_socketaddr_get_address(const socketaddr_t *addr);
  * @return Port number in case of success, 0 otherwise.
  * @since 0.0.1
  */
-P_API uint16_t
+P_API u16_t
 p_socketaddr_get_port(const socketaddr_t *addr);
 
 /*!@brief Gets IPv6 traffic class and flow information.
@@ -180,7 +180,7 @@ p_socketaddr_get_port(const socketaddr_t *addr);
  * @note Some operating systems may not support this property.
  * @sa p_socketaddr_is_flow_info_supported()
  */
-P_API uint32_t
+P_API u32_t
 p_socketaddr_get_flow_info(const socketaddr_t *addr);
 
 /*!@brief Gets an IPv6 set of interfaces for a scope.
@@ -191,7 +191,7 @@ p_socketaddr_get_flow_info(const socketaddr_t *addr);
  * @note Some operating systems may not support this property.
  * @sa p_socketaddr_is_scope_id_supported()
  */
-P_API uint32_t
+P_API u32_t
 p_socketaddr_get_scope_id(const socketaddr_t *addr);
 
 /*!@brief Sets IPv6 traffic class and flow information.
@@ -203,7 +203,7 @@ p_socketaddr_get_scope_id(const socketaddr_t *addr);
  * @sa p_socketaddr_is_flow_info_supported()
  */
 P_API void
-p_socketaddr_set_flow_info(socketaddr_t *addr, uint32_t flowinfo);
+p_socketaddr_set_flow_info(socketaddr_t *addr, u32_t flowinfo);
 
 /*!@brief Sets an IPv6 set of interfaces for a scope.
  * @param addr #PSocketAddress to set the set of interfaces for.
@@ -214,7 +214,7 @@ p_socketaddr_set_flow_info(socketaddr_t *addr, uint32_t flowinfo);
  * @sa p_socketaddr_is_scope_id_supported()
  */
 P_API void
-p_socketaddr_set_scope_id(socketaddr_t *addr, uint32_t scope_id);
+p_socketaddr_set_scope_id(socketaddr_t *addr, u32_t scope_id);
 
 /*!@brief Checks whether flow information is supported in IPv6.
  * @return TRUE in case of success, FALSE otherwise.

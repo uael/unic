@@ -54,43 +54,43 @@
 #include "p/macros.h"
 
 /*!@brief Type for signed 8 bit. */
-typedef signed char int8_t;
+typedef signed char i8_t;
 
 /*!@brief Type for unsigned 8 bit. */
-typedef unsigned char uint8_t;
+typedef unsigned char u8_t;
 
 /*!@brief Type for signed 16 bit. */
-typedef signed short int16_t;
+typedef signed short i16_t;
 
 /*!@brief Type for unsigned 16 bit. */
-typedef unsigned short uint16_t;
+typedef unsigned short u16_t;
 
 /*!@brief Type for signed 32 bit. */
-typedef signed int int32_t;
+typedef signed int i32_t;
 
 /*!@brief Type for unsigned 32 bit. */
-typedef unsigned int uint32_t;
+typedef unsigned int u32_t;
 
-/*!@var int64_t
+/*!@var i64_t
  * @brief Type for signed 64 bit.
  */
 
-/*!@var uint64_t
+/*!@var u64_t
  * @brief Type for unsigned 64 bit.
  */
 
 #if 0 && defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
-typedef signed __int64 int64_t;
-typedef unsigned __int64 uint64_t;
+typedef signed __int64 i64_t;
+typedef unsigned __int64 u64_t;
 #else
 # if PLIBSYS_SIZEOF_LONG == 8
-typedef signed long int64_t;
-typedef unsigned long uint64_t;
+typedef signed long i64_t;
+typedef unsigned long u64_t;
 # else
 
-typedef signed long long int64_t;
+typedef signed long long i64_t;
 
-typedef unsigned long long uint64_t;
+typedef unsigned long long u64_t;
 
 # endif
 #endif
@@ -280,15 +280,15 @@ typedef unsigned int uintptr_t;
 #endif
 
 /*!@brief Platform independent offset_t definition. */
-typedef int64_t poffset;
+typedef i64_t offset_t;
 
 #if PLIBSYS_SIZEOF_VOID_P == 8
 # define P_INT_TO_POINTER(i) ((void *) (long long) (i))
 # define P_POINTER_TO_INT(p) ((int) (long long) (p))
-# define PPOINTER_TO_INT(p) ((int) ((int64_t) (p)))
-# define PPOINTER_TO_UINT(p) ((uint_t) ((uint64_t) (p)))
-# define PINT_TO_POINTER(i) ((ptr_t) (int64_t) (i))
-# define PUINT_TO_POINTER(u) ((ptr_t) (uint64_t) (u))
+# define PPOINTER_TO_INT(p) ((int) ((i64_t) (p)))
+# define PPOINTER_TO_UINT(p) ((uint_t) ((u64_t) (p)))
+# define PINT_TO_POINTER(i) ((ptr_t) (i64_t) (i))
+# define PUINT_TO_POINTER(u) ((ptr_t) (u64_t) (u))
 #else
 # define P_INT_TO_POINTER(i) ((void *) (long) (i))
 # define P_POINTER_TO_INT(p) ((int) (long) (p))
@@ -346,32 +346,32 @@ typedef int64_t poffset;
 #define PPOINTER_TO_PSIZE(p) ((size_t) (p))
 
 /*!@brief Min value for a 8-bit int. */
-#define P_MININT8 ((int8_t) 0x80)
+#define P_MININT8 ((i8_t) 0x80)
 /*!@brief Max value for a 8-bit int. */
-#define P_MAXINT8 ((int8_t) 0x7F)
+#define P_MAXINT8 ((i8_t) 0x7F)
 /*!@brief Max value for a 8-bit unsigned int. */
-#define P_MAXUINT8 ((uint8_t) 0xFF)
+#define P_MAXUINT8 ((u8_t) 0xFF)
 
 /*!@brief Min value for a 16-bit int. */
-#define P_MININT16 ((int16_t) 0x8000)
+#define P_MININT16 ((i16_t) 0x8000)
 /*!@brief Max value for a 16-bit int. */
-#define P_MAXINT16 ((int16_t) 0x7FFF)
+#define P_MAXINT16 ((i16_t) 0x7FFF)
 /*!@brief Max value for a 16-bit unsigned int. */
-#define P_MAXUINT16 ((uint16_t) 0xFFFF)
+#define P_MAXUINT16 ((u16_t) 0xFFFF)
 
 /*!@brief Min value for a 32-bit int. */
-#define P_MININT32 ((int32_t) 0x80000000)
+#define P_MININT32 ((i32_t) 0x80000000)
 /*!@brief Max value for a 32-bit int. */
-#define P_MAXINT32 ((int32_t) 0x7FFFFFFF)
+#define P_MAXINT32 ((i32_t) 0x7FFFFFFF)
 /*!@brief Max value for a 32-bit unsigned int. */
-#define P_MAXUINT32 ((uint32_t) 0xFFFFFFFF)
+#define P_MAXUINT32 ((u32_t) 0xFFFFFFFF)
 
 /*!@brief Min value for a 64-bit int. */
-#define P_MININT64 ((int64_t) 0x8000000000000000LL)
+#define P_MININT64 ((i64_t) 0x8000000000000000LL)
 /*!@brief Max value for a 64-bit int. */
-#define P_MAXINT64 ((int64_t) 0x7FFFFFFFFFFFFFFFLL)
+#define P_MAXINT64 ((i64_t) 0x7FFFFFFFFFFFFFFFLL)
 /*!@brief Max value for a 64-bit unsigned int. */
-#define P_MAXUINT64 ((uint64_t) 0xFFFFFFFFFFFFFFFFULL)
+#define P_MAXUINT64 ((u64_t) 0xFFFFFFFFFFFFFFFFULL)
 
 /*!@def PINT16_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
@@ -426,13 +426,13 @@ typedef int64_t poffset;
 
 /*!@def POFFSET_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
- * #poffset type for printing and scanning values. It is a string literal, but
+ * #offset_t type for printing and scanning values. It is a string literal, but
  * doesn't include the percent sign so you can add precision and length
  * modifiers and append a conversion specifier.
  */
 
 /*!@def POFFSET_FORMAT
- * @brief Platform dependent conversion specifier of #poffset type for printing
+ * @brief Platform dependent conversion specifier of #offset_t type for printing
  * and scanning values.
  */
 
@@ -643,17 +643,17 @@ typedef int64_t poffset;
  */
 
 #if P_BYTE_ORDER == P_LITTLE_ENDIAN
-#define PINT16_TO_LE(val) ((int16_t)(val))
-#define PUINT16_TO_LE(val) ((uint16_t)(val))
-#define PINT16_TO_BE(val) ((int16_t) PUINT16_SWAP_BYTES(val))
+#define PINT16_TO_LE(val) ((i16_t)(val))
+#define PUINT16_TO_LE(val) ((u16_t)(val))
+#define PINT16_TO_BE(val) ((i16_t) PUINT16_SWAP_BYTES(val))
 #define PUINT16_TO_BE(val) (PUINT16_SWAP_BYTES(val))
-#define PINT32_TO_LE(val) ((int32_t)(val))
-#define PUINT32_TO_LE(val) ((uint32_t)(val))
-#define PINT32_TO_BE(val) ((int32_t) PUINT32_SWAP_BYTES(val))
+#define PINT32_TO_LE(val) ((i32_t)(val))
+#define PUINT32_TO_LE(val) ((u32_t)(val))
+#define PINT32_TO_BE(val) ((i32_t) PUINT32_SWAP_BYTES(val))
 #define PUINT32_TO_BE(val) (PUINT32_SWAP_BYTES(val))
-#define PINT64_TO_LE(val) ((int64_t)(val))
-#define PUINT64_TO_LE(val) ((uint64_t)(val))
-#define PINT64_TO_BE(val) ((int64_t) PUINT64_SWAP_BYTES(val))
+#define PINT64_TO_LE(val) ((i64_t)(val))
+#define PUINT64_TO_LE(val) ((u64_t)(val))
+#define PINT64_TO_BE(val) ((i64_t) PUINT64_SWAP_BYTES(val))
 #define PUINT64_TO_BE(val) (PUINT64_SWAP_BYTES(val))
 # if PLIBSYS_SIZEOF_LONG == 8
 #   define PLONG_TO_LE(val) ((long) PINT64_TO_LE(val))
@@ -682,18 +682,18 @@ typedef int64_t poffset;
 # define PINT_TO_BE(val) ((int) PINT32_TO_BE(val))
 # define PUINT_TO_BE(val) ((uint_t) PUINT32_TO_BE(val))
 #else
-# define PINT16_TO_LE(val) ((int16_t) PUINT16_SWAP_BYTES(val))
+# define PINT16_TO_LE(val) ((i16_t) PUINT16_SWAP_BYTES(val))
 # define PUINT16_TO_LE(val) (PUINT16_SWAP_BYTES(val))
-# define PINT16_TO_BE(val) ((int16_t)(val))
-# define PUINT16_TO_BE(val) ((uint16_t)(val))
-# define PINT32_TO_LE(val) ((int32_t) PUINT32_SWAP_BYTES(val))
+# define PINT16_TO_BE(val) ((i16_t)(val))
+# define PUINT16_TO_BE(val) ((u16_t)(val))
+# define PINT32_TO_LE(val) ((i32_t) PUINT32_SWAP_BYTES(val))
 # define PUINT32_TO_LE(val) (PUINT32_SWAP_BYTES(val))
-# define PINT32_TO_BE(val) ((int32_t)(val))
-# define PUINT32_TO_BE(val) ((uint32_t)(val))
-# define PINT64_TO_LE(val) ((int64_t) PUINT64_SWAP_BYTES *)
+# define PINT32_TO_BE(val) ((i32_t)(val))
+# define PUINT32_TO_BE(val) ((u32_t)(val))
+# define PINT64_TO_LE(val) ((i64_t) PUINT64_SWAP_BYTES *)
 # define PUINT64_TO_LE(val) (PUINT64_SWAP_BYTES(val))
-# define PINT64_TO_BE(val) ((int64_t)(val))
-# define PUINT64_TO_BE(val) ((uint64_t)(val))
+# define PINT64_TO_BE(val) ((i64_t)(val))
+# define PUINT64_TO_BE(val) ((u64_t)(val))
 # if PLIBSYS_SIZEOF_LONG == 8
 #   define PLONG_TO_LE(val) ((long) PINT64_TO_LE(val))
 #   define PULONG_TO_LE(val) ((ulong_t) PUINT64_TO_LE(val))
@@ -730,33 +730,33 @@ typedef int64_t poffset;
  * @since 0.0.1
  */
 #define PUINT16_SWAP_BYTES(val) \
-  ((uint16_t) (((uint16_t)(val)) >> 8 | ((uint16_t)(val)) << 8))
+  ((u16_t) (((u16_t)(val)) >> 8 | ((u16_t)(val)) << 8))
 
 /*!@brief Swaps a 32-bit unsigned int.
  * @param val Value to swap.
  * @return Swapped 32-bit unsigned int.
  * @since 0.0.1
  */
-#define PUINT32_SWAP_BYTES(val) ((uint32_t) ( \
-  (((uint32_t)(val)) >> 24) | \
-  ((((uint32_t)(val)) << 8) & ((uint32_t) 0x00FF0000U)) | \
-  ((((uint32_t)(val)) >> 8) & ((uint32_t) 0x0000FF00U)) | \
-  (((uint32_t)(val)) << 24)))
+#define PUINT32_SWAP_BYTES(val) ((u32_t) ( \
+  (((u32_t)(val)) >> 24) | \
+  ((((u32_t)(val)) << 8) & ((u32_t) 0x00FF0000U)) | \
+  ((((u32_t)(val)) >> 8) & ((u32_t) 0x0000FF00U)) | \
+  (((u32_t)(val)) << 24)))
 
 /*!@brief Swaps a 64-bit unsigned int.
  * @param val Value to swap.
  * @return Swapped 64-bit unsigned int.
  * @since 0.0.1
  */
-#define PUINT64_SWAP_BYTES(val) ((uint64_t) ( \
-  (((uint64_t)(val))  >> 56) | \
-  ((((uint64_t)(val)) << 40) & ((uint64_t) 0x00FF000000000000ULL)) | \
-  ((((uint64_t)(val)) << 24) & ((uint64_t) 0x0000FF0000000000ULL)) | \
-  ((((uint64_t)(val)) <<  8) & ((uint64_t) 0x000000FF00000000ULL)) | \
-  ((((uint64_t)(val)) >>  8) & ((uint64_t) 0x00000000FF000000ULL)) | \
-  ((((uint64_t)(val)) >> 24) & ((uint64_t) 0x0000000000FF0000ULL)) | \
-  ((((uint64_t)(val)) >> 40) & ((uint64_t) 0x000000000000FF00ULL)) | \
-  (((uint64_t)(val))  << 56)))
+#define PUINT64_SWAP_BYTES(val) ((u64_t) ( \
+  (((u64_t)(val))  >> 56) | \
+  ((((u64_t)(val)) << 40) & ((u64_t) 0x00FF000000000000ULL)) | \
+  ((((u64_t)(val)) << 24) & ((u64_t) 0x0000FF0000000000ULL)) | \
+  ((((u64_t)(val)) <<  8) & ((u64_t) 0x000000FF00000000ULL)) | \
+  ((((u64_t)(val)) >>  8) & ((u64_t) 0x00000000FF000000ULL)) | \
+  ((((u64_t)(val)) >> 24) & ((u64_t) 0x0000000000FF0000ULL)) | \
+  ((((u64_t)(val)) >> 40) & ((u64_t) 0x000000000000FF00ULL)) | \
+  (((u64_t)(val))  << 56)))
 
 /* Functions, similar to ?_TO_? functions */
 

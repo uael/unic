@@ -33,8 +33,8 @@ volatile static bool is_sender_working = false;
 volatile static bool is_receiver_working = false;
 
 typedef struct _SocketTestData {
-  uint16_t sender_port;
-  uint16_t receiver_port;
+  u16_t sender_port;
+  u16_t receiver_port;
   bool shutdown_channel;
 } SocketTestData;
 
@@ -67,14 +67,14 @@ clean_error(err_t **error) {
 }
 
 static bool
-test_socketaddr_directly(const socketaddr_t *addr, uint16_t port) {
+test_socketaddr_directly(const socketaddr_t *addr, u16_t port) {
   if (addr == NULL) {
     return false;
   }
 
   byte_t *addr_str = p_socketaddr_get_address(addr);
   socket_family_t remote_family = p_socketaddr_get_family(addr);
-  uint16_t remote_port = p_socketaddr_get_port(addr);
+  u16_t remote_port = p_socketaddr_get_port(addr);
   size_t remote_size = p_socketaddr_get_native_size(addr);
 
   bool ret =
@@ -91,7 +91,7 @@ test_socketaddr_directly(const socketaddr_t *addr, uint16_t port) {
 }
 
 static bool
-test_socketaddr(socket_t *socket, uint16_t port) {
+test_socketaddr(socket_t *socket, u16_t port) {
   /* Test remote address */
   socketaddr_t *remote_addr = p_socket_get_remote_address(socket, NULL);
 

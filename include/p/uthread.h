@@ -169,7 +169,7 @@ p_uthread_join(uthread_t *thread);
  * @since 0.0.1
  */
 P_API int
-p_uthread_sleep(uint32_t msec);
+p_uthread_sleep(u32_t msec);
 
 /*!@brief Sets a thread priority.
  * @param thread Thread to set the priority for.

@@ -24,48 +24,48 @@
 #  include <stdlib.h>
 #endif
 
-typedef uint64_t (WINAPI
+typedef u64_t (WINAPI
   *PWin32TicksFunc)(void);
 
-typedef uint64_t (*PWin32ElapsedFunc)(uint64_t last_counter);
+typedef u64_t (*PWin32ElapsedFunc)(u64_t last_counter);
 
 static PWin32TicksFunc pp_profiler_ticks_func = NULL;
 
 static PWin32ElapsedFunc pp_profiler_elapsed_func = NULL;
 
-static uint64_t pp_profiler_freq = 1;
+static u64_t pp_profiler_freq = 1;
 
-static uint64_t
+static u64_t
 WINAPIpp_profiler_get_hr_ticks(void);
 
-static uint64_t
-pp_profiler_elapsed_hr(uint64_t last_counter);
+static u64_t
+pp_profiler_elapsed_hr(u64_t last_counter);
 
-static uint64_t
-pp_profiler_elapsed_tick64(uint64_t last_counter);
+static u64_t
+pp_profiler_elapsed_tick64(u64_t last_counter);
 
-static uint64_t
-pp_profiler_elapsed_tick(uint64_t last_counter);
+static u64_t
+pp_profiler_elapsed_tick(u64_t last_counter);
 
-static uint64_t WINAPI
+static u64_t WINAPI
 pp_profiler_get_hr_ticks(void) {
   LARGE_INTEGER tcounter;
   if (P_UNLIKELY (QueryPerformanceCounter(&tcounter) == false)) {
     P_ERROR (
-      "p_profiler_t::pp_profiler_get_hr_ticks: QueryPerformanceCounter() failed");
+      "profiler_t::pp_profiler_get_hr_ticks: QueryPerformanceCounter() failed");
     tcounter.QuadPart = 0;
   }
-  return (uint64_t) tcounter.QuadPart;
+  return (u64_t) tcounter.QuadPart;
 }
 
-static uint64_t
-pp_profiler_elapsed_hr(uint64_t last_counter) {
-  uint64_t ticks;
+static u64_t
+pp_profiler_elapsed_hr(u64_t last_counter) {
+  u64_t ticks;
 #ifdef PLIBSYS_HAS_LLDIV
   lldiv_t ldres;
 #endif
-  uint64_t quot;
-  uint64_t rem;
+  u64_t quot;
+  u64_t rem;
   ticks = pp_profiler_ticks_func() - last_counter;
 #ifdef PLIBSYS_HAS_LLDIV
   ldres = lldiv((long long) ticks, (long long) pp_profiler_freq);
@@ -75,18 +75,18 @@ pp_profiler_elapsed_hr(uint64_t last_counter) {
   quot = ticks / pp_profiler_freq;
   rem = ticks % pp_profiler_freq;
 #endif
-  return (uint64_t) (quot * 1000000 + (rem * 1000000) / pp_profiler_freq);
+  return (u64_t) (quot * 1000000 + (rem * 1000000) / pp_profiler_freq);
 }
 
-static uint64_t
-pp_profiler_elapsed_tick64(uint64_t last_counter) {
+static u64_t
+pp_profiler_elapsed_tick64(u64_t last_counter) {
   return (pp_profiler_ticks_func() - last_counter) * 1000;
 }
 
-static uint64_t
-pp_profiler_elapsed_tick(uint64_t last_counter) {
-  uint64_t val;
-  uint64_t high_bit;
+static u64_t
+pp_profiler_elapsed_tick(u64_t last_counter) {
+  u64_t val;
+  u64_t high_bit;
   high_bit = 0;
   val = pp_profiler_ticks_func();
   if (P_UNLIKELY (val < last_counter)) {
@@ -95,13 +95,13 @@ pp_profiler_elapsed_tick(uint64_t last_counter) {
   return ((val | (high_bit << 32)) - last_counter) * 1000;
 }
 
-uint64_t
+u64_t
 p_profiler_get_ticks_internal() {
   return pp_profiler_ticks_func();
 }
 
-uint64_t
-p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
+u64_t
+p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   return pp_profiler_elapsed_func(profiler->counter);
 }
 
@@ -116,10 +116,10 @@ p_profiler_init(void) {
   if (has_qpc == true) {
     if (P_UNLIKELY (QueryPerformanceFrequency(&tcounter) == 0)) {
       P_ERROR (
-        "p_profiler_t::p_profiler_init: QueryPerformanceFrequency() failed");
+        "profiler_t::p_profiler_init: QueryPerformanceFrequency() failed");
       has_qpc = false;
     } else {
-      pp_profiler_freq = (uint64_t) (tcounter.QuadPart);
+      pp_profiler_freq = (u64_t) (tcounter.QuadPart);
       pp_profiler_ticks_func =
         (PWin32TicksFunc) pp_profiler_get_hr_ticks;
       pp_profiler_elapsed_func =
@@ -130,7 +130,7 @@ p_profiler_init(void) {
     hmodule = GetModuleHandleA("kernel32.dll");
     if (P_UNLIKELY (hmodule == NULL)) {
       P_ERROR (
-        "p_profiler_t::p_profiler_init: failed to load kernel32.dll module");
+        "profiler_t::p_profiler_init: failed to load kernel32.dll module");
       return;
     }
     pp_profiler_ticks_func =
@@ -144,7 +144,7 @@ p_profiler_init(void) {
         (PWin32ElapsedFunc) pp_profiler_elapsed_tick;
     }
     if (P_UNLIKELY (pp_profiler_ticks_func == NULL)) {
-      P_ERROR ("p_profiler_t::p_profiler_init: no reliable tick counter");
+      P_ERROR ("profiler_t::p_profiler_init: no reliable tick counter");
       pp_profiler_elapsed_func = NULL;
     }
   }

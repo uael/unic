@@ -18,11 +18,14 @@
 
 #include "p/mem.h"
 #include "p/string.h"
+
 #define P_STR_MAX_EXPON 308
+
 byte_t *
 p_strdup(const byte_t *str) {
   byte_t *ret;
   size_t len;
+
   if (P_UNLIKELY (str == NULL)) {
     return NULL;
   }
@@ -40,6 +43,7 @@ p_strchomp(const byte_t *str) {
   size_t str_len;
   byte_t *ret;
   const byte_t *ptr;
+
   if (P_UNLIKELY (str == NULL)) {
     return NULL;
   }

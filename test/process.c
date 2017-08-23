@@ -27,7 +27,7 @@ CUTEST_SETUP { p_libsys_init(); }
 CUTEST_TEARDOWN { p_libsys_shutdown(); }
 
 CUTEST(process, general) {
-  uint32_t pid;
+  u32_t pid;
 
   pid = p_process_get_current_pid();
   ASSERT(pid > 0);

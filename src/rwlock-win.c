@@ -110,7 +110,7 @@ typedef struct PRWLockVistaTable_ {
 } PRWLockVistaTable;
 
 typedef struct PRWLockXP_ {
-  volatile uint32_t lock;
+  volatile u32_t lock;
   HANDLE event;
 } PRWLockXP;
 
@@ -251,11 +251,11 @@ static bool
 pp_rwlock_start_read_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
   int i;
-  uint32_t tmp_lock;
-  uint32_t counter;
+  u32_t tmp_lock;
+  u32_t counter;
   for (i = 0;; ++i) {
     tmp_lock =
-      (uint32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
+      (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
     if (!P_RWLOCK_XP_IS_WRITER (tmp_lock)) {
       counter = P_RWLOCK_XP_SET_READERS (tmp_lock,
         P_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
@@ -302,9 +302,9 @@ pp_rwlock_start_read_xp(rwlock_t *lock) {
 static bool
 pp_rwlock_start_read_try_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  uint32_t tmp_lock;
-  uint32_t counter;
-  tmp_lock = (uint32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock
+  u32_t tmp_lock;
+  u32_t counter;
+  tmp_lock = (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock
   );
   if (P_RWLOCK_XP_IS_WRITER (tmp_lock)) {
     return false;
@@ -320,11 +320,11 @@ pp_rwlock_start_read_try_xp(rwlock_t *lock) {
 static bool
 pp_rwlock_end_read_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  uint32_t tmp_lock;
-  uint32_t counter;
+  u32_t tmp_lock;
+  u32_t counter;
   while (true) {
     tmp_lock =
-      (uint32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
+      (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
     counter = P_RWLOCK_XP_READER_COUNT (tmp_lock);
     if (P_UNLIKELY (counter == 0)) {
       return true;
@@ -349,11 +349,11 @@ static bool
 pp_rwlock_start_write_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
   int i;
-  uint32_t tmp_lock;
-  uint32_t counter;
+  u32_t tmp_lock;
+  u32_t counter;
   for (i = 0;; ++i) {
     tmp_lock =
-      (uint32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
+      (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
     if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
       counter = P_RWLOCK_XP_SET_WRITER (tmp_lock);
       if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
@@ -399,8 +399,8 @@ pp_rwlock_start_write_xp(rwlock_t *lock) {
 static bool
 pp_rwlock_start_write_try_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  uint32_t tmp_lock;
-  tmp_lock = (uint32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock
+  u32_t tmp_lock;
+  tmp_lock = (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock
   );
   if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
     return p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
@@ -413,11 +413,11 @@ pp_rwlock_start_write_try_xp(rwlock_t *lock) {
 static bool
 pp_rwlock_end_write_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
-  uint32_t tmp_lock;
+  u32_t tmp_lock;
   while (true) {
     while (true) {
       tmp_lock =
-        (uint32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
+        (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
       if (P_UNLIKELY (!P_RWLOCK_XP_IS_WRITER(tmp_lock))) {
         return true;
       }

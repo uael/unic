@@ -67,7 +67,7 @@ struct socket {
   WSAEVENT events;
 #endif
 #ifdef P_OS_SCO
-  p_profiler_t *timer;
+  profiler_t *timer;
 #endif
 };
 
@@ -101,7 +101,7 @@ pp_socket_set_details_from_fd(socket_t *socket, err_t **error);
 static bool
 pp_socket_set_fd_blocking(int fd, bool blocking, err_t **error) {
 #ifndef P_OS_WIN
-  int32_t arg;
+  i32_t arg;
 #else
   ulong_t arg;
 #endif
@@ -1500,7 +1500,7 @@ p_socket_io_condition_wait(const socket_t *socket, socket_io_cond_t condition,
     if (evret == -1 && p_err_get_last_net() == EINTR) {
 #   ifdef P_OS_SCO
       if (timeout < 0 ||
-          (p_profiler_elapsed_usecs (socket->timer) / 1000) < (uint64_t) timeout)
+          (p_profiler_elapsed_usecs (socket->timer) / 1000) < (u64_t) timeout)
         continue;
       else
         evret = 0;

@@ -23,17 +23,17 @@
 # include <unistd.h>
 #endif
 
-uint32_t
+u32_t
 p_process_get_current_pid(void) {
 #ifdef P_OS_WIN
-  return (uint32_t) GetCurrentProcessId();
+  return (u32_t) GetCurrentProcessId();
 #else
-  return (uint32_t) getpid();
+  return (u32_t) getpid();
 #endif
 }
 
 bool
-p_process_is_running(uint32_t pid) {
+p_process_is_running(u32_t pid) {
 #ifdef P_OS_WIN
   HANDLE proc;
   DWORD ret;

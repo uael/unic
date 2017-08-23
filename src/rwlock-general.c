@@ -28,8 +28,8 @@ struct rwlock {
   mutex_t *mutex;
   condvar_t *read_cv;
   condvar_t *write_cv;
-  uint32_t active_threads;
-  uint32_t waiting_threads;
+  u32_t active_threads;
+  u32_t waiting_threads;
 };
 
 rwlock_t *
@@ -120,7 +120,7 @@ p_rwlock_reader_trylock(rwlock_t *lock) {
 
 bool
 p_rwlock_reader_unlock(rwlock_t *lock) {
-  uint32_t reader_count;
+  u32_t reader_count;
   bool signal_ok;
   if (P_UNLIKELY (lock == NULL)) {
     return false;

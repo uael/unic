@@ -19,18 +19,18 @@
 #include "p/profiler.h"
 #include "profiler-private.h"
 
-extern uint64_t
+extern u64_t
 p_profiler_get_ticks_internal(void);
 
-extern uint64_t
+extern u64_t
 p_profiler_elapsed_usecs_internal(
-  const p_profiler_t *profiler);
+  const profiler_t *profiler);
 
-p_profiler_t *
+profiler_t *
 p_profiler_new() {
-  p_profiler_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(p_profiler_t))) == NULL)) {
-    P_ERROR ("p_profiler_t: failed to allocate memory");
+  profiler_t *ret;
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(profiler_t))) == NULL)) {
+    P_ERROR ("profiler_t: failed to allocate memory");
     return NULL;
   }
   ret->counter = p_profiler_get_ticks_internal();
@@ -38,15 +38,15 @@ p_profiler_new() {
 }
 
 void
-p_profiler_reset(p_profiler_t *profiler) {
+p_profiler_reset(profiler_t *profiler) {
   if (P_UNLIKELY (profiler == NULL)) {
     return;
   }
   profiler->counter = p_profiler_get_ticks_internal();
 }
 
-uint64_t
-p_profiler_elapsed_usecs(const p_profiler_t *profiler) {
+u64_t
+p_profiler_elapsed_usecs(const profiler_t *profiler) {
   if (P_UNLIKELY (profiler == NULL)) {
     return 0;
   }
@@ -54,6 +54,6 @@ p_profiler_elapsed_usecs(const p_profiler_t *profiler) {
 }
 
 void
-p_profiler_free(p_profiler_t *profiler) {
+p_profiler_free(profiler_t *profiler) {
   p_free(profiler);
 }

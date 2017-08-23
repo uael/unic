@@ -38,13 +38,13 @@
 #include "p/types.h"
 
 /*!@brief Time profiler opaque data structure. */
-typedef struct p_profiler p_profiler_t;
+typedef struct profiler profiler_t;
 
 /*!@brief Creates a new #PTimeProfiler object.
  * @return Pointer to a newly created #PTimeProfiler object.
  * @since 0.0.1
  */
-P_API p_profiler_t *
+P_API profiler_t *
 p_profiler_new(void);
 
 /*!@brief Resets the #PTimeProfiler's internal counter to zero.
@@ -55,21 +55,21 @@ p_profiler_new(void);
  * of time.
  */
 P_API void
-p_profiler_reset(p_profiler_t *profiler);
+p_profiler_reset(profiler_t *profiler);
 
 /*!@brief Calculates elapsed time since the last reset or creation.
  * @param profiler Time profiler to calculate elapsed time for.
  * @return Microseconds elapsed since the last reset or creation.
  * @since 0.0.1
  */
-P_API uint64_t
-p_profiler_elapsed_usecs(const p_profiler_t *profiler);
+P_API u64_t
+p_profiler_elapsed_usecs(const profiler_t *profiler);
 
 /*!@brief Frees #PTimeProfiler object.
  * @param profiler #PTimeProfiler to free.
  * @since 0.0.1
  */
 P_API void
-p_profiler_free(p_profiler_t *profiler);
+p_profiler_free(profiler_t *profiler);
 
 #endif /* !P_PROFILER_H__ */

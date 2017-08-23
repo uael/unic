@@ -28,34 +28,34 @@
 # endif
 #endif
 
-static uint64_t pp_profiler_freq = 1;
+static u64_t pp_profiler_freq = 1;
 
-uint64_t
+u64_t
 p_profiler_get_ticks_internal() {
   union {
-    uint64_t ticks;
+    u64_t ticks;
     QWORD tcounter;
   } tick_time;
   if (P_UNLIKELY (DosTmrQueryTime(&tick_time.tcounter) != NO_ERROR)) {
     P_ERROR (
-      "p_profiler_t::p_profiler_get_ticks_internal: DosTmrQueryTime() failed");
+      "profiler_t::p_profiler_get_ticks_internal: DosTmrQueryTime() failed");
     return 0;
   }
   return tick_time.ticks;
 }
 
-uint64_t
+u64_t
 p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
-  uint64_t ticks;
+  u64_t ticks;
 #if PLIBSYS_HAS_LLDIV
   lldiv_t ldres;
 #endif
-  uint64_t quot;
-  uint64_t rem;
+  u64_t quot;
+  u64_t rem;
   ticks = p_profiler_get_ticks_internal();
   if (ticks < profiler->counter) {
     P_WARNING (
-      "p_profiler_t::p_profiler_elapsed_usecs_internal: negative jitter");
+      "profiler_t::p_profiler_elapsed_usecs_internal: negative jitter");
     return 1;
   }
   ticks -= profiler->counter;
@@ -67,7 +67,7 @@ p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
   quot = ticks / pp_profiler_freq;
   rem = ticks % pp_profiler_freq;
 #endif
-  return (uint64_t) (
+  return (u64_t) (
     quot * 1000000LL
       + (rem * 1000000LL) / pp_profiler_freq
   );
@@ -77,10 +77,10 @@ void
 p_profiler_init(void) {
   ULONG freq;
   if (P_UNLIKELY (DosTmrQueryFreq(&freq) != NO_ERROR)) {
-    P_ERROR ("p_profiler_t::p_profiler_init: DosTmrQueryFreq() failed");
+    P_ERROR ("profiler_t::p_profiler_init: DosTmrQueryFreq() failed");
     return;
   }
-  pp_profiler_freq = (uint64_t) freq;
+  pp_profiler_freq = (u64_t) freq;
 }
 
 void

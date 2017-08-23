@@ -35,7 +35,7 @@
  * @return PID of the calling process.
  * @since 0.0.1
  */
-P_API uint32_t
+P_API u32_t
 p_process_get_current_pid(void);
 
 /*!@brief Checks whether a process with a given PID is running or not.
@@ -45,7 +45,7 @@ p_process_get_current_pid(void);
  * @since 0.0.1
  */
 P_API bool
-p_process_is_running(uint32_t pid);
+p_process_is_running(u32_t pid);
 
 #endif /* !P_PROCESS_H__ */
 

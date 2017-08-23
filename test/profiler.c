@@ -71,8 +71,8 @@ CUTEST(profiler, bad_input) {
 }
 
 CUTEST(profiler, general) {
-  p_profiler_t *profiler = NULL;
-  uint64_t prev_val, val;
+  profiler_t *profiler = NULL;
+  u64_t prev_val, val;
 
   profiler = p_profiler_new();
   ASSERT(profiler != NULL);

@@ -22,12 +22,12 @@
 struct PHashSHA2_512_ {
   union buf_ {
     ubyte_t buf[128];
-    uint64_t buf_w[16];
+    u64_t buf_w[16];
   } buf;
-  uint64_t hash[8];
+  u64_t hash[8];
 
-  uint64_t len_high;
-  uint64_t len_low;
+  u64_t len_high;
+  u64_t len_low;
 
   bool is384;
 };
@@ -43,7 +43,7 @@ static const ubyte_t pp_crypto_hash_sha2_512_pad[128] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static const uint64_t pp_crypto_hash_sha2_512_K[] = {
+static const u64_t pp_crypto_hash_sha2_512_K[] = {
   0x428A2F98D728AE22ULL, 0x7137449123EF65CDULL,
   0xB5C0FBCFEC4D3B2FULL, 0xE9B5DBA58189DBBCULL,
   0x3956C25BF348B538ULL, 0x59F111F1B605D019ULL,
@@ -87,11 +87,11 @@ static const uint64_t pp_crypto_hash_sha2_512_K[] = {
 };
 
 static void
-pp_crypto_hash_sha2_512_swap_bytes(uint64_t *data, uint_t words);
+pp_crypto_hash_sha2_512_swap_bytes(u64_t *data, uint_t words);
 
 static void
 pp_crypto_hash_sha2_512_process(PHashSHA2_512 *ctx,
-  const uint64_t data[16]);
+  const u64_t data[16]);
 
 static PHashSHA2_512 *
 pp_crypto_hash_sha2_512_new_internal(bool is384);
@@ -113,7 +113,7 @@ pp_crypto_hash_sha2_512_new_internal(bool is384);
 }
 
 static void
-pp_crypto_hash_sha2_512_swap_bytes(uint64_t *data,
+pp_crypto_hash_sha2_512_swap_bytes(u64_t *data,
   uint_t words) {
 #ifdef PLIBSYS_IS_BIGENDIAN
   P_UNUSED (data);
@@ -128,10 +128,10 @@ pp_crypto_hash_sha2_512_swap_bytes(uint64_t *data,
 
 static void
 pp_crypto_hash_sha2_512_process(PHashSHA2_512 *ctx,
-  const uint64_t data[16]) {
-  uint64_t tmp_sum1, tmp_sum2;
-  uint64_t W[80];
-  uint64_t A[8];
+  const u64_t data[16]) {
+  u64_t tmp_sum1, tmp_sum2;
+  u64_t W[80];
+  u64_t A[8];
   uint_t i;
   for (i = 0; i < 8; ++i) {
     A[i] = ctx->hash[i];
@@ -217,14 +217,14 @@ void
 p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx,
   const ubyte_t *data,
   size_t len) {
-  uint32_t left, to_fill;
-  left = (uint32_t) (ctx->len_low & 0x7F);
+  u32_t left, to_fill;
+  left = (u32_t) (ctx->len_low & 0x7F);
   to_fill = 128 - left;
-  ctx->len_low += (uint64_t) len;
-  if (ctx->len_low < (uint64_t) len) {
+  ctx->len_low += (u64_t) len;
+  if (ctx->len_low < (u64_t) len) {
     ++ctx->len_high;
   }
-  if (left && (uint64_t) len >= to_fill) {
+  if (left && (u64_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_sha2_512_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_sha2_512_process(ctx, ctx->buf.buf_w);
@@ -246,7 +246,7 @@ p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx,
 
 void
 p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx) {
-  uint64_t high, low;
+  u64_t high, low;
   int left, last;
   left = (int) (ctx->len_low & 0x7F);
   last = (left < 112) ? (112 - left) : (240 - left);

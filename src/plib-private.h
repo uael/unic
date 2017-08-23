@@ -31,7 +31,7 @@ typedef int socklen_t;
 #ifndef PLIBSYS_HAS_SOCKADDR_STORAGE
 /* According to RFC 2553 */
 # define _PLIBSYS_SS_MAXSIZE  128
-# define _PLIBSYS_SS_ALIGNSIZE  (sizeof (int64_t))
+# define _PLIBSYS_SS_ALIGNSIZE  (sizeof (i64_t))
 
 # ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
 #   define _PLIBSYS_SS_PAD1SIZE (_PLIBSYS_SS_ALIGNSIZE - (sizeof (ubyte_t) + sizeof (ubyte_t)))
@@ -61,7 +61,7 @@ struct sockaddr_storage {
 #   endif
 # endif
   byte_t __ss_pad1[_PLIBSYS_SS_PAD1SIZE];
-  int64_t __ss_align;
+  i64_t __ss_align;
   byte_t __ss_pad2[_PLIBSYS_SS_PAD2SIZE];
 };
 #endif

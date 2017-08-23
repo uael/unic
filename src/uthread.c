@@ -112,7 +112,7 @@ pp_uthread_proxy(ptr_t data);
 
 #ifndef P_OS_WIN
 # if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
-static int pp_uthread_nanosleep (uint32_t msec);
+static int pp_uthread_nanosleep (u32_t msec);
 # endif
 #endif
 
@@ -435,7 +435,7 @@ p_uthread_unref(uthread_t *thread) {
 # if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
 #   include <sys/select.h>
 #   include <sys/time.h>
-static int pp_uthread_nanosleep (uint32_t msec)
+static int pp_uthread_nanosleep (u32_t msec)
 {
   int  rc;
   struct timeval tstart, tstop, tremain, time2wait;
@@ -471,7 +471,7 @@ static int pp_uthread_nanosleep (uint32_t msec)
 #endif
 
 int
-p_uthread_sleep(uint32_t msec) {
+p_uthread_sleep(u32_t msec) {
 #if defined (P_OS_WIN)
   Sleep(msec);
   return 0;

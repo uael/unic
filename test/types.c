@@ -28,14 +28,14 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 
 CUTEST(types, general) {
   ASSERT(P_BYTE_ORDER == P_LITTLE_ENDIAN || P_BYTE_ORDER == P_BIG_ENDIAN);
-  ASSERT(sizeof(int8_t) == 1);
-  ASSERT(sizeof(uint8_t) == 1);
-  ASSERT(sizeof(int16_t) == 2);
-  ASSERT(sizeof(uint16_t) == 2);
-  ASSERT(sizeof(int32_t) == 4);
-  ASSERT(sizeof(uint32_t) == 4);
-  ASSERT(sizeof(int64_t) == 8);
-  ASSERT(sizeof(uint64_t) == 8);
+  ASSERT(sizeof(i8_t) == 1);
+  ASSERT(sizeof(u8_t) == 1);
+  ASSERT(sizeof(i16_t) == 2);
+  ASSERT(sizeof(u16_t) == 2);
+  ASSERT(sizeof(i32_t) == 4);
+  ASSERT(sizeof(u32_t) == 4);
+  ASSERT(sizeof(i64_t) == 8);
+  ASSERT(sizeof(u64_t) == 8);
   ASSERT(sizeof(void *) == sizeof(ptr_t));
   ASSERT(sizeof(const void *) == sizeof(const_ptr_t));
   ASSERT(sizeof(unsigned char) == sizeof(bool));
@@ -55,7 +55,7 @@ CUTEST(types, general) {
   ASSERT(sizeof(ssize_t) == PLIBSYS_SIZEOF_SIZE_T);
   ASSERT(sizeof(long) == PLIBSYS_SIZEOF_LONG);
   ASSERT(sizeof(ulong_t) == PLIBSYS_SIZEOF_LONG);
-  ASSERT(sizeof(poffset) == 8);
+  ASSERT(sizeof(offset_t) == 8);
   return CUTE_SUCCESS;
 }
 
@@ -78,18 +78,18 @@ CUTEST(types_pointers, convert) {
 }
 
 CUTEST(types_min, max) {
-  ASSERT(P_MININT8 == (int8_t) 0x80);
-  ASSERT(P_MAXINT8 == (int8_t) 0x7F);
-  ASSERT(P_MAXUINT8 == (uint8_t) 0xFF);
-  ASSERT(P_MININT16 == (int16_t) 0x8000);
-  ASSERT(P_MAXINT16 == (int16_t) 0x7FFF);
-  ASSERT(P_MAXUINT16 == (uint16_t) 0xFFFF);
-  ASSERT(P_MININT32 == (int32_t) 0x80000000);
-  ASSERT(P_MAXINT32 == (int32_t) 0x7FFFFFFF);
-  ASSERT(P_MAXUINT32 == (uint32_t) 0xFFFFFFFF);
-  ASSERT(P_MININT64 == (int64_t) 0x8000000000000000LL);
-  ASSERT(P_MAXINT64 == (int64_t) 0x7FFFFFFFFFFFFFFFLL);
-  ASSERT(P_MAXUINT64 == (uint64_t) 0xFFFFFFFFFFFFFFFFULL);
+  ASSERT(P_MININT8 == (i8_t) 0x80);
+  ASSERT(P_MAXINT8 == (i8_t) 0x7F);
+  ASSERT(P_MAXUINT8 == (u8_t) 0xFF);
+  ASSERT(P_MININT16 == (i16_t) 0x8000);
+  ASSERT(P_MAXINT16 == (i16_t) 0x7FFF);
+  ASSERT(P_MAXUINT16 == (u16_t) 0xFFFF);
+  ASSERT(P_MININT32 == (i32_t) 0x80000000);
+  ASSERT(P_MAXINT32 == (i32_t) 0x7FFFFFFF);
+  ASSERT(P_MAXUINT32 == (u32_t) 0xFFFFFFFF);
+  ASSERT(P_MININT64 == (i64_t) 0x8000000000000000LL);
+  ASSERT(P_MAXINT64 == (i64_t) 0x7FFFFFFFFFFFFFFFLL);
+  ASSERT(P_MAXUINT64 == (u64_t) 0xFFFFFFFFFFFFFFFFULL);
 
   if (PLIBSYS_SIZEOF_SIZE_T == 8) {
     ASSERT(P_MINSSIZE == P_MININT64);
@@ -128,22 +128,22 @@ CUTEST(types, modifiers) {
   intptr_t pintptr_val = -512;
   printf("%#" PINTPTR_MODIFIER "x\n", pintptr_val);
 
-  uint16_t puint16_val = 1024;
+  u16_t puint16_val = 1024;
   printf("%#" PINT16_MODIFIER "x\n", puint16_val);
-  int16_t pint16_val = -1024;
+  i16_t pint16_val = -1024;
   printf("%#" PINT16_MODIFIER "x\n", pint16_val);
 
-  uint32_t puint32_val = 2048;
+  u32_t puint32_val = 2048;
   printf("%#" PINT32_MODIFIER "x\n", puint32_val);
-  int32_t pint32_val = -2048;
+  i32_t pint32_val = -2048;
   printf("%#" PINT32_MODIFIER "x\n", pint32_val);
 
-  uint64_t puint64_val = 4096;
+  u64_t puint64_val = 4096;
   printf("%#" PINT64_MODIFIER "x\n", puint64_val);
-  int64_t pint64_val = -4096;
+  i64_t pint64_val = -4096;
   printf("%#" PINT64_MODIFIER "x\n", pint64_val);
 
-  poffset poffset_val = 8192;
+  offset_t poffset_val = 8192;
   printf("%#" POFFSET_MODIFIER "x\n", poffset_val);
 
   return CUTE_SUCCESS;
@@ -161,22 +161,22 @@ CUTEST(types, formats) {
   intptr_t pintptr_val = -512;
   printf("%" PINTPTR_FORMAT "\n", pintptr_val);
 
-  uint16_t puint16_val = 1024;
+  u16_t puint16_val = 1024;
   printf("%" PUINT16_FORMAT "\n", puint16_val);
-  int16_t pint16_val = -1024;
+  i16_t pint16_val = -1024;
   printf("%" PINT16_FORMAT "\n", pint16_val);
 
-  uint32_t puint32_val = 2048;
+  u32_t puint32_val = 2048;
   printf("%" PUINT32_FORMAT "\n", puint32_val);
-  int32_t pint32_val = -2048;
+  i32_t pint32_val = -2048;
   printf("%" PINT32_FORMAT "\n", pint32_val);
 
-  uint64_t puint64_val = 4096;
+  u64_t puint64_val = 4096;
   printf("%" PUINT64_FORMAT "\n", puint64_val);
-  int64_t pint64_val = -4096;
+  i64_t pint64_val = -4096;
   printf("%" PINT64_FORMAT "\n", pint64_val);
 
-  poffset poffset_val = 8192;
+  offset_t poffset_val = 8192;
   printf("%" POFFSET_FORMAT "\n", poffset_val);
 
   return CUTE_SUCCESS;
@@ -185,44 +185,44 @@ CUTEST(types, formats) {
 CUTEST(types_host, network) {
 
   if (P_BYTE_ORDER == P_LITTLE_ENDIAN) {
-    int16_t pint16_val = PINT16_TO_BE (0xFFE0);
-    ASSERT(pint16_val == (int16_t) 0xE0FF);
-    ASSERT(PINT16_FROM_BE(pint16_val) == (int16_t) 0xFFE0);
-    ASSERT(PINT16_TO_LE(pint16_val) == (int16_t) 0xE0FF);
-    ASSERT(PINT16_FROM_LE(pint16_val) == (int16_t) 0xE0FF);
+    i16_t pint16_val = PINT16_TO_BE (0xFFE0);
+    ASSERT(pint16_val == (i16_t) 0xE0FF);
+    ASSERT(PINT16_FROM_BE(pint16_val) == (i16_t) 0xFFE0);
+    ASSERT(PINT16_TO_LE(pint16_val) == (i16_t) 0xE0FF);
+    ASSERT(PINT16_FROM_LE(pint16_val) == (i16_t) 0xE0FF);
 
-    uint16_t puint16_val = PUINT16_TO_BE (0x0020);
-    ASSERT(puint16_val == (uint16_t) 0x2000);
-    ASSERT(PUINT16_FROM_BE(puint16_val) == (uint16_t) 0x0020);
-    ASSERT(PUINT16_TO_LE(puint16_val) == (uint16_t) 0x2000);
-    ASSERT(PUINT16_FROM_LE(puint16_val) == (uint16_t) 0x2000);
+    u16_t puint16_val = PUINT16_TO_BE (0x0020);
+    ASSERT(puint16_val == (u16_t) 0x2000);
+    ASSERT(PUINT16_FROM_BE(puint16_val) == (u16_t) 0x0020);
+    ASSERT(PUINT16_TO_LE(puint16_val) == (u16_t) 0x2000);
+    ASSERT(PUINT16_FROM_LE(puint16_val) == (u16_t) 0x2000);
 
-    int32_t pint32_val = PINT32_TO_BE (0xFFFFFFC0);
-    ASSERT(pint32_val == (int32_t) 0xC0FFFFFF);
-    ASSERT(PINT32_FROM_BE(pint32_val) == (int32_t) 0xFFFFFFC0);
-    ASSERT(PINT32_TO_LE(pint32_val) == (int32_t) 0xC0FFFFFF);
-    ASSERT(PINT32_FROM_LE(pint32_val) == (int32_t) 0xC0FFFFFF);
+    i32_t pint32_val = PINT32_TO_BE (0xFFFFFFC0);
+    ASSERT(pint32_val == (i32_t) 0xC0FFFFFF);
+    ASSERT(PINT32_FROM_BE(pint32_val) == (i32_t) 0xFFFFFFC0);
+    ASSERT(PINT32_TO_LE(pint32_val) == (i32_t) 0xC0FFFFFF);
+    ASSERT(PINT32_FROM_LE(pint32_val) == (i32_t) 0xC0FFFFFF);
 
-    uint32_t puint32_val = PUINT32_TO_BE (0x00000040);
-    ASSERT(puint32_val == (uint32_t) 0x40000000);
-    ASSERT(PUINT32_FROM_BE(puint32_val) == (uint32_t) 0x00000040);
-    ASSERT(PUINT32_TO_LE(puint32_val) == (uint32_t) 0x40000000);
-    ASSERT(PUINT32_FROM_LE(puint32_val) == (uint32_t) 0x40000000);
+    u32_t puint32_val = PUINT32_TO_BE (0x00000040);
+    ASSERT(puint32_val == (u32_t) 0x40000000);
+    ASSERT(PUINT32_FROM_BE(puint32_val) == (u32_t) 0x00000040);
+    ASSERT(PUINT32_TO_LE(puint32_val) == (u32_t) 0x40000000);
+    ASSERT(PUINT32_FROM_LE(puint32_val) == (u32_t) 0x40000000);
 
-    int64_t pint64_val = PINT64_TO_BE (0xFFFFFFFFFFFFFF80LL);
-    ASSERT(pint64_val == (int64_t) 0x80FFFFFFFFFFFFFFLL);
-    ASSERT(PINT64_FROM_BE(pint64_val) == (int64_t) 0xFFFFFFFFFFFFFF80LL);
-    ASSERT(PINT64_TO_LE(pint64_val) == (int64_t) 0x80FFFFFFFFFFFFFFLL);
-    ASSERT(PINT64_FROM_LE(pint64_val) == (int64_t) 0x80FFFFFFFFFFFFFFLL);
+    i64_t pint64_val = PINT64_TO_BE (0xFFFFFFFFFFFFFF80LL);
+    ASSERT(pint64_val == (i64_t) 0x80FFFFFFFFFFFFFFLL);
+    ASSERT(PINT64_FROM_BE(pint64_val) == (i64_t) 0xFFFFFFFFFFFFFF80LL);
+    ASSERT(PINT64_TO_LE(pint64_val) == (i64_t) 0x80FFFFFFFFFFFFFFLL);
+    ASSERT(PINT64_FROM_LE(pint64_val) == (i64_t) 0x80FFFFFFFFFFFFFFLL);
 
-    uint64_t puint64_val = PUINT64_TO_BE (0x0000000000000080ULL);
-    ASSERT(puint64_val == (uint64_t) 0x8000000000000000ULL);
+    u64_t puint64_val = PUINT64_TO_BE (0x0000000000000080ULL);
+    ASSERT(puint64_val == (u64_t) 0x8000000000000000ULL);
     ASSERT(
-      PUINT64_FROM_BE(puint64_val) == (uint64_t) 0x0000000000000080ULL);
+      PUINT64_FROM_BE(puint64_val) == (u64_t) 0x0000000000000080ULL);
     ASSERT(
-      PUINT64_TO_LE(puint64_val) == (uint64_t) 0x8000000000000000ULL);
+      PUINT64_TO_LE(puint64_val) == (u64_t) 0x8000000000000000ULL);
     ASSERT(
-      PUINT64_FROM_LE(puint64_val) == (uint64_t) 0x8000000000000000ULL);
+      PUINT64_FROM_LE(puint64_val) == (u64_t) 0x8000000000000000ULL);
 
     int pint_val = PINT_TO_BE (0xFFFFFC00);
     ASSERT(pint_val == (int) 0x00FCFFFF);
@@ -293,51 +293,51 @@ CUTEST(types_host, network) {
     }
 
     puint16_val = p_htons (0x0020);
-    ASSERT(puint16_val == (uint16_t) 0x2000);
-    ASSERT(p_ntohs(puint16_val) == (uint16_t) 0x0020);
+    ASSERT(puint16_val == (u16_t) 0x2000);
+    ASSERT(p_ntohs(puint16_val) == (u16_t) 0x0020);
 
     puint32_val = p_htonl (0x00000040);
-    ASSERT(puint32_val == (uint32_t) 0x40000000);
-    ASSERT(p_ntohl(puint32_val) == (uint32_t) 0x00000040);
+    ASSERT(puint32_val == (u32_t) 0x40000000);
+    ASSERT(p_ntohl(puint32_val) == (u32_t) 0x00000040);
   } else {
-    int16_t pint16_val = PINT16_TO_LE (0xFFE0);
-    ASSERT(pint16_val == (int16_t) 0xE0FF);
-    ASSERT(PINT16_FROM_LE(pint16_val) == (int16_t) 0xFFE0);
-    ASSERT(PINT16_TO_BE(pint16_val) == (int16_t) 0xE0FF);
-    ASSERT(PINT16_FROM_BE(pint16_val) == (int16_t) 0xE0FF);
+    i16_t pint16_val = PINT16_TO_LE (0xFFE0);
+    ASSERT(pint16_val == (i16_t) 0xE0FF);
+    ASSERT(PINT16_FROM_LE(pint16_val) == (i16_t) 0xFFE0);
+    ASSERT(PINT16_TO_BE(pint16_val) == (i16_t) 0xE0FF);
+    ASSERT(PINT16_FROM_BE(pint16_val) == (i16_t) 0xE0FF);
 
-    uint16_t puint16_val = PUINT16_TO_LE (0x0020);
-    ASSERT(puint16_val == (uint16_t) 0x2000);
-    ASSERT(PUINT16_FROM_LE(puint16_val) == (uint16_t) 0x0020);
-    ASSERT(PUINT16_TO_BE(puint16_val) == (uint16_t) 0x2000);
-    ASSERT(PUINT16_FROM_BE(puint16_val) == (uint16_t) 0x2000);
+    u16_t puint16_val = PUINT16_TO_LE (0x0020);
+    ASSERT(puint16_val == (u16_t) 0x2000);
+    ASSERT(PUINT16_FROM_LE(puint16_val) == (u16_t) 0x0020);
+    ASSERT(PUINT16_TO_BE(puint16_val) == (u16_t) 0x2000);
+    ASSERT(PUINT16_FROM_BE(puint16_val) == (u16_t) 0x2000);
 
-    int32_t pint32_val = PINT32_TO_LE (0xFFFFFFC0);
-    ASSERT(pint32_val == (int32_t) 0xC0FFFFFF);
-    ASSERT(PINT32_FROM_LE(pint32_val) == (int32_t) 0xFFFFFFC0);
-    ASSERT(PINT32_TO_BE(pint32_val) == (int32_t) 0xC0FFFFFF);
-    ASSERT(PINT32_FROM_BE(pint32_val) == (int32_t) 0xC0FFFFFF);
+    i32_t pint32_val = PINT32_TO_LE (0xFFFFFFC0);
+    ASSERT(pint32_val == (i32_t) 0xC0FFFFFF);
+    ASSERT(PINT32_FROM_LE(pint32_val) == (i32_t) 0xFFFFFFC0);
+    ASSERT(PINT32_TO_BE(pint32_val) == (i32_t) 0xC0FFFFFF);
+    ASSERT(PINT32_FROM_BE(pint32_val) == (i32_t) 0xC0FFFFFF);
 
-    uint32_t puint32_val = PUINT32_TO_LE (0x00000040);
-    ASSERT(puint32_val == (uint32_t) 0x40000000);
-    ASSERT(PUINT32_FROM_LE(puint32_val) == (uint32_t) 0x00000040);
-    ASSERT(PUINT32_TO_BE(puint32_val) == (uint32_t) 0x40000000);
-    ASSERT(PUINT32_FROM_BE(puint32_val) == (uint32_t) 0x40000000);
+    u32_t puint32_val = PUINT32_TO_LE (0x00000040);
+    ASSERT(puint32_val == (u32_t) 0x40000000);
+    ASSERT(PUINT32_FROM_LE(puint32_val) == (u32_t) 0x00000040);
+    ASSERT(PUINT32_TO_BE(puint32_val) == (u32_t) 0x40000000);
+    ASSERT(PUINT32_FROM_BE(puint32_val) == (u32_t) 0x40000000);
 
-    int64_t pint64_val = PINT64_TO_LE (0xFFFFFFFFFFFFFF80LL);
-    ASSERT(pint64_val == (int64_t) 0x80FFFFFFFFFFFFFFLL);
-    ASSERT(PINT64_FROM_LE(pint64_val) == (int64_t) 0xFFFFFFFFFFFFFF80LL);
-    ASSERT(PINT64_TO_BE(pint64_val) == (int64_t) 0x80FFFFFFFFFFFFFFLL);
-    ASSERT(PINT64_FROM_BE(pint64_val) == (int64_t) 0x80FFFFFFFFFFFFFFLL);
+    i64_t pint64_val = PINT64_TO_LE (0xFFFFFFFFFFFFFF80LL);
+    ASSERT(pint64_val == (i64_t) 0x80FFFFFFFFFFFFFFLL);
+    ASSERT(PINT64_FROM_LE(pint64_val) == (i64_t) 0xFFFFFFFFFFFFFF80LL);
+    ASSERT(PINT64_TO_BE(pint64_val) == (i64_t) 0x80FFFFFFFFFFFFFFLL);
+    ASSERT(PINT64_FROM_BE(pint64_val) == (i64_t) 0x80FFFFFFFFFFFFFFLL);
 
-    uint64_t puint64_val = PUINT64_TO_LE (0x0000000000000080ULL);
-    ASSERT(puint64_val == (uint64_t) 0x8000000000000000ULL);
+    u64_t puint64_val = PUINT64_TO_LE (0x0000000000000080ULL);
+    ASSERT(puint64_val == (u64_t) 0x8000000000000000ULL);
     ASSERT(
-      PUINT64_FROM_LE(puint64_val) == (uint64_t) 0x0000000000000080ULL);
+      PUINT64_FROM_LE(puint64_val) == (u64_t) 0x0000000000000080ULL);
     ASSERT(
-      PUINT64_TO_BE(puint64_val) == (uint64_t) 0x8000000000000000ULL);
+      PUINT64_TO_BE(puint64_val) == (u64_t) 0x8000000000000000ULL);
     ASSERT(
-      PUINT64_FROM_BE(puint64_val) == (uint64_t) 0x8000000000000000ULL);
+      PUINT64_FROM_BE(puint64_val) == (u64_t) 0x8000000000000000ULL);
 
     int pint_val = PINT_TO_LE (0xFFFFFC00);
     ASSERT(pint_val == (int) 0x00FCFFFF);
@@ -408,26 +408,26 @@ CUTEST(types_host, network) {
     }
 
     puint16_val = p_htons (0x0020);
-    ASSERT(puint16_val == (uint16_t) 0x0020);
-    ASSERT(p_ntohs(puint16_val) == (uint16_t) 0x0020);
+    ASSERT(puint16_val == (u16_t) 0x0020);
+    ASSERT(p_ntohs(puint16_val) == (u16_t) 0x0020);
 
     puint32_val = p_htonl (0x00000040);
-    ASSERT(puint32_val == (uint32_t) 0x00000040);
-    ASSERT(p_ntohl(puint32_val) == (uint32_t) 0x00000040);
+    ASSERT(puint32_val == (u32_t) 0x00000040);
+    ASSERT(p_ntohl(puint32_val) == (u32_t) 0x00000040);
   }
 
-  uint16_t puint16_val = PUINT16_SWAP_BYTES (0x0020);
-  ASSERT(puint16_val == (uint16_t) 0x2000);
-  ASSERT(PUINT16_SWAP_BYTES(puint16_val) == (uint16_t) 0x0020);
+  u16_t puint16_val = PUINT16_SWAP_BYTES (0x0020);
+  ASSERT(puint16_val == (u16_t) 0x2000);
+  ASSERT(PUINT16_SWAP_BYTES(puint16_val) == (u16_t) 0x0020);
 
-  uint32_t puint32_val = PUINT32_SWAP_BYTES (0x00000040);
-  ASSERT(puint32_val == (uint32_t) 0x40000000);
-  ASSERT(PUINT32_SWAP_BYTES(puint32_val) == (uint32_t) 0x00000040);
+  u32_t puint32_val = PUINT32_SWAP_BYTES (0x00000040);
+  ASSERT(puint32_val == (u32_t) 0x40000000);
+  ASSERT(PUINT32_SWAP_BYTES(puint32_val) == (u32_t) 0x00000040);
 
-  uint64_t puint64_val = PUINT64_SWAP_BYTES (0x0000000000000080ULL);
-  ASSERT(puint64_val == (uint64_t) 0x8000000000000000ULL);
+  u64_t puint64_val = PUINT64_SWAP_BYTES (0x0000000000000080ULL);
+  ASSERT(puint64_val == (u64_t) 0x8000000000000000ULL);
   ASSERT(
-    PUINT64_SWAP_BYTES(puint64_val) == (uint64_t) 0x0000000000000080ULL);
+    PUINT64_SWAP_BYTES(puint64_val) == (u64_t) 0x0000000000000080ULL);
 
   return CUTE_SUCCESS;
 }

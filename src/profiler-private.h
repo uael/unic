@@ -22,9 +22,9 @@
 #include "p/types.h"
 
 /*!@brief Time profiler opaque data structure. */
-struct p_profiler {
+struct profiler {
 
   /*!@brief Ticks counter. */
-  uint64_t counter;
+  u64_t counter;
 };
 #endif /* PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H */

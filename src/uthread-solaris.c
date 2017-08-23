@@ -145,7 +145,7 @@ p_uthread_create_internal(uthread_fn_t func,
   uthread_prio_t prio,
   size_t stack_size) {
   uthread_t *ret;
-  int32_t flags;
+  i32_t flags;
   size_t min_stack;
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(uthread_t))) == NULL)) {
     P_ERROR ("uthread_t::p_uthread_create_internal: failed to allocate memory");

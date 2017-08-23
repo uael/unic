@@ -20,18 +20,18 @@
 #include "p/profiler.h"
 #include "profiler-private.h"
 
-uint64_t
+u64_t
 p_profiler_get_ticks_internal() {
-  int64_t val;
-  if (P_UNLIKELY ((val = (int64_t) time(NULL)) == -1)) {
+  i64_t val;
+  if (P_UNLIKELY ((val = (i64_t) time(NULL)) == -1)) {
     P_ERROR (
-      "p_profiler_t::p_profiler_get_ticks_internal: time() failed");
+      "profiler_t::p_profiler_get_ticks_internal: time() failed");
     return 0;
   }
-  return (uint64_t) (val * 1000000);
+  return (u64_t) (val * 1000000);
 }
 
-uint64_t
+u64_t
 p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
   return p_profiler_get_ticks_internal() - profiler->counter;
 }

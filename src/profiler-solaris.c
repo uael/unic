@@ -18,14 +18,14 @@
 #include "p/profiler.h"
 #include "profiler-private.h"
 
-uint64_t
+u64_t
 p_profiler_get_ticks_internal() {
-  return (uint64_t) gethrtime();
+  return (u64_t) gethrtime();
 }
 
-uint64_t
+u64_t
 p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
-  return (((uint64_t) gethrtime()) - profiler->counter) / 1000;
+  return (((u64_t) gethrtime()) - profiler->counter) / 1000;
 }
 
 void

@@ -20,21 +20,21 @@
 #include "hash-gost3411.h"
 
 struct PHashGOST3411_ {
-  uint32_t buf[8];  /* Buffer to handle incoming data. */
-  uint32_t hash[8]; /* State of calculated hash. */
-  uint32_t len[8];  /* Length of hashed data, in bits. */
-  uint32_t sum[8];  /* 256-bit sum of hashed data. */
+  u32_t buf[8];  /* Buffer to handle incoming data. */
+  u32_t hash[8]; /* State of calculated hash. */
+  u32_t len[8];  /* Length of hashed data, in bits. */
+  u32_t sum[8];  /* 256-bit sum of hashed data. */
 };
 
 static void
-pp_crypto_hash_gost3411_swap_bytes(uint32_t *data, uint_t words);
+pp_crypto_hash_gost3411_swap_bytes(u32_t *data, uint_t words);
 
 static void
-pp_crypto_hash_gost3411_sum_256(uint32_t a[8], const uint32_t b[8]);
+pp_crypto_hash_gost3411_sum_256(u32_t a[8], const u32_t b[8]);
 
 static void
 pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
-  const uint32_t data[8]);
+  const u32_t data[8]);
 
 /* K block data from RFC4357 for GOST 28147-89 */
 /* static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
@@ -89,18 +89,18 @@ static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
 /* GOST 28147-89 transformation to generate keys*/
 #define P_GOST_28147_ROUND(N, key) \
 { \
-  uint32_t CM1; \
+  u32_t CM1; \
  \
   CM1 = (N)[0] + (key); \
  \
-  CM1 = ((uint32_t) pp_crypto_hash_gost3411_K_block [0][CM1 & 0xF] \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [1][(CM1 >> 4)  & 0xF] << 4 \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [2][(CM1 >> 8)  & 0xF] << 8 \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [3][(CM1 >> 12) & 0xF] << 12 \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [4][(CM1 >> 16) & 0xF] << 16 \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [5][(CM1 >> 20) & 0xF] << 20 \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [6][(CM1 >> 24) & 0xF] << 24 \
-      |  (uint32_t) pp_crypto_hash_gost3411_K_block [7][(CM1 >> 28) & 0xF] << 28); \
+  CM1 = ((u32_t) pp_crypto_hash_gost3411_K_block [0][CM1 & 0xF] \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [1][(CM1 >> 4)  & 0xF] << 4 \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [2][(CM1 >> 8)  & 0xF] << 8 \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [3][(CM1 >> 12) & 0xF] << 12 \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [4][(CM1 >> 16) & 0xF] << 16 \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [5][(CM1 >> 20) & 0xF] << 20 \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [6][(CM1 >> 24) & 0xF] << 24 \
+      |  (u32_t) pp_crypto_hash_gost3411_K_block [7][(CM1 >> 28) & 0xF] << 28); \
  \
   CM1 = ((CM1 << 11) | (CM1 >> 21)) ^ (N)[1]; \
   (N)[1] = (N)[0]; \
@@ -110,7 +110,7 @@ static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
 /* Core GOST 28147-89 transformation */
 #define P_GOST_28147_E(data, key, out) \
 { \
-  uint32_t N[2]; \
+  u32_t N[2]; \
  \
   memcpy (N, data, 8); \
  \
@@ -192,7 +192,7 @@ static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
 }
 
 static void
-pp_crypto_hash_gost3411_swap_bytes(uint32_t *data,
+pp_crypto_hash_gost3411_swap_bytes(u32_t *data,
   uint_t words) {
 #ifndef PLIBSYS_IS_BIGENDIAN
   P_UNUSED (data);
@@ -207,10 +207,10 @@ pp_crypto_hash_gost3411_swap_bytes(uint32_t *data,
 
 /* 256-bit sum */
 static void
-pp_crypto_hash_gost3411_sum_256(uint32_t a[8],
-  const uint32_t b[8]) {
+pp_crypto_hash_gost3411_sum_256(u32_t a[8],
+  const u32_t b[8]) {
   uint_t i;
-  uint32_t old;
+  u32_t old;
   bool carry;
   carry = false;
   for (i = 0; i < 8; ++i) {
@@ -223,8 +223,8 @@ pp_crypto_hash_gost3411_sum_256(uint32_t a[8],
 /* Core GOST R 34.11-94 transformation */
 static void
 pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
-  const uint32_t data[8]) {
-  uint32_t U[8], V[8], W[8], S[8], K[4][8];
+  const u32_t data[8]) {
+  u32_t U[8], V[8], W[8], S[8], K[4][8];
   memcpy(U, ctx->hash, 32);
   memcpy(V, data, 32);
 
@@ -395,14 +395,14 @@ void
 p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
   const ubyte_t *data,
   size_t len) {
-  uint32_t left, to_fill, len256[8];
+  u32_t left, to_fill, len256[8];
   left = (ctx->len[0] & 0xFF) >> 3;
   to_fill = 32 - left;
   memset(len256, 0, 32);
-  len256[0] = (uint32_t) (len << 3);
-  len256[1] = (uint32_t) (len >> 29);
+  len256[0] = (u32_t) (len << 3);
+  len256[1] = (u32_t) (len >> 29);
   pp_crypto_hash_gost3411_sum_256(ctx->len, len256);
-  if (left && (uint32_t) len >= to_fill) {
+  if (left && (u32_t) len >= to_fill) {
     memcpy((byte_t *) ctx->buf + left, data, to_fill);
     pp_crypto_hash_gost3411_swap_bytes(ctx->buf, 8);
     pp_crypto_hash_gost3411_process(ctx, ctx->buf);
@@ -426,7 +426,7 @@ p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
 
 void
 p_crypto_hash_gost3411_finish(PHashGOST3411 *ctx) {
-  uint32_t left, last;
+  u32_t left, last;
   left = ctx->len[0] & 0xFF;
   last = 32 - (left >> 3);
   if (last % 32 != 0) {

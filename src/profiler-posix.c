@@ -26,19 +26,19 @@
 # define _POSIX_MONOTONIC_CLOCK (-1)
 #endif
 
-typedef uint64_t (*PPOSIXTicksFunc)(void);
+typedef u64_t (*PPOSIXTicksFunc)(void);
 
 static PPOSIXTicksFunc pp_profiler_ticks_func = NULL;
 
 #if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
-static uint64_t pp_profiler_get_ticks_clock();
+static u64_t pp_profiler_get_ticks_clock();
 #endif
 
-static uint64_t
+static u64_t
 pp_profiler_get_ticks_gtod();
 
 #if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
-static uint64_t
+static u64_t
 pp_profiler_get_ticks_clock() {
   struct timespec ts;
 
@@ -48,30 +48,30 @@ pp_profiler_get_ticks_clock() {
   if (P_UNLIKELY (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)) {
 #endif
     P_ERROR (
-      "p_profiler_t::pp_profiler_get_ticks_clock: clock_gettime() failed");
+      "profiler_t::pp_profiler_get_ticks_clock: clock_gettime() failed");
     return pp_profiler_get_ticks_gtod();
   } else
-    return (uint64_t) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+    return (u64_t) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 }
 #endif
 
-static uint64_t
+static u64_t
 pp_profiler_get_ticks_gtod() {
   struct timeval tv;
   if (P_UNLIKELY (gettimeofday(&tv, NULL) != 0)) {
     P_ERROR (
-      "p_profiler_t::pp_profiler_get_ticks_gtod: gettimeofday() failed");
+      "profiler_t::pp_profiler_get_ticks_gtod: gettimeofday() failed");
     return 0;
   }
-  return (uint64_t) (tv.tv_sec * 1000000 + tv.tv_usec);
+  return (u64_t) (tv.tv_sec * 1000000 + tv.tv_usec);
 }
 
-uint64_t
+u64_t
 p_profiler_get_ticks_internal() {
   return pp_profiler_ticks_func();
 }
 
-uint64_t
+u64_t
 p_profiler_elapsed_usecs_internal(const p_profiler_t *profiler) {
   return pp_profiler_ticks_func() - profiler->counter;
 }

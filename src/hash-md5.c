@@ -22,12 +22,12 @@
 struct PHashMD5_ {
   union buf_ {
     ubyte_t buf[64];
-    uint32_t buf_w[16];
+    u32_t buf_w[16];
   } buf;
-  uint32_t hash[4];
+  u32_t hash[4];
 
-  uint32_t len_high;
-  uint32_t len_low;
+  u32_t len_high;
+  u32_t len_low;
 };
 
 static const ubyte_t pp_crypto_hash_md5_pad[64] = {
@@ -38,10 +38,10 @@ static const ubyte_t pp_crypto_hash_md5_pad[64] = {
 };
 
 static void
-pp_crypto_hash_md5_swap_bytes(uint32_t *data, uint_t words);
+pp_crypto_hash_md5_swap_bytes(u32_t *data, uint_t words);
 
 static void
-pp_crypto_hash_md5_process(PHashMD5 *ctx, const uint32_t data[16]);
+pp_crypto_hash_md5_process(PHashMD5 *ctx, const u32_t data[16]);
 
 #define P_MD5_ROTL(val, shift) ((val) << (shift) |  (val) >> (32 - (shift)))
 #define P_MD5_F(x, y, z) (z ^ (x & (y ^ z)))
@@ -58,7 +58,7 @@ pp_crypto_hash_md5_process(PHashMD5 *ctx, const uint32_t data[16]);
   a += P_MD5_I (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
 
 static void
-pp_crypto_hash_md5_swap_bytes(uint32_t *data,
+pp_crypto_hash_md5_swap_bytes(u32_t *data,
   uint_t words) {
 #ifndef PLIBSYS_IS_BIGENDIAN
   P_UNUSED (data);
@@ -73,8 +73,8 @@ pp_crypto_hash_md5_swap_bytes(uint32_t *data,
 
 static void
 pp_crypto_hash_md5_process(PHashMD5 *ctx,
-  const uint32_t data[16]) {
-  uint32_t A, B, C, D;
+  const u32_t data[16]) {
+  u32_t A, B, C, D;
   A = ctx->hash[0];
   B = ctx->hash[1];
   C = ctx->hash[2];
@@ -174,14 +174,14 @@ void
 p_crypto_hash_md5_update(PHashMD5 *ctx,
   const ubyte_t *data,
   size_t len) {
-  uint32_t left, to_fill;
+  u32_t left, to_fill;
   left = ctx->len_low & 0x3F;
   to_fill = 64 - left;
-  ctx->len_low += (uint32_t) len;
-  if (ctx->len_low < (uint32_t) len) {
+  ctx->len_low += (u32_t) len;
+  if (ctx->len_low < (u32_t) len) {
     ++ctx->len_high;
   }
-  if (left && (uint32_t) len >= to_fill) {
+  if (left && (u32_t) len >= to_fill) {
     memcpy(ctx->buf.buf + left, data, to_fill);
     pp_crypto_hash_md5_swap_bytes(ctx->buf.buf_w, 16);
     pp_crypto_hash_md5_process(ctx, ctx->buf.buf_w);
@@ -203,7 +203,7 @@ p_crypto_hash_md5_update(PHashMD5 *ctx,
 
 void
 p_crypto_hash_md5_finish(PHashMD5 *ctx) {
-  uint32_t high, low;
+  u32_t high, low;
   int left, last;
   left = ctx->len_low & 0x3F;
   last = (left < 56) ? (56 - left) : (120 - left);

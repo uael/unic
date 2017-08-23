@@ -30,8 +30,8 @@
          (int) (newval))
 # define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst) \
     __CMP_SWAP_QUAD ((volatile void *) (atomic_src), \
-         (int64_t) (oldval), \
-         (int64_t) (newval))
+         (i64_t) (oldval), \
+         (i64_t) (newval))
 #else
 # define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst) \
     __CMP_STORE_LONG ((volatile void *) (atomic_src), \
@@ -40,8 +40,8 @@
           (volatile void *) (atomic_dst))
 # define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst) \
     __CMP_STORE_QUAD ((volatile void *) (atomic_src), \
-          (int64_t) (oldval), \
-          (int64_t) (newval), \
+          (i64_t) (oldval), \
+          (i64_t) (newval), \
           (volatile void *) (atomic_dst))
 #endif
 
@@ -138,7 +138,7 @@ p_atomic_pointer_get(const volatile void *atomic) {
 void
 p_atomic_pointer_set(volatile void *atomic, ptr_t val) {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-  (void) __ATOMIC_EXCH_QUAD(atomic, (int64_t) val);
+  (void) __ATOMIC_EXCH_QUAD(atomic, (i64_t) val);
 #else
   (void) __ATOMIC_EXCH_LONG(atomic, (int) val);
 #endif
@@ -168,7 +168,7 @@ p_atomic_pointer_add(volatile void *atomic, ssize_t val) {
 
   __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-  result = (ssize_t) __ATOMIC_ADD_QUAD(atomic, (int64_t) val);
+  result = (ssize_t) __ATOMIC_ADD_QUAD(atomic, (i64_t) val);
 #else
   result = (ssize_t) __ATOMIC_ADD_LONG(atomic, (int) val);
 #endif
@@ -182,7 +182,7 @@ p_atomic_pointer_and(volatile void *atomic, size_t val) {
 
   __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-  result = (size_t) __ATOMIC_AND_QUAD(atomic, (int64_t) val);
+  result = (size_t) __ATOMIC_AND_QUAD(atomic, (i64_t) val);
 #else
   result = (size_t) __ATOMIC_AND_LONG(atomic, (int) val);
 #endif
@@ -196,7 +196,7 @@ p_atomic_pointer_or(volatile void *atomic, size_t val) {
 
   __MB();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-  result = (size_t) __ATOMIC_OR_QUAD(atomic, (int64_t) val);
+  result = (size_t) __ATOMIC_OR_QUAD(atomic, (i64_t) val);
 #else
   result = (size_t) __ATOMIC_OR_LONG(atomic, (int) val);
 #endif
@@ -207,12 +207,12 @@ p_atomic_pointer_or(volatile void *atomic, size_t val) {
 size_t
 p_atomic_pointer_xor(volatile void *atomic, size_t val) {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-  int64_t i;
+  i64_t i;
 
   do {
     __MB();
-    i = (int64_t) (*((volatile size_t *) atomic));
-  } while (PATOMIC_DECC_CAS_QUAD (atomic, i, i ^ ((int64_t) val), atomic) != 1);
+    i = (i64_t) (*((volatile size_t *) atomic));
+  } while (PATOMIC_DECC_CAS_QUAD (atomic, i, i ^ ((i64_t) val), atomic) != 1);
 #else
   int i;
 
