@@ -31,14 +31,14 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 CUTEST(file, general) {
   FILE *file;
 
+  ASSERT(p_file_is_exists(PFILE_TEST_FILE) == false);
   ASSERT(file = fopen(PFILE_TEST_FILE, "w"));
   ASSERT(fprintf(file, "This is a test file string\n"));
   ASSERT(p_file_remove(NULL, NULL) == false);
-  ASSERT(p_file_is_exists(PFILE_TEST_FILE) == false);
-  ASSERT(p_file_remove("."P_DIR_SEP"test_file_remove.txt", NULL) == false);
-  ASSERT(file != NULL);
   ASSERT(p_file_is_exists(PFILE_TEST_FILE) == true);
+  ASSERT(p_file_remove("."P_DIR_SEP"test_file_remove.txt", NULL) == false);
   ASSERT(p_file_remove(PFILE_TEST_FILE, NULL) == true);
+  ASSERT(p_file_is_exists(PFILE_TEST_FILE) == false);
   ASSERT(fclose(file) == 0);
   return CUTE_SUCCESS;
 }

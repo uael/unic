@@ -17,7 +17,6 @@
 
 #include <time.h>
 #include <math.h>
-
 #include "cute.h"
 #include "plib.h"
 
@@ -33,8 +32,7 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 #define PTREE_STRESS_NODES  10000
 #define PTREE_STRESS_ROOT_MIN  10000
 #define PTREE_STRESS_TRAVS  30
-
-typedef struct _TreeData {
+typedef struct tree_data {
   int cmp_counter;
   int key_destroy_counter;
   int value_destroy_counter;
@@ -44,9 +42,9 @@ typedef struct _TreeData {
   int value_sum;
   int last_key;
   int key_order_errors;
-} TreeData;
+} tree_data_t;
 
-static TreeData tree_data = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+static tree_data_t tree_data = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 ptr_t
 pmem_alloc(size_t nbytes) {
@@ -71,18 +69,15 @@ tree_complexity(tree_t *tree) {
   if (tree == NULL || p_tree_get_nnodes(tree) == 0) {
     return 0;
   }
-
   switch (p_tree_get_type(tree)) {
     case P_TREE_TYPE_BINARY:
       return p_tree_get_nnodes(tree);
     case P_TREE_TYPE_RB:
-      return 2
-        * ((int) (log((double) p_tree_get_nnodes(tree) + 1) / log(2.0)));
+      return 2 * ((int) (log((double) p_tree_get_nnodes(tree) + 1) / log(2.0)));
     case P_TREE_TYPE_AVL: {
       double phi = (1 + sqrt(5.0)) / 2.0;
       return (int) (
-        log(sqrt(5.0) * (p_tree_get_nnodes(tree) + 2)) / log(phi)
-          - 2
+        log(sqrt(5.0) * (p_tree_get_nnodes(tree) + 2)) / log(phi) - 2
       );
     }
     default:
@@ -92,9 +87,11 @@ tree_complexity(tree_t *tree) {
 
 static int
 compare_keys(const_ptr_t a, const_ptr_t b) {
-  int p1 = PPOINTER_TO_INT (a);
-  int p2 = PPOINTER_TO_INT (b);
+  int p1;
+  int p2;
 
+  p1 = PPOINTER_TO_INT (a);
+  p2 = PPOINTER_TO_INT (b);
   if (p1 < p2) {
     return -1;
   } else if (p1 > p2) {
@@ -106,13 +103,14 @@ compare_keys(const_ptr_t a, const_ptr_t b) {
 
 static int
 compare_keys_data(const_ptr_t a, const_ptr_t b, ptr_t data) {
-  int p1 = PPOINTER_TO_INT (a);
-  int p2 = PPOINTER_TO_INT (b);
+  int p1;
+  int p2;
 
+  p1 = PPOINTER_TO_INT (a);
+  p2 = PPOINTER_TO_INT (b);
   if (data != NULL) {
-    ((TreeData *) data)->cmp_counter++;
+    ((tree_data_t *) data)->cmp_counter++;
   }
-
   if (p1 < p2) {
     return -1;
   } else if (p1 > p2) {
@@ -136,27 +134,25 @@ value_destroy_notify(ptr_t data) {
 
 static bool
 tree_traverse(ptr_t key, ptr_t value, ptr_t data) {
-  TreeData *tdata = ((TreeData *) data);
+  tree_data_t *tdata;
 
+  tdata = ((tree_data_t *) data);
   tdata->key_sum += PPOINTER_TO_INT (key);
   tdata->value_sum += PPOINTER_TO_INT (value);
   tdata->traverse_counter++;
-
   if (tdata->last_key >= PPOINTER_TO_INT (key)) {
     tdata->key_order_errors++;
   }
-
   tdata->last_key = PPOINTER_TO_INT (key);
-
   return false;
 }
 
 static bool
 tree_traverse_thres(ptr_t key, ptr_t value, ptr_t data) {
-  TreeData *tdata = ((TreeData *) data);
+  tree_data_t *tdata;
 
+  tdata = ((tree_data_t *) data);
   tree_traverse(key, value, data);
-
   return tdata->traverse_counter >= tdata->traverse_thres ? true : false;
 }
 
@@ -176,59 +172,48 @@ check_tree_data_is_zero() {
 static bool
 general_tree_test(tree_t *tree, tree_kind_t type, bool check_cmp,
   bool check_notify) {
-  memset(&tree_data, 0, sizeof(tree_data));
+  int i;
 
+  memset(&tree_data, 0, sizeof(tree_data));
   ASSERT(tree != NULL);
   ASSERT(p_tree_get_nnodes(tree) == 0);
   ASSERT(p_tree_get_type(tree) == type);
   ASSERT(p_tree_lookup(tree, NULL) == NULL);
   ASSERT(p_tree_remove(tree, NULL) == false);
-
   p_tree_insert(tree, NULL, PINT_TO_POINTER (10));
   ASSERT(p_tree_get_nnodes(tree) == 1);
   ASSERT(p_tree_lookup(tree, NULL) == PINT_TO_POINTER(10));
   ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(2)) == NULL);
   ASSERT(p_tree_remove(tree, NULL) == true);
   ASSERT(p_tree_get_nnodes(tree) == 0);
-
   p_tree_foreach(tree, (traverse_fn_t) tree_traverse, &tree_data);
   ASSERT(tree_data.traverse_counter == 0);
   ASSERT(tree_data.key_order_errors == 0);
 
   /* Because we have NULL-key node */
   ASSERT(tree_data.key_sum == 0);
-
   if (check_notify)
     ASSERT(tree_data.value_sum == 10);
   else
     ASSERT(tree_data.value_sum == 0);
-
   memset(&tree_data, 0, sizeof(tree_data));
-
   p_tree_insert(tree, PINT_TO_POINTER (4), PINT_TO_POINTER (40));
   p_tree_insert(tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
   p_tree_insert(tree, PINT_TO_POINTER (5), PINT_TO_POINTER (50));
   p_tree_insert(tree, PINT_TO_POINTER (2), PINT_TO_POINTER (20));
   p_tree_insert(tree, PINT_TO_POINTER (6), PINT_TO_POINTER (60));
   p_tree_insert(tree, PINT_TO_POINTER (3), PINT_TO_POINTER (30));
-
   ASSERT(p_tree_get_nnodes(tree) == 6);
-
   p_tree_insert(tree, PINT_TO_POINTER (1), PINT_TO_POINTER (100));
   p_tree_insert(tree, PINT_TO_POINTER (5), PINT_TO_POINTER (500));
-
   ASSERT(p_tree_get_nnodes(tree) == 6);
-
   p_tree_insert(tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
   p_tree_insert(tree, PINT_TO_POINTER (5), PINT_TO_POINTER (50));
-
   ASSERT(p_tree_get_nnodes(tree) == 6);
-
   if (check_cmp)
     ASSERT(tree_data.cmp_counter > 0);
   else
     ASSERT(tree_data.cmp_counter == 0);
-
   if (check_notify) {
     ASSERT(tree_data.key_sum == 12);
     ASSERT(tree_data.value_sum == 660);
@@ -236,104 +221,74 @@ general_tree_test(tree_t *tree, tree_kind_t type, bool check_cmp,
     ASSERT(tree_data.key_sum == 0);
     ASSERT(tree_data.value_sum == 0);
   }
-
   ASSERT(tree_data.traverse_counter == 0);
   ASSERT(tree_data.key_order_errors == 0);
-
   memset(&tree_data, 0, sizeof(tree_data));
-
   p_tree_foreach(tree, (traverse_fn_t) tree_traverse, &tree_data);
   ASSERT(p_tree_get_nnodes(tree) == 6);
-
   ASSERT(tree_data.cmp_counter == 0);
   ASSERT(tree_data.key_sum == 21);
   ASSERT(tree_data.value_sum == 210);
   ASSERT(tree_data.traverse_counter == 6);
   ASSERT(tree_data.key_order_errors == 0);
-
   memset(&tree_data, 0, sizeof(tree_data));
-
-  for (int i = 0; i < 7; ++i)
-    ASSERT(
-      p_tree_lookup(tree, PINT_TO_POINTER(i)) == PINT_TO_POINTER(i * 10));
-
+  for (i = 0; i < 7; ++i)
+    ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(i)) == PINT_TO_POINTER(i * 10));
   if (check_cmp)
     ASSERT(tree_data.cmp_counter > 0);
   else
     ASSERT(tree_data.cmp_counter == 0);
-
   ASSERT(tree_data.key_sum == 0);
   ASSERT(tree_data.value_sum == 0);
   ASSERT(tree_data.key_order_errors == 0);
-
   tree_data.cmp_counter = 0;
-
   ASSERT(p_tree_remove(tree, PINT_TO_POINTER(7)) == false);
-
   if (check_cmp)
     ASSERT(tree_data.cmp_counter > 0 &&
       tree_data.cmp_counter <= tree_complexity(tree));
   else
     ASSERT(tree_data.cmp_counter == 0);
-
   if (check_notify) {
     ASSERT(tree_data.key_sum == 0);
     ASSERT(tree_data.value_sum == 0);
   }
-
   tree_data.cmp_counter = 0;
-
-  for (int i = 0; i < 7; ++i)
-    ASSERT(
-      p_tree_lookup(tree, PINT_TO_POINTER(i)) == PINT_TO_POINTER(i * 10));
-
+  for (i = 0; i < 7; ++i)
+    ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(i)) == PINT_TO_POINTER(i * 10));
   if (check_cmp)
     ASSERT(tree_data.cmp_counter > 0);
   else
     ASSERT(tree_data.cmp_counter == 0);
-
   ASSERT(tree_data.key_sum == 0);
   ASSERT(tree_data.value_sum == 0);
   ASSERT(tree_data.key_order_errors == 0);
-
   memset(&tree_data, 0, sizeof(tree_data));
-
   tree_data.traverse_thres = 5;
-
   p_tree_foreach(tree, (traverse_fn_t) tree_traverse_thres, &tree_data);
   ASSERT(p_tree_get_nnodes(tree) == 6);
-
   ASSERT(tree_data.cmp_counter == 0);
   ASSERT(tree_data.key_sum == 15);
   ASSERT(tree_data.value_sum == 150);
   ASSERT(tree_data.traverse_counter == 5);
   ASSERT(tree_data.key_order_errors == 0);
-
   memset(&tree_data, 0, sizeof(tree_data));
-
   tree_data.traverse_thres = 3;
-
   p_tree_foreach(tree, (traverse_fn_t) tree_traverse_thres, &tree_data);
   ASSERT(p_tree_get_nnodes(tree) == 6);
-
   ASSERT(tree_data.cmp_counter == 0);
   ASSERT(tree_data.key_sum == 6);
   ASSERT(tree_data.value_sum == 60);
   ASSERT(tree_data.traverse_counter == 3);
   ASSERT(tree_data.key_order_errors == 0);
-
   memset(&tree_data, 0, sizeof(tree_data));
-
   ASSERT(p_tree_remove(tree, PINT_TO_POINTER(1)) == true);
   ASSERT(p_tree_remove(tree, PINT_TO_POINTER(6)) == true);
   ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(1)) == NULL);
   ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(6)) == NULL);
-
   if (check_cmp)
     ASSERT(tree_data.cmp_counter > 0);
   else
     ASSERT(tree_data.cmp_counter == 0);
-
   if (check_notify) {
     ASSERT(tree_data.key_sum == 7);
     ASSERT(tree_data.value_sum == 70);
@@ -341,18 +296,14 @@ general_tree_test(tree_t *tree, tree_kind_t type, bool check_cmp,
     ASSERT(tree_data.key_sum == 0);
     ASSERT(tree_data.value_sum == 0);
   }
-
   tree_data.cmp_counter = 0;
-
-  for (int i = 2; i < 6; ++i)
+  for (i = 2; i < 6; ++i)
     ASSERT(
       p_tree_lookup(tree, PINT_TO_POINTER(i)) == PINT_TO_POINTER(i * 10));
-
   if (check_cmp)
     ASSERT(tree_data.cmp_counter > 0);
   else
     ASSERT(tree_data.cmp_counter == 0);
-
   if (check_notify) {
     ASSERT(tree_data.key_sum == 7);
     ASSERT(tree_data.value_sum == 70);
@@ -360,21 +311,14 @@ general_tree_test(tree_t *tree, tree_kind_t type, bool check_cmp,
     ASSERT(tree_data.key_sum == 0);
     ASSERT(tree_data.value_sum == 0);
   }
-
   ASSERT(tree_data.key_order_errors == 0);
-
   tree_data.cmp_counter = 0;
-
   p_tree_foreach(tree, NULL, NULL);
-
   ASSERT(tree_data.cmp_counter == 0);
   ASSERT(tree_data.key_order_errors == 0);
-
   p_tree_clear(tree);
-
   ASSERT(tree_data.cmp_counter == 0);
   ASSERT(tree_data.key_order_errors == 0);
-
   if (check_notify) {
     ASSERT(tree_data.key_sum == 21);
     ASSERT(tree_data.value_sum == 210);
@@ -382,146 +326,115 @@ general_tree_test(tree_t *tree, tree_kind_t type, bool check_cmp,
     ASSERT(tree_data.key_sum == 0);
     ASSERT(tree_data.value_sum == 0);
   }
-
   ASSERT(p_tree_get_nnodes(tree) == 0);
-
   return true;
 }
 
 static bool
 stress_tree_test(tree_t *tree, int node_count) {
+  int counter;
+  int *keys;
+  int *values;
+  int rand_number;
+  int i;
+
   ASSERT(tree != NULL);
   ASSERT(node_count > 0);
   ASSERT(p_tree_get_nnodes(tree) == 0);
-
   srand((unsigned int) time(NULL));
-
-  int counter = 0;
-
+  counter = 0;
   memset(&tree_data, 0, sizeof(tree_data));
-
-  int *keys = (int *) p_malloc0((size_t) node_count * sizeof(int));
-  int *values = (int *) p_malloc0((size_t) node_count * sizeof(int));
-
+  keys = (int *) p_malloc0((size_t) node_count * sizeof(int));
+  values = (int *) p_malloc0((size_t) node_count * sizeof(int));
   ASSERT(keys != NULL);
   ASSERT(values != NULL);
-
   while (counter != node_count) {
-    int rand_number = rand();
-
+    rand_number = rand();
     if (counter == 0 && rand_number < PTREE_STRESS_ROOT_MIN) {
       continue;
     }
-
     memset(&tree_data, 0, sizeof(tree_data));
-
     if (p_tree_lookup(tree, PINT_TO_POINTER (rand_number)) != NULL) {
       continue;
     }
-
     if (counter > 0)
       ASSERT(tree_data.cmp_counter > 0 &&
         tree_data.cmp_counter <= tree_complexity(tree));
-
     memset(&tree_data, 0, sizeof(tree_data));
-
     keys[counter] = rand_number;
     values[counter] = rand() + 1;
-
     p_tree_insert(
       tree, PINT_TO_POINTER (keys[counter]),
       PINT_TO_POINTER (values[counter]));
-
     if (counter > 0)
       ASSERT(tree_data.cmp_counter > 0 &&
         tree_data.cmp_counter <= tree_complexity(tree));
-
     ++counter;
   }
-
-  for (int i = 0; i < PTREE_STRESS_TRAVS; ++i) {
+  for (i = 0; i < PTREE_STRESS_TRAVS; ++i) {
     memset(&tree_data, 0, sizeof(tree_data));
-
     tree_data.traverse_thres = i + 1;
     tree_data.last_key = -1;
-
     p_tree_foreach(tree, (traverse_fn_t) tree_traverse_thres, &tree_data);
-
     ASSERT(tree_data.traverse_counter == i + 1);
     ASSERT(tree_data.key_order_errors == 0);
   }
-
-  for (int i = 0; i < node_count; ++i) {
+  for (i = 0; i < node_count; ++i) {
     memset(&tree_data, 0, sizeof(tree_data));
-
     ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(keys[i])) ==
       PINT_TO_POINTER(values[i]));
-
     ASSERT(tree_data.cmp_counter > 0 &&
       tree_data.cmp_counter <= tree_complexity(tree));
-
     ASSERT(p_tree_remove(tree, PINT_TO_POINTER(keys[i])) == true);
     ASSERT(p_tree_lookup(tree, PINT_TO_POINTER(keys[i])) == NULL);
   }
-
   ASSERT(p_tree_get_nnodes(tree) == 0);
-
-  for (int i = 0; i < node_count; ++i) {
+  for (i = 0; i < node_count; ++i) {
     p_tree_insert(tree, PINT_TO_POINTER (keys[i]), PINT_TO_POINTER (values[i]));
   }
-
   ASSERT(p_tree_get_nnodes(tree) == node_count);
-
   p_tree_clear(tree);
-
   ASSERT(p_tree_get_nnodes(tree) == 0);
-
   p_free(keys);
   p_free(values);
-
   return true;
 }
 
 CUTEST(tree, nomem) {
-
+  int i;
   mem_vtable_t vtable;
+  tree_t *tree;
 
-  for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
-    tree_t *tree = p_tree_new((tree_kind_t) i, (cmp_fn_t) compare_keys);
+  for (i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
+    tree = p_tree_new((tree_kind_t) i, (cmp_fn_t) compare_keys);
     ASSERT(tree != NULL);
-
     vtable.free = pmem_free;
     vtable.malloc = pmem_alloc;
     vtable.realloc = pmem_realloc;
-
     ASSERT(p_mem_set_vtable(&vtable) == true);
-
     ASSERT(p_tree_new((tree_kind_t) i, (cmp_fn_t) compare_keys) == NULL);
     p_tree_insert(tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
     ASSERT(p_tree_get_nnodes(tree) == 0);
-
     p_mem_restore_vtable();
-
     p_tree_free(tree);
   }
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(tree, invalid) {
+  int i;
 
-  for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
+  for (i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
     /* Invalid usage */
     ASSERT(p_tree_new((tree_kind_t) i, NULL) == NULL);
     ASSERT(p_tree_new((tree_kind_t) -1, (cmp_fn_t) compare_keys) == NULL);
     ASSERT(p_tree_new((tree_kind_t) -1, NULL) == NULL);
-
     ASSERT(p_tree_new_with_data((tree_kind_t) i, NULL, NULL) == NULL);
     ASSERT(
       p_tree_new_with_data((tree_kind_t) -1, (cmp_data_fn_t) compare_keys, NULL)
-        == NULL);
+        == NULL
+    );
     ASSERT(p_tree_new_with_data((tree_kind_t) -1, NULL, NULL) == NULL);
-
     ASSERT(p_tree_new_full((tree_kind_t) i,
       NULL,
       NULL,
@@ -540,34 +453,28 @@ CUTEST(tree, invalid) {
       NULL,
       NULL
     ) == NULL);
-
     ASSERT(p_tree_remove(NULL, NULL) == false);
     ASSERT(p_tree_lookup(NULL, NULL) == NULL);
     ASSERT(p_tree_get_type(NULL) == (tree_kind_t) -1);
     ASSERT(p_tree_get_nnodes(NULL) == 0);
-
     p_tree_insert(NULL, NULL, NULL);
     p_tree_foreach(NULL, NULL, NULL);
     p_tree_clear(NULL);
     p_tree_free(NULL);
   }
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(tree, general) {
   tree_t *tree;
+  int i;
 
-  for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
+  for (i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
     /* Test 1 */
     tree = p_tree_new((tree_kind_t) i, (cmp_fn_t) compare_keys);
-
-    ASSERT(
-      general_tree_test(tree, (tree_kind_t) i, false, false) == true);
-
+    ASSERT(general_tree_test(tree, (tree_kind_t) i, false, false) == true);
     memset(&tree_data, 0, sizeof(tree_data));
     p_tree_free(tree);
-
     ASSERT(check_tree_data_is_zero() == true);
 
     /* Test 2 */
@@ -575,12 +482,9 @@ CUTEST(tree, general) {
       (cmp_data_fn_t) compare_keys_data,
       &tree_data
     );
-
     ASSERT(general_tree_test(tree, (tree_kind_t) i, true, false) == true);
-
     memset(&tree_data, 0, sizeof(tree_data));
     p_tree_free(tree);
-
     ASSERT(check_tree_data_is_zero() == true);
 
     /* Test 3 */
@@ -591,33 +495,29 @@ CUTEST(tree, general) {
       (destroy_fn_t) value_destroy_notify
     );
     ASSERT(general_tree_test(tree, (tree_kind_t) i, true, true) == true);
-
     memset(&tree_data, 0, sizeof(tree_data));
     p_tree_free(tree);
-
     ASSERT(check_tree_data_is_zero() == true);
   }
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(tree, stress) {
   tree_t *tree;
+  int i;
+  int j;
 
-  for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
+  for (i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
     tree = p_tree_new_full((tree_kind_t) i,
       (cmp_data_fn_t) compare_keys_data,
       &tree_data,
       (destroy_fn_t) key_destroy_notify,
       (destroy_fn_t) value_destroy_notify
     );
-
-    for (int j = 0; j < PTREE_STRESS_ITERATIONS; ++j)
+    for (j = 0; j < PTREE_STRESS_ITERATIONS; ++j)
       ASSERT(stress_tree_test(tree, PTREE_STRESS_NODES) == true);
-
     p_tree_free(tree);
   }
-
   return CUTE_SUCCESS;
 }
 

@@ -195,6 +195,9 @@ CUTEST(inifile, read) {
   list_t *list;
   list_t *iter;
   list_t *list_val;
+  int int_sum;
+  double flt_sum;
+  bool bool_sum;
 
   ini = p_inifile_new("." P_DIR_SEP "p_ini_test_file.ini");
   ASSERT(ini != NULL);
@@ -376,8 +379,7 @@ CUTEST(inifile, read) {
   list_val = p_inifile_parameter_list(ini, "list_section", "list_parameter_1");
   ASSERT(list_val != NULL);
   ASSERT(p_list_length(list_val) == 4);
-
-  int int_sum = 0;
+  int_sum = 0;
   for (iter = list_val; iter != NULL; iter = iter->next) {
     int_sum += atoi((const byte_t *) (iter->data));
   }
@@ -391,7 +393,7 @@ CUTEST(inifile, read) {
   ASSERT(list_val != NULL);
   ASSERT(p_list_length(list_val) == 3);
 
-  double flt_sum = 0;
+  flt_sum = 0;
   for (iter = list_val; iter != NULL; iter = iter->next) {
     flt_sum += atof((const byte_t *) (iter->data));
   }
@@ -405,7 +407,7 @@ CUTEST(inifile, read) {
   ASSERT(list_val != NULL);
   ASSERT(p_list_length(list_val) == 3);
 
-  bool bool_sum = true;
+  bool_sum = true;
   for (iter = list_val; iter != NULL; iter = iter->next) {
     bool_sum = bool_sum && atoi((const byte_t *) (iter->data));
   }

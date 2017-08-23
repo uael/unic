@@ -29,7 +29,6 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 #define PSPINLOCK_MAX_VAL 10
 
 static int spinlock_test_val = 0;
-
 static spinlock_t *global_spinlock = NULL;
 
 ptr_t
@@ -60,47 +59,37 @@ spinlock_test_thread(void) {
         p_uthread_exit(1);
       }
     }
-
     if (spinlock_test_val == PSPINLOCK_MAX_VAL) {
       --spinlock_test_val;
     } else {
       p_uthread_sleep(1);
       ++spinlock_test_val;
     }
-
     if (!p_spinlock_unlock(global_spinlock)) {
       p_uthread_exit(1);
     }
   }
-
   p_uthread_exit(0);
-
   return NULL;
 }
 
 CUTEST(spinlock, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
   ASSERT(p_spinlock_new() == NULL);
-
   p_mem_restore_vtable();
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(spinlock, bad_input) {
-
   ASSERT(p_spinlock_lock(NULL) == false);
   ASSERT(p_spinlock_unlock(NULL) == false);
   ASSERT(p_spinlock_trylock(NULL) == false);
   p_spinlock_free(NULL);
-
   return CUTE_SUCCESS;
 }
 
@@ -109,24 +98,17 @@ CUTEST(spinlock, general) {
 
   spinlock_test_val = PSPINLOCK_MAX_VAL;
   global_spinlock = p_spinlock_new();
-
   ASSERT(global_spinlock != NULL);
-
   thr1 = p_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-
   thr2 = p_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-
   ASSERT(p_uthread_join(thr1) == 0);
   ASSERT(p_uthread_join(thr2) == 0);
-
   ASSERT(spinlock_test_val == PSPINLOCK_MAX_VAL);
-
   p_uthread_unref(thr1);
   p_uthread_unref(thr2);
   p_spinlock_free(global_spinlock);
-
   return CUTE_SUCCESS;
 }
 

@@ -28,6 +28,8 @@ message(STATUS "Checking whether to enable unit tests")
 if (PLIBSYS_TESTS)
   message(STATUS "Checking whether to enable unit tests - yes")
   enable_testing()
+  include(${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
+  plibsys_detect_target_os(PLIBSYS_TESTS_TARGET_OS)
 
   list(APPEND PLIBSYS_TEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include ${CMAKE_BINARY_DIR})
 
@@ -45,7 +47,12 @@ if (PLIBSYS_TESTS)
 
   macro(plibsys_add_test_executable TEST_NAME SRC_FILE)
     add_executable(${TEST_NAME} ${SRC_FILE})
-    target_link_libraries(${TEST_NAME} plibsys m)
+
+    target_link_libraries(${TEST_NAME} plibsys)
+    # QNX requires libm for sqrt() and friends
+    if (NOT PLIBSYS_TESTS_TARGET_OS STREQUAL windows)
+      target_link_libraries(${TEST_NAME} m)
+    endif ()
 
     # Add include directories
     if (COMMAND target_include_directories)

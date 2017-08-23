@@ -29,15 +29,10 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 #define PCONDTEST_MAX_QUEUE 10
 
 static int thread_wakeups = 0;
-
 static int thread_queue = 0;
-
 static condvar_t *queue_empty_cond = NULL;
-
 static condvar_t *queue_full_cond = NULL;
-
 static mutex_t *cond_mutex = NULL;
-
 volatile static bool is_working = true;
 
 ptr_t
@@ -67,7 +62,6 @@ producer_test_thread(void *a) {
       p_condvar_broadcast(queue_full_cond);
       p_uthread_exit(1);
     }
-
     while (thread_queue >= PCONDTEST_MAX_QUEUE && is_working == true) {
       if (!p_condvar_wait(queue_empty_cond, cond_mutex)) {
         is_working = false;
@@ -76,28 +70,23 @@ producer_test_thread(void *a) {
         p_uthread_exit(1);
       }
     }
-
     if (is_working) {
       ++thread_queue;
       ++thread_wakeups;
     }
-
     if (!p_condvar_broadcast(queue_full_cond)) {
       is_working = false;
       p_mutex_unlock(cond_mutex);
       p_uthread_exit(1);
     }
-
     if (!p_mutex_unlock(cond_mutex)) {
       is_working = false;
       p_condvar_broadcast(queue_full_cond);
       p_uthread_exit(1);
     }
   }
-
   p_condvar_broadcast(queue_full_cond);
   p_uthread_exit(0);
-
   return NULL;
 }
 
@@ -110,7 +99,6 @@ consumer_test_thread(void *a) {
       p_condvar_signal(queue_empty_cond);
       p_uthread_exit(1);
     }
-
     while (thread_queue <= 0 && is_working == true) {
       if (!p_condvar_wait(queue_full_cond, cond_mutex)) {
         is_working = false;
@@ -119,28 +107,23 @@ consumer_test_thread(void *a) {
         p_uthread_exit(1);
       }
     }
-
     if (is_working) {
       --thread_queue;
       ++thread_wakeups;
     }
-
     if (!p_condvar_signal(queue_empty_cond)) {
       is_working = false;
       p_mutex_unlock(cond_mutex);
       p_uthread_exit(1);
     }
-
     if (!p_mutex_unlock(cond_mutex)) {
       is_working = false;
       p_condvar_signal(queue_empty_cond);
       p_uthread_exit(1);
     }
   }
-
   p_condvar_signal(queue_empty_cond);
   p_uthread_exit(0);
-
   return NULL;
 }
 
@@ -150,22 +133,17 @@ CUTEST(condvar, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
   ASSERT(p_condvar_new() == NULL);
-
   p_mem_restore_vtable();
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(condvar, bad_input) {
-
   ASSERT(p_condvar_broadcast(NULL) == false);
   ASSERT(p_condvar_signal(NULL) == false);
   ASSERT(p_condvar_wait(NULL, NULL) == false);
   p_condvar_free(NULL);
-
   return CUTE_SUCCESS;
 }
 
@@ -178,40 +156,29 @@ CUTEST(condvar, general) {
   ASSERT(queue_full_cond != NULL);
   cond_mutex = p_mutex_new();
   ASSERT(cond_mutex != NULL);
-
   is_working = true;
   thread_wakeups = 0;
   thread_queue = 0;
-
   thr1 = p_uthread_create((uthread_fn_t) producer_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-
   thr2 = p_uthread_create((uthread_fn_t) consumer_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-
   thr3 = p_uthread_create((uthread_fn_t) consumer_test_thread, NULL, true);
   ASSERT(thr3 != NULL);
-
   ASSERT(p_condvar_broadcast(queue_empty_cond) == true);
   ASSERT(p_condvar_broadcast(queue_full_cond) == true);
-
-  p_uthread_sleep(4000);
-
+  p_uthread_sleep(40);
   is_working = false;
-
   ASSERT(p_uthread_join(thr1) == 0);
   ASSERT(p_uthread_join(thr2) == 0);
   ASSERT(p_uthread_join(thr3) == 0);
-
   ASSERT(thread_wakeups > 0 && thread_queue >= 0 && thread_queue <= 10);
-
   p_uthread_unref(thr1);
   p_uthread_unref(thr2);
   p_uthread_unref(thr3);
   p_condvar_free(queue_empty_cond);
   p_condvar_free(queue_full_cond);
   p_mutex_free(cond_mutex);
-
   return CUTE_SUCCESS;
 }
 

@@ -32,7 +32,6 @@ CUTEST(process, general) {
   pid = p_process_get_current_pid();
   ASSERT(pid > 0);
   ASSERT(p_process_is_running(pid) == true);
-
   return CUTE_SUCCESS;
 }
 

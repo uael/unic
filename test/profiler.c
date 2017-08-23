@@ -50,57 +50,43 @@ CUTEST(profiler, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
   ASSERT(p_profiler_new() == NULL);
-
   p_mem_restore_vtable();
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(profiler, bad_input) {
-
   ASSERT(p_profiler_elapsed_usecs(NULL) == 0);
   p_profiler_reset(NULL);
   p_profiler_free(NULL);
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(profiler, general) {
-  profiler_t *profiler = NULL;
+  profiler_t *profiler;
   u64_t prev_val, val;
 
   profiler = p_profiler_new();
   ASSERT(profiler != NULL);
-
   p_uthread_sleep(50);
   prev_val = p_profiler_elapsed_usecs(profiler);
   ASSERT(prev_val > 0);
-
   p_uthread_sleep(100);
   val = p_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
   prev_val = val;
-
   p_uthread_sleep(1000);
   val = p_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
-
   p_profiler_reset(profiler);
-
   p_uthread_sleep(15);
   prev_val = p_profiler_elapsed_usecs(profiler);
   ASSERT(prev_val > 0);
-
   p_uthread_sleep(178);
   val = p_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
-
   p_profiler_free(profiler);
-
   return CUTE_SUCCESS;
 }
 

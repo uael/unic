@@ -104,6 +104,8 @@ CUTEST(dir, general) {
   dirent_t *entry;
   int dir_count_2;
   int file_count_2;
+  bool has_entry_dir;
+  bool has_entry_file;
 
   ASSERT(p_dir_new(NULL, NULL) == NULL);
   ASSERT(p_dir_new("."
@@ -156,8 +158,8 @@ CUTEST(dir, general) {
 
   dir_count = 0;
   file_count = 0;
-  bool has_entry_dir = false;
-  bool has_entry_file = false;
+  has_entry_dir = false;
+  has_entry_file = false;
 
   while ((entry = p_dir_get_next_entry(dir, NULL)) != NULL) {
     ASSERT(entry->name != NULL);

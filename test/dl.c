@@ -68,30 +68,26 @@ CUTEST(dl, nomem) {
   /* Cleanup from previous run */
   p_file_remove("." P_DIR_SEP "p_empty_file.txt", NULL);
   file = fopen("." P_DIR_SEP "p_empty_file.txt", "w");
-
   ASSERT(file != NULL);
   ASSERT(fclose(file) == 0);
-
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
 #ifdef P_OS_WIN
   SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
-
-  ASSERT(p_dl_new("."P_DIR_SEP"p_empty_file.txt") == NULL);
+  ASSERT(p_dl_new("."
+    P_DIR_SEP
+    "p_empty_file.txt") == NULL);
   ASSERT(p_dl_new(self->av[self->ac - 1]) == NULL);
-
 #ifdef P_OS_WIN
   SetErrorMode(0);
 #endif
-
   p_mem_restore_vtable();
-  ASSERT(p_file_remove("."P_DIR_SEP"p_empty_file.txt", NULL) == true);
-
+  ASSERT(p_file_remove("."
+    P_DIR_SEP
+    "p_empty_file.txt", NULL) == true);
   return CUTE_SUCCESS;
 }
 
@@ -99,7 +95,6 @@ CUTEST(dl, general) {
   dl_t *loader;
   byte_t *err_msg;
   void (*shutdown_func)(void);
-
 
   /* We assume that 3rd argument is ourself library path */
   ASSERT(self->ac > 1);
@@ -109,7 +104,6 @@ CUTEST(dl, general) {
   ASSERT(p_dl_new("./unexistent_file.nofile") == NULL);
   ASSERT(p_dl_get_symbol(NULL, NULL) == NULL);
   ASSERT(p_dl_get_symbol(NULL, "unexistent_symbol") == NULL);
-
   p_dl_free(NULL);
 
   /* General tests */
@@ -120,40 +114,31 @@ CUTEST(dl, general) {
 #else
   p_dl_is_ref_counted();
 #endif
-
   err_msg = p_dl_get_last_error(NULL);
   p_free(err_msg);
-
   if (P_UNLIKELY (p_dl_is_ref_counted() == false)) {
     return CUTE_SUCCESS;
   }
-
   loader = p_dl_new(
     self->av[self->ac - 1]
   );
   ASSERT(loader != NULL);
-
-  ASSERT(
-    p_dl_get_symbol(loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
-
+  ASSERT(p_dl_get_symbol(
+    loader,
+    "there_is_no_such_a_symbol"
+  ) == (PFuncAddr) NULL);
   err_msg = p_dl_get_last_error(loader);
   ASSERT(err_msg != NULL);
   p_free(err_msg);
-
   shutdown_func = (void (*)(void)) p_dl_get_symbol(loader, "p_libsys_shutdown");
-
   if (shutdown_func == NULL) {
     shutdown_func =
       (void (*)(void)) p_dl_get_symbol(loader, "_p_libsys_shutdown");
   }
-
   ASSERT(shutdown_func != NULL);
-
   err_msg = p_dl_get_last_error(loader);
   p_free(err_msg);
-
   p_dl_free(loader);
-
   return CUTE_SUCCESS;
 }
 

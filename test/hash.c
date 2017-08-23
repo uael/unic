@@ -64,27 +64,22 @@ general_hash_test(hash_kind_t type,
   byte_t *hash_str;
   byte_t *long_str;
   ubyte_t *hash_dig;
-  int i;
+  uint_t i;
 
   crypto_hash = p_crypto_hash_new(type);
-
   ASSERT((size_t) p_crypto_hash_get_length(crypto_hash) == hash_len);
   ASSERT(p_crypto_hash_get_type(crypto_hash) == type);
-
   hash_str = p_crypto_hash_get_string(crypto_hash);
   ASSERT(hash_str != NULL);
   p_crypto_hash_reset(crypto_hash);
   p_free(hash_str);
-
   hash_dig = (ubyte_t *) p_malloc0(hash_len);
   ASSERT(hash_dig != NULL);
-
   long_str = (byte_t *) p_malloc0(PCRYPTO_STRESS_LENGTH);
   ASSERT(long_str != NULL);
   for (i = 0; i < PCRYPTO_STRESS_LENGTH; ++i) {
     long_str[i] = (byte_t) (97 + i % 20);
   }
-
   /* Case 1 */
 
   /* Check string */
@@ -92,19 +87,15 @@ general_hash_test(hash_kind_t type,
   hash_str = p_crypto_hash_get_string(crypto_hash);
   ASSERT(strcmp(hash_str, hash1) == 0);
   p_free(hash_str);
-
   p_crypto_hash_reset(crypto_hash);
 
   /* Check digest */
   dig_len = hash_len;
   p_crypto_hash_update(crypto_hash, (const ubyte_t *) msg1, strlen(msg1));
   p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
-
   ASSERT(dig_len == hash_len);
-
   for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon1[i]);
-
   p_crypto_hash_reset(crypto_hash);
 
   /* Case 2 */
@@ -114,19 +105,15 @@ general_hash_test(hash_kind_t type,
   hash_str = p_crypto_hash_get_string(crypto_hash);
   ASSERT(strcmp(hash_str, hash2) == 0);
   p_free(hash_str);
-
   p_crypto_hash_reset(crypto_hash);
 
   /* Check digest */
   dig_len = hash_len;
   p_crypto_hash_update(crypto_hash, (const ubyte_t *) msg2, strlen(msg2));
   p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
-
   ASSERT(dig_len == hash_len);
-
   for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon2[i]);
-
   p_crypto_hash_reset(crypto_hash);
 
   /* Case 3 */
@@ -135,12 +122,9 @@ general_hash_test(hash_kind_t type,
   for (i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
     p_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
   }
-
   hash_str = p_crypto_hash_get_string(crypto_hash);
-
   ASSERT(strcmp(hash_str, hash3) == 0);
   p_free(hash_str);
-
   p_crypto_hash_reset(crypto_hash);
 
   /* Check digest */
@@ -148,13 +132,10 @@ general_hash_test(hash_kind_t type,
   for (i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
     p_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
   }
-
   p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
   ASSERT(dig_len == hash_len);
-
   for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon3[i]);
-
   p_crypto_hash_reset(crypto_hash);
 
   /* Stress test */
@@ -163,35 +144,26 @@ general_hash_test(hash_kind_t type,
     PCRYPTO_STRESS_LENGTH
   );
   hash_str = p_crypto_hash_get_string(crypto_hash);
-
   ASSERT(strcmp(hash_str, hash_stress) == 0);
   p_free(hash_str);
-
   p_crypto_hash_reset(crypto_hash);
-
   p_free(long_str);
   p_free(hash_dig);
   p_crypto_hash_free(crypto_hash);
-
   return CUTE_SUCCESS;
 }
 
 CUTEST(hash, nomem) {
-
   mem_vtable_t vtable;
 
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-
   ASSERT(p_mem_set_vtable(&vtable) == true);
-
   ASSERT(p_crypto_hash_new(P_HASH_MD5) == NULL);
   ASSERT(p_crypto_hash_new(P_HASH_SHA1) == NULL);
   ASSERT(p_crypto_hash_new(P_HASH_GOST) == NULL);
-
   p_mem_restore_vtable();
-
   return CUTE_SUCCESS;
 }
 
@@ -207,44 +179,32 @@ CUTEST(hash, invalid) {
   ASSERT(p_crypto_hash_get_string(NULL) == NULL);
   ASSERT((int) p_crypto_hash_get_type(NULL) == -1);
   p_crypto_hash_free(NULL);
-
   p_crypto_hash_update(NULL, NULL, 0);
   p_crypto_hash_get_digest(NULL, NULL, NULL);
-
   p_crypto_hash_get_digest(NULL, NULL, &len);
   ASSERT(len == 0);
-
   p_crypto_hash_reset(NULL);
-
   hash = p_crypto_hash_new(P_HASH_MD5);
   ASSERT(hash != NULL);
-
   md5_len = p_crypto_hash_get_length(hash);
   ASSERT(md5_len > 0);
-
-  buf = (ubyte_t *) p_malloc0(md5_len);
+  buf = (ubyte_t *) p_malloc0((size_t) md5_len);
   ASSERT(buf != NULL);
-
   p_crypto_hash_get_digest(hash, buf, &len);
   ASSERT(len == 0);
-
   p_crypto_hash_update(hash, (const ubyte_t *) ("abc"), 3);
   len = ((size_t) md5_len) - 1;
   p_crypto_hash_get_digest(hash, buf, &len);
   ASSERT(len == 0);
-
   hash_str = p_crypto_hash_get_string(hash);
   ASSERT(strcmp(hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
   p_free(hash_str);
-
   p_crypto_hash_update(hash, (const ubyte_t *) ("abc"), 3);
   hash_str = p_crypto_hash_get_string(hash);
   ASSERT(strcmp(hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
   p_free(hash_str);
-
   p_crypto_hash_free(hash);
   p_free(buf);
-
   return CUTE_SUCCESS;
 }
 
@@ -262,7 +222,7 @@ CUTEST(hash, md5) {
     238, 162, 169, 53, 194, 41, 111, 33
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_MD5,
     16,
     "abc",
@@ -275,11 +235,6 @@ CUTEST(hash, md5) {
     "7707d6ae4e027c70eea2a935c2296f21",
     "e19ea4a77c97fa6c2521ae1ca66982b9"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sh1) {
@@ -299,7 +254,7 @@ CUTEST(hash, sh1) {
     101, 52, 1, 111
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA1,
     20,
     "abc",
@@ -312,11 +267,6 @@ CUTEST(hash, sh1) {
     "34aa973cd4c4daa4f61eeb2bdbad27316534016f",
     "56309c2dbe04a348ec801ca5f40b035bad01f907"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha2_224) {
@@ -336,7 +286,7 @@ CUTEST(hash, sha2_224) {
     25, 72, 178, 238, 78, 231, 173, 103,
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA2_224,
     28,
     "abc",
@@ -349,11 +299,6 @@ CUTEST(hash, sha2_224) {
     "20794655980c91d8bbb4c1ea97618a4bf03f42581948b2ee4ee7ad67",
     "4cf3d45b57e0d54981c4d86954e8378168d5a9f6ceab9e0aae5dd2f6"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha2_256) {
@@ -376,7 +321,7 @@ CUTEST(hash, sha2_256) {
     4, 109, 57, 204, 199, 17, 44, 208
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA2_256,
     32,
     "abc",
@@ -389,11 +334,6 @@ CUTEST(hash, sha2_256) {
     "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0",
     "4c2d7749e1b711ca652fda20dd29fe378fd9988f19eadadfa570682e2c55349f"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha2_384) {
@@ -419,7 +359,7 @@ CUTEST(hash, sha2_384) {
     56, 236, 196, 235, 174, 151, 221, 216, 127, 61, 137, 133
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA2_384,
     48,
     "abc",
@@ -432,11 +372,6 @@ CUTEST(hash, sha2_384) {
     "9d0e1809716474cb086e834e310a4a1ced149e9c00f248527972cec5704c2a5b07b8b3dc38ecc4ebae97ddd87f3d8985",
     "533e016fd92dd8a8c339328bb5401c3e700e27cd72d8230059e1d4583a506fe8187607bf899a86961af2bf5521b359eb"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha2_512) {
@@ -471,7 +406,7 @@ CUTEST(hash, sha2_512) {
     78, 173, 178, 23, 173, 140, 192, 155
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA2_512,
     64,
     "abc",
@@ -484,11 +419,6 @@ CUTEST(hash, sha2_512) {
     "e718483d0ce769644e2e42c7bc15b4638e1f98b13b2044285632a803afa973ebde0ff244877ea60a4cb0432ce577c31beb009c5c2c49aa2e4eadb217ad8cc09b",
     "411525772d02eef0e2ce1107d89b79b8cf6d704e88d4509f726c963d411df6df178c1c9473718f70b0e06c2fda6a9c25f6c91a925849f372634d5f63e6047a20"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha3_224) {
@@ -508,7 +438,7 @@ CUTEST(hash, sha3_224) {
     193, 82, 67, 231, 167, 253, 101, 60
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA3_224,
     28,
     "abc",
@@ -521,11 +451,6 @@ CUTEST(hash, sha3_224) {
     "d69335b93325192e516a912e6d19a15cb51c6ed5c15243e7a7fd653c",
     "425fbad801bf675651dcf61af1138831480b562e714c70a2a0050ad3"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha3_256) {
@@ -548,7 +473,7 @@ CUTEST(hash, sha3_256) {
     208, 205, 203, 108, 17, 88, 145, 193
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA3_256,
     32,
     "abc",
@@ -561,11 +486,6 @@ CUTEST(hash, sha3_256) {
     "5c8875ae474a3634ba4fd55ec85bffd661f32aca75c6d699d0cdcb6c115891c1",
     "e37ed9f31da3d61740e04c3124a2da5dbe8be0a2ef5c8b5932d45eb1958219e2"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha3_384) {
@@ -591,7 +511,7 @@ CUTEST(hash, sha3_384) {
     219, 144, 168, 66, 25, 13, 44, 85, 139, 75, 131, 64
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA3_384,
     48,
     "abc",
@@ -604,11 +524,6 @@ CUTEST(hash, sha3_384) {
     "eee9e24d78c1855337983451df97c8ad9eedf256c6334f8e948d252d5e0e76847aa0774ddb90a842190d2c558b4b8340",
     "3836508de3aa893ad8bd18df238a79e534bc55a6fae84a557bde0820ccfc3ad58e3eaab29a7d0d3bfc071c6d69b2e9d3"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, sha3_512) {
@@ -643,7 +558,7 @@ CUTEST(hash, sha3_512) {
     13, 181, 150, 201, 11, 10, 123, 135
   };
 
-  char *r = general_hash_test(
+  return general_hash_test(
     P_HASH_SHA3_512,
     64,
     "abc",
@@ -656,11 +571,6 @@ CUTEST(hash, sha3_512) {
     "3c3a876da14034ab60627c077bb98f7e120a2a5370212dffb3385a18d4f38859ed311d0a9d5141ce9cc5c66ee689b266a8aa18ace8282a0e0db596c90b0a7b87",
     "16f59fe0b4344af86b37eb145afe41e9dadb45279d074c5bf5c649dd3d2952e47c0ac3a59ea19dc8395d04e8a72fddd9307b839c35fc4bc44a0463003b80dcf1"
   );
-  if (r) {
-    return r;
-  }
-
-  return CUTE_SUCCESS;
 }
 
 CUTEST(hash, gost3411_94) {
@@ -684,8 +594,9 @@ CUTEST(hash, gost3411_94) {
     167, 219, 175, 14, 126, 167, 78, 159,
     166, 2, 65, 60, 144, 161, 41, 250
   };
+  byte_t *r;
 
-  char *r = general_hash_test(
+  r = general_hash_test(
     P_HASH_GOST,
     32,
     "This is message, length=32 bytes",
@@ -701,9 +612,7 @@ CUTEST(hash, gost3411_94) {
   if (r) {
     return r;
   }
-
   gost3411_94_hash = p_crypto_hash_new(P_HASH_GOST);
-
   ASSERT(gost3411_94_hash != NULL);
 
   /* Repeat test */
@@ -723,17 +632,14 @@ CUTEST(hash, gost3411_94) {
     gost3411_94_hash, (const ubyte_t *) "message digest",
     14
   );
-
   hash_str = p_crypto_hash_get_string(gost3411_94_hash);
   ASSERT(strcmp(
     hash_str,
     "1564064cce4fe1386be063f98d7ab17fc724fa7f02be4fa6847a2162be20d807"
   ) == 0);
   p_free(hash_str);
-
   p_crypto_hash_reset(gost3411_94_hash);
   p_crypto_hash_free(gost3411_94_hash);
-
   return CUTE_SUCCESS;
 }
 

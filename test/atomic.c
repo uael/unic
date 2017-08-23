@@ -37,46 +37,34 @@ CUTEST(atomic, general) {
   (void) p_atomic_is_lock_free();
   atomic_int = 0;
   p_atomic_int_set(&atomic_int, 10);
-
   ASSERT(p_atomic_int_add(&atomic_int, 5) == 10);
   ASSERT(p_atomic_int_get(&atomic_int) == 15);
-
   p_atomic_int_add(&atomic_int, -5);
   ASSERT(p_atomic_int_get(&atomic_int) == 10);
-
   p_atomic_int_inc(&atomic_int);
   ASSERT(p_atomic_int_get(&atomic_int) == 11);
-
   ASSERT(p_atomic_int_dec_and_test(&atomic_int) == false);
   ASSERT(p_atomic_int_get(&atomic_int) == 10);
-
   ASSERT(p_atomic_int_compare_and_exchange(&atomic_int, 10, -10) == true);
   ASSERT(p_atomic_int_get(&atomic_int) == -10);
   ASSERT(p_atomic_int_compare_and_exchange(&atomic_int, 10, 20) == false);
   ASSERT(p_atomic_int_get(&atomic_int) == -10);
-
   p_atomic_int_inc(&atomic_int);
   ASSERT(p_atomic_int_get(&atomic_int) == -9);
-
   p_atomic_int_set(&atomic_int, 4);
   ASSERT(p_atomic_int_get(&atomic_int) == 4);
-
   ASSERT(p_atomic_int_xor((uint_t *) &atomic_int, (uint_t) 1) == 4);
   ASSERT(p_atomic_int_get(&atomic_int) == 5);
-
   ASSERT(p_atomic_int_or((uint_t *) &atomic_int, (uint_t) 2) == 5);
   ASSERT(p_atomic_int_get(&atomic_int) == 7);
-
   ASSERT(p_atomic_int_and((uint_t *) &atomic_int, (uint_t) 1) == 7);
   ASSERT(p_atomic_int_get(&atomic_int) == 1);
-
   p_atomic_int_set(&atomic_int, 51);
   ASSERT(p_atomic_int_get(&atomic_int) == 51);
   for (i = 51; i > 1; --i) {
     ASSERT(p_atomic_int_dec_and_test(&atomic_int) == false);
     ASSERT(p_atomic_int_get(&atomic_int) == (i - 1));
   }
-
   ASSERT(p_atomic_int_dec_and_test(&atomic_int) == true);
   ASSERT(p_atomic_int_get(&atomic_int) == 0);
   atomic_pointer = NULL;
@@ -84,24 +72,18 @@ CUTEST(atomic, general) {
   ASSERT(
     p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(P_MAXSIZE)
   );
-
   p_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (100));
   ASSERT(p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(100));
   ASSERT(p_atomic_pointer_add(&atomic_pointer, (ssize_t) 100) == 100);
   ASSERT(p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(200));
-
   p_atomic_pointer_set(&atomic_pointer, PINT_TO_POINTER (4));
   ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(4));
-
   ASSERT(p_atomic_pointer_xor(&atomic_pointer, (size_t) 1) == 4);
   ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(5));
-
   ASSERT(p_atomic_pointer_or(&atomic_pointer, (size_t) 2) == 5);
   ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(7));
-
   ASSERT(p_atomic_pointer_and(&atomic_pointer, (size_t) 1) == 7);
   ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(1));
-
   ASSERT(
     p_atomic_pointer_compare_and_exchange(
       &atomic_pointer, PUINT_TO_POINTER(1),
