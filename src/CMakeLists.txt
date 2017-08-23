@@ -17,7 +17,7 @@ if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cyg
   set(PLIBSYS_NATIVE_WINDOWS true)
 endif ()
 
-if (PLIBSYS_COVERAGE)
+if (COVERAGE)
   if (PLIBSYS_C_COMPILER MATCHES "gcc|clang")
     set(CMAKE_BUILD_TYPE "Debug")
     list(APPEND CMAKE_C_FLAGS "--coverage")
@@ -865,7 +865,7 @@ set(PLIBSYS_SUMMARY
 	Platform libraries:     ${PLIBSYS_PLATFORM_LINK_LIBRARIES}
 
 	Build static library:   ${PLIBSYS_BUILD_STATIC}
-	Coverage support:       ${PLIBSYS_COVERAGE}
+	Coverage support:       ${COVERAGE}
 	Visibility:             ${PLIBSYS_VISIBILITY}
 
 ")
