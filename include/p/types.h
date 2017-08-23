@@ -21,9 +21,9 @@
  *
  * Every operating system in pair with a compiler has its own set of data types.
  * Here you can find unified platform independent data types which guarantee the
- * same bit-size on every supported platform: #pint8, #pint16, #pint32, #pint64
+ * same bit-size on every supported platform: #i8_t, #i16_t, #i32_t, #i64_t
  * and their unsigned variants. Also other types are defined for convinience:
- * #ppointer, #pboolean, #pint, #plong, #pdouble and more.
+ * #ptr_t, #bool, and more.
  *
  * Along with the types, length and format modifiers are defined. They can be
  * used to print and scan data from/to a variable.
@@ -137,7 +137,7 @@ typedef unsigned long ulong_t;
 
 /*!@def PSIZE_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
- * #psize or #pssize type for printing and scanning values. It is a string
+ * #size_t or #ssize_t type for printing and scanning values. It is a string
  * literal, but doesn't include the percent sign so you can add precision and
  * length modifiers and append a conversion specifier.
  * @code
@@ -147,7 +147,7 @@ typedef unsigned long ulong_t;
  */
 
 /*!@def PSSIZE_FORMAT
- * @brief Platform dependent conversion specifier of #pssize type for printing
+ * @brief Platform dependent conversion specifier of #ssize_t type for printing
  * and scanning values.
  * @code
  * pssize size_val = 100;
@@ -156,20 +156,20 @@ typedef unsigned long ulong_t;
  */
 
 /*!@def PSIZE_FORMAT
- * @brief Platform dependent conversion specifier of #psize type for printing
+ * @brief Platform dependent conversion specifier of #size_t type for printing
  * and scanning values.
  */
 
 /*!@def P_MAXSIZE
- * @brief Maximum value of a #psize type.
+ * @brief Maximum value of a #size_t type.
  */
 
 /*!@def P_MINSSIZE
- * @brief Minimum value of a #pssize type.
+ * @brief Minimum value of a #ssize_t type.
  */
 
 /*!@def P_MAXSSIZE
- * @brief Maximum value of a #pssize type.
+ * @brief Maximum value of a #ssize_t type.
  */
 
 #if PLIBSYS_SIZEOF_SIZE_T == 8
@@ -222,58 +222,58 @@ typedef unsigned int size_t;
 # define P_MAXSSIZE    P_MAXINT
 #endif
 
-/*!@var intptr_t
+/*!@var iptr_t
  * @brief Type for a platform independent signed pointer represented by an
  * integer.
  */
 
-/*!@var uintptr_t
+/*!@var uptr_t
  * @brief Type for a platform independent unsigned pointer represented by an
  * integer.
  */
 
 /*!@def PINTPTR_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
- * #pintptr or #puintptr type for printing and scanning values. It is a string
+ * #iptr_t or #uptr_t type for printing and scanning values. It is a string
  * literal, but doesn't include the percent sign so you can add precision and
  * length modifiers and append a conversion specifier.
  */
 
 /*!@def PINTPTR_FORMAT
- * @brief Platform dependent conversion specifier of #pintptr type for printing
+ * @brief Platform dependent conversion specifier of #iptr_t type for printing
  * and scanning values.
  */
 
 /*!@def PUINTPTR_FORMAT
- * @brief Platform dependent conversion specifier of #puintptr type for
+ * @brief Platform dependent conversion specifier of #uptr_t type for
  * printing and scanning values.
  */
 
 #if PLIBSYS_SIZEOF_VOID_P == 8
 # if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
-typedef signed __int64 intptr_t;
-typedef unsigned __int64 uintptr_t;
+typedef signed __int64 iptr_t;
+typedef unsigned __int64 uptr_t;
 #   define PINTPTR_MODIFIER "I64"
 #   define PINTPTR_FORMAT "I64i"
 #   define PUINTPTR_FORMAT "I64u"
 # else
 #   if PLIBSYS_SIZEOF_LONG == 8
-typedef long intptr_t;
-typedef unsigned long uintptr_t;
+typedef long iptr_t;
+typedef unsigned long uptr_t;
 #     define PINTPTR_MODIFIER    "l"
 #     define PINTPTR_FORMAT    "li"
 #     define PUINTPTR_FORMAT    "lu"
 #   else
-typedef long long  intptr_t;
-typedef unsigned long long uintptr_t;
+typedef long long  iptr_t;
+typedef unsigned long long uptr_t;
 #     define PINTPTR_MODIFIER  "ll"
 #     define PINTPTR_FORMAT  "lli"
 #     define PUINTPTR_FORMAT  "llu"
 #   endif
 # endif
 #else
-typedef signed int intptr_t;
-typedef unsigned int uintptr_t;
+typedef signed int iptr_t;
+typedef unsigned int uptr_t;
 # define PINTPTR_MODIFIER  ""
 # define PINTPTR_FORMAT  "i"
 # define PUINTPTR_FORMAT  "u"
@@ -313,36 +313,36 @@ typedef i64_t offset_t;
  */
 
 /*!@def PPOINTER_TO_INT
- * @brief Casts a #ppointer to a #pint value.
- * @param p #ppointer to cast.
- * @return Casted #ppointer.
+ * @brief Casts a #ptr_t to a #int value.
+ * @param p #ptr_t to cast.
+ * @return Casted #ptr_t.
  * @since 0.0.1
  */
 
 /*!@def PPOINTER_TO_UINT
- * @brief Casts a #ppointer to a #pint value.
- * @param p #ppointer to cast.
- * @return Casted #ppointer.
+ * @brief Casts a #ptr_t to a #int value.
+ * @param p #ptr_t to cast.
+ * @return Casted #ptr_t.
  * @since 0.0.1
  */
 
 /*!@def PINT_TO_POINTER
- * @brief Casts a #pint value to a #ppointer.
- * @param i #pint to cast.
- * @return Casted #pint.
+ * @brief Casts a #int value to a #ptr_t.
+ * @param i #int to cast.
+ * @return Casted #int.
  * @since 0.0.1
  */
 
 /*!@def PUINT_TO_POINTER
- * @brief Casts a #puint value to a #ppointer.
- * @param u #puint to cast.
- * @return Casted #puint.
+ * @brief Casts a #uint_t value to a #ptr_t.
+ * @param u #uint_t to cast.
+ * @return Casted #uint_t.
  * @since 0.0.1
  */
 
-/*!@brief Casts a #psize value to a #ppointer. */
+/*!@brief Casts a #size_t value to a #ptr_t. */
 #define PSIZE_TO_POINTER(i) ((ptr_t) ((size_t) (i)))
-/*!@brief Casts a #ppointer to a #psize value. */
+/*!@brief Casts a #ptr_t to a #size_t value. */
 #define PPOINTER_TO_PSIZE(p) ((size_t) (p))
 
 /*!@brief Min value for a 8-bit int. */
@@ -375,52 +375,52 @@ typedef i64_t offset_t;
 
 /*!@def PINT16_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
- * #pint16 or #puint16 type for printing and scanning values. It is a string
+ * #i16_t or #u16_t type for printing and scanning values. It is a string
  * literal, but doesn't include the percent sign so you can add precision and
  * length modifiers and append a conversion specifier.
  */
 
 /*!@def PINT16_FORMAT
- * @brief Platform dependent conversion specifier of #pint16 type for printing
+ * @brief Platform dependent conversion specifier of #i16_t type for printing
  * and scanning values.
  */
 
 /*!@def PUINT16_FORMAT
- * @brief Platform dependent conversion specifier of #puint16 type for printing
+ * @brief Platform dependent conversion specifier of #u16_t type for printing
  * and scanning values.
  */
 
 /*!@def PINT32_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
- * #pint32 or #puint32 type for printing and scanning values. It is a string
+ * #i32_t or #u32_t type for printing and scanning values. It is a string
  * literal, but doesn't include the percent sign so you can add precision and
  * length modifiers and append a conversion specifier.
  */
 
 /*!@def PINT32_FORMAT
- * @brief Platform dependent conversion specifier of #pint32 type for printing
+ * @brief Platform dependent conversion specifier of #i32_t type for printing
  * and scanning values.
  */
 
 /*!@def PUINT32_FORMAT
- * @brief Platform dependent conversion specifier of #puint32 type for printing
+ * @brief Platform dependent conversion specifier of #u32_t type for printing
  * and scanning values.
  */
 
 /*!@def PINT64_MODIFIER
  * @brief Platform dependent length modifier for conversion specifiers of
- * #pint64 or #puint64 type for printing and scanning values. It is a string
+ * #i64_t or #u64_t type for printing and scanning values. It is a string
  * literal, but doesn't include the percent sign so you can add precision and
  * length modifiers and append a conversion specifier.
  */
 
 /*!@def PINT64_FORMAT
- * @brief Platform dependent conversion specifier of #pint64 type for printing
+ * @brief Platform dependent conversion specifier of #i64_t type for printing
  * and scanning values.
  */
 
 /*!@def PUINT64_FORMAT
- * @brief Platform dependent conversion specifier of #puint64 type for printing
+ * @brief Platform dependent conversion specifier of #u64_t type for printing
  * and scanning values.
  */
 
@@ -475,168 +475,168 @@ typedef i64_t offset_t;
 #define P_BIG_ENDIAN 4321
 
 /*!@def PINT16_TO_LE
- * @brief Swaps a #pint16 variable from the host to the little endian order.
+ * @brief Swaps a #i16_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT16_TO_LE
- * @brief Swaps a #puint16 variable from the host to the little the endian order.
+ * @brief Swaps a #u16_t variable from the host to the little the endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT16_TO_BE
- * @brief Swaps a #pint16 variable from the host to the big endian order.
+ * @brief Swaps a #i16_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT16_TO_BE
- * @brief Swaps a #puint16 variable from the host to the big endian order.
+ * @brief Swaps a #u16_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT32_TO_LE
- * @brief Swaps a #pint32 variable from the host to the little endian order.
+ * @brief Swaps a #i32_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT32_TO_LE
- * @brief Swaps a #puint32 variable from the host to the little endian order.
+ * @brief Swaps a #u32_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT32_TO_BE
- * @brief Swaps a #pint32 variable from the host to the big endian order.
+ * @brief Swaps a #i32_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT32_TO_BE
- * @brief Swaps a #puint32 variable from the host to the big endian order.
+ * @brief Swaps a #u32_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT64_TO_LE
- * @brief Swaps a #pint64 variable from the host to the little endian order.
+ * @brief Swaps a #i64_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT64_TO_LE
- * @brief Swaps a #puint64 variable from the host to the little endian order.
+ * @brief Swaps a #u64_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT64_TO_BE
- * @brief Swaps a #pint64 variable from the host to the big endian order.
+ * @brief Swaps a #i64_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT64_TO_BE
- * @brief Swaps a #puint64 variable from the host to the big endian order.
+ * @brief Swaps a #u64_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PLONG_TO_LE
- * @brief Swaps a #plong variable from the host to the little endian order.
+ * @brief Swaps a #long variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PULONG_TO_LE
- * @brief Swaps a #pulong variable from the host to the little endian order.
+ * @brief Swaps a #ulong_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PLONG_TO_BE
- * @brief Swaps a #plong variable from the host to the big endian order.
+ * @brief Swaps a #long variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PULONG_TO_BE
- * @brief Swaps a #pulong variable from the host to the big endian order.
+ * @brief Swaps a #ulong_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PSSIZE_TO_LE
- * @brief Swaps a #pssize variable from the host to the little endian order.
+ * @brief Swaps a #ssize_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PSIZE_TO_LE
- * @brief Swaps a #psize variable from the host to the little endian order.
+ * @brief Swaps a #size_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PSSIZE_TO_BE
- * @brief Swaps a #pssize variable from the host to the big endian order.
+ * @brief Swaps a #ssize_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PSIZE_TO_BE
- * @brief Swaps a #psize variable from the host to the big endian order.
+ * @brief Swaps a #size_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT_TO_LE
- * @brief Swaps a #pint variable from the host to the little endian order.
+ * @brief Swaps a #int variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT_TO_LE
- * @brief Swaps a #puint variable from the host to the little endian order.
+ * @brief Swaps a #uint_t variable from the host to the little endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PINT_TO_BE
- * @brief Swaps a #pint variable from the host to the big endian order.
+ * @brief Swaps a #int variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
  */
 
 /*!@def PUINT_TO_BE
- * @brief Swaps a #puint variable from the host to the big endian order.
+ * @brief Swaps a #uint_t variable from the host to the big endian order.
  * @param val Value to swap.
  * @return Swapped value.
  * @since 0.0.1
@@ -881,58 +881,58 @@ typedef i64_t offset_t;
  */
 #define PULONG_FROM_BE(val) (PULONG_TO_BE(val))
 
-/*!@brief Swaps a #pint from the little endian byte order to the host one.
+/*!@brief Swaps a #int from the little endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #pint.
+ * @return Swapped #int.
  * @since 0.0.1
  */
 #define PINT_FROM_LE(val) (PINT_TO_LE(val))
 
-/*!@brief Swaps a #puint from the little endian byte order to the host one.
+/*!@brief Swaps a #uint_t from the little endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #puint.
+ * @return Swapped #uint_t.
  * @since 0.0.1
  */
 #define PUINT_FROM_LE(val) (PUINT_TO_LE(val))
 
-/*!@brief Swaps a #pint from the big endian byte order to the host one.
+/*!@brief Swaps a #int from the big endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #pint.
+ * @return Swapped #int.
  * @since 0.0.1
  */
 #define PINT_FROM_BE(val) (PINT_TO_BE(val))
 
-/*!@brief Swaps a #puint from the big endian byte order to the host one.
+/*!@brief Swaps a #uint_t from the big endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #puint.
+ * @return Swapped #uint_t.
  * @since 0.0.1
  */
 #define PUINT_FROM_BE(val) (PUINT_TO_BE(val))
 
-/*!@brief Swaps a #psize from the little endian byte order to the host one.
+/*!@brief Swaps a #size_t from the little endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #psize.
+ * @return Swapped #size_t.
  * @since 0.0.1
  */
 #define PSIZE_FROM_LE(val) (PSIZE_TO_LE(val))
 
-/*!@brief Swaps a #pssize from the little endian byte order to the host one.
+/*!@brief Swaps a #ssize_t from the little endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #pssize.
+ * @return Swapped #ssize_t.
  * @since 0.0.1
  */
 #define PSSIZE_FROM_LE(val) (PSSIZE_TO_LE(val))
 
-/*!@brief Swaps a #psize from the big endian byte order to the host one.
+/*!@brief Swaps a #size_t from the big endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #psize.
+ * @return Swapped #size_t.
  * @since 0.0.1
  */
 #define PSIZE_FROM_BE(val) (PSIZE_TO_BE(val))
 
-/*!@brief Swaps a #pssize from the big endian byte order to the host one.
+/*!@brief Swaps a #ssize_t from the big endian byte order to the host one.
  * @param val Value to swap.
- * @return Swapped #pssize.
+ * @return Swapped #ssize_t.
  * @since 0.0.1
  */
 #define PSSIZE_FROM_BE(val) (PSSIZE_TO_BE(val))
@@ -974,7 +974,7 @@ typedef void *P_HANDLE;
  * @param key The key of an item.
  * @param value The value of the item.
  * @param user_data Data provided by a user, maybe NULL.
- * @return FALSE to continue traversing, TRUE to stop it.
+ * @return false to continue traversing, true to stop it.
  * @since 0.0.1
  */
 typedef bool (*traverse_fn_t)(ptr_t key, ptr_t value, ptr_t user_data);

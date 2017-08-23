@@ -67,7 +67,7 @@ p_mutex_new(void);
 
 /*!@brief Locks a mutex.
  * @param mutex #PMutex to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock the mutex recursively - it may lead to an application
  * deadlock (implementation dependent).
@@ -80,7 +80,7 @@ p_mutex_lock(mutex_t *mutex);
 
 /*!@brief Tries to lock a mutex immediately.
  * @param mutex #PMutex to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock the mutex recursively - it may lead to an application
  * deadlock (implementation dependent).
@@ -93,7 +93,7 @@ p_mutex_trylock(mutex_t *mutex);
 
 /*!@brief Releases a locked mutex.
  * @param mutex #PMutex to release.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not use this function on non-locked mutexes - behavior may be
  * unpredictable.

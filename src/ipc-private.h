@@ -46,8 +46,8 @@ int p_ipc_unix_get_ftok_key(const byte_t *file_name);
 /*!@brief Generates a platform independent key for IPC usage, an object name for
  * Windows and a file name to use with ftok () for UNIX-like systems.
  * @param name Object name.
- * @param posix TRUE if the key will be used for the POSIX IPC calls, otherwise
- * FALSE. This parameter is not used on the Windows platform.
+ * @param posix true if the key will be used for the POSIX IPC calls, otherwise
+ * false. This parameter is not used on the Windows platform.
  * @return Platform independent key for IPC usage.
  */
 byte_t *

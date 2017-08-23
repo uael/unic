@@ -89,7 +89,7 @@ pp_uthread_get_tls_key(uthread_key_t *key) {
         (PVOID volatile *) &pp_uthread_tls_destructors,
         (PVOID) destr->next,
         (PVOID) destr
-      ) == FALSE)) {
+      ) == false)) {
         P_ERROR (
           "uthread_t::pp_uthread_get_tls_key: p_atomic_pointer_compare_and_exchange() failed");
         if (P_UNLIKELY (TlsFree(tls_key) == 0))

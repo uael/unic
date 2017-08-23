@@ -49,8 +49,8 @@ CUTEST(types, general) {
   ASSERT(sizeof(unsigned long) == sizeof(ulong_t));
   ASSERT(sizeof(float) == sizeof(float));
   ASSERT(sizeof(double) == sizeof(double));
-  ASSERT(sizeof(intptr_t) == PLIBSYS_SIZEOF_VOID_P);
-  ASSERT(sizeof(uintptr_t) == PLIBSYS_SIZEOF_VOID_P);
+  ASSERT(sizeof(iptr_t) == PLIBSYS_SIZEOF_VOID_P);
+  ASSERT(sizeof(uptr_t) == PLIBSYS_SIZEOF_VOID_P);
   ASSERT(sizeof(size_t) == PLIBSYS_SIZEOF_SIZE_T);
   ASSERT(sizeof(ssize_t) == PLIBSYS_SIZEOF_SIZE_T);
   ASSERT(sizeof(long) == PLIBSYS_SIZEOF_LONG);
@@ -123,9 +123,9 @@ CUTEST(types, modifiers) {
   ssize_t ssize_val = -256;
   printf("%#" PSIZE_MODIFIER "x\n", ssize_val);
 
-  uintptr_t puintptr_val = 512;
+  uptr_t puintptr_val = 512;
   printf("%#" PINTPTR_MODIFIER "x\n", puintptr_val);
-  intptr_t pintptr_val = -512;
+  iptr_t pintptr_val = -512;
   printf("%#" PINTPTR_MODIFIER "x\n", pintptr_val);
 
   u16_t puint16_val = 1024;
@@ -156,9 +156,9 @@ CUTEST(types, formats) {
   size_t size_val = 256;
   printf("%" PSIZE_FORMAT "\n", size_val);
 
-  uintptr_t puintptr_val = 512;
+  uptr_t puintptr_val = 512;
   printf("%" PUINTPTR_FORMAT "\n", puintptr_val);
-  intptr_t pintptr_val = -512;
+  iptr_t pintptr_val = -512;
   printf("%" PINTPTR_FORMAT "\n", pintptr_val);
 
   u16_t puint16_val = 1024;

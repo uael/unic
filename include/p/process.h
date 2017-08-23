@@ -40,8 +40,8 @@ p_process_get_current_pid(void);
 
 /*!@brief Checks whether a process with a given PID is running or not.
  * @param pid PID to check for.
- * @return TRUE if the process with the given PID exists and is running up,
- * FALSE otherwise.
+ * @return true if the process with the given PID exists and is running up,
+ * false otherwise.
  * @since 0.0.1
  */
 P_API bool

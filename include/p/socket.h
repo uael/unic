@@ -120,7 +120,7 @@
  * ...
  * }
  *
- * if (!p_socket_bind (sock, addr, FALSE)) {
+ * if (!p_socket_bind (sock, addr, false)) {
  * p_socketaddr_free(addr);
  * p_socket_free(sock);
  * ...
@@ -287,7 +287,7 @@ p_socket_get_protocol(const socket_t *socket);
 
 /*!@brief Checks whether the SO_KEEPALIVE flag is enabled.
  * @param socket #PSocket to check the SO_KEEPALIVE flag for.
- * @return TRUE if the SO_KEEPALIVE flag is enabled, FALSE otherwise.
+ * @return true if the SO_KEEPALIVE flag is enabled, false otherwise.
  * @since 0.0.1
  * @sa p_socket_set_keepalive()
  *
@@ -308,7 +308,7 @@ p_socket_get_keepalive(const socket_t *socket);
 
 /*!@brief Checks whether @a socket is used in a blocking mode.
  * @param socket #PSocket to check the blocking mode for.
- * @return TRUE if @a socket is in the blocking mode, FALSE otherwise.
+ * @return true if @a socket is in the blocking mode, false otherwise.
  * @note A blocking socket will wait for an I/O operation to be completed before
  * returning to the caller function.
  * @since 0.0.1
@@ -393,7 +393,7 @@ p_socket_get_remote_address(const socket_t *socket, err_t **error);
 
 /*!@brief Checks whether a @a socket is connected.
  * @param socket #PSocket to check a connection for.
- * @return TRUE if the @a socket is connected, FALSE otherwise.
+ * @return true if the @a socket is connected, false otherwise.
  * @since 0.0.1
  * @sa p_socket_connect(), p_socket_check_connect_result()
  *
@@ -406,11 +406,11 @@ p_socket_is_connected(const socket_t *socket);
 
 /*!@brief Checks whether a @a socket is closed.
  * @param socket #PSocket to check a closed state.
- * @return TRUE if the @a socket is closed, FALSE otherwise.
+ * @return true if the @a socket is closed, false otherwise.
  * @since 0.0.1
  * @sa p_socket_close(), p_socket_shutdown()
  *
- * If the socket is in a non-blocking mode this call will not return TRUE until
+ * If the socket is in a non-blocking mode this call will not return true until
  * p_socket_check_connect_result() is called. The socket will be closed if
  * p_socket_shutdown() is called for both the directions.
  */
@@ -420,13 +420,13 @@ p_socket_is_closed(const socket_t *socket);
 /*!@brief Checks a connection state after calling p_socket_connect().
  * @param socket #PSocket to check the connection state for.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE if was no error, FALSE otherwise.
+ * @return true if was no error, false otherwise.
  * @since 0.0.1
  * @sa p_socket_io_condition_wait()
  * @warning Not supported on Syllable for connection-less sockets.
  *
  * Usually this call is used after calling p_socket_connect() on a socket in a
- * non-blocking mode to check the connection state. If call returns the FALSE
+ * non-blocking mode to check the connection state. If call returns the false
  * result then the connection checking call has failed or there was an error
  * during the connection and you should check the last error using an @a error
  * object.
@@ -497,7 +497,7 @@ p_socket_set_timeout(socket_t *socket, int timeout);
  * @param address #PSocketAddress to bind the given @a socket to.
  * @param allow_reuse Whether to allow socket's address reusing.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @sa p_socket_get_local_address()
  *
@@ -531,7 +531,7 @@ p_socket_set_timeout(socket_t *socket, int timeout);
  * better to refer to the system documentation for that.
  *
  * In general case, a server socket should be bound with the @a allow_reuse set
- * to TRUE, while a client socket shouldn't set this option to TRUE. If you
+ * to true, while a client socket shouldn't set this option to true. If you
  * restart the client quickly with the same address it can fail to bind.
  */
 P_API bool
@@ -542,7 +542,7 @@ p_socket_bind(const socket_t *socket, socketaddr_t *address, bool allow_reuse,
  * @param socket #PSocket to connect.
  * @param address #PSocketAddress to connect the @a socket to.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @sa p_socket_is_connected(), p_socket_check_connect_result(),
  * p_socket_get_remote_address(), p_socket_io_condition_wait()
@@ -571,7 +571,7 @@ p_socket_connect(socket_t *socket, socketaddr_t *address, err_t **error);
 /*!@brief Puts a @a socket into a listening state.
  * @param socket #PSocket to start listening.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @sa p_socket_get_listen_backlog(), p_socket_set_listen_backlog()
  *
@@ -690,7 +690,7 @@ p_socket_send_to(const socket_t *socket, socketaddr_t *address,
 /*!@brief Closes a @a socket.
  * @param socket #PSocket to close.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @sa p_socket_free(), p_socket_is_closed()
  *
@@ -706,7 +706,7 @@ p_socket_close(socket_t *socket, err_t **error);
  * @param shutdown_read Whether to shutdown the incoming data transfer link.
  * @param shutdown_write Whether to shutdown the outcoming data transfer link.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @note Shutdown of any link is possible only on the socket in a connected
  * state, otherwise the call will fail.
  * @since 0.0.1
@@ -732,7 +732,7 @@ p_socket_free(socket_t *socket);
  * @param dir Direction to set the buffer size on.
  * @param size Size of the buffer to set, in bytes.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Not supported on Syllable.
  */
@@ -744,7 +744,7 @@ p_socket_set_buffer_size(const socket_t *socket, socket_dir_t dir, size_t size,
  * @param socket #PSocket to wait for @a condition on.
  * @param condition An I/O condition to wait for on @a socket.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE if @a condition has been met, FALSE otherwise.
+ * @return true if @a condition has been met, false otherwise.
  * @since 0.0.1
  * @sa p_socket_get_timeout(), p_socket_set_timeout()
  *

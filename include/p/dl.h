@@ -120,7 +120,7 @@ P_API byte_t *
 p_dl_get_last_error(dl_t *loader);
 
 /*!@brief Checks whether library loading subsystem uses reference counting.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.3
  *
  * When reference counting is supported, the same shared library can be opened

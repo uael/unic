@@ -71,7 +71,7 @@ p_rwlock_new(void);
 
 /*!@brief Locks a read-write lock for reading.
  * @param lock #PRWLock to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
  * application deadlock (implementation dependent).
@@ -84,7 +84,7 @@ p_rwlock_reader_lock(rwlock_t *lock);
 
 /*!@brief Tries to lock a read-write lock for reading immediately.
  * @param lock #PRWLock to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
  * application deadlock (implementation dependent).
@@ -97,7 +97,7 @@ p_rwlock_reader_trylock(rwlock_t *lock);
 
 /*!@brief Releases a locked for reading read-write lock.
  * @param lock #PRWLock to release.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not use this function on non-locked read-write locks - behavior
  * may be unpredictable.
@@ -114,7 +114,7 @@ p_rwlock_reader_unlock(rwlock_t *lock);
 
 /*!@brief Locks a read-write lock for writing.
  * @param lock #PRWLock to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
  * application deadlock (implementation dependent).
@@ -127,7 +127,7 @@ p_rwlock_writer_lock(rwlock_t *lock);
 
 /*!@brief Tries to lock a read-write lock immediately.
  * @param lock #PRWLock to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
  * application deadlock (implementation dependent).
@@ -140,7 +140,7 @@ p_rwlock_writer_trylock(rwlock_t *lock);
 
 /*!@brief Releases a locked for writing read-write lock.
  * @param lock #PRWLock to release.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not use this function on non-locked read-write locks - behavior
  * may be unpredictable.

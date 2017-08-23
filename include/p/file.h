@@ -43,7 +43,7 @@
 
 /*!@brief Checks whether a file exists or not.
  * @param file File name to check.
- * @return TRUE if the file exists, FALSE otherwise.
+ * @return true if the file exists, false otherwise.
  * @since 0.0.1
  *
  * On Windows this call doesn't resolve symbolic links, while on UNIX systems
@@ -55,7 +55,7 @@ p_file_is_exists(const byte_t *file);
 /*!@brief Removes a file from the disk.
  * @param file File name to remove.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE if the file was successfully removed, FALSE otherwise.
+ * @return true if the file was successfully removed, false otherwise.
  * @since 0.0.1
  *
  * This call doesn't resolve symbolic links and remove a symbolic link if the

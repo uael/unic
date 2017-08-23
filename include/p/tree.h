@@ -130,7 +130,7 @@ p_tree_insert(tree_t *tree, ptr_t key, ptr_t value);
 /*!@brief Removes a key from a tree.
  * @param tree #PTree to remove a key from.
  * @param key A key to lookup.
- * @return TRUE if the key was removed, FALSE if the key was not found.
+ * @return true if the key was removed, false if the key was not found.
  * @since 0.0.1
  *
  * If a key destroy function was provided it would be called on the key. If a

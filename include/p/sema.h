@@ -143,7 +143,7 @@ p_sema_take_ownership(sema_t *sem);
 /*!@brief Acquires (P operation) a semaphore.
  * @param sem #PSemaphore to acquire.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool
@@ -152,7 +152,7 @@ p_sema_acquire(sema_t *sem, err_t **error);
 /*!@brief Releases (V operation) a semaphore.
  * @param sem #PSemaphore to release.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool

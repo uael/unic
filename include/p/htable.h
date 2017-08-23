@@ -78,7 +78,7 @@ p_htable_insert(htable_t *table, ptr_t key, ptr_t value);
 /*!@brief Searches for a specifed key in the hash table.
  * @param table Hash table to lookup in.
  * @param key Key to lookup for.
- * @return Value related to its key pair (can be NULL), (#ppointer) -1 if no
+ * @return Value related to its key pair (can be NULL), (#ptr_t) -1 if no
  * value was found.
  * @since 0.0.1
  */

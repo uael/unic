@@ -122,7 +122,7 @@ p_free(ptr_t mem);
 
 /*!@brief Sets custom memory management routines.
  * @param table Table of the memory routines to use.
- * @return TRUE if the table was accepted, FALSE otherwise.
+ * @return true if the table was accepted, false otherwise.
  * @note All members of @a table must be non-NULL.
  * @note This call is not thread-safe.
  * @warning Do not forget to set the original memory management routines before
@@ -169,7 +169,7 @@ p_mem_mmap(size_t n_bytes, err_t **error);
  * p_mem_mmap() call.
  * @param n_bytes Size of the memory block in bytes.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool

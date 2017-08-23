@@ -138,7 +138,7 @@ p_shm_free(shm_t *shm);
 /*!@brief Locks #PShm object for usage.
  * @param shm #PShm to lock.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
  * If the object is already locked then the thread will be suspended until the
@@ -150,7 +150,7 @@ p_shm_lock(shm_t *shm, err_t **error);
 /*!@brief Unlocks #PShm object.
  * @param shm #PShm to unlock.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool

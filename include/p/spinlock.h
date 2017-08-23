@@ -60,7 +60,7 @@ p_spinlock_new(void);
 
 /*!@brief Locks a spinlock.
  * @param spinlock #PSpinLock to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
  * A thread will not sleep in this call if another thread is holding the lock,
@@ -77,7 +77,7 @@ p_spinlock_lock(spinlock_t *spinlock);
 
 /*!@brief Tries to lock a spinlock immediately.
  * @param spinlock #PSpinLock to lock.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
  * Tries to lock @a spinlock and returns immediately if it is not available for
@@ -94,7 +94,7 @@ p_spinlock_trylock(spinlock_t *spinlock);
 
 /*!@brief Releases a locked spinlock.
  * @param spinlock #PSpinLock to release.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
  * If @a spinlock was previously locked then it becomes unlocked. Any thread

@@ -42,7 +42,7 @@
  * valid decimal point symbol is the '.'. There is no locale dependency on the
  * decimal point.
  *
- * Boolean values can be written in the form of 'true/false' or 'TRUE/FALSE', or
+ * Boolean values can be written in the form of 'true/false' or 'true/false', or
  * simply '0/1'.
  *
  * Any value can be interpreted as a string at any moment. Actually all the
@@ -69,7 +69,7 @@
  * float_value_2 = 123.19
  *
  * [boolean_section]
- * boolean_value_1 = TRUE
+ * boolean_value_1 = true
  * boolean_value_2 = 0
  * boolean_value_3 = false
  *
@@ -110,7 +110,7 @@ p_inifile_free(ini_file_t *file);
 /*!@brief Parses given #PIniFile.
  * @param file #PIniFile file to parse.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool
@@ -118,7 +118,7 @@ p_inifile_parse(ini_file_t *file, err_t **error);
 
 /*!@brief Checks whether #PIniFile was already parsed or not.
  * @param file #PIniFile to check.
- * @return TRUE if the file was already parsed, FALSE otherwise.
+ * @return true if the file was already parsed, false otherwise.
  * @since 0.0.1
  */
 P_API bool
@@ -151,7 +151,7 @@ p_inifile_keys(const ini_file_t *file, const byte_t *section);
  * @param file #PIniFile to check in. The @a file should be parsed before.
  * @param section Section to check the key in.
  * @param key Key to check.
- * @return TRUE if @a key exists, FALSE otherwise.
+ * @return true if @a key exists, false otherwise.
  * @since 0.0.1
  */
 P_API bool

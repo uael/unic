@@ -174,7 +174,7 @@ p_uthread_sleep(u32_t msec);
 /*!@brief Sets a thread priority.
  * @param thread Thread to set the priority for.
  * @param prio Priority to set.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool

@@ -131,7 +131,7 @@ p_socketaddr_new_loopback(socket_family_t family, u16_t port);
  * @param addr #PSocketAddress to convert.
  * @param[out] dest Output buffer for raw data.
  * @param destlen Length in bytes of the @a dest buffer.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool
@@ -217,21 +217,21 @@ P_API void
 p_socketaddr_set_scope_id(socketaddr_t *addr, u32_t scope_id);
 
 /*!@brief Checks whether flow information is supported in IPv6.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool
 p_socketaddr_is_flow_info_supported(void);
 
 /*!@brief Checks whether a set of interfaces for a scope is supported in IPv6.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool
 p_socketaddr_is_scope_id_supported(void);
 
 /*!@brief Checks whether IPv6 protocol is supported.
- * @return TRUE in case of success, FALSE otherwise.
+ * @return true in case of success, false otherwise.
  * @since 0.0.3
  */
 P_API bool
@@ -240,7 +240,7 @@ p_socketaddr_is_ipv6_supported(void);
 /*!@brief Checks whether a given socket address is an any-address
  * representation. Such an address is a 0.0.0.0.
  * @param addr #PSocketAddress to check.
- * @return TRUE if the @a addr is the any-address representation, FALSE
+ * @return true if the @a addr is the any-address representation, false
  * otherwise.
  * @since 0.0.1
  * @sa p_socketaddr_new_any()
@@ -251,7 +251,7 @@ p_socketaddr_is_any(const socketaddr_t *addr);
 /*!@brief Checks whether a given socket address is for the loopback interface.
  * Such an address is a 127.x.x.x.
  * @param addr #PSocketAddress to check.
- * @return TRUE if the @a addr is for the loopback interface, FALSE otherwise.
+ * @return true if the @a addr is for the loopback interface, false otherwise.
  * @since 0.0.1
  * @sa p_socketaddr_new_loopback()
  */
