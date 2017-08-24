@@ -26,7 +26,7 @@ CUTEST_SETUP { p_libsys_init(); }
 
 CUTEST_TEARDOWN { p_libsys_shutdown(); }
 
-#define PFILE_TEST_FILE "." P_DIR_SEP "test_file.txt"
+#define PFILE_TEST_FILE "." P_DIR_SEP "p_test_file.txt"
 
 CUTEST(file, general) {
   FILE *file;
