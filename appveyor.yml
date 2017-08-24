@@ -1,9 +1,4 @@
 environment:
-        COVERITY_SCAN_PROJECT_NAME:       "saprykin/plibsys"
-        COVERITY_SCAN_NOTIFICATION_EMAIL: "xelfium@gmail.com"
-        COVERITY_SCAN_TOKEN:
-                secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
-
         matrix:
                 - CMAKE_GENERATOR: "Watcom WMake"
                   USE_WATCOM:      "1"
@@ -42,7 +37,6 @@ environment:
                 - CMAKE_GENERATOR: "Visual Studio 12 2013 Win64"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015 Win64"
-                  USE_COVERITY:    "1"
                 - CMAKE_GENERATOR: "NMake Makefiles"
                   USE_LLVM:        "1"
 
@@ -219,22 +213,6 @@ build_script:
 
                         $BUILD_COMMAND = "msbuild";
                         $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
-                }
-
-                If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        & nuget install PublishCoverity -o $BUILD_DIR -excludeversion;
-
-                        $COVERITY_EXE = "$BUILD_DIR\PublishCoverity\tools\PublishCoverity.exe";
-
-                        # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
-
-                        & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
-
-                        & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
-                        & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
-
-                        Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
 
                 & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
