@@ -82,12 +82,12 @@ p_dl_new(const byte_t *path) {
   return loader;
 }
 
-PFuncAddr
+fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
   }
-  return (PFuncAddr) dlsym(loader->handle, sym);
+  return (fn_addr_t) dlsym(loader->handle, sym);
 }
 
 void

@@ -23,7 +23,7 @@ p_dl_new(const byte_t *path) {
   return NULL;
 }
 
-PFuncAddr
+fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   P_UNUSED (loader);
   P_UNUSED (sym);

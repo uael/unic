@@ -33,14 +33,14 @@ pp_dl_clean_handle(plibrary_handle handle);
 static void
 pp_dl_clean_handle(plibrary_handle handle) {
   if (P_UNLIKELY (!FreeLibrary(handle)))
-    P_ERROR (
-      "dl_t::pp_dl_clean_handle: FreeLibrary() failed");
+    P_ERROR ("dl_t::pp_dl_clean_handle: FreeLibrary() failed");
 }
 
 dl_t *
 p_dl_new(const byte_t *path) {
-  dl_t *loader = NULL;
+  dl_t *loader;
   plibrary_handle handle;
+
   if (!p_file_is_exists(path)) {
     return NULL;
   }
@@ -57,14 +57,12 @@ p_dl_new(const byte_t *path) {
   return loader;
 }
 
-PFuncAddr
+fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
-  PFuncAddr ret_sym = NULL;
   if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
   }
-  ret_sym = (PFuncAddr) GetProcAddress(loader->handle, sym);
-  return ret_sym;
+  return (fn_addr_t) GetProcAddress(loader->handle, sym);
 }
 
 void
@@ -78,11 +76,13 @@ p_dl_free(dl_t *loader) {
 
 byte_t *
 p_dl_get_last_error(dl_t *loader) {
-  byte_t *res = NULL;
+  byte_t *res;
   DWORD err_code;
   LPVOID msg_buf;
+
+  res = NULL;
   P_UNUSED (loader);
-  err_code = p_err_get_last_system();
+  err_code = (DWORD) p_err_get_last_system();
   if (err_code == 0) {
     return NULL;
   }
@@ -93,7 +93,7 @@ p_dl_get_last_error(dl_t *loader) {
     NULL,
     err_code,
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    (LPSTR) &msg_buf,
+    (LPSTR) & msg_buf,
     0,
     NULL
   ) != 0)) {

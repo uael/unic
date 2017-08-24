@@ -64,11 +64,11 @@
 typedef struct dl dl_t;
 
 /*!@brief Pointer to a function address. */
-typedef void (*PFuncAddr)(void);
+typedef void (*fn_addr_t)(void);
 
 /*!@brief Loads a shared library.
  * @param path Path to the shared library file.
- * @return Pointer to #PLibraryLoader in case of success, NULL otherwise.
+ * @return Pointer to #dl_t in case of success, NULL otherwise.
  * @since 0.0.1
  *
  * If you are loading the already loaded shared library, an operating system
@@ -89,7 +89,7 @@ p_dl_new(const byte_t *path);
  * call actually doesn't mean the failed result. You can additionally check the
  * error result using p_dl_get_last_error().
  */
-P_API PFuncAddr
+P_API fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym);
 
 /*!@brief Frees memory and allocated resources of #PLibraryLoader.

@@ -32,16 +32,6 @@ unused_result_test_func() {
   return 0;
 }
 
-P_INTERNAL_API int
-internal_api_test() {
-  return 0;
-}
-
-P_GLOBAL_API int
-global_api_test() {
-  return 0;
-}
-
 CUTEST(macros, general) {
   int rand_number;
   int unused;
@@ -497,8 +487,6 @@ CUTEST(macros, general) {
   unused = 8;
   P_UNUSED (unused);
   result = unused_result_test_func();
-  ASSERT(internal_api_test() == 0);
-  ASSERT(global_api_test() == 0);
   P_WARNING ("Test warning output");
   P_ERROR ("Test error output");
   P_DEBUG ("Test debug output");

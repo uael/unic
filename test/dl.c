@@ -126,7 +126,7 @@ CUTEST(dl, general) {
   ASSERT(p_dl_get_symbol(
     loader,
     "there_is_no_such_a_symbol"
-  ) == (PFuncAddr) NULL);
+  ) == (fn_addr_t) NULL);
   err_msg = p_dl_get_last_error(loader);
   ASSERT(err_msg != NULL);
   p_free(err_msg);

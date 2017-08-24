@@ -73,7 +73,7 @@ p_dl_new(const byte_t *path) {
   return loader;
 }
 
-PFuncAddr
+fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   PFN func_addr = NULL;
   APIRET ulrc;
@@ -89,7 +89,7 @@ p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
     return NULL;
   }
   loader->last_error = NO_ERROR;
-  return (PFuncAddr) func_addr;
+  return (fn_addr_t) func_addr;
 }
 
 void

@@ -61,7 +61,7 @@ p_dl_new(const byte_t *path) {
   return loader;
 }
 
-PFuncAddr
+fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   ptr_t location = NULL;
   status_t status;
@@ -81,7 +81,7 @@ p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
     return NULL;
   }
   loader->last_status = B_OK;
-  return (PFuncAddr) location;
+  return (fn_addr_t) location;
 }
 
 void

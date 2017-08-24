@@ -103,7 +103,11 @@
     (defined(P_OS_WIN) && defined(P_CC_PGI)) || \
     ((defined(P_OS_WIN) || defined(P_OS_CYGWIN) || defined(P_OS_MSYS)) && \
     defined(P_CC_GNU))
-# define P_GLOBAL_API P_C_DECL __declspec(dllexport)
+# ifdef PLIBSYS_COMPILE
+#   define P_GLOBAL_API P_C_DECL __declspec(dllexport)
+# else
+#   define P_GLOBAL_API P_C_DECL __declspec(dllimport)
+# endif
 # define P_INTERNAL_API P_C_DECL
 #elif ((__GNUC__ >= 4) && !defined(P_OS_SOLARIS) && !defined(P_OS_HPUX) && \
       !defined(P_OS_AIX)) || \

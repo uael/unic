@@ -64,9 +64,9 @@ p_dl_new(const byte_t *path) {
   return loader;
 }
 
-PFuncAddr
+fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
-  PFuncAddr func_addr = NULL;
+  fn_addr_t func_addr = NULL;
   if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
   }
