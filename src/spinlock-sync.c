@@ -15,26 +15,26 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/spinlock.h"
+#include "unic/mem.h"
+#include "unic/spinlock.h"
 
 struct spinlock {
   volatile int spin;
 };
 
 spinlock_t *
-p_spinlock_new(void) {
+u_spinlock_new(void) {
   spinlock_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(spinlock_t))) == NULL)) {
-    P_ERROR ("spinlock_t::p_spinlock_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(spinlock_t))) == NULL)) {
+    U_ERROR ("spinlock_t::u_spinlock_new: failed to allocate memory");
     return NULL;
   }
   return ret;
 }
 
 bool
-p_spinlock_lock(spinlock_t *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL)) {
+u_spinlock_lock(spinlock_t *spinlock) {
+  if (U_UNLIKELY (spinlock == NULL)) {
     return false;
   }
   while ((bool) __sync_bool_compare_and_swap(&(spinlock->spin), 0, 1)
@@ -43,16 +43,16 @@ p_spinlock_lock(spinlock_t *spinlock) {
 }
 
 bool
-p_spinlock_trylock(spinlock_t *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL)) {
+u_spinlock_trylock(spinlock_t *spinlock) {
+  if (U_UNLIKELY (spinlock == NULL)) {
     return false;
   }
   return (bool) __sync_bool_compare_and_swap(&(spinlock->spin), 0, 1);
 }
 
 bool
-p_spinlock_unlock(spinlock_t *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL)) {
+u_spinlock_unlock(spinlock_t *spinlock) {
+  if (U_UNLIKELY (spinlock == NULL)) {
     return false;
   }
   spinlock->spin = 0;
@@ -61,6 +61,6 @@ p_spinlock_unlock(spinlock_t *spinlock) {
 }
 
 void
-p_spinlock_free(spinlock_t *spinlock) {
-  p_free(spinlock);
+u_spinlock_free(spinlock_t *spinlock) {
+  u_free(spinlock);
 }

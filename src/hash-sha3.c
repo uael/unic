@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/string.h"
-#include "p/mem.h"
+#include "unic/string.h"
+#include "unic/mem.h"
 #include "hash-sha3.h"
 
 struct PHashSHA3_ {
@@ -66,15 +66,15 @@ pp_crypto_hash_sha3_process(PHashSHA3 *ctx, const u64_t *data);
 static PHashSHA3 *
 pp_crypto_hash_sha3_new_internal(uint_t bits);
 
-#define P_SHA3_SHL(val, shift) ((val) << (shift))
-#define P_SHA3_ROTL(val, shift) (P_SHA3_SHL(val, shift) | ((val) >> (64 - (shift))))
+#define U_SHA3_SHL(val, shift) ((val) << (shift))
+#define U_SHA3_ROTL(val, shift) (U_SHA3_SHL(val, shift) | ((val) >> (64 - (shift))))
 
 static void
 pp_crypto_hash_sha3_swap_bytes(u64_t *data,
   uint_t words) {
-#ifndef PLIBSYS_IS_BIGENDIAN
-  P_UNUSED (data);
-  P_UNUSED (words);
+#ifndef UNIC_IS_BIGENDIAN
+  U_UNUSED (data);
+  U_UNUSED (words);
 #else
   while (words-- > 0) {
     *data = PUINT64_TO_LE (*data);
@@ -97,11 +97,11 @@ pp_crypto_hash_sha3_keccak_theta(PHashSHA3 *ctx) {
   }
 
   /* Compute the theta effect for a given column */
-  D[0] = P_SHA3_ROTL (C[1], 1) ^ C[4];
-  D[1] = P_SHA3_ROTL (C[2], 1) ^ C[0];
-  D[2] = P_SHA3_ROTL (C[3], 1) ^ C[1];
-  D[3] = P_SHA3_ROTL (C[4], 1) ^ C[2];
-  D[4] = P_SHA3_ROTL (C[0], 1) ^ C[3];
+  D[0] = U_SHA3_ROTL (C[1], 1) ^ C[4];
+  D[1] = U_SHA3_ROTL (C[2], 1) ^ C[0];
+  D[2] = U_SHA3_ROTL (C[3], 1) ^ C[1];
+  D[3] = U_SHA3_ROTL (C[4], 1) ^ C[2];
+  D[4] = U_SHA3_ROTL (C[0], 1) ^ C[3];
 
   /* Add the theta effect to the whole column */
   for (i = 0; i < 5; ++i) {
@@ -120,30 +120,30 @@ pp_crypto_hash_sha3_keccak_rho_pi(PHashSHA3 *ctx) {
 
   /* Unroll the loop over ((0 1)(2 3))^t * (1 0) for 0 ≤ t ≤ 23 */
   tmp_A = ctx->hash[1];
-  ctx->hash[1] = P_SHA3_ROTL (ctx->hash[6], 44);
-  ctx->hash[6] = P_SHA3_ROTL (ctx->hash[9], 20);
-  ctx->hash[9] = P_SHA3_ROTL (ctx->hash[22], 61);
-  ctx->hash[22] = P_SHA3_ROTL (ctx->hash[14], 39);
-  ctx->hash[14] = P_SHA3_ROTL (ctx->hash[20], 18);
-  ctx->hash[20] = P_SHA3_ROTL (ctx->hash[2], 62);
-  ctx->hash[2] = P_SHA3_ROTL (ctx->hash[12], 43);
-  ctx->hash[12] = P_SHA3_ROTL (ctx->hash[13], 25);
-  ctx->hash[13] = P_SHA3_ROTL (ctx->hash[19], 8);
-  ctx->hash[19] = P_SHA3_ROTL (ctx->hash[23], 56);
-  ctx->hash[23] = P_SHA3_ROTL (ctx->hash[15], 41);
-  ctx->hash[15] = P_SHA3_ROTL (ctx->hash[4], 27);
-  ctx->hash[4] = P_SHA3_ROTL (ctx->hash[24], 14);
-  ctx->hash[24] = P_SHA3_ROTL (ctx->hash[21], 2);
-  ctx->hash[21] = P_SHA3_ROTL (ctx->hash[8], 55);
-  ctx->hash[8] = P_SHA3_ROTL (ctx->hash[16], 45);
-  ctx->hash[16] = P_SHA3_ROTL (ctx->hash[5], 36);
-  ctx->hash[5] = P_SHA3_ROTL (ctx->hash[3], 28);
-  ctx->hash[3] = P_SHA3_ROTL (ctx->hash[18], 21);
-  ctx->hash[18] = P_SHA3_ROTL (ctx->hash[17], 15);
-  ctx->hash[17] = P_SHA3_ROTL (ctx->hash[11], 10);
-  ctx->hash[11] = P_SHA3_ROTL (ctx->hash[7], 6);
-  ctx->hash[7] = P_SHA3_ROTL (ctx->hash[10], 3);
-  ctx->hash[10] = P_SHA3_ROTL (tmp_A, 1);
+  ctx->hash[1] = U_SHA3_ROTL (ctx->hash[6], 44);
+  ctx->hash[6] = U_SHA3_ROTL (ctx->hash[9], 20);
+  ctx->hash[9] = U_SHA3_ROTL (ctx->hash[22], 61);
+  ctx->hash[22] = U_SHA3_ROTL (ctx->hash[14], 39);
+  ctx->hash[14] = U_SHA3_ROTL (ctx->hash[20], 18);
+  ctx->hash[20] = U_SHA3_ROTL (ctx->hash[2], 62);
+  ctx->hash[2] = U_SHA3_ROTL (ctx->hash[12], 43);
+  ctx->hash[12] = U_SHA3_ROTL (ctx->hash[13], 25);
+  ctx->hash[13] = U_SHA3_ROTL (ctx->hash[19], 8);
+  ctx->hash[19] = U_SHA3_ROTL (ctx->hash[23], 56);
+  ctx->hash[23] = U_SHA3_ROTL (ctx->hash[15], 41);
+  ctx->hash[15] = U_SHA3_ROTL (ctx->hash[4], 27);
+  ctx->hash[4] = U_SHA3_ROTL (ctx->hash[24], 14);
+  ctx->hash[24] = U_SHA3_ROTL (ctx->hash[21], 2);
+  ctx->hash[21] = U_SHA3_ROTL (ctx->hash[8], 55);
+  ctx->hash[8] = U_SHA3_ROTL (ctx->hash[16], 45);
+  ctx->hash[16] = U_SHA3_ROTL (ctx->hash[5], 36);
+  ctx->hash[5] = U_SHA3_ROTL (ctx->hash[3], 28);
+  ctx->hash[3] = U_SHA3_ROTL (ctx->hash[18], 21);
+  ctx->hash[18] = U_SHA3_ROTL (ctx->hash[17], 15);
+  ctx->hash[17] = U_SHA3_ROTL (ctx->hash[11], 10);
+  ctx->hash[11] = U_SHA3_ROTL (ctx->hash[7], 6);
+  ctx->hash[7] = U_SHA3_ROTL (ctx->hash[10], 3);
+  ctx->hash[10] = U_SHA3_ROTL (tmp_A, 1);
 }
 
 /* Chi step (see [Keccak Reference, Section 2.3.1]) */
@@ -191,7 +191,7 @@ pp_crypto_hash_sha3_process(PHashSHA3 *ctx,
 static PHashSHA3 *
 pp_crypto_hash_sha3_new_internal(uint_t bits) {
   PHashSHA3 *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashSHA3))) == NULL)) {
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(PHashSHA3))) == NULL)) {
     return NULL;
   }
   ret->block_size = (1600 - bits * 2) / 8;
@@ -199,34 +199,34 @@ pp_crypto_hash_sha3_new_internal(uint_t bits) {
 }
 
 void
-p_crypto_hash_sha3_reset(PHashSHA3 *ctx) {
+u_crypto_hash_sha3_reset(PHashSHA3 *ctx) {
   memset(ctx->buf.buf, 0, 200);
   memset(ctx->hash, 0, sizeof(ctx->hash));
   ctx->len = 0;
 }
 
 PHashSHA3 *
-p_crypto_hash_sha3_224_new(void) {
+u_crypto_hash_sha3_224_new(void) {
   return pp_crypto_hash_sha3_new_internal(224);
 }
 
 PHashSHA3 *
-p_crypto_hash_sha3_256_new(void) {
+u_crypto_hash_sha3_256_new(void) {
   return pp_crypto_hash_sha3_new_internal(256);
 }
 
 PHashSHA3 *
-p_crypto_hash_sha3_384_new(void) {
+u_crypto_hash_sha3_384_new(void) {
   return pp_crypto_hash_sha3_new_internal(384);
 }
 
 PHashSHA3 *
-p_crypto_hash_sha3_512_new(void) {
+u_crypto_hash_sha3_512_new(void) {
   return pp_crypto_hash_sha3_new_internal(512);
 }
 
 void
-p_crypto_hash_sha3_update(PHashSHA3 *ctx,
+u_crypto_hash_sha3_update(PHashSHA3 *ctx,
   const ubyte_t *data,
   size_t len) {
   u32_t left, to_fill;
@@ -254,7 +254,7 @@ p_crypto_hash_sha3_update(PHashSHA3 *ctx,
 }
 
 void
-p_crypto_hash_sha3_finish(PHashSHA3 *ctx) {
+u_crypto_hash_sha3_finish(PHashSHA3 *ctx) {
   memset(ctx->buf.buf + ctx->len, 0, ctx->block_size - ctx->len);
   ctx->buf.buf[ctx->len] |= 0x06;
   ctx->buf.buf[ctx->block_size - 1] |= 0x80;
@@ -267,11 +267,11 @@ p_crypto_hash_sha3_finish(PHashSHA3 *ctx) {
 }
 
 const ubyte_t *
-p_crypto_hash_sha3_digest(PHashSHA3 *ctx) {
+u_crypto_hash_sha3_digest(PHashSHA3 *ctx) {
   return (const ubyte_t *) ctx->hash;
 }
 
 void
-p_crypto_hash_sha3_free(PHashSHA3 *ctx) {
-  p_free(ctx);
+u_crypto_hash_sha3_free(PHashSHA3 *ctx) {
+  u_free(ctx);
 }

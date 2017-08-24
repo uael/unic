@@ -15,23 +15,23 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/profiler.h"
+#include "unic/profiler.h"
 #include "profiler-private.h"
 
 u64_t
-p_profiler_get_ticks_internal() {
+u_profiler_get_ticks_internal() {
   return (u64_t) gethrtime();
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
+u_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   return (((u64_t) gethrtime()) - profiler->counter) / 1000;
 }
 
 void
-p_profiler_init(void) {
+u_profiler_init(void) {
 }
 
 void
-p_profiler_shutdown(void) {
+u_profiler_shutdown(void) {
 }

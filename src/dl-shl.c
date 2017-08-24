@@ -18,44 +18,44 @@
 #include <dl.h>
 #include <errno.h>
 
-#include "p/err.h"
-#include "p/file.h"
-#include "p/dl.h"
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/err.h"
+#include "unic/file.h"
+#include "unic/dl.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 
-typedef shl_t plibrary_handle;
+typedef shl_t unic_handle;
 
 struct dl {
-  plibrary_handle handle;
+  unic_handle handle;
   int last_error;
 };
 
 static void
-pp_dl_clean_handle(plibrary_handle handle);
+pp_dl_clean_handle(unic_handle handle);
 
 static void
-pp_dl_clean_handle(plibrary_handle handle) {
-  if (P_UNLIKELY (shl_unload(handle) != 0))
-    P_ERROR (
+pp_dl_clean_handle(unic_handle handle) {
+  if (U_UNLIKELY (shl_unload(handle) != 0))
+    U_ERROR (
       "dl_t::pp_dl_clean_handle: shl_unload() failed");
 }
 
 dl_t *
-p_dl_new(const byte_t *path) {
+u_dl_new(const byte_t *path) {
   dl_t *loader = NULL;
-  plibrary_handle handle;
-  if (!p_file_is_exists(path)) {
+  unic_handle handle;
+  if (!u_file_is_exists(path)) {
     return NULL;
   }
-  if (P_UNLIKELY (
+  if (U_UNLIKELY (
     (handle = shl_load(path, BIND_IMMEDIATE | BIND_NONFATAL | DYNAMIC_PATH, 0))
       == NULL)) {
-    P_ERROR ("dl_t::p_dl_new: shl_load() failed");
+    U_ERROR ("dl_t::u_dl_new: shl_load() failed");
     return NULL;
   }
-  if (P_UNLIKELY ((loader = p_malloc0(sizeof(dl_t))) == NULL)) {
-    P_ERROR ("dl_t::p_dl_new: failed to allocate memory");
+  if (U_UNLIKELY ((loader = u_malloc0(sizeof(dl_t))) == NULL)) {
+    U_ERROR ("dl_t::u_dl_new: failed to allocate memory");
     pp_dl_clean_handle(handle);
     return NULL;
   }
@@ -65,16 +65,16 @@ p_dl_new(const byte_t *path) {
 }
 
 fn_addr_t
-p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
+u_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   fn_addr_t func_addr = NULL;
-  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
+  if (U_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
   }
-  if (P_UNLIKELY (
+  if (U_UNLIKELY (
     shl_findsym(&loader->handle, sym, TYPE_UNDEFINED, (ptr_t) &func_addr)
       != 0)) {
-    P_ERROR (
-      "dl_t::p_dl_get_symbol: shl_findsym() failed");
+    U_ERROR (
+      "dl_t::u_dl_get_symbol: shl_findsym() failed");
     loader->last_error = (errno == 0 ? -1 : errno);
     return NULL;
   }
@@ -83,31 +83,31 @@ p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
 }
 
 void
-p_dl_free(dl_t *loader) {
-  if (P_UNLIKELY (loader == NULL)) {
+u_dl_free(dl_t *loader) {
+  if (U_UNLIKELY (loader == NULL)) {
     return;
   }
   pp_dl_clean_handle(loader->handle);
-  p_free(loader);
+  u_free(loader);
 }
 
 byte_t *
-p_dl_get_last_error(dl_t *loader) {
+u_dl_get_last_error(dl_t *loader) {
   if (loader == NULL) {
     return NULL;
   }
   if (loader->last_error == 0) {
     return NULL;
   } else if (loader->last_error == -1) {
-    return p_strdup("Failed to find a symbol");
+    return u_strdup("Failed to find a symbol");
   } else {
-    return p_strdup(strerror(loader->last_error));
+    return u_strdup(strerror(loader->last_error));
   }
 }
 
 bool
-p_dl_is_ref_counted(void) {
-#if defined (P_OS_HPUX) && defined (P_CPU_HPPA) && (PLIBSYS_SIZEOF_VOID_P == 4)
+u_dl_is_ref_counted(void) {
+#if defined (U_OS_HPUX) && defined (U_ARCH_HPPA) && (UNIC_SIZEOF_VOID_P == 4)
   return false;
 #else
   return true;

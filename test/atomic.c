@@ -16,15 +16,15 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 /* Actually we couldn't test the work of the atomic operations across the
  * threads, but at least we can test the sanity of operations */
@@ -34,63 +34,63 @@ CUTEST(atomic, general) {
   int atomic_int;
   int i;
 
-  (void) p_atomic_is_lock_free();
+  (void) u_atomic_is_lock_free();
   atomic_int = 0;
-  p_atomic_int_set(&atomic_int, 10);
-  ASSERT(p_atomic_int_add(&atomic_int, 5) == 10);
-  ASSERT(p_atomic_int_get(&atomic_int) == 15);
-  p_atomic_int_add(&atomic_int, -5);
-  ASSERT(p_atomic_int_get(&atomic_int) == 10);
-  p_atomic_int_inc(&atomic_int);
-  ASSERT(p_atomic_int_get(&atomic_int) == 11);
-  ASSERT(p_atomic_int_dec_and_test(&atomic_int) == false);
-  ASSERT(p_atomic_int_get(&atomic_int) == 10);
-  ASSERT(p_atomic_int_compare_and_exchange(&atomic_int, 10, -10) == true);
-  ASSERT(p_atomic_int_get(&atomic_int) == -10);
-  ASSERT(p_atomic_int_compare_and_exchange(&atomic_int, 10, 20) == false);
-  ASSERT(p_atomic_int_get(&atomic_int) == -10);
-  p_atomic_int_inc(&atomic_int);
-  ASSERT(p_atomic_int_get(&atomic_int) == -9);
-  p_atomic_int_set(&atomic_int, 4);
-  ASSERT(p_atomic_int_get(&atomic_int) == 4);
-  ASSERT(p_atomic_int_xor((uint_t *) &atomic_int, (uint_t) 1) == 4);
-  ASSERT(p_atomic_int_get(&atomic_int) == 5);
-  ASSERT(p_atomic_int_or((uint_t *) &atomic_int, (uint_t) 2) == 5);
-  ASSERT(p_atomic_int_get(&atomic_int) == 7);
-  ASSERT(p_atomic_int_and((uint_t *) &atomic_int, (uint_t) 1) == 7);
-  ASSERT(p_atomic_int_get(&atomic_int) == 1);
-  p_atomic_int_set(&atomic_int, 51);
-  ASSERT(p_atomic_int_get(&atomic_int) == 51);
+  u_atomic_int_set(&atomic_int, 10);
+  ASSERT(u_atomic_int_add(&atomic_int, 5) == 10);
+  ASSERT(u_atomic_int_get(&atomic_int) == 15);
+  u_atomic_int_add(&atomic_int, -5);
+  ASSERT(u_atomic_int_get(&atomic_int) == 10);
+  u_atomic_int_inc(&atomic_int);
+  ASSERT(u_atomic_int_get(&atomic_int) == 11);
+  ASSERT(u_atomic_int_dec_and_test(&atomic_int) == false);
+  ASSERT(u_atomic_int_get(&atomic_int) == 10);
+  ASSERT(u_atomic_int_compare_and_exchange(&atomic_int, 10, -10) == true);
+  ASSERT(u_atomic_int_get(&atomic_int) == -10);
+  ASSERT(u_atomic_int_compare_and_exchange(&atomic_int, 10, 20) == false);
+  ASSERT(u_atomic_int_get(&atomic_int) == -10);
+  u_atomic_int_inc(&atomic_int);
+  ASSERT(u_atomic_int_get(&atomic_int) == -9);
+  u_atomic_int_set(&atomic_int, 4);
+  ASSERT(u_atomic_int_get(&atomic_int) == 4);
+  ASSERT(u_atomic_int_xor((uint_t *) &atomic_int, (uint_t) 1) == 4);
+  ASSERT(u_atomic_int_get(&atomic_int) == 5);
+  ASSERT(u_atomic_int_or((uint_t *) &atomic_int, (uint_t) 2) == 5);
+  ASSERT(u_atomic_int_get(&atomic_int) == 7);
+  ASSERT(u_atomic_int_and((uint_t *) &atomic_int, (uint_t) 1) == 7);
+  ASSERT(u_atomic_int_get(&atomic_int) == 1);
+  u_atomic_int_set(&atomic_int, 51);
+  ASSERT(u_atomic_int_get(&atomic_int) == 51);
   for (i = 51; i > 1; --i) {
-    ASSERT(p_atomic_int_dec_and_test(&atomic_int) == false);
-    ASSERT(p_atomic_int_get(&atomic_int) == (i - 1));
+    ASSERT(u_atomic_int_dec_and_test(&atomic_int) == false);
+    ASSERT(u_atomic_int_get(&atomic_int) == (i - 1));
   }
-  ASSERT(p_atomic_int_dec_and_test(&atomic_int) == true);
-  ASSERT(p_atomic_int_get(&atomic_int) == 0);
+  ASSERT(u_atomic_int_dec_and_test(&atomic_int) == true);
+  ASSERT(u_atomic_int_get(&atomic_int) == 0);
   atomic_pointer = NULL;
-  p_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (P_MAXSIZE));
+  u_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (U_MAXSIZE));
   ASSERT(
-    p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(P_MAXSIZE)
+    u_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(U_MAXSIZE)
   );
-  p_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (100));
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(100));
-  ASSERT(p_atomic_pointer_add(&atomic_pointer, (ssize_t) 100) == 100);
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(200));
-  p_atomic_pointer_set(&atomic_pointer, PINT_TO_POINTER (4));
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(4));
-  ASSERT(p_atomic_pointer_xor(&atomic_pointer, (size_t) 1) == 4);
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(5));
-  ASSERT(p_atomic_pointer_or(&atomic_pointer, (size_t) 2) == 5);
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(7));
-  ASSERT(p_atomic_pointer_and(&atomic_pointer, (size_t) 1) == 7);
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(1));
+  u_atomic_pointer_set(&atomic_pointer, PUINT_TO_POINTER (100));
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(100));
+  ASSERT(u_atomic_pointer_add(&atomic_pointer, (ssize_t) 100) == 100);
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == PUINT_TO_POINTER(200));
+  u_atomic_pointer_set(&atomic_pointer, PINT_TO_POINTER (4));
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(4));
+  ASSERT(u_atomic_pointer_xor(&atomic_pointer, (size_t) 1) == 4);
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(5));
+  ASSERT(u_atomic_pointer_or(&atomic_pointer, (size_t) 2) == 5);
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(7));
+  ASSERT(u_atomic_pointer_and(&atomic_pointer, (size_t) 1) == 7);
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == PINT_TO_POINTER(1));
   ASSERT(
-    p_atomic_pointer_compare_and_exchange(
+    u_atomic_pointer_compare_and_exchange(
       &atomic_pointer, PUINT_TO_POINTER(1),
       NULL
     ) == true
   );
-  ASSERT(p_atomic_pointer_get(&atomic_pointer) == NULL);
+  ASSERT(u_atomic_pointer_get(&atomic_pointer) == NULL);
   return CUTE_SUCCESS;
 }
 

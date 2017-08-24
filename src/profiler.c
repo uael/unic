@@ -15,45 +15,45 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/profiler.h"
+#include "unic/mem.h"
+#include "unic/profiler.h"
 #include "profiler-private.h"
 
 extern u64_t
-p_profiler_get_ticks_internal(void);
+u_profiler_get_ticks_internal(void);
 
 extern u64_t
-p_profiler_elapsed_usecs_internal(
+u_profiler_elapsed_usecs_internal(
   const profiler_t *profiler);
 
 profiler_t *
-p_profiler_new() {
+u_profiler_new() {
   profiler_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(profiler_t))) == NULL)) {
-    P_ERROR ("profiler_t: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(profiler_t))) == NULL)) {
+    U_ERROR ("profiler_t: failed to allocate memory");
     return NULL;
   }
-  ret->counter = p_profiler_get_ticks_internal();
+  ret->counter = u_profiler_get_ticks_internal();
   return ret;
 }
 
 void
-p_profiler_reset(profiler_t *profiler) {
-  if (P_UNLIKELY (profiler == NULL)) {
+u_profiler_reset(profiler_t *profiler) {
+  if (U_UNLIKELY (profiler == NULL)) {
     return;
   }
-  profiler->counter = p_profiler_get_ticks_internal();
+  profiler->counter = u_profiler_get_ticks_internal();
 }
 
 u64_t
-p_profiler_elapsed_usecs(const profiler_t *profiler) {
-  if (P_UNLIKELY (profiler == NULL)) {
+u_profiler_elapsed_usecs(const profiler_t *profiler) {
+  if (U_UNLIKELY (profiler == NULL)) {
     return 0;
   }
-  return p_profiler_elapsed_usecs_internal(profiler);
+  return u_profiler_elapsed_usecs_internal(profiler);
 }
 
 void
-p_profiler_free(profiler_t *profiler) {
-  p_free(profiler);
+u_profiler_free(profiler_t *profiler) {
+  u_free(profiler);
 }

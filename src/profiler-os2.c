@@ -19,11 +19,11 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
-#include "p/profiler.h"
+#include "unic/profiler.h"
 #include "profiler-private.h"
 
-#if PLIBSYS_HAS_LLDIV
-# ifdef P_CC_GNU
+#if UNIC_HAS_LLDIV
+# ifdef U_CC_GNU
 #   define __USE_ISOC99
 # endif
 #endif
@@ -31,35 +31,35 @@
 static u64_t pp_profiler_freq = 1;
 
 u64_t
-p_profiler_get_ticks_internal() {
+u_profiler_get_ticks_internal() {
   union {
     u64_t ticks;
     QWORD tcounter;
   } tick_time;
-  if (P_UNLIKELY (DosTmrQueryTime(&tick_time.tcounter) != NO_ERROR)) {
-    P_ERROR (
-      "profiler_t::p_profiler_get_ticks_internal: DosTmrQueryTime() failed");
+  if (U_UNLIKELY (DosTmrQueryTime(&tick_time.tcounter) != NO_ERROR)) {
+    U_ERROR (
+      "profiler_t::u_profiler_get_ticks_internal: DosTmrQueryTime() failed");
     return 0;
   }
   return tick_time.ticks;
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
+u_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   u64_t ticks;
-#if PLIBSYS_HAS_LLDIV
+#if UNIC_HAS_LLDIV
   lldiv_t ldres;
 #endif
   u64_t quot;
   u64_t rem;
-  ticks = p_profiler_get_ticks_internal();
+  ticks = u_profiler_get_ticks_internal();
   if (ticks < profiler->counter) {
-    P_WARNING (
-      "profiler_t::p_profiler_elapsed_usecs_internal: negative jitter");
+    U_WARNING (
+      "profiler_t::u_profiler_elapsed_usecs_internal: negative jitter");
     return 1;
   }
   ticks -= profiler->counter;
-#if PLIBSYS_HAS_LLDIV
+#if UNIC_HAS_LLDIV
   ldres = lldiv((long long) ticks, (long long) pp_profiler_freq);
   quot = ldres.quot;
   rem = ldres.rem;
@@ -74,16 +74,16 @@ p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
 }
 
 void
-p_profiler_init(void) {
+u_profiler_init(void) {
   ULONG freq;
-  if (P_UNLIKELY (DosTmrQueryFreq(&freq) != NO_ERROR)) {
-    P_ERROR ("profiler_t::p_profiler_init: DosTmrQueryFreq() failed");
+  if (U_UNLIKELY (DosTmrQueryFreq(&freq) != NO_ERROR)) {
+    U_ERROR ("profiler_t::u_profiler_init: DosTmrQueryFreq() failed");
     return;
   }
   pp_profiler_freq = (u64_t) freq;
 }
 
 void
-p_profiler_shutdown(void) {
+u_profiler_shutdown(void) {
   pp_profiler_freq = 1;
 }

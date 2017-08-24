@@ -16,38 +16,38 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 #define PDIR_ENTRY_DIR    "test_2"
 #define PDIR_ENTRY_FILE    "test_file.txt"
-#define PDIR_TEST_DIR    "." P_DIR_SEP "pdir_test_dir"
-#define PDIR_TEST_DIR_IN  "." P_DIR_SEP "pdir_test_dir" P_DIR_SEP "test_2"
-#define PDIR_TEST_FILE    "." P_DIR_SEP "pdir_test_dir" P_DIR_SEP "test_file.txt"
+#define PDIR_TEST_DIR    "." U_DIR_SEP "pdir_test_dir"
+#define PDIR_TEST_DIR_IN  "." U_DIR_SEP "pdir_test_dir" U_DIR_SEP "test_2"
+#define PDIR_TEST_FILE    "." U_DIR_SEP "pdir_test_dir" U_DIR_SEP "test_file.txt"
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 CUTEST(dir, nomem) {
@@ -58,39 +58,39 @@ CUTEST(dir, nomem) {
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
 
-  ASSERT(p_mem_set_vtable(&vtable) == true);
+  ASSERT(u_mem_set_vtable(&vtable) == true);
 
   /* Cleanup previous run */
-  p_dir_remove(PDIR_TEST_DIR_IN, NULL);
-  p_dir_remove(PDIR_TEST_DIR, NULL);
+  u_dir_remove(PDIR_TEST_DIR_IN, NULL);
+  u_dir_remove(PDIR_TEST_DIR, NULL);
 
-  ASSERT(p_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
-  ASSERT(p_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
+  ASSERT(u_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
+  ASSERT(u_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
 
-  ASSERT(p_dir_new(PDIR_TEST_DIR "/", NULL) == NULL);
+  ASSERT(u_dir_new(PDIR_TEST_DIR "/", NULL) == NULL);
 
   /* Revert memory management back */
-  p_mem_restore_vtable();
+  u_mem_restore_vtable();
 
   /* Try out of memory when iterating */
-  dir = p_dir_new(PDIR_TEST_DIR"/", NULL);
+  dir = u_dir_new(PDIR_TEST_DIR"/", NULL);
   ASSERT(dir != NULL);
 
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
 
-  ASSERT(p_mem_set_vtable(&vtable) == true);
+  ASSERT(u_mem_set_vtable(&vtable) == true);
 
-  ASSERT(p_dir_get_next_entry(dir, NULL) == NULL);
+  ASSERT(u_dir_get_next_entry(dir, NULL) == NULL);
 
   /* Cleanup */
-  p_mem_restore_vtable();
+  u_mem_restore_vtable();
 
-  p_dir_free(dir);
+  u_dir_free(dir);
 
-  ASSERT(p_dir_remove(PDIR_TEST_DIR_IN, NULL) == true);
-  ASSERT(p_dir_remove(PDIR_TEST_DIR, NULL) == true);
+  ASSERT(u_dir_remove(PDIR_TEST_DIR_IN, NULL) == true);
+  ASSERT(u_dir_remove(PDIR_TEST_DIR, NULL) == true);
 
   return CUTE_SUCCESS;
 }
@@ -107,53 +107,53 @@ CUTEST(dir, general) {
   bool has_entry_dir;
   bool has_entry_file;
 
-  ASSERT(p_dir_new(NULL, NULL) == NULL);
-  ASSERT(p_dir_new("."
-    P_DIR_SEP
+  ASSERT(u_dir_new(NULL, NULL) == NULL);
+  ASSERT(u_dir_new("."
+    U_DIR_SEP
     "pdir_test_dir_new", NULL) == NULL);
-  ASSERT(p_dir_create(NULL, -1, NULL) == false);
-#ifndef P_OS_VMS
-  ASSERT(p_dir_create("."
-    P_DIR_SEP
+  ASSERT(u_dir_create(NULL, -1, NULL) == false);
+#ifndef U_OS_VMS
+  ASSERT(u_dir_create("."
+    U_DIR_SEP
     "pdir_test_dir_new"
-    P_DIR_SEP
+    U_DIR_SEP
     "test_dir", -1, NULL) == false);
 #endif
-  ASSERT(p_dir_remove(NULL, NULL) == false);
-  ASSERT(p_dir_remove("."
-    P_DIR_SEP
+  ASSERT(u_dir_remove(NULL, NULL) == false);
+  ASSERT(u_dir_remove("."
+    U_DIR_SEP
     "pdir_test_dir_new", NULL) == false);
-  ASSERT(p_dir_is_exists(NULL) == false);
-  ASSERT(p_dir_is_exists("."
-    P_DIR_SEP
+  ASSERT(u_dir_is_exists(NULL) == false);
+  ASSERT(u_dir_is_exists("."
+    U_DIR_SEP
     "pdir_test_dir_new") == false);
-  ASSERT(p_dir_get_path(NULL) == NULL);
-  ASSERT(p_dir_get_next_entry(NULL, NULL) == NULL);
-  ASSERT(p_dir_rewind(NULL, NULL) == false);
+  ASSERT(u_dir_get_path(NULL) == NULL);
+  ASSERT(u_dir_get_next_entry(NULL, NULL) == NULL);
+  ASSERT(u_dir_rewind(NULL, NULL) == false);
 
-  p_dir_entry_free(NULL);
-  p_dir_free(NULL);
+  u_dir_entry_free(NULL);
+  u_dir_free(NULL);
 
   /* Cleanup previous run */
-  p_dir_remove(PDIR_TEST_DIR_IN, NULL);
-  p_dir_remove(PDIR_TEST_DIR, NULL);
+  u_dir_remove(PDIR_TEST_DIR_IN, NULL);
+  u_dir_remove(PDIR_TEST_DIR, NULL);
 
-  ASSERT(p_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
-  ASSERT(p_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
-  ASSERT(p_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
-  ASSERT(p_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
+  ASSERT(u_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
+  ASSERT(u_dir_create(PDIR_TEST_DIR, 0777, NULL) == true);
+  ASSERT(u_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
+  ASSERT(u_dir_create(PDIR_TEST_DIR_IN, 0777, NULL) == true);
   file = fopen(PDIR_TEST_FILE, "w");
   ASSERT(file != NULL);
-  ASSERT(p_file_is_exists(PDIR_TEST_FILE) == true);
+  ASSERT(u_file_is_exists(PDIR_TEST_FILE) == true);
 
   fprintf(file, "This is a test file string\n");
 
   ASSERT(fclose(file) == 0);
 
-  ASSERT(p_dir_is_exists(PDIR_TEST_DIR) == true);
-  ASSERT(p_dir_is_exists(PDIR_TEST_DIR_IN) == true);
+  ASSERT(u_dir_is_exists(PDIR_TEST_DIR) == true);
+  ASSERT(u_dir_is_exists(PDIR_TEST_DIR_IN) == true);
 
-  dir = p_dir_new(PDIR_TEST_DIR"/", NULL);
+  dir = u_dir_new(PDIR_TEST_DIR"/", NULL);
   ASSERT(dir != NULL);
 
   dir_count = 0;
@@ -161,17 +161,17 @@ CUTEST(dir, general) {
   has_entry_dir = false;
   has_entry_file = false;
 
-  while ((entry = p_dir_get_next_entry(dir, NULL)) != NULL) {
+  while ((entry = u_dir_get_next_entry(dir, NULL)) != NULL) {
     ASSERT(entry->name != NULL);
 
     switch (entry->type) {
-      case P_DIRENT_DIR:
+      case U_DIRENT_DIR:
         ++dir_count;
         break;
-      case P_DIRENT_FILE:
+      case U_DIRENT_FILE:
         ++file_count;
         break;
-      case P_DIRENT_OTHER:
+      case U_DIRENT_OTHER:
       default:
         break;
     }
@@ -182,7 +182,7 @@ CUTEST(dir, general) {
       has_entry_file = true;
     }
 
-    p_dir_entry_free(entry);
+    u_dir_entry_free(entry);
   }
 
   ASSERT(dir_count > 0 && dir_count < 4);
@@ -190,24 +190,24 @@ CUTEST(dir, general) {
   ASSERT(has_entry_dir == true);
   ASSERT(has_entry_file == true);
 
-  ASSERT(p_dir_rewind(dir, NULL) == true);
+  ASSERT(u_dir_rewind(dir, NULL) == true);
 
   dir_count_2 = 0;
   file_count_2 = 0;
   has_entry_dir = false;
   has_entry_file = false;
 
-  while ((entry = p_dir_get_next_entry(dir, NULL)) != NULL) {
+  while ((entry = u_dir_get_next_entry(dir, NULL)) != NULL) {
     ASSERT(entry->name != NULL);
 
     switch (entry->type) {
-      case P_DIRENT_DIR:
+      case U_DIRENT_DIR:
         ++dir_count_2;
         break;
-      case P_DIRENT_FILE:
+      case U_DIRENT_FILE:
         ++file_count_2;
         break;
-      case P_DIRENT_OTHER:
+      case U_DIRENT_OTHER:
       default:
         break;
     }
@@ -218,7 +218,7 @@ CUTEST(dir, general) {
       has_entry_file = true;
     }
 
-    p_dir_entry_free(entry);
+    u_dir_entry_free(entry);
   }
 
   ASSERT(dir_count_2 > 0 && dir_count_2 < 4);
@@ -231,18 +231,18 @@ CUTEST(dir, general) {
   ASSERT(file_count == file_count_2);
 
   /* Remove all stuff */
-  ASSERT(p_file_remove(PDIR_TEST_FILE, NULL) == true);
-  ASSERT(p_dir_remove(PDIR_TEST_DIR, NULL) == false);
-  ASSERT(p_dir_remove(PDIR_TEST_DIR_IN, NULL) == true);
-  ASSERT(p_dir_remove(PDIR_TEST_DIR, NULL) == true);
+  ASSERT(u_file_remove(PDIR_TEST_FILE, NULL) == true);
+  ASSERT(u_dir_remove(PDIR_TEST_DIR, NULL) == false);
+  ASSERT(u_dir_remove(PDIR_TEST_DIR_IN, NULL) == true);
+  ASSERT(u_dir_remove(PDIR_TEST_DIR, NULL) == true);
 
-  ASSERT(p_dir_is_exists(PDIR_TEST_DIR_IN) == false);
-  ASSERT(p_dir_is_exists(PDIR_TEST_DIR) == false);
-  orig_path = p_dir_get_path(dir);
+  ASSERT(u_dir_is_exists(PDIR_TEST_DIR_IN) == false);
+  ASSERT(u_dir_is_exists(PDIR_TEST_DIR) == false);
+  orig_path = u_dir_get_path(dir);
   ASSERT(strcmp(orig_path, PDIR_TEST_DIR "/") == 0);
-  p_free(orig_path);
+  u_free(orig_path);
 
-  p_dir_free(dir);
+  u_dir_free(dir);
 
   return CUTE_SUCCESS;
 }

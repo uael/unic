@@ -17,20 +17,20 @@
 
 /* More emulation variants: https://github.com/neosmart/RWLock */
 
-#include "p/mem.h"
-#include "p/atomic.h"
-#include "p/uthread.h"
-#include "p/rwlock.h"
+#include "unic/mem.h"
+#include "unic/atomic.h"
+#include "unic/uthread.h"
+#include "unic/rwlock.h"
 
-#define P_RWLOCK_XP_MAX_SPIN 4000
-#define P_RWLOCK_XP_IS_CLEAR(lock) (((lock) & 0x40007FFF) == 0)
-#define P_RWLOCK_XP_IS_WRITER(lock) (((lock) & 0x40000000) != 0)
-#define P_RWLOCK_XP_SET_WRITER(lock) ((lock) | 0x40000000)
-#define P_RWLOCK_XP_UNSET_WRITER(lock) ((lock) & (~0x40000000))
-#define P_RWLOCK_XP_SET_READERS(lock, readers) (((lock) & (~0x00007FFF)) | (readers))
-#define P_RWLOCK_XP_READER_COUNT(lock) ((lock) & 0x00007FFF)
-#define P_RWLOCK_XP_SET_WAITING(lock, waiting) (((lock) & (~0x3FFF8000)) | ((waiting) << 15))
-#define P_RWLOCK_XP_WAITING_COUNT(lock) (((lock) & 0x3FFF8000) >> 15)
+#define U_RWLOCK_XP_MAX_SPIN 4000
+#define U_RWLOCK_XP_IS_CLEAR(lock) (((lock) & 0x40007FFF) == 0)
+#define U_RWLOCK_XP_IS_WRITER(lock) (((lock) & 0x40000000) != 0)
+#define U_RWLOCK_XP_SET_WRITER(lock) ((lock) | 0x40000000)
+#define U_RWLOCK_XP_UNSET_WRITER(lock) ((lock) & (~0x40000000))
+#define U_RWLOCK_XP_SET_READERS(lock, readers) (((lock) & (~0x00007FFF)) | (readers))
+#define U_RWLOCK_XP_READER_COUNT(lock) ((lock) & 0x00007FFF)
+#define U_RWLOCK_XP_SET_WAITING(lock, waiting) (((lock) & (~0x3FFF8000)) | ((waiting) << 15))
+#define U_RWLOCK_XP_WAITING_COUNT(lock) (((lock) & 0x3FFF8000) >> 15)
 
 typedef VOID    (WINAPI
   *InitializeSRWLockFunc)(
@@ -183,7 +183,7 @@ pp_rwlock_init_vista(rwlock_t *lock) {
 
 static void
 pp_rwlock_close_vista(rwlock_t *lock) {
-  P_UNUSED (lock);
+  U_UNUSED (lock);
 }
 
 static bool
@@ -225,16 +225,16 @@ pp_rwlock_end_write_vista(rwlock_t *lock) {
 static bool
 pp_rwlock_init_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp;
-  if ((lock->lock = p_malloc0(sizeof(PRWLockXP))) == NULL) {
-    P_ERROR ("rwlock_t::pp_rwlock_init_xp: failed to allocate memory");
+  if ((lock->lock = u_malloc0(sizeof(PRWLockXP))) == NULL) {
+    U_ERROR ("rwlock_t::pp_rwlock_init_xp: failed to allocate memory");
     return false;
   }
   rwl_xp = ((PRWLockXP *) lock->lock);
   rwl_xp->lock = 0;
   rwl_xp->event = CreateEventA(NULL, false, false, NULL);
-  if (P_UNLIKELY (rwl_xp->event == NULL)) {
-    P_ERROR ("rwlock_t::pp_rwlock_init_xp: CreateEventA() failed");
-    p_free(lock->lock);
+  if (U_UNLIKELY (rwl_xp->event == NULL)) {
+    U_ERROR ("rwlock_t::pp_rwlock_init_xp: CreateEventA() failed");
+    u_free(lock->lock);
     lock->lock = NULL;
     return false;
   }
@@ -244,7 +244,7 @@ pp_rwlock_init_xp(rwlock_t *lock) {
 static void
 pp_rwlock_close_xp(rwlock_t *lock) {
   CloseHandle(((PRWLockXP *) lock->lock)->event);
-  p_free(lock->lock);
+  u_free(lock->lock);
 }
 
 static bool
@@ -255,11 +255,11 @@ pp_rwlock_start_read_xp(rwlock_t *lock) {
   u32_t counter;
   for (i = 0;; ++i) {
     tmp_lock =
-      (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
-    if (!P_RWLOCK_XP_IS_WRITER (tmp_lock)) {
-      counter = P_RWLOCK_XP_SET_READERS (tmp_lock,
-        P_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
-      if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+      (u32_t) u_atomic_int_get((const volatile int *) &rwl_xp->lock);
+    if (!U_RWLOCK_XP_IS_WRITER (tmp_lock)) {
+      counter = U_RWLOCK_XP_SET_READERS (tmp_lock,
+        U_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
+      if (u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
         (int) tmp_lock,
         (int) counter
       ) == true) {
@@ -268,29 +268,29 @@ pp_rwlock_start_read_xp(rwlock_t *lock) {
         continue;
       }
     } else {
-      if (P_LIKELY (i < P_RWLOCK_XP_MAX_SPIN)) {
-        p_uthread_yield();
+      if (U_LIKELY (i < U_RWLOCK_XP_MAX_SPIN)) {
+        u_uthread_yield();
         continue;
       }
-      counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
-        P_RWLOCK_XP_WAITING_COUNT(tmp_lock) + 1);
-      if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+      counter = U_RWLOCK_XP_SET_WAITING (tmp_lock,
+        U_RWLOCK_XP_WAITING_COUNT(tmp_lock) + 1);
+      if (u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
         (int) tmp_lock,
         (int) counter
       ) != true) {
         continue;
       }
       i = 0;
-      if (P_UNLIKELY (
+      if (U_UNLIKELY (
         WaitForSingleObject(rwl_xp->event, INFINITE) != WAIT_OBJECT_0))
-        P_WARNING (
+        U_WARNING (
           "rwlock_t::pp_rwlock_start_read_xp: WaitForSingleObject() failed, go ahead");
       do {
-        tmp_lock = p_atomic_int_get((const volatile int *) &rwl_xp->lock);
-        counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
-          P_RWLOCK_XP_WAITING_COUNT(tmp_lock) - 1);
+        tmp_lock = u_atomic_int_get((const volatile int *) &rwl_xp->lock);
+        counter = U_RWLOCK_XP_SET_WAITING (tmp_lock,
+          U_RWLOCK_XP_WAITING_COUNT(tmp_lock) - 1);
       } while (
-        p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+        u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
           (int) tmp_lock,
           (int) counter
         ) != true);
@@ -304,14 +304,14 @@ pp_rwlock_start_read_try_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
   u32_t tmp_lock;
   u32_t counter;
-  tmp_lock = (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock
+  tmp_lock = (u32_t) u_atomic_int_get((const volatile int *) &rwl_xp->lock
   );
-  if (P_RWLOCK_XP_IS_WRITER (tmp_lock)) {
+  if (U_RWLOCK_XP_IS_WRITER (tmp_lock)) {
     return false;
   }
   counter =
-    P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
-  return p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+    U_RWLOCK_XP_SET_READERS (tmp_lock, U_RWLOCK_XP_READER_COUNT(tmp_lock) + 1);
+  return u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
     (int) tmp_lock,
     (int) counter
   );
@@ -324,18 +324,18 @@ pp_rwlock_end_read_xp(rwlock_t *lock) {
   u32_t counter;
   while (true) {
     tmp_lock =
-      (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
-    counter = P_RWLOCK_XP_READER_COUNT (tmp_lock);
-    if (P_UNLIKELY (counter == 0)) {
+      (u32_t) u_atomic_int_get((const volatile int *) &rwl_xp->lock);
+    counter = U_RWLOCK_XP_READER_COUNT (tmp_lock);
+    if (U_UNLIKELY (counter == 0)) {
       return true;
     }
-    if (counter == 1 && P_RWLOCK_XP_WAITING_COUNT (tmp_lock) != 0) {
+    if (counter == 1 && U_RWLOCK_XP_WAITING_COUNT (tmp_lock) != 0) {
       /* A duplicate wake up notification is possible */
-      if (P_UNLIKELY (SetEvent(rwl_xp->event) == 0))
-        P_WARNING ("rwlock_t::pp_rwlock_end_read_xp: SetEvent() failed");
+      if (U_UNLIKELY (SetEvent(rwl_xp->event) == 0))
+        U_WARNING ("rwlock_t::pp_rwlock_end_read_xp: SetEvent() failed");
     }
-    counter = P_RWLOCK_XP_SET_READERS (tmp_lock, counter - 1);
-    if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+    counter = U_RWLOCK_XP_SET_READERS (tmp_lock, counter - 1);
+    if (u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
       (int) tmp_lock,
       (int) counter
     ) == true) {
@@ -353,10 +353,10 @@ pp_rwlock_start_write_xp(rwlock_t *lock) {
   u32_t counter;
   for (i = 0;; ++i) {
     tmp_lock =
-      (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
-    if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
-      counter = P_RWLOCK_XP_SET_WRITER (tmp_lock);
-      if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+      (u32_t) u_atomic_int_get((const volatile int *) &rwl_xp->lock);
+    if (U_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
+      counter = U_RWLOCK_XP_SET_WRITER (tmp_lock);
+      if (u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
         (int) tmp_lock,
         (int) counter
       ) == true) {
@@ -365,29 +365,29 @@ pp_rwlock_start_write_xp(rwlock_t *lock) {
         continue;
       }
     } else {
-      if (P_LIKELY (i < P_RWLOCK_XP_MAX_SPIN)) {
-        p_uthread_yield();
+      if (U_LIKELY (i < U_RWLOCK_XP_MAX_SPIN)) {
+        u_uthread_yield();
         continue;
       }
-      counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
-        P_RWLOCK_XP_WAITING_COUNT(tmp_lock) + 1);
-      if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+      counter = U_RWLOCK_XP_SET_WAITING (tmp_lock,
+        U_RWLOCK_XP_WAITING_COUNT(tmp_lock) + 1);
+      if (u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
         (int) tmp_lock,
         (int) counter
       ) != true) {
         continue;
       }
       i = 0;
-      if (P_UNLIKELY (
+      if (U_UNLIKELY (
         WaitForSingleObject(rwl_xp->event, INFINITE) != WAIT_OBJECT_0))
-        P_WARNING (
+        U_WARNING (
           "rwlock_t::pp_rwlock_start_write_xp: WaitForSingleObject() failed, go ahead");
       do {
-        tmp_lock = p_atomic_int_get((const volatile int *) &rwl_xp->lock);
-        counter = P_RWLOCK_XP_SET_WAITING (tmp_lock,
-          P_RWLOCK_XP_WAITING_COUNT(tmp_lock) - 1);
+        tmp_lock = u_atomic_int_get((const volatile int *) &rwl_xp->lock);
+        counter = U_RWLOCK_XP_SET_WAITING (tmp_lock,
+          U_RWLOCK_XP_WAITING_COUNT(tmp_lock) - 1);
       } while (
-        p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+        u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
           (int) tmp_lock,
           (int) counter
         ) != true);
@@ -400,12 +400,12 @@ static bool
 pp_rwlock_start_write_try_xp(rwlock_t *lock) {
   PRWLockXP *rwl_xp = ((PRWLockXP *) lock->lock);
   u32_t tmp_lock;
-  tmp_lock = (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock
+  tmp_lock = (u32_t) u_atomic_int_get((const volatile int *) &rwl_xp->lock
   );
-  if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
-    return p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+  if (U_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
+    return u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
       (int) tmp_lock,
-      (int) P_RWLOCK_XP_SET_WRITER (tmp_lock));
+      (int) U_RWLOCK_XP_SET_WRITER (tmp_lock));
   }
   return false;
 }
@@ -417,21 +417,21 @@ pp_rwlock_end_write_xp(rwlock_t *lock) {
   while (true) {
     while (true) {
       tmp_lock =
-        (u32_t) p_atomic_int_get((const volatile int *) &rwl_xp->lock);
-      if (P_UNLIKELY (!P_RWLOCK_XP_IS_WRITER(tmp_lock))) {
+        (u32_t) u_atomic_int_get((const volatile int *) &rwl_xp->lock);
+      if (U_UNLIKELY (!U_RWLOCK_XP_IS_WRITER(tmp_lock))) {
         return true;
       }
-      if (P_RWLOCK_XP_WAITING_COUNT (tmp_lock) == 0) {
+      if (U_RWLOCK_XP_WAITING_COUNT (tmp_lock) == 0) {
         break;
       }
 
       /* Only the one end-of-write call can be */
-      if (P_UNLIKELY (SetEvent(rwl_xp->event) == 0))
-        P_WARNING ("rwlock_t::pp_rwlock_end_write_xp: SetEvent() failed");
+      if (U_UNLIKELY (SetEvent(rwl_xp->event) == 0))
+        U_WARNING ("rwlock_t::pp_rwlock_end_write_xp: SetEvent() failed");
     }
-    if (p_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
+    if (u_atomic_int_compare_and_exchange((volatile int *) &rwl_xp->lock,
       (int) tmp_lock,
-      (int) P_RWLOCK_XP_UNSET_WRITER (tmp_lock)) == true) {
+      (int) U_RWLOCK_XP_UNSET_WRITER (tmp_lock)) == true) {
         break;
     }
   }
@@ -439,83 +439,83 @@ pp_rwlock_end_write_xp(rwlock_t *lock) {
 }
 
 rwlock_t *
-p_rwlock_new(void) {
+u_rwlock_new(void) {
   rwlock_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(rwlock_t))) == NULL)) {
-    P_ERROR ("rwlock_t::p_rwlock_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(rwlock_t))) == NULL)) {
+    U_ERROR ("rwlock_t::u_rwlock_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (pp_rwlock_init_func(ret) != true)) {
-    P_ERROR ("rwlock_t::p_rwlock_new: failed to initialize");
-    p_free(ret);
+  if (U_UNLIKELY (pp_rwlock_init_func(ret) != true)) {
+    U_ERROR ("rwlock_t::u_rwlock_new: failed to initialize");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 bool
-p_rwlock_reader_lock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_reader_lock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return pp_rwlock_start_read_func(lock);
 }
 
 bool
-p_rwlock_reader_trylock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_reader_trylock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return pp_rwlock_start_read_try_func(lock);
 }
 
 bool
-p_rwlock_reader_unlock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_reader_unlock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return pp_rwlock_end_read_func(lock);
 }
 
 bool
-p_rwlock_writer_lock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_writer_lock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return pp_rwlock_start_write_func(lock);
 }
 
 bool
-p_rwlock_writer_trylock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_writer_trylock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return pp_rwlock_start_write_try_func(lock);
 }
 
 bool
-p_rwlock_writer_unlock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_writer_unlock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return pp_rwlock_end_write_func(lock);
 }
 
 void
-p_rwlock_free(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_free(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return;
   }
   pp_rwlock_close_func(lock);
-  p_free(lock);
+  u_free(lock);
 }
 
 void
-p_rwlock_init(void) {
+u_rwlock_init(void) {
   HMODULE hmodule;
   hmodule = GetModuleHandleA("kernel32.dll");
-  if (P_UNLIKELY (hmodule == NULL)) {
-    P_ERROR ("rwlock_t::p_rwlock_init: failed to load kernel32.dll module");
+  if (U_UNLIKELY (hmodule == NULL)) {
+    U_ERROR ("rwlock_t::u_rwlock_init: failed to load kernel32.dll module");
     return;
   }
   pp_rwlock_vista_table.rwl_init =
@@ -523,7 +523,7 @@ p_rwlock_init(void) {
       hmodule,
       "InitializeSRWLock"
     );
-  if (P_LIKELY (pp_rwlock_vista_table.rwl_init != NULL)) {
+  if (U_LIKELY (pp_rwlock_vista_table.rwl_init != NULL)) {
     pp_rwlock_vista_table.rwl_excl_lock =
       (AcquireSRWLockExclusiveFunc) GetProcAddress(
         hmodule,
@@ -575,7 +575,7 @@ p_rwlock_init(void) {
 }
 
 void
-p_rwlock_shutdown(void) {
+u_rwlock_shutdown(void) {
   memset(&pp_rwlock_vista_table, 0, sizeof(pp_rwlock_vista_table));
   pp_rwlock_init_func = NULL;
   pp_rwlock_close_func = NULL;

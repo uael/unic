@@ -16,21 +16,21 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 
-#define P_STR_MAX_EXPON 308
+#define U_STR_MAX_EXPON 308
 
 byte_t *
-p_strdup(const byte_t *str) {
+u_strdup(const byte_t *str) {
   byte_t *ret;
   size_t len;
 
-  if (P_UNLIKELY (str == NULL)) {
+  if (U_UNLIKELY (str == NULL)) {
     return NULL;
   }
   len = strlen(str) + 1;
-  if (P_UNLIKELY ((ret = p_malloc(len)) == NULL)) {
+  if (U_UNLIKELY ((ret = u_malloc(len)) == NULL)) {
     return NULL;
   }
   memcpy(ret, str, len);
@@ -38,13 +38,13 @@ p_strdup(const byte_t *str) {
 }
 
 byte_t *
-p_strchomp(const byte_t *str) {
+u_strchomp(const byte_t *str) {
   ssize_t pos_start, pos_end;
   size_t str_len;
   byte_t *ret;
   const byte_t *ptr;
 
-  if (P_UNLIKELY (str == NULL)) {
+  if (U_UNLIKELY (str == NULL)) {
     return NULL;
   }
   ptr = str;
@@ -58,13 +58,13 @@ p_strchomp(const byte_t *str) {
     --pos_end;
   }
   if (pos_end < pos_start) {
-    return p_strdup("\0");
+    return u_strdup("\0");
   }
   if (pos_end == pos_start && isspace(*((const ubyte_t *) (str + pos_end)))) {
-    return p_strdup("\0");
+    return u_strdup("\0");
   }
   str_len = (size_t) (pos_end - pos_start + 2);
-  if (P_UNLIKELY ((ret = p_malloc0(str_len)) == NULL)) {
+  if (U_UNLIKELY ((ret = u_malloc0(str_len)) == NULL)) {
     return NULL;
   }
   memcpy(ret, str + pos_start, str_len - 1);
@@ -73,33 +73,33 @@ p_strchomp(const byte_t *str) {
 }
 
 byte_t *
-p_strtok(byte_t *str, const byte_t *delim, byte_t **buf) {
-  if (P_UNLIKELY (delim == NULL)) {
+u_strtok(byte_t *str, const byte_t *delim, byte_t **buf) {
+  if (U_UNLIKELY (delim == NULL)) {
     return str;
   }
-#ifdef P_OS_WIN
-# ifdef P_CC_MSVC
-  if (P_UNLIKELY (buf == NULL))
+#ifdef U_OS_WIN
+# ifdef U_CC_MSVC
+  if (U_UNLIKELY (buf == NULL))
     return str;
 #   if _MSC_VER < 1400
-  P_UNUSED (buf);
+  U_UNUSED (buf);
   return strtok (str, delim);
 #   else
   return strtok_s (str, delim, buf);
 #   endif
 # else
-P_UNUSED (buf);
+U_UNUSED (buf);
 return strtok(str, delim);
 # endif
 #else
-  if (P_UNLIKELY (buf == NULL))
+  if (U_UNLIKELY (buf == NULL))
     return str;
   return strtok_r(str, delim, buf);
 #endif
 }
 
 double
-p_strtod(const byte_t *str) {
+u_strtod(const byte_t *str) {
   double sign;
   double value;
   double scale;
@@ -108,8 +108,8 @@ p_strtod(const byte_t *str) {
   int frac;
   byte_t *orig_str, *strp;
 
-  orig_str = p_strchomp(str);
-  if (P_UNLIKELY (orig_str == NULL)) {
+  orig_str = u_strchomp(str);
+  if (U_UNLIKELY (orig_str == NULL)) {
     return 0.0;
   }
   strp = orig_str;
@@ -154,8 +154,8 @@ p_strtod(const byte_t *str) {
     for (expon = 0; isdigit((int) *strp); strp += 1) {
       expon = expon * 10 + (uint_t) ((*strp - '0'));
     }
-    if (P_UNLIKELY (expon > P_STR_MAX_EXPON)) {
-      expon = P_STR_MAX_EXPON;
+    if (U_UNLIKELY (expon > U_STR_MAX_EXPON)) {
+      expon = U_STR_MAX_EXPON;
     }
 
     /* Calculate scaling factor */
@@ -172,7 +172,7 @@ p_strtod(const byte_t *str) {
       expon -= 1;
     }
   }
-  p_free(orig_str);
+  u_free(orig_str);
 
   /* Return signed and scaled floating point result */
   return sign * (frac ? (value / scale) : (value * scale));

@@ -51,7 +51,7 @@ branches:
                 - master
                 - appveyor_test
 
-clone_folder: c:\projects\plibsys
+clone_folder: c:\projects\unic
 
 cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
@@ -152,7 +152,7 @@ install:
 
 build_script:
         - ps: >-
-                $BUILD_DIR = "c:\projects\plibsys-build";
+                $BUILD_DIR = "c:\projects\unic-build";
 
                 New-Item -ItemType directory -Path $BUILD_DIR | Out-Null;
                 Set-Location $BUILD_DIR | Out-Null;
@@ -212,9 +212,9 @@ build_script:
                         }
 
                         $BUILD_COMMAND = "msbuild";
-                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
+                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\unic.sln", "/p:Configuration=$env:configuration", "/m");
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../unic;
                 & $BUILD_COMMAND $BUILD_PARAMS;
                 & ctest $CTEST_PARAMS --output-on-failure -V -C Release;

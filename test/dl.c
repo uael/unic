@@ -16,7 +16,7 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int ac;
@@ -25,69 +25,69 @@ CUTEST_DATA {
   void (*st_fn)(void);
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
 CUTEST_TEARDOWN {
-#ifdef P_OS_BEOS
-  p_libsys_shutdown();
+#ifdef U_OS_BEOS
+  u_libsys_shutdown();
 #else
   /* We have already loaded reference to ourself library, it's OK */
   if (self->st_fn) {
     self->st_fn();
   } else {
-    p_libsys_shutdown();
+    u_libsys_shutdown();
   }
 #endif
 }
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 CUTEST(dl, nomem) {
   FILE *file;
   mem_vtable_t vtable;
 
-  if (P_UNLIKELY (p_dl_is_ref_counted() == false)) {
+  if (U_UNLIKELY (u_dl_is_ref_counted() == false)) {
     return CUTE_SUCCESS;
   }
   /* Cleanup from previous run */
-  p_file_remove("." P_DIR_SEP "p_empty_file.txt", NULL);
-  file = fopen("." P_DIR_SEP "p_empty_file.txt", "w");
+  u_file_remove("." U_DIR_SEP "u_empty_file.txt", NULL);
+  file = fopen("." U_DIR_SEP "u_empty_file.txt", "w");
   ASSERT(file != NULL);
   ASSERT(fclose(file) == 0);
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
-#ifdef P_OS_WIN
+  ASSERT(u_mem_set_vtable(&vtable) == true);
+#ifdef U_OS_WIN
   SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
-  ASSERT(p_dl_new("."
-    P_DIR_SEP
-    "p_empty_file.txt") == NULL);
-  ASSERT(p_dl_new(self->av[self->ac - 1]) == NULL);
-#ifdef P_OS_WIN
+  ASSERT(u_dl_new("."
+    U_DIR_SEP
+    "u_empty_file.txt") == NULL);
+  ASSERT(u_dl_new(self->av[self->ac - 1]) == NULL);
+#ifdef U_OS_WIN
   SetErrorMode(0);
 #endif
-  p_mem_restore_vtable();
-  ASSERT(p_file_remove("."
-    P_DIR_SEP
-    "p_empty_file.txt", NULL) == true);
+  u_mem_restore_vtable();
+  ASSERT(u_file_remove("."
+    U_DIR_SEP
+    "u_empty_file.txt", NULL) == true);
   return CUTE_SUCCESS;
 }
 
@@ -99,49 +99,49 @@ CUTEST(dl, general) {
   ASSERT(self->ac > 1);
 
   /* Invalid usage */
-  ASSERT(p_dl_new(NULL) == NULL);
-  ASSERT(p_dl_new("./unexistent_file.nofile") == NULL);
-  ASSERT(p_dl_get_symbol(NULL, NULL) == NULL);
-  ASSERT(p_dl_get_symbol(NULL, "unexistent_symbol") == NULL);
-  p_dl_free(NULL);
+  ASSERT(u_dl_new(NULL) == NULL);
+  ASSERT(u_dl_new("./unexistent_file.nofile") == NULL);
+  ASSERT(u_dl_get_symbol(NULL, NULL) == NULL);
+  ASSERT(u_dl_get_symbol(NULL, "unexistent_symbol") == NULL);
+  u_dl_free(NULL);
 
   /* General tests */
 
   /* At least not on HP-UX it should be true */
-#if !defined (P_OS_HPUX)
-  ASSERT(p_dl_is_ref_counted() == true);
+#if !defined (U_OS_HPUX)
+  ASSERT(u_dl_is_ref_counted() == true);
 #else
-  p_dl_is_ref_counted();
+  u_dl_is_ref_counted();
 #endif
-  err_msg = p_dl_get_last_error(NULL);
-  p_free(err_msg);
-  if (P_UNLIKELY (p_dl_is_ref_counted() == false)) {
+  err_msg = u_dl_get_last_error(NULL);
+  u_free(err_msg);
+  if (U_UNLIKELY (u_dl_is_ref_counted() == false)) {
     return CUTE_SUCCESS;
   }
-  loader = p_dl_new(
+  loader = u_dl_new(
     self->av[self->ac - 1]
   );
   ASSERT(loader != NULL);
-  ASSERT(p_dl_get_symbol(
+  ASSERT(u_dl_get_symbol(
     loader,
     "there_is_no_such_a_symbol"
   ) == (fn_addr_t) NULL);
-  err_msg = p_dl_get_last_error(loader);
+  err_msg = u_dl_get_last_error(loader);
   ASSERT(err_msg != NULL);
-  p_free(err_msg);
-  self->st_fn = (void (*)(void)) p_dl_get_symbol(loader, "p_libsys_shutdown");
+  u_free(err_msg);
+  self->st_fn = (void (*)(void)) u_dl_get_symbol(loader, "u_libsys_shutdown");
   if (self->st_fn == NULL) {
     self->st_fn =
-      (void (*)(void)) p_dl_get_symbol(loader, "_p_libsys_shutdown");
+      (void (*)(void)) u_dl_get_symbol(loader, "_p_libsys_shutdown");
   }
-#ifdef P_CC_WATCOM
+#ifdef U_CC_WATCOM
   ASSERT(self->st_fn == NULL);
 #else
   ASSERT(self->st_fn != NULL);
 #endif
-  err_msg = p_dl_get_last_error(loader);
-  p_free(err_msg);
-  p_dl_free(loader);
+  err_msg = u_dl_get_last_error(loader);
+  u_free(err_msg);
+  u_dl_free(loader);
   return CUTE_SUCCESS;
 }
 

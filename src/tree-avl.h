@@ -15,15 +15,15 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_HEADER_PTREEAVL_H
-# define PLIBSYS_HEADER_PTREEAVL_H
+#ifndef UNIC_HEADER_PTREEAVL_H
+# define UNIC_HEADER_PTREEAVL_H
 
-#include "p/macros.h"
-#include "p/types.h"
+#include "unic/macros.h"
+#include "unic/types.h"
 #include "tree-private.h"
 
 bool
-p_tree_avl_insert(PTreeBaseNode **root_node,
+u_tree_avl_insert(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -32,7 +32,7 @@ p_tree_avl_insert(PTreeBaseNode **root_node,
   ptr_t value);
 
 bool
-p_tree_avl_remove(PTreeBaseNode **root_node,
+u_tree_avl_remove(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -40,6 +40,6 @@ p_tree_avl_remove(PTreeBaseNode **root_node,
   const_ptr_t key);
 
 void
-p_tree_avl_node_free(PTreeBaseNode *node);
+u_tree_avl_node_free(PTreeBaseNode *node);
 
-#endif /* PLIBSYS_HEADER_PTREEAVL_H */
+#endif /* UNIC_HEADER_PTREEAVL_H */

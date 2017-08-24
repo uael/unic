@@ -15,35 +15,35 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mutex.h"
+#include "unic/mutex.h"
 
 struct mutex {
   int hdl;
 };
 
 mutex_t *
-p_mutex_new(void) {
+u_mutex_new(void) {
   return NULL;
 }
 
 bool
-p_mutex_lock(mutex_t *mutex) {
+u_mutex_lock(mutex_t *mutex) {
   return false;
 }
 
 bool
-p_mutex_trylock(mutex_t *mutex) {
-  P_UNUSED (mutex);
+u_mutex_trylock(mutex_t *mutex) {
+  U_UNUSED (mutex);
   return false;
 }
 
 bool
-p_mutex_unlock(mutex_t *mutex) {
-  P_UNUSED (mutex);
+u_mutex_unlock(mutex_t *mutex) {
+  U_UNUSED (mutex);
   return false;
 }
 
 void
-p_mutex_free(mutex_t *mutex) {
-  P_UNUSED (mutex);
+u_mutex_free(mutex_t *mutex) {
+  U_UNUSED (mutex);
 }

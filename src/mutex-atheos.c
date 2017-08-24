@@ -18,8 +18,8 @@
 #include <errno.h>
 #include <atheos/semaphore.h>
 
-#include "p/mem.h"
-#include "p/mutex.h"
+#include "unic/mem.h"
+#include "unic/mutex.h"
 
 typedef sem_id mutex_hdl;
 
@@ -28,62 +28,62 @@ struct mutex {
 };
 
 mutex_t *
-p_mutex_new(void) {
+u_mutex_new(void) {
   mutex_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(mutex_t))) == NULL)) {
-    P_ERROR ("mutex_t::p_mutex_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(mutex_t))) == NULL)) {
+    U_ERROR ("mutex_t::u_mutex_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY ((ret->hdl = create_semaphore("", 1, 0)) < 0)) {
-    P_ERROR ("mutex_t::p_mutex_new: create_semaphore() failed");
-    p_free(ret);
+  if (U_UNLIKELY ((ret->hdl = create_semaphore("", 1, 0)) < 0)) {
+    U_ERROR ("mutex_t::u_mutex_new: create_semaphore() failed");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 bool
-p_mutex_lock(mutex_t *mutex) {
+u_mutex_lock(mutex_t *mutex) {
   status_t ret_status;
-  if (P_UNLIKELY (mutex == NULL)) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   while ((ret_status = lock_semaphore(mutex->hdl)) == EINTR);
-  if (P_LIKELY (ret_status == 0)) {
+  if (U_LIKELY (ret_status == 0)) {
     return true;
   } else {
-    P_ERROR ("mutex_t::p_mutex_lock: lock_semaphore() failed");
+    U_ERROR ("mutex_t::u_mutex_lock: lock_semaphore() failed");
     return false;
   }
 }
 
 bool
-p_mutex_trylock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_trylock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   return (lock_sema_x(mutex->hdl, 1, 0, 0)) == 0 ? true : false;
 }
 
 bool
-p_mutex_unlock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_unlock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
-  if (P_LIKELY (unlock_semaphore(mutex->hdl) == 0)) {
+  if (U_LIKELY (unlock_semaphore(mutex->hdl) == 0)) {
     return true;
   } else {
-    P_ERROR ("mutex_t::p_mutex_unlock: unlock_semaphore() failed");
+    U_ERROR ("mutex_t::u_mutex_unlock: unlock_semaphore() failed");
     return false;
   }
 }
 
 void
-p_mutex_free(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_free(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return;
   }
-  if (P_UNLIKELY (delete_semaphore(mutex->hdl) != 0))
-    P_ERROR ("mutex_t::p_mutex_free: delete_semaphore() failed");
-  p_free(mutex);
+  if (U_UNLIKELY (delete_semaphore(mutex->hdl) != 0))
+    U_ERROR ("mutex_t::u_mutex_free: delete_semaphore() failed");
+  u_free(mutex);
 }

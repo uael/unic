@@ -16,15 +16,15 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 static int mutex_test_val = 0;
 
@@ -32,20 +32,20 @@ static mutex_t *global_mutex = NULL;
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 static void *
@@ -53,22 +53,22 @@ mutex_test_thread(void) {
   int i;
 
   for (i = 0; i < 100; ++i) {
-    if (!p_mutex_trylock(global_mutex)) {
-      if (!p_mutex_lock(global_mutex)) {
-        p_uthread_exit(1);
+    if (!u_mutex_trylock(global_mutex)) {
+      if (!u_mutex_lock(global_mutex)) {
+        u_uthread_exit(1);
       }
     }
     if (mutex_test_val == 10) {
       --mutex_test_val;
     } else {
-      p_uthread_sleep(1);
+      u_uthread_sleep(1);
       ++mutex_test_val;
     }
-    if (!p_mutex_unlock(global_mutex)) {
-      p_uthread_exit(1);
+    if (!u_mutex_unlock(global_mutex)) {
+      u_uthread_exit(1);
     }
   }
-  p_uthread_exit(0);
+  u_uthread_exit(0);
   return NULL;
 }
 
@@ -79,37 +79,37 @@ CUTEST(mutex, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
-  ASSERT(p_mutex_new() == NULL);
-  p_mem_restore_vtable();
+  ASSERT(u_mem_set_vtable(&vtable) == true);
+  ASSERT(u_mutex_new() == NULL);
+  u_mem_restore_vtable();
   return CUTE_SUCCESS;
 }
 
 CUTEST(mutex, bad_input) {
 
-  ASSERT(p_mutex_lock(NULL) == false);
-  ASSERT(p_mutex_unlock(NULL) == false);
-  ASSERT(p_mutex_trylock(NULL) == false);
-  p_mutex_free(NULL);
+  ASSERT(u_mutex_lock(NULL) == false);
+  ASSERT(u_mutex_unlock(NULL) == false);
+  ASSERT(u_mutex_trylock(NULL) == false);
+  u_mutex_free(NULL);
   return CUTE_SUCCESS;
 }
 
 CUTEST(mutex, general) {
   uthread_t *thr1, *thr2;
 
-  global_mutex = p_mutex_new();
+  global_mutex = u_mutex_new();
   ASSERT(global_mutex != NULL);
   mutex_test_val = 10;
-  thr1 = p_uthread_create((uthread_fn_t) mutex_test_thread, NULL, true);
+  thr1 = u_uthread_create((uthread_fn_t) mutex_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-  thr2 = p_uthread_create((uthread_fn_t) mutex_test_thread, NULL, true);
+  thr2 = u_uthread_create((uthread_fn_t) mutex_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-  ASSERT(p_uthread_join(thr1) == 0);
-  ASSERT(p_uthread_join(thr2) == 0);
+  ASSERT(u_uthread_join(thr1) == 0);
+  ASSERT(u_uthread_join(thr2) == 0);
   ASSERT(mutex_test_val == 10);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
-  p_mutex_free(global_mutex);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
+  u_mutex_free(global_mutex);
   return CUTE_SUCCESS;
 }
 

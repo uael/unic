@@ -1,4 +1,4 @@
-function (plibsys_detect_visibility cflags ldflags)
+function (unic_detect_visibility cflags ldflags)
         if (WIN32 OR CYGWIN OR MSYS)
             set (${cflags} "" PARENT_SCOPE)
             set (${ldflags} "" PARENT_SCOPE)
@@ -16,10 +16,10 @@ function (plibsys_detect_visibility cflags ldflags)
                                         stop_compile_here
                                         #endif
                                  }"
-                                 PLIBSYS_HAS_GCC_VISIBILITY
+                                 UNIC_HAS_GCC_VISIBILITY
         )
 
-        if (PLIBSYS_HAS_GCC_VISIBILITY)
+        if (UNIC_HAS_GCC_VISIBILITY)
                 set (${cflags} "-fvisibility=hidden" PARENT_SCOPE)
                 set (${ldflags} "" PARENT_SCOPE)
                 return()
@@ -34,10 +34,10 @@ function (plibsys_detect_visibility cflags ldflags)
                                         stop_compile_here
                                         #endif
                                  }"
-                                 PLIBSYS_HAS_SUN_VISIBILITY
+                                 UNIC_HAS_SUN_VISIBILITY
         )
 
-        if (PLIBSYS_HAS_SUN_VISIBILITY)
+        if (UNIC_HAS_SUN_VISIBILITY)
                 set (${cflags} "" PARENT_SCOPE)
                 set (${ldlags} "-xldscope=__hidden" PARENT_SCOPE)
                 return()
@@ -51,10 +51,10 @@ function (plibsys_detect_visibility cflags ldflags)
                                         stop_compile_here
                                         #endif
                                  }"
-                                 PLIBSYS_HAS_XLC_VISIBILITY
+                                 UNIC_HAS_XLC_VISIBILITY
         )
 
-        if (PLIBSYS_HAS_XLC_VISIBILITY)
+        if (UNIC_HAS_XLC_VISIBILITY)
                 set (${cflags} "-qvisibility=hidden" PARENT_SCOPE)
                 set (${ldflags} "" PARENT_SCOPE)
                 return()
@@ -69,10 +69,10 @@ function (plibsys_detect_visibility cflags ldflags)
                                         stop_compile_here
                                         #endif
                                  }"
-                                 PLIBSYS_HAS_HP_VISIBILITY
+                                 UNIC_HAS_HP_VISIBILITY
         )
 
-        if (PLIBSYS_HAS_HP_VISIBILITY)
+        if (UNIC_HAS_HP_VISIBILITY)
                 set (${cflags} "-Bhidden" PARENT_SCOPE)
                 set (${ldflags} "" PARENT_SCOPE)
                 return()
@@ -86,10 +86,10 @@ function (plibsys_detect_visibility cflags ldflags)
                                         stop_compile_here
                                         #endif
                                  }"
-                                 PLIBSYS_HAS_CLANG_VISIBILITY
+                                 UNIC_HAS_CLANG_VISIBILITY
         )
 
-        if (PLIBSYS_HAS_CLANG_VISIBILITY)
+        if (UNIC_HAS_CLANG_VISIBILITY)
                 set (${cflags} "-fvisibility=hidden" PARENT_SCOPE)
                 set (${ldflags} "" PARENT_SCOPE)
                 return()
@@ -98,4 +98,4 @@ function (plibsys_detect_visibility cflags ldflags)
         # Empty result
         set (${cflags} "" PARENT_SCOPE)
         set (${ldflags} "" PARENT_SCOPE)
-endfunction (plibsys_detect_visibility)
+endfunction (unic_detect_visibility)

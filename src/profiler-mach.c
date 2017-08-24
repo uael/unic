@@ -17,14 +17,14 @@
 
 #include <mach/mach_time.h>
 
-#include "p/profiler.h"
+#include "unic/profiler.h"
 #include "profiler-private.h"
 
 static u64_t pp_profiler_freq_num = 0;
 static u64_t pp_profiler_freq_denom = 0;
 
 u64_t
-p_profiler_get_ticks_internal() {
+u_profiler_get_ticks_internal() {
   u64_t val = mach_absolute_time();
 
   /* To prevent overflow */
@@ -35,16 +35,16 @@ p_profiler_get_ticks_internal() {
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
-  return p_profiler_get_ticks_internal() - profiler->counter;
+u_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
+  return u_profiler_get_ticks_internal() - profiler->counter;
 }
 
 void
-p_profiler_init(void) {
+u_profiler_init(void) {
   mach_timebase_info_data_t tb;
-  if (P_UNLIKELY (mach_timebase_info(&tb) != KERN_SUCCESS || tb.denom == 0)) {
-    P_ERROR (
-      "profiler_t::p_profiler_init: mach_timebase_info() failed");
+  if (U_UNLIKELY (mach_timebase_info(&tb) != KERN_SUCCESS || tb.denom == 0)) {
+    U_ERROR (
+      "profiler_t::u_profiler_init: mach_timebase_info() failed");
     return;
   }
   pp_profiler_freq_num = (u64_t) tb.numer;
@@ -52,7 +52,7 @@ p_profiler_init(void) {
 }
 
 void
-p_profiler_shutdown(void) {
+u_profiler_shutdown(void) {
   pp_profiler_freq_num = 0;
   pp_profiler_freq_denom = 0;
 }

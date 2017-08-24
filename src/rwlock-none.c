@@ -15,63 +15,63 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/rwlock.h"
+#include "unic/rwlock.h"
 
 struct rwlock {
   int hdl;
 };
 
 rwlock_t *
-p_rwlock_new(void) {
+u_rwlock_new(void) {
   return NULL;
 }
 
 bool
-p_rwlock_reader_lock(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_reader_lock(rwlock_t *lock) {
+  U_UNUSED (lock);
   return false;
 }
 
 bool
-p_rwlock_reader_trylock(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_reader_trylock(rwlock_t *lock) {
+  U_UNUSED (lock);
   return false;
 }
 
 bool
-p_rwlock_reader_unlock(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_reader_unlock(rwlock_t *lock) {
+  U_UNUSED (lock);
   return false;
 }
 
 bool
-p_rwlock_writer_lock(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_writer_lock(rwlock_t *lock) {
+  U_UNUSED (lock);
   return false;
 }
 
 bool
-p_rwlock_writer_trylock(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_writer_trylock(rwlock_t *lock) {
+  U_UNUSED (lock);
   return false;
 }
 
 bool
-p_rwlock_writer_unlock(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_writer_unlock(rwlock_t *lock) {
+  U_UNUSED (lock);
   return false;
 }
 
 void
-p_rwlock_free(rwlock_t *lock) {
-  P_UNUSED (lock);
+u_rwlock_free(rwlock_t *lock) {
+  U_UNUSED (lock);
 }
 
 void
-p_rwlock_init(void) {
+u_rwlock_init(void) {
 }
 
 void
-p_rwlock_shutdown(void) {
+u_rwlock_shutdown(void) {
 }
 

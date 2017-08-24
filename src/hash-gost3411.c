@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 #include "hash-gost3411.h"
 
 struct PHashGOST3411_ {
@@ -87,7 +87,7 @@ static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
 /* TODO: Add S-box from CryptoPro RFC 4357 */
 
 /* GOST 28147-89 transformation to generate keys*/
-#define P_GOST_28147_ROUND(N, key) \
+#define U_GOST_28147_ROUND(N, key) \
 { \
   u32_t CM1; \
  \
@@ -108,54 +108,54 @@ static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
 }
 
 /* Core GOST 28147-89 transformation */
-#define P_GOST_28147_E(data, key, out) \
+#define U_GOST_28147_E(data, key, out) \
 { \
   u32_t N[2]; \
  \
   memcpy (N, data, 8); \
  \
-  P_GOST_28147_ROUND (N, (key)[0]); \
-  P_GOST_28147_ROUND (N, (key)[1]); \
-  P_GOST_28147_ROUND (N, (key)[2]); \
-  P_GOST_28147_ROUND (N, (key)[3]); \
-  P_GOST_28147_ROUND (N, (key)[4]); \
-  P_GOST_28147_ROUND (N, (key)[5]); \
-  P_GOST_28147_ROUND (N, (key)[6]); \
-  P_GOST_28147_ROUND (N, (key)[7]); \
+  U_GOST_28147_ROUND (N, (key)[0]); \
+  U_GOST_28147_ROUND (N, (key)[1]); \
+  U_GOST_28147_ROUND (N, (key)[2]); \
+  U_GOST_28147_ROUND (N, (key)[3]); \
+  U_GOST_28147_ROUND (N, (key)[4]); \
+  U_GOST_28147_ROUND (N, (key)[5]); \
+  U_GOST_28147_ROUND (N, (key)[6]); \
+  U_GOST_28147_ROUND (N, (key)[7]); \
  \
-  P_GOST_28147_ROUND (N, (key)[0]); \
-  P_GOST_28147_ROUND (N, (key)[1]); \
-  P_GOST_28147_ROUND (N, (key)[2]); \
-  P_GOST_28147_ROUND (N, (key)[3]); \
-  P_GOST_28147_ROUND (N, (key)[4]); \
-  P_GOST_28147_ROUND (N, (key)[5]); \
-  P_GOST_28147_ROUND (N, (key)[6]); \
-  P_GOST_28147_ROUND (N, (key)[7]); \
+  U_GOST_28147_ROUND (N, (key)[0]); \
+  U_GOST_28147_ROUND (N, (key)[1]); \
+  U_GOST_28147_ROUND (N, (key)[2]); \
+  U_GOST_28147_ROUND (N, (key)[3]); \
+  U_GOST_28147_ROUND (N, (key)[4]); \
+  U_GOST_28147_ROUND (N, (key)[5]); \
+  U_GOST_28147_ROUND (N, (key)[6]); \
+  U_GOST_28147_ROUND (N, (key)[7]); \
  \
-  P_GOST_28147_ROUND (N, (key)[0]); \
-  P_GOST_28147_ROUND (N, (key)[1]); \
-  P_GOST_28147_ROUND (N, (key)[2]); \
-  P_GOST_28147_ROUND (N, (key)[3]); \
-  P_GOST_28147_ROUND (N, (key)[4]); \
-  P_GOST_28147_ROUND (N, (key)[5]); \
-  P_GOST_28147_ROUND (N, (key)[6]); \
-  P_GOST_28147_ROUND (N, (key)[7]); \
+  U_GOST_28147_ROUND (N, (key)[0]); \
+  U_GOST_28147_ROUND (N, (key)[1]); \
+  U_GOST_28147_ROUND (N, (key)[2]); \
+  U_GOST_28147_ROUND (N, (key)[3]); \
+  U_GOST_28147_ROUND (N, (key)[4]); \
+  U_GOST_28147_ROUND (N, (key)[5]); \
+  U_GOST_28147_ROUND (N, (key)[6]); \
+  U_GOST_28147_ROUND (N, (key)[7]); \
  \
-  P_GOST_28147_ROUND (N, (key)[7]); \
-  P_GOST_28147_ROUND (N, (key)[6]); \
-  P_GOST_28147_ROUND (N, (key)[5]); \
-  P_GOST_28147_ROUND (N, (key)[4]); \
-  P_GOST_28147_ROUND (N, (key)[3]); \
-  P_GOST_28147_ROUND (N, (key)[2]); \
-  P_GOST_28147_ROUND (N, (key)[1]); \
-  P_GOST_28147_ROUND (N, (key)[0]); \
+  U_GOST_28147_ROUND (N, (key)[7]); \
+  U_GOST_28147_ROUND (N, (key)[6]); \
+  U_GOST_28147_ROUND (N, (key)[5]); \
+  U_GOST_28147_ROUND (N, (key)[4]); \
+  U_GOST_28147_ROUND (N, (key)[3]); \
+  U_GOST_28147_ROUND (N, (key)[2]); \
+  U_GOST_28147_ROUND (N, (key)[1]); \
+  U_GOST_28147_ROUND (N, (key)[0]); \
  \
   (out)[0] = N[1]; \
   (out)[1] = N[0]; \
 }
 
 /* P transformation from GOST R 34.11-94 */
-#define P_GOST_3411_P(data, out) \
+#define U_GOST_3411_P(data, out) \
 { \
   (out)[0] = ((data) [0] & 0x000000FF) \
      | (((data)[2] << 8)  & 0x0000FF00) \
@@ -194,9 +194,9 @@ static const ubyte_t pp_crypto_hash_gost3411_K_block[8][16] = {
 static void
 pp_crypto_hash_gost3411_swap_bytes(u32_t *data,
   uint_t words) {
-#ifndef PLIBSYS_IS_BIGENDIAN
-  P_UNUSED (data);
-  P_UNUSED (words);
+#ifndef UNIC_IS_BIGENDIAN
+  U_UNUSED (data);
+  U_UNUSED (words);
 #else
   while (words-- > 0) {
     *data = PUINT32_TO_LE (*data);
@@ -237,7 +237,7 @@ pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
   W[5] = U[5] ^ V[5];
   W[6] = U[6] ^ V[6];
   W[7] = U[7] ^ V[7];
-  P_GOST_3411_P (W, K[0]);
+  U_GOST_3411_P (W, K[0]);
 
   /* Generate second key: P (A (U) xor A^2 (V)) */
   W[0] = U[2] ^ V[4];
@@ -248,7 +248,7 @@ pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
   W[5] = U[7] ^ (V[1] ^= V[3]);
   W[6] = (U[0] ^= U[2]) ^ (V[2] ^= V[4]);
   W[7] = (U[1] ^= U[3]) ^ (V[3] ^= V[5]);
-  P_GOST_3411_P (W, K[1]);
+  U_GOST_3411_P (W, K[1]);
 
   /* Generate third key: P ((A^2 (U) + C3) xor A^4 (V)) */
   /* C3 = FF00FFFF 000000FF FF0000FF 00FFFF00 00FF00FF 00FF00FF FF00FF00 FF00FF00 */
@@ -268,7 +268,7 @@ pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
   W[3] = U[7] ^ V[3];
   W[5] = U[1] ^ (V[5] ^= V[7]);
   W[7] = U[3] ^ (V[7] ^= V[1]);
-  P_GOST_3411_P (W, K[2]);
+  U_GOST_3411_P (W, K[2]);
 
   /* Generate forth key: P (A (A^2 (U) xor C3) xor A^6 (V)) */
   W[0] = U[6] ^ V[4];
@@ -279,13 +279,13 @@ pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
   W[5] = U[3] ^ (V[1] ^= V[3]);
   W[6] = (U[4] ^= U[6]) ^ (V[2] ^= V[4]);
   W[7] = (U[5] ^= U[7]) ^ (V[3] ^= V[5]);
-  P_GOST_3411_P (W, K[3]);
+  U_GOST_3411_P (W, K[3]);
 
   /* Perform GOST 28147-89 encryption */
-  P_GOST_28147_E (ctx->hash, K[0], S);
-  P_GOST_28147_E (ctx->hash + 2, K[1], S + 2);
-  P_GOST_28147_E (ctx->hash + 4, K[2], S + 4);
-  P_GOST_28147_E (ctx->hash + 6, K[3], S + 6);
+  U_GOST_28147_E (ctx->hash, K[0], S);
+  U_GOST_28147_E (ctx->hash + 2, K[1], S + 2);
+  U_GOST_28147_E (ctx->hash + 4, K[2], S + 4);
+  U_GOST_28147_E (ctx->hash + 6, K[3], S + 6);
 
   /* Step hash function: H (M, Hprev) = PSI^61 (Hprev xor PSI (M xor PSI^12 (S))) */
 
@@ -382,17 +382,17 @@ pp_crypto_hash_gost3411_process(PHashGOST3411 *ctx,
 }
 
 PHashGOST3411 *
-p_crypto_hash_gost3411_new(void) {
+u_crypto_hash_gost3411_new(void) {
   PHashGOST3411 *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(PHashGOST3411))) == NULL)) {
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(PHashGOST3411))) == NULL)) {
     return NULL;
   }
-  p_crypto_hash_gost3411_reset(ret);
+  u_crypto_hash_gost3411_reset(ret);
   return ret;
 }
 
 void
-p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
+u_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
   const ubyte_t *data,
   size_t len) {
   u32_t left, to_fill, len256[8];
@@ -425,7 +425,7 @@ p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
 }
 
 void
-p_crypto_hash_gost3411_finish(PHashGOST3411 *ctx) {
+u_crypto_hash_gost3411_finish(PHashGOST3411 *ctx) {
   u32_t left, last;
   left = ctx->len[0] & 0xFF;
   last = 32 - (left >> 3);
@@ -441,12 +441,12 @@ p_crypto_hash_gost3411_finish(PHashGOST3411 *ctx) {
 }
 
 const ubyte_t *
-p_crypto_hash_gost3411_digest(PHashGOST3411 *ctx) {
+u_crypto_hash_gost3411_digest(PHashGOST3411 *ctx) {
   return (const ubyte_t *) ctx->hash;
 }
 
 void
-p_crypto_hash_gost3411_reset(PHashGOST3411 *ctx) {
+u_crypto_hash_gost3411_reset(PHashGOST3411 *ctx) {
   memset(ctx->buf, 0, 32);
   memset(ctx->hash, 0, 32);
   memset(ctx->len, 0, 32);
@@ -454,6 +454,6 @@ p_crypto_hash_gost3411_reset(PHashGOST3411 *ctx) {
 }
 
 void
-p_crypto_hash_gost3411_free(PHashGOST3411 *ctx) {
-  p_free(ctx);
+u_crypto_hash_gost3411_free(PHashGOST3411 *ctx) {
+  u_free(ctx);
 }

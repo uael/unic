@@ -32,7 +32,7 @@ acts like a shared library. All libraries and tests are placed inside the
 Do not forget to define a logical name for a shareable image of the library
 before running programs which use it:
 
-`DEFINE PLIBSYS SYS$SYSROOT:[BUILD_DIR]PLIBSYS.EXE`
+`DEFINE UNIC SYS$SYSROOT:[BUILD_DIR]UNIC.EXE`
 
 You can also place an image into the `SYS$SHARE` directory instead of
 defining a logical name.

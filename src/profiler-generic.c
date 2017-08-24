@@ -17,29 +17,29 @@
 
 #include <time.h>
 
-#include "p/profiler.h"
+#include "unic/profiler.h"
 #include "profiler-private.h"
 
 u64_t
-p_profiler_get_ticks_internal() {
+u_profiler_get_ticks_internal() {
   i64_t val;
-  if (P_UNLIKELY ((val = (i64_t) time(NULL)) == -1)) {
-    P_ERROR (
-      "profiler_t::p_profiler_get_ticks_internal: time() failed");
+  if (U_UNLIKELY ((val = (i64_t) time(NULL)) == -1)) {
+    U_ERROR (
+      "profiler_t::u_profiler_get_ticks_internal: time() failed");
     return 0;
   }
   return (u64_t) (val * 1000000);
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
-  return p_profiler_get_ticks_internal() - profiler->counter;
+u_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
+  return u_profiler_get_ticks_internal() - profiler->counter;
 }
 
 void
-p_profiler_init(void) {
+u_profiler_init(void) {
 }
 
 void
-p_profiler_shutdown(void) {
+u_profiler_shutdown(void) {
 }

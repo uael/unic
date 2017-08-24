@@ -15,37 +15,37 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_HEADER_PERROR_PRIVATE_H
-# define PLIBSYS_HEADER_PERROR_PRIVATE_H
+#ifndef UNIC_HEADER_PERROR_PRIVATE_H
+# define UNIC_HEADER_PERROR_PRIVATE_H
 
-#include "p/err.h"
-#include "p/macros.h"
-#include "p/types.h"
+#include "unic/err.h"
+#include "unic/macros.h"
+#include "unic/types.h"
 
 /*!@brief Gets an IO error code from a system error code.
  * @param err_code System error code.
  * @return IO error code.
  */
 err_io_t
-p_err_get_io_from_system(int err_code);
+u_err_get_io_from_system(int err_code);
 
 /*!@brief Gets an IO error code from the last call result.
  * @return IO error code.
  */
 err_io_t
-p_err_get_last_io(void);
+u_err_get_last_io(void);
 
 /*!@brief Gets an IPC error code from a system error code
  * @param err_code System error code.
  * @return IPC error code.
  */
 err_ipc_t
-p_err_get_ipc_from_system(int err_code);
+u_err_get_ipc_from_system(int err_code);
 
 /*!@brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
-P_API err_ipc_t
-p_err_get_last_ipc(void);
+U_API err_ipc_t
+u_err_get_last_ipc(void);
 
-#endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */
+#endif /* UNIC_HEADER_PERROR_PRIVATE_H */

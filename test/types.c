@@ -16,18 +16,18 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 CUTEST(types, general) {
-  ASSERT(P_BYTE_ORDER == P_LITTLE_ENDIAN || P_BYTE_ORDER == P_BIG_ENDIAN);
+  ASSERT(U_BYTE_ORDER == U_LITTLE_ENDIAN || U_BYTE_ORDER == U_BIG_ENDIAN);
   ASSERT(sizeof(i8_t) == 1);
   ASSERT(sizeof(u8_t) == 1);
   ASSERT(sizeof(i16_t) == 2);
@@ -44,12 +44,12 @@ CUTEST(types, general) {
   ASSERT(sizeof(unsigned short) == sizeof(ushort_t));
   ASSERT(sizeof(unsigned int) == sizeof(uint_t));
   ASSERT(sizeof(unsigned long) == sizeof(ulong_t));
-  ASSERT(sizeof(iptr_t) == PLIBSYS_SIZEOF_VOID_P);
-  ASSERT(sizeof(uptr_t) == PLIBSYS_SIZEOF_VOID_P);
-  ASSERT(sizeof(size_t) == PLIBSYS_SIZEOF_SIZE_T);
-  ASSERT(sizeof(ssize_t) == PLIBSYS_SIZEOF_SIZE_T);
-  ASSERT(sizeof(long) == PLIBSYS_SIZEOF_LONG);
-  ASSERT(sizeof(ulong_t) == PLIBSYS_SIZEOF_LONG);
+  ASSERT(sizeof(iptr_t) == UNIC_SIZEOF_VOID_P);
+  ASSERT(sizeof(uptr_t) == UNIC_SIZEOF_VOID_P);
+  ASSERT(sizeof(size_t) == UNIC_SIZEOF_SIZE_T);
+  ASSERT(sizeof(ssize_t) == UNIC_SIZEOF_SIZE_T);
+  ASSERT(sizeof(long) == UNIC_SIZEOF_LONG);
+  ASSERT(sizeof(ulong_t) == UNIC_SIZEOF_LONG);
   ASSERT(sizeof(offset_t) == 8);
   return CUTE_SUCCESS;
 }
@@ -60,8 +60,8 @@ CUTEST(types_pointers, convert) {
   uint_t puint_val;
   size_t psize_val;
 
-  pointer = P_INT_TO_POINTER (128);
-  ASSERT(P_POINTER_TO_INT(pointer) == 128);
+  pointer = U_INT_TO_POINTER (128);
+  ASSERT(U_POINTER_TO_INT(pointer) == 128);
   pint_val = -64;
   pointer = PINT_TO_POINTER (pint_val);
   ASSERT(PPOINTER_TO_INT(pointer) == -64);
@@ -75,35 +75,35 @@ CUTEST(types_pointers, convert) {
 }
 
 CUTEST(types_min, max) {
-  ASSERT(P_MININT8 == (i8_t) 0x80);
-  ASSERT(P_MAXINT8 == (i8_t) 0x7F);
-  ASSERT(P_MAXUINT8 == (u8_t) 0xFF);
-  ASSERT(P_MININT16 == (i16_t) 0x8000);
-  ASSERT(P_MAXINT16 == (i16_t) 0x7FFF);
-  ASSERT(P_MAXUINT16 == (u16_t) 0xFFFF);
-  ASSERT(P_MININT32 == (i32_t) 0x80000000);
-  ASSERT(P_MAXINT32 == (i32_t) 0x7FFFFFFF);
-  ASSERT(P_MAXUINT32 == (u32_t) 0xFFFFFFFF);
-  ASSERT(P_MININT64 == (i64_t) 0x8000000000000000LL);
-  ASSERT(P_MAXINT64 == (i64_t) 0x7FFFFFFFFFFFFFFFLL);
-  ASSERT(P_MAXUINT64 == (u64_t) 0xFFFFFFFFFFFFFFFFULL);
-  if (PLIBSYS_SIZEOF_SIZE_T == 8) {
-    ASSERT(P_MINSSIZE == P_MININT64);
-    ASSERT(P_MAXSSIZE == P_MAXINT64);
-    ASSERT(P_MAXSIZE == P_MAXUINT64);
-    if (PLIBSYS_SIZEOF_LONG == 8) {
-      ASSERT(P_MINSSIZE == P_MINLONG);
-      ASSERT(P_MAXSSIZE == P_MAXLONG);
-      ASSERT(P_MAXSIZE == P_MAXULONG);
+  ASSERT(U_MININT8 == (i8_t) 0x80);
+  ASSERT(U_MAXINT8 == (i8_t) 0x7F);
+  ASSERT(U_MAXUINT8 == (u8_t) 0xFF);
+  ASSERT(U_MININT16 == (i16_t) 0x8000);
+  ASSERT(U_MAXINT16 == (i16_t) 0x7FFF);
+  ASSERT(U_MAXUINT16 == (u16_t) 0xFFFF);
+  ASSERT(U_MININT32 == (i32_t) 0x80000000);
+  ASSERT(U_MAXINT32 == (i32_t) 0x7FFFFFFF);
+  ASSERT(U_MAXUINT32 == (u32_t) 0xFFFFFFFF);
+  ASSERT(U_MININT64 == (i64_t) 0x8000000000000000LL);
+  ASSERT(U_MAXINT64 == (i64_t) 0x7FFFFFFFFFFFFFFFLL);
+  ASSERT(U_MAXUINT64 == (u64_t) 0xFFFFFFFFFFFFFFFFULL);
+  if (UNIC_SIZEOF_SIZE_T == 8) {
+    ASSERT(U_MINSSIZE == U_MININT64);
+    ASSERT(U_MAXSSIZE == U_MAXINT64);
+    ASSERT(U_MAXSIZE == U_MAXUINT64);
+    if (UNIC_SIZEOF_LONG == 8) {
+      ASSERT(U_MINSSIZE == U_MINLONG);
+      ASSERT(U_MAXSSIZE == U_MAXLONG);
+      ASSERT(U_MAXSIZE == U_MAXULONG);
     }
   } else {
-    ASSERT(P_MINSSIZE == P_MININT32);
-    ASSERT(P_MAXSSIZE == P_MAXINT32);
-    ASSERT(P_MAXSIZE == P_MAXUINT32);
-    if (PLIBSYS_SIZEOF_LONG == 4) {
-      ASSERT(P_MINSSIZE == P_MINLONG);
-      ASSERT(P_MAXSSIZE == P_MAXLONG);
-      ASSERT(P_MAXSIZE == P_MAXULONG);
+    ASSERT(U_MINSSIZE == U_MININT32);
+    ASSERT(U_MAXSSIZE == U_MAXINT32);
+    ASSERT(U_MAXSIZE == U_MAXUINT32);
+    if (UNIC_SIZEOF_LONG == 4) {
+      ASSERT(U_MINSSIZE == U_MINLONG);
+      ASSERT(U_MAXSSIZE == U_MAXLONG);
+      ASSERT(U_MAXSIZE == U_MAXULONG);
     }
   }
   return CUTE_SUCCESS;
@@ -199,7 +199,7 @@ CUTEST(types_host, network) {
   size_t psize_val;
   ssize_t pssize_val;
 
-  if (P_BYTE_ORDER == P_LITTLE_ENDIAN) {
+  if (U_BYTE_ORDER == U_LITTLE_ENDIAN) {
     pint16_val = PINT16_TO_BE (0xFFE0);
     ASSERT(pint16_val == (i16_t) 0xE0FF);
     ASSERT(PINT16_FROM_BE(pint16_val) == (i16_t) 0xFFE0);
@@ -240,7 +240,7 @@ CUTEST(types_host, network) {
     ASSERT(PUINT_FROM_BE(puint_val) == (uint_t) 0x00000400);
     ASSERT(PUINT_TO_LE(puint_val) == (uint_t) 0x00040000);
     ASSERT(PUINT_FROM_LE(puint_val) == (uint_t) 0x00040000);
-    if (PLIBSYS_SIZEOF_LONG == 8) {
+    if (UNIC_SIZEOF_LONG == 8) {
       plong_val = PLONG_TO_BE (0xFFFFFFFFFFFFF800LL);
       ASSERT(plong_val == (long) 0x00F8FFFFFFFFFFFFLL);
       ASSERT(PLONG_FROM_BE(plong_val) == (long) 0xFFFFFFFFFFFFF800LL);
@@ -263,7 +263,7 @@ CUTEST(types_host, network) {
       ASSERT(PULONG_TO_LE(pulong_val) == (ulong_t) 0x00080000);
       ASSERT(PULONG_FROM_LE(pulong_val) == (ulong_t) 0x00080000);
     }
-    if (PLIBSYS_SIZEOF_SIZE_T == 8) {
+    if (UNIC_SIZEOF_SIZE_T == 8) {
       psize_val = PSIZE_TO_BE (0x0000000000001000ULL);
       ASSERT(psize_val == (size_t) 0x0010000000000000ULL);
       ASSERT(PSIZE_FROM_BE(psize_val) == (size_t) 0x0000000000001000ULL);
@@ -286,12 +286,12 @@ CUTEST(types_host, network) {
       ASSERT(PSSIZE_TO_LE(pssize_val) == (ssize_t) 0x00F00000);
       ASSERT(PSSIZE_FROM_LE(pssize_val) == (ssize_t) 0x00F00000);
     }
-    puint16_val = p_htons (0x0020);
+    puint16_val = u_htons (0x0020);
     ASSERT(puint16_val == (u16_t) 0x2000);
-    ASSERT(p_ntohs(puint16_val) == (u16_t) 0x0020);
-    puint32_val = p_htonl (0x00000040);
+    ASSERT(u_ntohs(puint16_val) == (u16_t) 0x0020);
+    puint32_val = u_htonl (0x00000040);
     ASSERT(puint32_val == (u32_t) 0x40000000);
-    ASSERT(p_ntohl(puint32_val) == (u32_t) 0x00000040);
+    ASSERT(u_ntohl(puint32_val) == (u32_t) 0x00000040);
   } else {
     pint16_val = PINT16_TO_LE (0xFFE0);
     ASSERT(pint16_val == (i16_t) 0xE0FF);
@@ -333,7 +333,7 @@ CUTEST(types_host, network) {
     ASSERT(PUINT_FROM_LE(puint_val) == (uint_t) 0x00000400);
     ASSERT(PUINT_TO_BE(puint_val) == (uint_t) 0x00040000);
     ASSERT(PUINT_FROM_BE(puint_val) == (uint_t) 0x00040000);
-    if (PLIBSYS_SIZEOF_LONG == 8) {
+    if (UNIC_SIZEOF_LONG == 8) {
       plong_val = PLONG_TO_LE (0xFFFFFFFFFFFFF800LL);
       ASSERT(plong_val == (long) 0x00F8FFFFFFFFFFFFLL);
       ASSERT(PLONG_FROM_LE(plong_val) == (long) 0xFFFFFFFFFFFFF800LL);
@@ -358,7 +358,7 @@ CUTEST(types_host, network) {
       ASSERT(PULONG_TO_BE(pulong_val) == (ulong_t) 0x00080000);
       ASSERT(PULONG_FROM_BE(pulong_val) == (ulong_t) 0x00080000);
     }
-    if (PLIBSYS_SIZEOF_SIZE_T == 8) {
+    if (UNIC_SIZEOF_SIZE_T == 8) {
       psize_val = PSIZE_TO_LE (0x0000000000001000ULL);
       ASSERT(psize_val == (size_t) 0x0010000000000000ULL);
       ASSERT(PSIZE_FROM_LE(psize_val) == (size_t) 0x0000000000001000ULL);
@@ -381,12 +381,12 @@ CUTEST(types_host, network) {
       ASSERT(PSSIZE_TO_BE(pssize_val) == (ssize_t) 0x00F00000);
       ASSERT(PSSIZE_FROM_BE(pssize_val) == (ssize_t) 0x00F00000);
     }
-    puint16_val = p_htons (0x0020);
+    puint16_val = u_htons (0x0020);
     ASSERT(puint16_val == (u16_t) 0x0020);
-    ASSERT(p_ntohs(puint16_val) == (u16_t) 0x0020);
-    puint32_val = p_htonl (0x00000040);
+    ASSERT(u_ntohs(puint16_val) == (u16_t) 0x0020);
+    puint32_val = u_htonl (0x00000040);
     ASSERT(puint32_val == (u32_t) 0x00000040);
-    ASSERT(p_ntohl(puint32_val) == (u32_t) 0x00000040);
+    ASSERT(u_ntohl(puint32_val) == (u32_t) 0x00000040);
   }
   puint16_val = PUINT16_SWAP_BYTES (0x0020);
   ASSERT(puint16_val == (u16_t) 0x2000);

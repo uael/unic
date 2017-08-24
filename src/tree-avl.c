@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
+#include "unic/mem.h"
 #include "tree-avl.h"
 
 typedef struct PTreeAVLNode_ {
@@ -55,7 +55,7 @@ pp_tree_avl_rotate_left(PTreeAVLNode *node, PTreeBaseNode **root) {
   node->base.left = (PTreeBaseNode *) node->parent;
   node->parent = ((PTreeAVLNode *) node->base.left)->parent;
   ((PTreeAVLNode *) node->base.left)->parent = node;
-  if (P_LIKELY (node->parent != NULL)) {
+  if (U_LIKELY (node->parent != NULL)) {
     if (node->parent->base.left == node->base.left) {
       node->parent->base.left = (PTreeBaseNode *) node;
     } else {
@@ -80,7 +80,7 @@ pp_tree_avl_rotate_right(PTreeAVLNode *node, PTreeBaseNode **root) {
   node->base.right = (PTreeBaseNode *) node->parent;
   node->parent = ((PTreeAVLNode *) node->base.right)->parent;
   ((PTreeAVLNode *) node->base.right)->parent = node;
-  if (P_LIKELY (node->parent != NULL)) {
+  if (U_LIKELY (node->parent != NULL)) {
     if (node->parent->base.left == node->base.right) {
       node->parent->base.left = (PTreeBaseNode *) node;
     } else {
@@ -105,7 +105,7 @@ pp_tree_avl_rotate_left_right(PTreeAVLNode *node, PTreeBaseNode **root) {
     ((PTreeAVLNode *) node->base.right)->parent = node;
   }
   tmp_node->parent = node->parent->parent;
-  if (P_LIKELY (tmp_node->parent != NULL)) {
+  if (U_LIKELY (tmp_node->parent != NULL)) {
     if (tmp_node->parent->base.left == (PTreeBaseNode *) node->parent) {
       tmp_node->parent->base.left = (PTreeBaseNode *) tmp_node;
     } else {
@@ -146,7 +146,7 @@ pp_tree_avl_rotate_right_left(PTreeAVLNode *node, PTreeBaseNode **root) {
     ((PTreeAVLNode *) node->base.left)->parent = node;
   }
   tmp_node->parent = node->parent->parent;
-  if (P_LIKELY (tmp_node->parent != NULL)) {
+  if (U_LIKELY (tmp_node->parent != NULL)) {
     if (tmp_node->parent->base.left == (PTreeBaseNode *) node->parent) {
       tmp_node->parent->base.left = (PTreeBaseNode *) tmp_node;
     } else {
@@ -183,7 +183,7 @@ pp_tree_avl_balance_insert(PTreeAVLNode *node, PTreeBaseNode **root) {
   PTreeAVLNode *parent;
   while (true) {
     parent = node->parent;
-    if (P_UNLIKELY (parent == NULL)) {
+    if (U_UNLIKELY (parent == NULL)) {
       break;
     }
     if (parent->base.left == (PTreeBaseNode *) node) {
@@ -270,7 +270,7 @@ pp_tree_avl_balance_remove(PTreeAVLNode *node, PTreeBaseNode **root) {
   int sibling_balance;
   while (true) {
     parent = node->parent;
-    if (P_UNLIKELY (parent == NULL)) {
+    if (U_UNLIKELY (parent == NULL)) {
       break;
     }
     if (parent->base.left == (PTreeBaseNode *) node) {
@@ -325,7 +325,7 @@ pp_tree_avl_balance_remove(PTreeAVLNode *node, PTreeBaseNode **root) {
 }
 
 bool
-p_tree_avl_insert(PTreeBaseNode **root_node,
+u_tree_avl_insert(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -364,7 +364,7 @@ p_tree_avl_insert(PTreeBaseNode **root_node,
     (*cur_node)->value = value;
     return false;
   }
-  if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeAVLNode))) == NULL)) {
+  if (U_UNLIKELY ((*cur_node = u_malloc0(sizeof(PTreeAVLNode))) == NULL)) {
     return false;
   }
   (*cur_node)->key = key;
@@ -378,7 +378,7 @@ p_tree_avl_insert(PTreeBaseNode **root_node,
 }
 
 bool
-p_tree_avl_remove(PTreeBaseNode **root_node,
+u_tree_avl_remove(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -400,7 +400,7 @@ p_tree_avl_remove(PTreeBaseNode **root_node,
       break;
     }
   }
-  if (P_UNLIKELY (cur_node == NULL)) {
+  if (U_UNLIKELY (cur_node == NULL)) {
     return false;
   }
   if (cur_node->left != NULL && cur_node->right != NULL) {
@@ -420,7 +420,7 @@ p_tree_avl_remove(PTreeBaseNode **root_node,
   }
 
   /* Replace node with its child */
-  if (P_UNLIKELY (cur_node == *root_node)) {
+  if (U_UNLIKELY (cur_node == *root_node)) {
     *root_node = child_node;
     child_parent = NULL;
   } else {
@@ -445,11 +445,11 @@ p_tree_avl_remove(PTreeBaseNode **root_node,
   if (value_destroy_func != NULL) {
     value_destroy_func(cur_node->value);
   }
-  p_free(cur_node);
+  u_free(cur_node);
   return true;
 }
 
 void
-p_tree_avl_node_free(PTreeBaseNode *node) {
-  p_free(node);
+u_tree_avl_node_free(PTreeBaseNode *node) {
+  u_free(node);
 }

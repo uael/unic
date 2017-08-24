@@ -17,8 +17,8 @@
 
 #include <thread.h>
 
-#include "p/mem.h"
-#include "p/rwlock.h"
+#include "unic/mem.h"
+#include "unic/rwlock.h"
 
 typedef rwlock_t rwlock_hdl;
 
@@ -31,98 +31,98 @@ pp_rwlock_unlock_any(rwlock_t *lock);
 
 static bool
 pp_rwlock_unlock_any(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
-  if (P_LIKELY (rw_unlock(&lock->hdl) == 0)) {
+  if (U_LIKELY (rw_unlock(&lock->hdl) == 0)) {
     return true;
   } else {
-    P_ERROR ("rwlock_t::pp_rwlock_unlock_any: rw_unlock() failed");
+    U_ERROR ("rwlock_t::pp_rwlock_unlock_any: rw_unlock() failed");
     return false;
   }
 }
 
 rwlock_t *
-p_rwlock_new(void) {
+u_rwlock_new(void) {
   rwlock_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(rwlock_t))) == NULL)) {
-    P_ERROR ("rwlock_t::p_rwlock_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(rwlock_t))) == NULL)) {
+    U_ERROR ("rwlock_t::u_rwlock_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (rwlock_init(&ret->hdl, USYNC_THREAD, NULL) != 0)) {
-    P_ERROR ("rwlock_t::p_rwlock_new: rwlock_init() failed");
-    p_free(ret);
+  if (U_UNLIKELY (rwlock_init(&ret->hdl, USYNC_THREAD, NULL) != 0)) {
+    U_ERROR ("rwlock_t::u_rwlock_new: rwlock_init() failed");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 bool
-p_rwlock_reader_lock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_reader_lock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
-  if (P_UNLIKELY (rw_rdlock(&lock->hdl) == 0)) {
+  if (U_UNLIKELY (rw_rdlock(&lock->hdl) == 0)) {
     return true;
   } else {
-    P_ERROR ("rwlock_t::p_rwlock_reader_lock: rw_rdlock() failed");
+    U_ERROR ("rwlock_t::u_rwlock_reader_lock: rw_rdlock() failed");
     return false;
   }
 }
 
 bool
-p_rwlock_reader_trylock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_reader_trylock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return (rw_tryrdlock(&lock->hdl) == 0) ? true : false;
 }
 
 bool
-p_rwlock_reader_unlock(rwlock_t *lock) {
+u_rwlock_reader_unlock(rwlock_t *lock) {
   return pp_rwlock_unlock_any(lock);
 }
 
 bool
-p_rwlock_writer_lock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_writer_lock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
-  if (P_UNLIKELY (rw_wrlock(&lock->hdl) == 0)) {
+  if (U_UNLIKELY (rw_wrlock(&lock->hdl) == 0)) {
     return true;
   } else {
-    P_ERROR ("rwlock_t::p_rwlock_writer_lock: rw_wrlock() failed");
+    U_ERROR ("rwlock_t::u_rwlock_writer_lock: rw_wrlock() failed");
     return false;
   }
 }
 
 bool
-p_rwlock_writer_trylock(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_writer_trylock(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return false;
   }
   return (rw_trywrlock(&lock->hdl) == 0) ? true : false;
 }
 
 bool
-p_rwlock_writer_unlock(rwlock_t *lock) {
+u_rwlock_writer_unlock(rwlock_t *lock) {
   return pp_rwlock_unlock_any(lock);
 }
 
 void
-p_rwlock_free(rwlock_t *lock) {
-  if (P_UNLIKELY (lock == NULL)) {
+u_rwlock_free(rwlock_t *lock) {
+  if (U_UNLIKELY (lock == NULL)) {
     return;
   }
-  if (P_UNLIKELY (rwlock_destroy(&lock->hdl) != 0))
-    P_ERROR ("rwlock_t::p_rwlock_free: rwlock_destroy() failed");
-  p_free(lock);
+  if (U_UNLIKELY (rwlock_destroy(&lock->hdl) != 0))
+    U_ERROR ("rwlock_t::u_rwlock_free: rwlock_destroy() failed");
+  u_free(lock);
 }
 
 void
-p_rwlock_init(void) {
+u_rwlock_init(void) {
 }
 
 void
-p_rwlock_shutdown(void) {
+u_rwlock_shutdown(void) {
 }

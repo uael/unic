@@ -16,15 +16,15 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 typedef struct test_data {
   int test_array[3];
@@ -33,20 +33,20 @@ typedef struct test_data {
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 static void
@@ -60,7 +60,7 @@ foreach_test_func(ptr_t data, ptr_t user_data) {
   if (test_data->index < 0 || test_data->index > 2) {
     return;
   }
-  test_data->test_array[test_data->index] = P_POINTER_TO_INT (data);
+  test_data->test_array[test_data->index] = U_POINTER_TO_INT (data);
   ++test_data->index;
 }
 
@@ -70,20 +70,20 @@ CUTEST(list, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
-  ASSERT(p_list_append(NULL, PINT_TO_POINTER(10)) == NULL);
-  ASSERT(p_list_prepend(NULL, PINT_TO_POINTER(10)) == NULL);
-  p_mem_restore_vtable();
+  ASSERT(u_mem_set_vtable(&vtable) == true);
+  ASSERT(u_list_append(NULL, PINT_TO_POINTER(10)) == NULL);
+  ASSERT(u_list_prepend(NULL, PINT_TO_POINTER(10)) == NULL);
+  u_mem_restore_vtable();
   return CUTE_SUCCESS;
 }
 
 CUTEST(list, invalid) {
-  ASSERT(p_list_remove(NULL, NULL) == NULL);
-  ASSERT(p_list_last(NULL) == NULL);
-  ASSERT(p_list_length(NULL) == 0);
-  ASSERT(p_list_reverse(NULL) == NULL);
-  p_list_free(NULL);
-  p_list_foreach(NULL, NULL, NULL);
+  ASSERT(u_list_remove(NULL, NULL) == NULL);
+  ASSERT(u_list_last(NULL) == NULL);
+  ASSERT(u_list_length(NULL) == 0);
+  ASSERT(u_list_reverse(NULL) == NULL);
+  u_list_free(NULL);
+  u_list_foreach(NULL, NULL, NULL);
   return CUTE_SUCCESS;
 }
 
@@ -92,21 +92,21 @@ CUTEST(list, general) {
   test_data_t test_data;
 
   /* Testing append */
-  list = p_list_append(list, P_INT_TO_POINTER (32));
-  list = p_list_append(list, P_INT_TO_POINTER (64));
+  list = u_list_append(list, U_INT_TO_POINTER (32));
+  list = u_list_append(list, U_INT_TO_POINTER (64));
   ASSERT(list != NULL);
-  ASSERT(p_list_length(list) == 2);
+  ASSERT(u_list_length(list) == 2);
 
   /* Testing data access */
-  ASSERT(P_POINTER_TO_INT(list->data) == 32);
-  ASSERT(P_POINTER_TO_INT(p_list_last(list)->data) == 64);
+  ASSERT(U_POINTER_TO_INT(list->data) == 32);
+  ASSERT(U_POINTER_TO_INT(u_list_last(list)->data) == 64);
 
   /* Testing prepend */
-  list = p_list_prepend(list, P_INT_TO_POINTER (128));
+  list = u_list_prepend(list, U_INT_TO_POINTER (128));
   ASSERT(list != NULL);
-  ASSERT(p_list_length(list) == 3);
-  ASSERT(P_POINTER_TO_INT(list->data) == 128);
-  ASSERT(P_POINTER_TO_INT(p_list_last(list)->data) == 64);
+  ASSERT(u_list_length(list) == 3);
+  ASSERT(U_POINTER_TO_INT(list->data) == 128);
+  ASSERT(U_POINTER_TO_INT(u_list_last(list)->data) == 64);
 
   /* Testing for each loop */
   memset(&test_data, 0, sizeof(test_data));
@@ -114,7 +114,7 @@ CUTEST(list, general) {
   ASSERT(test_data.test_array[1] == 0);
   ASSERT(test_data.test_array[2] == 0);
   ASSERT(test_data.index == 0);
-  p_list_foreach(list, (fn_t) foreach_test_func, (ptr_t) &test_data);
+  u_list_foreach(list, (fn_t) foreach_test_func, (ptr_t) &test_data);
   ASSERT(test_data.index == 3);
   ASSERT(test_data.test_array[0] == 128);
   ASSERT(test_data.test_array[1] == 32);
@@ -122,11 +122,11 @@ CUTEST(list, general) {
 
   /* Testing reverse */
 
-  list = p_list_reverse(list);
+  list = u_list_reverse(list);
   ASSERT(list != NULL);
-  ASSERT(p_list_length(list) == 3);
-  ASSERT(P_POINTER_TO_INT(list->data) == 64);
-  ASSERT(P_POINTER_TO_INT(p_list_last(list)->data) == 128);
+  ASSERT(u_list_length(list) == 3);
+  ASSERT(U_POINTER_TO_INT(list->data) == 64);
+  ASSERT(U_POINTER_TO_INT(u_list_last(list)->data) == 128);
 
   /* Testing for each loop */
   memset(&test_data, 0, sizeof(test_data));
@@ -134,26 +134,26 @@ CUTEST(list, general) {
   ASSERT(test_data.test_array[1] == 0);
   ASSERT(test_data.test_array[2] == 0);
   ASSERT(test_data.index == 0);
-  p_list_foreach(list, (fn_t) foreach_test_func, (ptr_t) &test_data);
+  u_list_foreach(list, (fn_t) foreach_test_func, (ptr_t) &test_data);
   ASSERT(test_data.index == 3);
   ASSERT(test_data.test_array[0] == 64);
   ASSERT(test_data.test_array[1] == 32);
   ASSERT(test_data.test_array[2] == 128);
 
   /* Testing remove */
-  list = p_list_remove(list, P_INT_TO_POINTER (32));
+  list = u_list_remove(list, U_INT_TO_POINTER (32));
   ASSERT(list != NULL);
-  ASSERT(p_list_length(list) == 2);
-  list = p_list_remove(list, P_INT_TO_POINTER (128));
+  ASSERT(u_list_length(list) == 2);
+  list = u_list_remove(list, U_INT_TO_POINTER (128));
   ASSERT(list != NULL);
-  ASSERT(p_list_length(list) == 1);
-  list = p_list_remove(list, P_INT_TO_POINTER (256));
+  ASSERT(u_list_length(list) == 1);
+  list = u_list_remove(list, U_INT_TO_POINTER (256));
   ASSERT(list != NULL);
-  ASSERT(p_list_length(list) == 1);
-  list = p_list_remove(list, P_INT_TO_POINTER (64));
+  ASSERT(u_list_length(list) == 1);
+  list = u_list_remove(list, U_INT_TO_POINTER (64));
   ASSERT(list == NULL);
-  ASSERT(p_list_length(list) == 0);
-  p_list_free(list);
+  ASSERT(u_list_length(list) == 0);
+  u_list_free(list);
   return CUTE_SUCCESS;
 }
 

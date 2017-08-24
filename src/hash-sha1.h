@@ -17,30 +17,30 @@
 
 /* SHA1 interface implementation for #hash_t */
 
-#ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA1_H
-# define PLIBSYS_HEADER_PCRYPTOHASHSHA1_H
+#ifndef UNIC_HEADER_PCRYPTOHASHSHA1_H
+# define UNIC_HEADER_PCRYPTOHASHSHA1_H
 
-#include "p/types.h"
-#include "p/macros.h"
+#include "unic/types.h"
+#include "unic/macros.h"
 
 typedef struct PHashSHA1_ PHashSHA1;
 
 PHashSHA1 *
-p_crypto_hash_sha1_new(void);
+u_crypto_hash_sha1_new(void);
 
 void
-p_crypto_hash_sha1_update(PHashSHA1 *ctx, const ubyte_t *data, size_t len);
+u_crypto_hash_sha1_update(PHashSHA1 *ctx, const ubyte_t *data, size_t len);
 
 void
-p_crypto_hash_sha1_finish(PHashSHA1 *ctx);
+u_crypto_hash_sha1_finish(PHashSHA1 *ctx);
 
 const ubyte_t *
-p_crypto_hash_sha1_digest(PHashSHA1 *ctx);
+u_crypto_hash_sha1_digest(PHashSHA1 *ctx);
 
 void
-p_crypto_hash_sha1_reset(PHashSHA1 *ctx);
+u_crypto_hash_sha1_reset(PHashSHA1 *ctx);
 
 void
-p_crypto_hash_sha1_free(PHashSHA1 *ctx);
+u_crypto_hash_sha1_free(PHashSHA1 *ctx);
 
-#endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA1_H */
+#endif /* UNIC_HEADER_PCRYPTOHASHSHA1_H */

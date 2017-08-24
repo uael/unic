@@ -16,32 +16,32 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 CUTEST(profiler, nomem) {
@@ -50,16 +50,16 @@ CUTEST(profiler, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
-  ASSERT(p_profiler_new() == NULL);
-  p_mem_restore_vtable();
+  ASSERT(u_mem_set_vtable(&vtable) == true);
+  ASSERT(u_profiler_new() == NULL);
+  u_mem_restore_vtable();
   return CUTE_SUCCESS;
 }
 
 CUTEST(profiler, bad_input) {
-  ASSERT(p_profiler_elapsed_usecs(NULL) == 0);
-  p_profiler_reset(NULL);
-  p_profiler_free(NULL);
+  ASSERT(u_profiler_elapsed_usecs(NULL) == 0);
+  u_profiler_reset(NULL);
+  u_profiler_free(NULL);
   return CUTE_SUCCESS;
 }
 
@@ -67,26 +67,26 @@ CUTEST(profiler, general) {
   profiler_t *profiler;
   u64_t prev_val, val;
 
-  profiler = p_profiler_new();
+  profiler = u_profiler_new();
   ASSERT(profiler != NULL);
-  p_uthread_sleep(50);
-  prev_val = p_profiler_elapsed_usecs(profiler);
+  u_uthread_sleep(50);
+  prev_val = u_profiler_elapsed_usecs(profiler);
   ASSERT(prev_val > 0);
-  p_uthread_sleep(100);
-  val = p_profiler_elapsed_usecs(profiler);
+  u_uthread_sleep(100);
+  val = u_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
   prev_val = val;
-  p_uthread_sleep(1000);
-  val = p_profiler_elapsed_usecs(profiler);
+  u_uthread_sleep(1000);
+  val = u_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
-  p_profiler_reset(profiler);
-  p_uthread_sleep(15);
-  prev_val = p_profiler_elapsed_usecs(profiler);
+  u_profiler_reset(profiler);
+  u_uthread_sleep(15);
+  prev_val = u_profiler_elapsed_usecs(profiler);
   ASSERT(prev_val > 0);
-  p_uthread_sleep(178);
-  val = p_profiler_elapsed_usecs(profiler);
+  u_uthread_sleep(178);
+  val = u_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
-  p_profiler_free(profiler);
+  u_profiler_free(profiler);
   return CUTE_SUCCESS;
 }
 

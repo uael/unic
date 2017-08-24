@@ -15,58 +15,58 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/shm.h"
+#include "unic/shm.h"
 
 struct shm {
   int hdl;
 };
 
 shm_t *
-p_shm_new(const byte_t *name,
+u_shm_new(const byte_t *name,
   size_t size,
   shm_access_t perms,
   err_t **error) {
-  P_UNUSED (name);
-  P_UNUSED (size);
-  P_UNUSED (perms);
-  P_UNUSED (error);
+  U_UNUSED (name);
+  U_UNUSED (size);
+  U_UNUSED (perms);
+  U_UNUSED (error);
   return NULL;
 }
 
 void
-p_shm_take_ownership(shm_t *shm) {
-  P_UNUSED (shm);
+u_shm_take_ownership(shm_t *shm) {
+  U_UNUSED (shm);
 }
 
 void
-p_shm_free(shm_t *shm) {
-  P_UNUSED (shm);
+u_shm_free(shm_t *shm) {
+  U_UNUSED (shm);
 }
 
 bool
-p_shm_lock(shm_t *shm,
+u_shm_lock(shm_t *shm,
   err_t **error) {
-  P_UNUSED (shm);
-  P_UNUSED (error);
+  U_UNUSED (shm);
+  U_UNUSED (error);
   return false;
 }
 
 bool
-p_shm_unlock(shm_t *shm,
+u_shm_unlock(shm_t *shm,
   err_t **error) {
-  P_UNUSED (shm);
-  P_UNUSED (error);
+  U_UNUSED (shm);
+  U_UNUSED (error);
   return false;
 }
 
 ptr_t
-p_shm_get_address(const shm_t *shm) {
-  P_UNUSED (shm);
+u_shm_get_address(const shm_t *shm) {
+  U_UNUSED (shm);
   return NULL;
 }
 
 size_t
-p_shm_get_size(const shm_t *shm) {
-  P_UNUSED (shm);
+u_shm_get_size(const shm_t *shm) {
+  U_UNUSED (shm);
   return 0;
 }

@@ -15,20 +15,20 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/list.h"
+#include "unic/mem.h"
+#include "unic/list.h"
 
 list_t *
-p_list_append(list_t *list, ptr_t data) {
+u_list_append(list_t *list, ptr_t data) {
   list_t *item, *cur;
-  if (P_UNLIKELY ((item = p_malloc0(sizeof(list_t))) == NULL)) {
-    P_ERROR ("list_t::p_list_append: failed to allocate memory");
+  if (U_UNLIKELY ((item = u_malloc0(sizeof(list_t))) == NULL)) {
+    U_ERROR ("list_t::u_list_append: failed to allocate memory");
     return list;
   }
   item->data = data;
 
   /* List is empty */
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return item;
   }
   for (cur = list; cur->next != NULL; cur = cur->next);
@@ -37,9 +37,9 @@ p_list_append(list_t *list, ptr_t data) {
 }
 
 list_t *
-p_list_remove(list_t *list, ptr_t data) {
+u_list_remove(list_t *list, ptr_t data) {
   list_t *cur, *prev, *head;
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return NULL;
   }
   for (head = list, prev = NULL, cur = list; cur != NULL;
@@ -50,7 +50,7 @@ p_list_remove(list_t *list, ptr_t data) {
       } else {
         prev->next = cur->next;
       }
-      p_free(cur);
+      u_free(cur);
       break;
     }
   }
@@ -58,9 +58,9 @@ p_list_remove(list_t *list, ptr_t data) {
 }
 
 void
-p_list_foreach(list_t *list, fn_t func, ptr_t user_data) {
+u_list_foreach(list_t *list, fn_t func, ptr_t user_data) {
   list_t *cur;
-  if (P_UNLIKELY (list == NULL || func == NULL)) {
+  if (U_UNLIKELY (list == NULL || func == NULL)) {
     return;
   }
   for (cur = list; cur != NULL; cur = cur->next) {
@@ -69,21 +69,21 @@ p_list_foreach(list_t *list, fn_t func, ptr_t user_data) {
 }
 
 void
-p_list_free(list_t *list) {
+u_list_free(list_t *list) {
   list_t *cur, *next;
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return;
   }
   for (next = cur = list; cur != NULL && next != NULL; cur = next) {
     next = cur->next;
-    p_free(cur);
+    u_free(cur);
   }
 }
 
 list_t *
-p_list_last(list_t *list) {
+u_list_last(list_t *list) {
   list_t *cur;
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return NULL;
   }
   for (cur = list; cur->next != NULL; cur = cur->next);
@@ -91,10 +91,10 @@ p_list_last(list_t *list) {
 }
 
 size_t
-p_list_length(const list_t *list) {
+u_list_length(const list_t *list) {
   const list_t *cur;
   size_t ret;
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return 0;
   }
   for (cur = list, ret = 1; cur->next != NULL; cur = cur->next, ++ret);
@@ -102,16 +102,16 @@ p_list_length(const list_t *list) {
 }
 
 list_t *
-p_list_prepend(list_t *list, ptr_t data) {
+u_list_prepend(list_t *list, ptr_t data) {
   list_t *item;
-  if (P_UNLIKELY ((item = p_malloc0(sizeof(list_t))) == NULL)) {
-    P_ERROR ("list_t::p_list_prepend: failed to allocate memory");
+  if (U_UNLIKELY ((item = u_malloc0(sizeof(list_t))) == NULL)) {
+    U_ERROR ("list_t::u_list_prepend: failed to allocate memory");
     return list;
   }
   item->data = data;
 
   /* List is empty */
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return item;
   }
   item->next = list;
@@ -119,9 +119,9 @@ p_list_prepend(list_t *list, ptr_t data) {
 }
 
 list_t *
-p_list_reverse(list_t *list) {
+u_list_reverse(list_t *list) {
   list_t *prev, *cur, *tmp;
-  if (P_UNLIKELY (list == NULL)) {
+  if (U_UNLIKELY (list == NULL)) {
     return NULL;
   }
   prev = list;

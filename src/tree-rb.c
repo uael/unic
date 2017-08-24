@@ -16,12 +16,12 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
+#include "unic/mem.h"
 #include "tree-rb.h"
 
 typedef enum PTreeRBColor_ {
-  P_TREE_RB_COLOR_RED = 0x01,
-  P_TREE_RB_COLOR_BLACK = 0x02
+  U_TREE_RB_COLOR_RED = 0x01,
+  U_TREE_RB_COLOR_BLACK = 0x02
 } PTreeRBColor;
 
 typedef struct PTreeRBNode_ {
@@ -62,12 +62,12 @@ pp_tree_rb_is_black(PTreeRBNode *node) {
   if (node == NULL) {
     return true;
   }
-  return ((node->color) & P_TREE_RB_COLOR_BLACK) > 0 ? true : false;
+  return ((node->color) & U_TREE_RB_COLOR_BLACK) > 0 ? true : false;
 }
 
 static bool
 pp_tree_rb_is_red(PTreeRBNode *node) {
-  return ((node->color) & P_TREE_RB_COLOR_RED) > 0 ? true : false;
+  return ((node->color) & U_TREE_RB_COLOR_RED) > 0 ? true : false;
 }
 
 static PTreeRBNode *
@@ -98,7 +98,7 @@ static void
 pp_tree_rb_rotate_left(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeBaseNode *tmp_node;
   tmp_node = node->base.right;
-  if (P_LIKELY (node->parent != NULL)) {
+  if (U_LIKELY (node->parent != NULL)) {
     if (node->parent->base.left == (PTreeBaseNode *) node) {
       node->parent->base.left = tmp_node;
     } else {
@@ -112,7 +112,7 @@ pp_tree_rb_rotate_left(PTreeRBNode *node, PTreeBaseNode **root) {
   tmp_node->left = (PTreeBaseNode *) node;
   ((PTreeRBNode *) tmp_node)->parent = node->parent;
   node->parent = (PTreeRBNode *) tmp_node;
-  if (P_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL)) {
+  if (U_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL)) {
     *root = tmp_node;
   }
 }
@@ -121,7 +121,7 @@ static void
 pp_tree_rb_rotate_right(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeBaseNode *tmp_node;
   tmp_node = node->base.left;
-  if (P_LIKELY (node->parent != NULL)) {
+  if (U_LIKELY (node->parent != NULL)) {
     if (node->parent->base.left == (PTreeBaseNode *) node) {
       node->parent->base.left = tmp_node;
     } else {
@@ -135,7 +135,7 @@ pp_tree_rb_rotate_right(PTreeRBNode *node, PTreeBaseNode **root) {
   tmp_node->right = (PTreeBaseNode *) node;
   ((PTreeRBNode *) tmp_node)->parent = node->parent;
   node->parent = (PTreeRBNode *) tmp_node;
-  if (P_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL)) {
+  if (U_UNLIKELY (((PTreeRBNode *) tmp_node)->parent == NULL)) {
     *root = tmp_node;
   }
 }
@@ -146,8 +146,8 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeRBNode *gparent;
   while (true) {
     /* Case 1: We are at the root  */
-    if (P_UNLIKELY (node->parent == NULL)) {
-      node->color = P_TREE_RB_COLOR_BLACK;
+    if (U_UNLIKELY (node->parent == NULL)) {
+      node->color = U_TREE_RB_COLOR_BLACK;
       break;
     }
 
@@ -162,14 +162,14 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
      *
      *       G            g
      *      / \          / \
-     *     p   u  -->   P   U
+     *     unic   u  -->   P   U
      *    /            /
      *   n            n
      */
     if (uncle != NULL && pp_tree_rb_is_red(uncle) == true) {
-      node->parent->color = P_TREE_RB_COLOR_BLACK;
-      uncle->color = P_TREE_RB_COLOR_BLACK;
-      gparent->color = P_TREE_RB_COLOR_RED;
+      node->parent->color = U_TREE_RB_COLOR_BLACK;
+      uncle->color = U_TREE_RB_COLOR_BLACK;
+      gparent->color = U_TREE_RB_COLOR_RED;
 
       /* Continue iteratively from gparent */
       node = gparent;
@@ -181,21 +181,21 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
          *
          *      G             G
          *     / \           / \
-         *    p   U  -->    n   U
+         *    unic   U  -->    n   U
          * \           /
-         *      n         p
+         *      n         unic
          */
         pp_tree_rb_rotate_left(node->parent, root);
         node = (PTreeRBNode *) node->base.left;
       }
-      gparent->color = P_TREE_RB_COLOR_RED;
-      node->parent->color = P_TREE_RB_COLOR_BLACK;
+      gparent->color = U_TREE_RB_COLOR_RED;
+      node->parent->color = U_TREE_RB_COLOR_BLACK;
 
       /* Case 5a: Right rotate at gparent
        *
        *        G           P
        *       / \         / \
-       *      p   U  -->  n   g
+       *      unic   U  -->  n   g
        *     / \
        *    n                   U
        */
@@ -207,8 +207,8 @@ pp_tree_rb_balance_insert(PTreeRBNode *node, PTreeBaseNode **root) {
         pp_tree_rb_rotate_right(node->parent, root);
         node = (PTreeRBNode *) node->base.right;
       }
-      gparent->color = P_TREE_RB_COLOR_RED;
-      node->parent->color = P_TREE_RB_COLOR_BLACK;
+      gparent->color = U_TREE_RB_COLOR_RED;
+      node->parent->color = U_TREE_RB_COLOR_BLACK;
 
       /* Case 5b: Left rotate at gparent*/
       pp_tree_rb_rotate_left(gparent, root);
@@ -222,7 +222,7 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
   PTreeRBNode *sibling;
   while (true) {
     /* Case 1: We are at the root */
-    if (P_UNLIKELY (node->parent == NULL)) {
+    if (U_UNLIKELY (node->parent == NULL)) {
       break;
     }
     sibling = pp_tree_rb_get_sibling(node);
@@ -232,12 +232,12 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
        *
        *     P               S
        *    / \             / \
-       *   N   s    -->    p   Sr
+       *   N   s    -->    unic   Sr
        *      / \         / \
        *     Sl  Sr      N   Sl
        */
-      node->parent->color = P_TREE_RB_COLOR_RED;
-      sibling->color = P_TREE_RB_COLOR_BLACK;
+      node->parent->color = U_TREE_RB_COLOR_RED;
+      sibling->color = U_TREE_RB_COLOR_BLACK;
       if ((PTreeBaseNode *) node == node->parent->base.left) {
         pp_tree_rb_rotate_left(node->parent, root);
       } else {
@@ -249,7 +249,7 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
     /*
      * Case 3: Sibling (parent) color flip
      *
-     *    (p)           (p)
+     *    (unic)           (unic)
      *    / \           / \
      *   N   S    -->  N   s
      *      / \           / \
@@ -257,12 +257,12 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
      */
     if (pp_tree_rb_is_black((PTreeRBNode *) sibling->base.left) == true &&
       pp_tree_rb_is_black((PTreeRBNode *) sibling->base.right) == true) {
-      sibling->color = P_TREE_RB_COLOR_RED;
+      sibling->color = U_TREE_RB_COLOR_RED;
       if (pp_tree_rb_is_black(node->parent) == true) {
         node = node->parent;
         continue;
       } else {
-        node->parent->color = P_TREE_RB_COLOR_BLACK;
+        node->parent->color = U_TREE_RB_COLOR_BLACK;
         break;
       }
     }
@@ -270,7 +270,7 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
     /*
      * Case 4: Right (left) rotate at sibling
      *
-     *   (p)           (p)
+     *   (unic)           (unic)
      *   / \           / \
      *  N   S    -->  N   Sl
      *     / \ \
@@ -280,14 +280,14 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
      */
     if ((PTreeBaseNode *) node == node->parent->base.left &&
       pp_tree_rb_is_black((PTreeRBNode *) sibling->base.right) == true) {
-      sibling->color = P_TREE_RB_COLOR_RED;
-      ((PTreeRBNode *) sibling->base.left)->color = P_TREE_RB_COLOR_BLACK;
+      sibling->color = U_TREE_RB_COLOR_RED;
+      ((PTreeRBNode *) sibling->base.left)->color = U_TREE_RB_COLOR_BLACK;
       pp_tree_rb_rotate_right(sibling, root);
       sibling = pp_tree_rb_get_sibling(node);
     } else if ((PTreeBaseNode *) node == node->parent->base.right &&
       pp_tree_rb_is_black((PTreeRBNode *) sibling->base.left) == true) {
-      sibling->color = P_TREE_RB_COLOR_RED;
-      ((PTreeRBNode *) sibling->base.right)->color = P_TREE_RB_COLOR_BLACK;
+      sibling->color = U_TREE_RB_COLOR_RED;
+      ((PTreeRBNode *) sibling->base.right)->color = U_TREE_RB_COLOR_BLACK;
       pp_tree_rb_rotate_left(sibling, root);
       sibling = pp_tree_rb_get_sibling(node);
     }
@@ -295,19 +295,19 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
     /*
      * Case 5: Left (right) rotate at parent and color flips
      *
-     *      (p)             (s)
+     *      (unic)             (s)
      *      / \             / \
      *     N   S     -->   P   Sr
      *        / \         / \
      *      (sl) sr      N  (sl)
      */
     sibling->color = node->parent->color;
-    node->parent->color = P_TREE_RB_COLOR_BLACK;
+    node->parent->color = U_TREE_RB_COLOR_BLACK;
     if ((PTreeBaseNode *) node == node->parent->base.left) {
-      ((PTreeRBNode *) sibling->base.right)->color = P_TREE_RB_COLOR_BLACK;
+      ((PTreeRBNode *) sibling->base.right)->color = U_TREE_RB_COLOR_BLACK;
       pp_tree_rb_rotate_left(node->parent, root);
     } else {
-      ((PTreeRBNode *) sibling->base.left)->color = P_TREE_RB_COLOR_BLACK;
+      ((PTreeRBNode *) sibling->base.left)->color = U_TREE_RB_COLOR_BLACK;
       pp_tree_rb_rotate_right(node->parent, root);
     }
     break;
@@ -315,7 +315,7 @@ pp_tree_rb_balance_remove(PTreeRBNode *node, PTreeBaseNode **root) {
 }
 
 bool
-p_tree_rb_insert(PTreeBaseNode **root_node,
+u_tree_rb_insert(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -354,12 +354,12 @@ p_tree_rb_insert(PTreeBaseNode **root_node,
     (*cur_node)->value = value;
     return false;
   }
-  if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeRBNode))) == NULL)) {
+  if (U_UNLIKELY ((*cur_node = u_malloc0(sizeof(PTreeRBNode))) == NULL)) {
     return false;
   }
   (*cur_node)->key = key;
   (*cur_node)->value = value;
-  ((PTreeRBNode *) *cur_node)->color = P_TREE_RB_COLOR_RED;
+  ((PTreeRBNode *) *cur_node)->color = U_TREE_RB_COLOR_RED;
   ((PTreeRBNode *) *cur_node)->parent = (PTreeRBNode *) parent_node;
 
   /* Balance the tree */
@@ -368,7 +368,7 @@ p_tree_rb_insert(PTreeBaseNode **root_node,
 }
 
 bool
-p_tree_rb_remove(PTreeBaseNode **root_node,
+u_tree_rb_remove(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -390,7 +390,7 @@ p_tree_rb_remove(PTreeBaseNode **root_node,
       break;
     }
   }
-  if (P_UNLIKELY (cur_node == NULL)) {
+  if (U_UNLIKELY (cur_node == NULL)) {
     return false;
   }
   if (cur_node->left != NULL && cur_node->right != NULL) {
@@ -427,7 +427,7 @@ p_tree_rb_remove(PTreeBaseNode **root_node,
 
     /* Check if we need to repaint the node */
     if (pp_tree_rb_is_black((PTreeRBNode *) cur_node) == true) {
-      ((PTreeRBNode *) child_node)->color = P_TREE_RB_COLOR_BLACK;
+      ((PTreeRBNode *) child_node)->color = U_TREE_RB_COLOR_BLACK;
     }
   }
 
@@ -438,11 +438,11 @@ p_tree_rb_remove(PTreeBaseNode **root_node,
   if (value_destroy_func != NULL) {
     value_destroy_func(cur_node->value);
   }
-  p_free(cur_node);
+  u_free(cur_node);
   return true;
 }
 
 void
-p_tree_rb_node_free(PTreeBaseNode *node) {
-  p_free(node);
+u_tree_rb_node_free(PTreeBaseNode *node) {
+  u_free(node);
 }

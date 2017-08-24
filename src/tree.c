@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/tree.h"
+#include "unic/mem.h"
+#include "unic/tree.h"
 #include "tree-avl.h"
 #include "tree-bst.h"
 #include "tree-rb.h"
@@ -52,28 +52,28 @@ struct tree {
 };
 
 tree_t *
-p_tree_new(tree_kind_t type, cmp_fn_t func) {
-  return p_tree_new_full(type, (cmp_data_fn_t) func, NULL, NULL, NULL);
+u_tree_new(tree_kind_t type, cmp_fn_t func) {
+  return u_tree_new_full(type, (cmp_data_fn_t) func, NULL, NULL, NULL);
 }
 
 tree_t *
-p_tree_new_with_data(tree_kind_t type, cmp_data_fn_t func, ptr_t data) {
-  return p_tree_new_full(type, func, data, NULL, NULL);
+u_tree_new_with_data(tree_kind_t type, cmp_data_fn_t func, ptr_t data) {
+  return u_tree_new_full(type, func, data, NULL, NULL);
 }
 
 tree_t *
-p_tree_new_full(tree_kind_t type, cmp_data_fn_t func, ptr_t data,
+u_tree_new_full(tree_kind_t type, cmp_data_fn_t func, ptr_t data,
   destroy_fn_t key_destroy, destroy_fn_t value_destroy) {
   tree_t *ret;
 
-  if (P_UNLIKELY (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_AVL)) {
+  if (U_UNLIKELY (type < U_TREE_TYPE_BINARY || type > U_TREE_TYPE_AVL)) {
     return NULL;
   }
-  if (P_UNLIKELY (func == NULL)) {
+  if (U_UNLIKELY (func == NULL)) {
     return NULL;
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(tree_t))) == NULL)) {
-    P_ERROR ("tree_t::p_tree_new_full: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(tree_t))) == NULL)) {
+    U_ERROR ("tree_t::u_tree_new_full: failed to allocate memory");
     return NULL;
   }
   ret->type = type;
@@ -82,30 +82,30 @@ p_tree_new_full(tree_kind_t type, cmp_data_fn_t func, ptr_t data,
   ret->key_destroy_func = key_destroy;
   ret->value_destroy_func = value_destroy;
   switch (type) {
-    case P_TREE_TYPE_BINARY:
-      ret->insert_node_func = p_tree_bst_insert;
-      ret->remove_node_func = p_tree_bst_remove;
-      ret->free_node_func = p_tree_bst_node_free;
+    case U_TREE_TYPE_BINARY:
+      ret->insert_node_func = u_tree_bst_insert;
+      ret->remove_node_func = u_tree_bst_remove;
+      ret->free_node_func = u_tree_bst_node_free;
       break;
-    case P_TREE_TYPE_RB:
-      ret->insert_node_func = p_tree_rb_insert;
-      ret->remove_node_func = p_tree_rb_remove;
-      ret->free_node_func = p_tree_rb_node_free;
+    case U_TREE_TYPE_RB:
+      ret->insert_node_func = u_tree_rb_insert;
+      ret->remove_node_func = u_tree_rb_remove;
+      ret->free_node_func = u_tree_rb_node_free;
       break;
-    case P_TREE_TYPE_AVL:
-      ret->insert_node_func = p_tree_avl_insert;
-      ret->remove_node_func = p_tree_avl_remove;
-      ret->free_node_func = p_tree_avl_node_free;
+    case U_TREE_TYPE_AVL:
+      ret->insert_node_func = u_tree_avl_insert;
+      ret->remove_node_func = u_tree_avl_remove;
+      ret->free_node_func = u_tree_avl_node_free;
       break;
   }
   return ret;
 }
 
 void
-p_tree_insert(tree_t *tree, ptr_t key, ptr_t value) {
+u_tree_insert(tree_t *tree, ptr_t key, ptr_t value) {
   bool result;
 
-  if (P_UNLIKELY (tree == NULL)) {
+  if (U_UNLIKELY (tree == NULL)) {
     return;
   }
   result = tree->insert_node_func(
@@ -123,10 +123,10 @@ p_tree_insert(tree_t *tree, ptr_t key, ptr_t value) {
 }
 
 bool
-p_tree_remove(tree_t *tree, const_ptr_t key) {
+u_tree_remove(tree_t *tree, const_ptr_t key) {
   bool result;
 
-  if (P_UNLIKELY (tree == NULL || tree->root == NULL)) {
+  if (U_UNLIKELY (tree == NULL || tree->root == NULL)) {
     return false;
   }
   result = tree->remove_node_func(
@@ -144,11 +144,11 @@ p_tree_remove(tree_t *tree, const_ptr_t key) {
 }
 
 ptr_t
-p_tree_lookup(tree_t *tree, const_ptr_t key) {
+u_tree_lookup(tree_t *tree, const_ptr_t key) {
   PTreeBaseNode *cur_node;
   int cmp_result;
 
-  if (P_UNLIKELY (tree == NULL)) {
+  if (U_UNLIKELY (tree == NULL)) {
     return NULL;
   }
   cur_node = tree->root;
@@ -166,16 +166,16 @@ p_tree_lookup(tree_t *tree, const_ptr_t key) {
 }
 
 void
-p_tree_foreach(tree_t *tree, traverse_fn_t traverse_func, ptr_t user_data) {
+u_tree_foreach(tree_t *tree, traverse_fn_t traverse_func, ptr_t user_data) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   int mod_counter;
   bool need_stop;
 
-  if (P_UNLIKELY (tree == NULL || traverse_func == NULL)) {
+  if (U_UNLIKELY (tree == NULL || traverse_func == NULL)) {
     return;
   }
-  if (P_UNLIKELY (tree->root == NULL)) {
+  if (U_UNLIKELY (tree->root == NULL)) {
     return;
   }
   cur_node = tree->root;
@@ -220,12 +220,12 @@ p_tree_foreach(tree_t *tree, traverse_fn_t traverse_func, ptr_t user_data) {
 }
 
 void
-p_tree_clear(tree_t *tree) {
+u_tree_clear(tree_t *tree) {
   PTreeBaseNode *cur_node;
   PTreeBaseNode *prev_node;
   PTreeBaseNode *next_node;
 
-  if (P_UNLIKELY (tree == NULL || tree->root == NULL)) {
+  if (U_UNLIKELY (tree == NULL || tree->root == NULL)) {
     return;
   }
   cur_node = tree->root;
@@ -256,23 +256,23 @@ p_tree_clear(tree_t *tree) {
 }
 
 tree_kind_t
-p_tree_get_type(const tree_t *tree) {
-  if (P_UNLIKELY (tree == NULL)) {
+u_tree_get_type(const tree_t *tree) {
+  if (U_UNLIKELY (tree == NULL)) {
     return (tree_kind_t) -1;
   }
   return tree->type;
 }
 
 int
-p_tree_get_nnodes(const tree_t *tree) {
-  if (P_UNLIKELY (tree == NULL)) {
+u_tree_get_nnodes(const tree_t *tree) {
+  if (U_UNLIKELY (tree == NULL)) {
     return 0;
   }
   return tree->nnodes;
 }
 
 void
-p_tree_free(tree_t *tree) {
-  p_tree_clear(tree);
-  p_free(tree);
+u_tree_free(tree_t *tree) {
+  u_tree_clear(tree);
+  u_free(tree);
 }

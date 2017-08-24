@@ -19,8 +19,8 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
-#include "p/mem.h"
-#include "p/mutex.h"
+#include "unic/mem.h"
+#include "unic/mutex.h"
 
 typedef HMTX mutex_hdl;
 
@@ -29,40 +29,40 @@ struct mutex {
 };
 
 mutex_t *
-p_mutex_new(void) {
+u_mutex_new(void) {
   mutex_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(mutex_t))) == NULL)) {
-    P_ERROR ("mutex_t::p_mutex_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(mutex_t))) == NULL)) {
+    U_ERROR ("mutex_t::u_mutex_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (
+  if (U_UNLIKELY (
     DosCreateMutexSem(NULL, (PHMTX) & ret->hdl, 0, false) != NO_ERROR)) {
-    P_ERROR ("mutex_t::p_mutex_new: DosCreateMutexSem() failed");
-    p_free(ret);
+    U_ERROR ("mutex_t::u_mutex_new: DosCreateMutexSem() failed");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 bool
-p_mutex_lock(mutex_t *mutex) {
+u_mutex_lock(mutex_t *mutex) {
   APIRET ulrc;
-  if (P_UNLIKELY (mutex == NULL)) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   while ((ulrc = DosRequestMutexSem(mutex->hdl, SEM_INDEFINITE_WAIT))
     == ERROR_INTERRUPT) {}
-  if (P_LIKELY (ulrc == NO_ERROR)) {
+  if (U_LIKELY (ulrc == NO_ERROR)) {
     return true;
   } else {
-    P_ERROR ("mutex_t::p_mutex_lock: DosRequestMutexSem() failed");
+    U_ERROR ("mutex_t::u_mutex_lock: DosRequestMutexSem() failed");
     return false;
   }
 }
 
 bool
-p_mutex_trylock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_trylock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   return (DosRequestMutexSem(mutex->hdl, SEM_IMMEDIATE_RETURN)) == NO_ERROR
@@ -70,24 +70,24 @@ p_mutex_trylock(mutex_t *mutex) {
 }
 
 bool
-p_mutex_unlock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_unlock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
-  if (P_LIKELY (DosReleaseMutexSem(mutex->hdl) == NO_ERROR)) {
+  if (U_LIKELY (DosReleaseMutexSem(mutex->hdl) == NO_ERROR)) {
     return true;
   } else {
-    P_ERROR ("mutex_t::p_mutex_unlock: DosReleaseMutexSem() failed");
+    U_ERROR ("mutex_t::u_mutex_unlock: DosReleaseMutexSem() failed");
     return false;
   }
 }
 
 void
-p_mutex_free(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_free(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return;
   }
-  if (P_UNLIKELY (DosCloseMutexSem(mutex->hdl) != NO_ERROR))
-    P_ERROR ("mutex_t::p_mutex_free: DosCloseMutexSem() failed");
-  p_free(mutex);
+  if (U_UNLIKELY (DosCloseMutexSem(mutex->hdl) != NO_ERROR))
+    U_ERROR ("mutex_t::u_mutex_free: DosCloseMutexSem() failed");
+  u_free(mutex);
 }

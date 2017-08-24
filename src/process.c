@@ -15,17 +15,17 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/process.h"
+#include "unic/process.h"
 
-#ifndef P_OS_WIN
+#ifndef U_OS_WIN
 # include <sys/types.h>
 # include <signal.h>
 # include <unistd.h>
 #endif
 
 u32_t
-p_process_get_current_pid(void) {
-#ifdef P_OS_WIN
+u_process_get_current_pid(void) {
+#ifdef U_OS_WIN
   return (u32_t) GetCurrentProcessId();
 #else
   return (u32_t) getpid();
@@ -33,8 +33,8 @@ p_process_get_current_pid(void) {
 }
 
 bool
-p_process_is_running(u32_t pid) {
-#ifdef P_OS_WIN
+u_process_is_running(u32_t pid) {
+#ifdef U_OS_WIN
   HANDLE proc;
   DWORD ret;
   if ((proc = OpenProcess(SYNCHRONIZE, false, pid)) == NULL) {

@@ -18,7 +18,7 @@
 #include "sysclose-private.h"
 
 int
-p_sys_close(int fd) {
+u_sys_close(int fd) {
   /* On Windows we can only close a socket descriptor */
   return closesocket(fd) == 0 ? 0 : -1;
 }

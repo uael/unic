@@ -17,42 +17,42 @@
 
 #include <be/kernel/image.h>
 
-#include "p/err.h"
-#include "p/file.h"
-#include "p/dl.h"
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/err.h"
+#include "unic/file.h"
+#include "unic/dl.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 
-typedef image_id plibrary_handle;
+typedef image_id unic_handle;
 
 struct dl {
-  plibrary_handle handle;
+  unic_handle handle;
   status_t last_status;
 };
 
 static void
-pp_dl_clean_handle(plibrary_handle handle);
+pp_dl_clean_handle(unic_handle handle);
 
 static void
-pp_dl_clean_handle(plibrary_handle handle) {
-  if (P_UNLIKELY (unload_add_on(handle) != B_OK))
-    P_ERROR (
+pp_dl_clean_handle(unic_handle handle) {
+  if (U_UNLIKELY (unload_add_on(handle) != B_OK))
+    U_ERROR (
       "dl_t::pp_dl_clean_handle: unload_add_on() failed");
 }
 
 dl_t *
-p_dl_new(const byte_t *path) {
+u_dl_new(const byte_t *path) {
   dl_t *loader = NULL;
-  plibrary_handle handle;
-  if (!p_file_is_exists(path)) {
+  unic_handle handle;
+  if (!u_file_is_exists(path)) {
     return NULL;
   }
-  if (P_UNLIKELY ((handle = load_add_on(path)) == B_ERROR)) {
-    P_ERROR ("dl_t::p_dl_new: load_add_on() failed");
+  if (U_UNLIKELY ((handle = load_add_on(path)) == B_ERROR)) {
+    U_ERROR ("dl_t::u_dl_new: load_add_on() failed");
     return NULL;
   }
-  if (P_UNLIKELY ((loader = p_malloc0(sizeof(dl_t))) == NULL)) {
-    P_ERROR ("dl_t::p_dl_new: failed to allocate memory");
+  if (U_UNLIKELY ((loader = u_malloc0(sizeof(dl_t))) == NULL)) {
+    U_ERROR ("dl_t::u_dl_new: failed to allocate memory");
     pp_dl_clean_handle(handle);
     return NULL;
   }
@@ -62,21 +62,21 @@ p_dl_new(const byte_t *path) {
 }
 
 fn_addr_t
-p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
+u_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   ptr_t location = NULL;
   status_t status;
-  if (P_UNLIKELY (loader == NULL || sym == NULL)) {
+  if (U_UNLIKELY (loader == NULL || sym == NULL)) {
     return NULL;
   }
-  if (P_UNLIKELY ((
+  if (U_UNLIKELY ((
     status = get_image_symbol(
       loader->handle,
       (byte_t *) sym,
       B_SYMBOL_TYPE_ANY,
       &location
     )) != B_OK)) {
-    P_ERROR (
-      "dl_t::p_dl_get_symbol: get_image_symbol() failed");
+    U_ERROR (
+      "dl_t::u_dl_get_symbol: get_image_symbol() failed");
     loader->last_status = status;
     return NULL;
   }
@@ -85,16 +85,16 @@ p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
 }
 
 void
-p_dl_free(dl_t *loader) {
-  if (P_UNLIKELY (loader == NULL)) {
+u_dl_free(dl_t *loader) {
+  if (U_UNLIKELY (loader == NULL)) {
     return;
   }
   pp_dl_clean_handle(loader->handle);
-  p_free(loader);
+  u_free(loader);
 }
 
 byte_t *
-p_dl_get_last_error(dl_t *loader) {
+u_dl_get_last_error(dl_t *loader) {
   if (loader == NULL) {
     return NULL;
   }
@@ -102,15 +102,15 @@ p_dl_get_last_error(dl_t *loader) {
     case B_OK:
       return NULL;
     case B_BAD_IMAGE_ID:
-      return p_strdup("Image handler doesn't identify an existing image");
+      return u_strdup("Image handler doesn't identify an existing image");
     case B_BAD_INDEX:
-      return p_strdup("Invalid symbol index");
+      return u_strdup("Invalid symbol index");
     default:
-      return p_strdup("Unknown error");
+      return u_strdup("Unknown error");
   }
 }
 
 bool
-p_dl_is_ref_counted(void) {
+u_dl_is_ref_counted(void) {
   return true;
 }

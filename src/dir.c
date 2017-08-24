@@ -15,14 +15,14 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/dir.h"
+#include "unic/mem.h"
+#include "unic/dir.h"
 
 void
-p_dir_entry_free(dirent_t *entry) {
-  if (P_UNLIKELY(entry == NULL)) {
+u_dir_entry_free(dirent_t *entry) {
+  if (U_UNLIKELY(entry == NULL)) {
     return;
   }
-  p_free(entry->name);
-  p_free(entry);
+  u_free(entry->name);
+  u_free(entry);
 }

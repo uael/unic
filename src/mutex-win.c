@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/mutex.h"
+#include "unic/mem.h"
+#include "unic/mutex.h"
 
 typedef CRITICAL_SECTION mutex_hdl;
 
@@ -25,10 +25,10 @@ struct mutex {
 };
 
 mutex_t *
-p_mutex_new(void) {
+u_mutex_new(void) {
   mutex_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(mutex_t))) == NULL)) {
-    P_ERROR ("mutex_t::p_mutex_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(mutex_t))) == NULL)) {
+    U_ERROR ("mutex_t::u_mutex_new: failed to allocate memory");
     return NULL;
   }
   InitializeCriticalSection(&ret->hdl);
@@ -36,8 +36,8 @@ p_mutex_new(void) {
 }
 
 bool
-p_mutex_lock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_lock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   EnterCriticalSection(&mutex->hdl);
@@ -45,16 +45,16 @@ p_mutex_lock(mutex_t *mutex) {
 }
 
 bool
-p_mutex_trylock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_trylock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   return TryEnterCriticalSection(&mutex->hdl) != 0 ? true : false;
 }
 
 bool
-p_mutex_unlock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_unlock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   LeaveCriticalSection(&mutex->hdl);
@@ -62,10 +62,10 @@ p_mutex_unlock(mutex_t *mutex) {
 }
 
 void
-p_mutex_free(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_free(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return;
   }
   DeleteCriticalSection(&mutex->hdl);
-  p_free(mutex);
+  u_free(mutex);
 }

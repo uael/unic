@@ -17,8 +17,8 @@
 
 #include <pthread.h>
 
-#include "p/mem.h"
-#include "p/mutex.h"
+#include "unic/mem.h"
+#include "unic/mutex.h"
 
 typedef pthread_mutex_t mutex_hdl;
 
@@ -27,60 +27,60 @@ struct mutex {
 };
 
 mutex_t *
-p_mutex_new(void) {
+u_mutex_new(void) {
   mutex_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(mutex_t))) == NULL)) {
-    P_ERROR ("mutex_t::p_mutex_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(mutex_t))) == NULL)) {
+    U_ERROR ("mutex_t::u_mutex_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (pthread_mutex_init(&ret->hdl, NULL) != 0)) {
-    P_ERROR ("mutex_t::p_mutex_new: pthread_mutex_init() failed");
-    p_free(ret);
+  if (U_UNLIKELY (pthread_mutex_init(&ret->hdl, NULL) != 0)) {
+    U_ERROR ("mutex_t::u_mutex_new: pthread_mutex_init() failed");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 bool
-p_mutex_lock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_lock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
-  if (P_LIKELY (pthread_mutex_lock(&mutex->hdl) == 0)) {
+  if (U_LIKELY (pthread_mutex_lock(&mutex->hdl) == 0)) {
     return true;
   } else {
-    P_ERROR ("mutex_t::p_mutex_lock: pthread_mutex_lock() failed");
+    U_ERROR ("mutex_t::u_mutex_lock: pthread_mutex_lock() failed");
     return false;
   }
 }
 
 bool
-p_mutex_trylock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_trylock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
   return (pthread_mutex_trylock(&mutex->hdl) == 0) ? true : false;
 }
 
 bool
-p_mutex_unlock(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_unlock(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return false;
   }
-  if (P_LIKELY (pthread_mutex_unlock(&mutex->hdl) == 0)) {
+  if (U_LIKELY (pthread_mutex_unlock(&mutex->hdl) == 0)) {
     return true;
   } else {
-    P_ERROR ("mutex_t::p_mutex_unlock: pthread_mutex_unlock() failed");
+    U_ERROR ("mutex_t::u_mutex_unlock: pthread_mutex_unlock() failed");
     return false;
   }
 }
 
 void
-p_mutex_free(mutex_t *mutex) {
-  if (P_UNLIKELY (mutex == NULL)) {
+u_mutex_free(mutex_t *mutex) {
+  if (U_UNLIKELY (mutex == NULL)) {
     return;
   }
-  if (P_UNLIKELY (pthread_mutex_destroy(&mutex->hdl) != 0))
-    P_ERROR ("mutex_t::p_mutex_free: pthread_mutex_destroy() failed");
-  p_free(mutex);
+  if (U_UNLIKELY (pthread_mutex_destroy(&mutex->hdl) != 0))
+    U_ERROR ("mutex_t::u_mutex_free: pthread_mutex_destroy() failed");
+  u_free(mutex);
 }

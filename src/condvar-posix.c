@@ -17,85 +17,85 @@
 
 #include <pthread.h>
 
-#include "p/mem.h"
-#include "p/condvar.h"
+#include "unic/mem.h"
+#include "unic/condvar.h"
 
 struct condvar {
   pthread_cond_t hdl;
 };
 
 condvar_t *
-p_condvar_new(void) {
+u_condvar_new(void) {
   condvar_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(condvar_t))) == NULL)) {
-    P_ERROR ("condvar_t::p_condvar_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(condvar_t))) == NULL)) {
+    U_ERROR ("condvar_t::u_condvar_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (pthread_cond_init(&ret->hdl, NULL) != 0)) {
-    P_ERROR ("condvar_t::p_condvar_new: failed to initialize");
-    p_free(ret);
+  if (U_UNLIKELY (pthread_cond_init(&ret->hdl, NULL) != 0)) {
+    U_ERROR ("condvar_t::u_condvar_new: failed to initialize");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 void
-p_condvar_free(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_free(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return;
   }
-  if (P_UNLIKELY (pthread_cond_destroy(&cond->hdl) != 0))
-    P_WARNING (
-      "condvar_t::p_condvar_free: pthread_cond_destroy() failed");
-  p_free(cond);
+  if (U_UNLIKELY (pthread_cond_destroy(&cond->hdl) != 0))
+    U_WARNING (
+      "condvar_t::u_condvar_free: pthread_cond_destroy() failed");
+  u_free(cond);
 }
 
 bool
-p_condvar_wait(condvar_t *cond,
+u_condvar_wait(condvar_t *cond,
   mutex_t *mutex) {
-  if (P_UNLIKELY (cond == NULL || mutex == NULL)) {
+  if (U_UNLIKELY (cond == NULL || mutex == NULL)) {
     return false;
   }
 
   /* Cast is eligible since there is only one field in the mutex_t structure */
-  if (P_UNLIKELY (
+  if (U_UNLIKELY (
     pthread_cond_wait(&cond->hdl, (pthread_mutex_t *) mutex) != 0)) {
-    P_ERROR ("condvar_t::p_condvar_wait: pthread_cond_wait() failed");
+    U_ERROR ("condvar_t::u_condvar_wait: pthread_cond_wait() failed");
     return false;
   }
   return true;
 }
 
 bool
-p_condvar_signal(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_signal(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return false;
   }
-  if (P_UNLIKELY (pthread_cond_signal(&cond->hdl) != 0)) {
-    P_ERROR (
-      "condvar_t::p_condvar_signal: pthread_cond_signal() failed");
+  if (U_UNLIKELY (pthread_cond_signal(&cond->hdl) != 0)) {
+    U_ERROR (
+      "condvar_t::u_condvar_signal: pthread_cond_signal() failed");
     return false;
   }
   return true;
 }
 
 bool
-p_condvar_broadcast(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_broadcast(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return false;
   }
-  if (P_UNLIKELY (pthread_cond_broadcast(&cond->hdl) != 0)) {
-    P_ERROR (
-      "condvar_t::p_condvar_broadcast: thread_cond_broadcast() failed");
+  if (U_UNLIKELY (pthread_cond_broadcast(&cond->hdl) != 0)) {
+    U_ERROR (
+      "condvar_t::u_condvar_broadcast: thread_cond_broadcast() failed");
     return false;
   }
   return true;
 }
 
 void
-p_condvar_init(void) {
+u_condvar_init(void) {
 }
 
 void
-p_condvar_shutdown(void) {
+u_condvar_shutdown(void) {
 }

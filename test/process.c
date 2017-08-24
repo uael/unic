@@ -16,22 +16,22 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 CUTEST(process, general) {
   u32_t pid;
 
-  pid = p_process_get_current_pid();
+  pid = u_process_get_current_pid();
   ASSERT(pid > 0);
-  ASSERT(p_process_is_running(pid) == true);
+  ASSERT(u_process_is_running(pid) == true);
   return CUTE_SUCCESS;
 }
 

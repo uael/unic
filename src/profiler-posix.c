@@ -19,7 +19,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include "p/profiler.h"
+#include "unic/profiler.h"
 #include "profiler-private.h"
 
 #ifndef _POSIX_MONOTONIC_CLOCK
@@ -30,24 +30,24 @@ typedef u64_t (*PPOSIXTicksFunc)(void);
 
 static PPOSIXTicksFunc pp_profiler_ticks_func = NULL;
 
-#if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
+#if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (U_OS_IRIX)
 static u64_t pp_profiler_get_ticks_clock();
 #endif
 
 static u64_t
 pp_profiler_get_ticks_gtod();
 
-#if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
+#if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (U_OS_IRIX)
 static u64_t
 pp_profiler_get_ticks_clock() {
   struct timespec ts;
 
-#ifdef P_OS_IRIX
-  if (P_UNLIKELY (clock_gettime (CLOCK_SGI_CYCLE, &ts) != 0)) {
+#ifdef U_OS_IRIX
+  if (U_UNLIKELY (clock_gettime (CLOCK_SGI_CYCLE, &ts) != 0)) {
 #else
-  if (P_UNLIKELY (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)) {
+  if (U_UNLIKELY (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)) {
 #endif
-    P_ERROR (
+    U_ERROR (
       "profiler_t::pp_profiler_get_ticks_clock: clock_gettime() failed");
     return pp_profiler_get_ticks_gtod();
   } else
@@ -58,8 +58,8 @@ pp_profiler_get_ticks_clock() {
 static u64_t
 pp_profiler_get_ticks_gtod() {
   struct timeval tv;
-  if (P_UNLIKELY (gettimeofday(&tv, NULL) != 0)) {
-    P_ERROR (
+  if (U_UNLIKELY (gettimeofday(&tv, NULL) != 0)) {
+    U_ERROR (
       "profiler_t::pp_profiler_get_ticks_gtod: gettimeofday() failed");
     return 0;
   }
@@ -67,21 +67,21 @@ pp_profiler_get_ticks_gtod() {
 }
 
 u64_t
-p_profiler_get_ticks_internal() {
+u_profiler_get_ticks_internal() {
   return pp_profiler_ticks_func();
 }
 
 u64_t
-p_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
+u_profiler_elapsed_usecs_internal(const profiler_t *profiler) {
   return pp_profiler_ticks_func() - profiler->counter;
 }
 
 void
-p_profiler_init(void) {
-#if defined (P_OS_IRIX) || (_POSIX_MONOTONIC_CLOCK > 0)
+u_profiler_init(void) {
+#if defined (U_OS_IRIX) || (_POSIX_MONOTONIC_CLOCK > 0)
   pp_profiler_ticks_func = (PPOSIXTicksFunc) pp_profiler_get_ticks_clock;
 #elif (_POSIX_MONOTONIC_CLOCK == 0) && defined (_SC_MONOTONIC_CLOCK)
-  if (P_LIKELY (sysconf(_SC_MONOTONIC_CLOCK) > 0))
+  if (U_LIKELY (sysconf(_SC_MONOTONIC_CLOCK) > 0))
     pp_profiler_ticks_func =
       (PPOSIXTicksFunc) pp_profiler_get_ticks_clock;
   else
@@ -93,6 +93,6 @@ p_profiler_init(void) {
 }
 
 void
-p_profiler_shutdown(void) {
+u_profiler_shutdown(void) {
   pp_profiler_ticks_func = NULL;
 }

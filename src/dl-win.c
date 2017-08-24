@@ -15,41 +15,41 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "p/file.h"
-#include "p/dl.h"
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/err.h"
+#include "unic/file.h"
+#include "unic/dl.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 
-typedef HINSTANCE plibrary_handle;
+typedef HINSTANCE unic_handle;
 
 struct dl {
-  plibrary_handle handle;
+  unic_handle handle;
 };
 
 static void
-pp_dl_clean_handle(plibrary_handle handle);
+pp_dl_clean_handle(unic_handle handle);
 
 static void
-pp_dl_clean_handle(plibrary_handle handle) {
-  if (P_UNLIKELY (!FreeLibrary(handle)))
-    P_ERROR ("dl_t::pp_dl_clean_handle: FreeLibrary() failed");
+pp_dl_clean_handle(unic_handle handle) {
+  if (U_UNLIKELY (!FreeLibrary(handle)))
+    U_ERROR ("dl_t::pp_dl_clean_handle: FreeLibrary() failed");
 }
 
 dl_t *
-p_dl_new(const byte_t *path) {
+u_dl_new(const byte_t *path) {
   dl_t *loader;
-  plibrary_handle handle;
+  unic_handle handle;
 
-  if (!p_file_is_exists(path)) {
+  if (!u_file_is_exists(path)) {
     return NULL;
   }
-  if (P_UNLIKELY ((handle = LoadLibraryA(path)) == NULL)) {
-    P_ERROR ("dl_t::p_dl_new: LoadLibraryA() failed");
+  if (U_UNLIKELY ((handle = LoadLibraryA(path)) == NULL)) {
+    U_ERROR ("dl_t::u_dl_new: LoadLibraryA() failed");
     return NULL;
   }
-  if (P_UNLIKELY ((loader = p_malloc0(sizeof(dl_t))) == NULL)) {
-    P_ERROR ("dl_t::p_dl_new: failed to allocate memory");
+  if (U_UNLIKELY ((loader = u_malloc0(sizeof(dl_t))) == NULL)) {
+    U_ERROR ("dl_t::u_dl_new: failed to allocate memory");
     pp_dl_clean_handle(handle);
     return NULL;
   }
@@ -58,35 +58,35 @@ p_dl_new(const byte_t *path) {
 }
 
 fn_addr_t
-p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
-  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
+u_dl_get_symbol(dl_t *loader, const byte_t *sym) {
+  if (U_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
   }
   return (fn_addr_t) GetProcAddress(loader->handle, sym);
 }
 
 void
-p_dl_free(dl_t *loader) {
-  if (P_UNLIKELY (loader == NULL)) {
+u_dl_free(dl_t *loader) {
+  if (U_UNLIKELY (loader == NULL)) {
     return;
   }
   pp_dl_clean_handle(loader->handle);
-  p_free(loader);
+  u_free(loader);
 }
 
 byte_t *
-p_dl_get_last_error(dl_t *loader) {
+u_dl_get_last_error(dl_t *loader) {
   byte_t *res;
   DWORD err_code;
   LPVOID msg_buf;
 
   res = NULL;
-  P_UNUSED (loader);
-  err_code = (DWORD) p_err_get_last_system();
+  U_UNUSED (loader);
+  err_code = (DWORD) u_err_get_last_system();
   if (err_code == 0) {
     return NULL;
   }
-  if (P_LIKELY (FormatMessageA(
+  if (U_LIKELY (FormatMessageA(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
       FORMAT_MESSAGE_FROM_SYSTEM |
       FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -97,13 +97,13 @@ p_dl_get_last_error(dl_t *loader) {
     0,
     NULL
   ) != 0)) {
-    res = p_strdup((byte_t *) msg_buf);
+    res = u_strdup((byte_t *) msg_buf);
     LocalFree(msg_buf);
   }
   return res;
 }
 
 bool
-p_dl_is_ref_counted(void) {
+u_dl_is_ref_counted(void) {
   return true;
 }

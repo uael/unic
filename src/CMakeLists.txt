@@ -7,25 +7,25 @@ include(${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 # Try to detect target platform
-plibsys_detect_target_platform(PLIBSYS_TARGET_PLATFORM)
-plibsys_detect_c_compiler(PLIBSYS_C_COMPILER)
-plibsys_detect_target_os(PLIBSYS_TARGET_OS)
-plibsys_detect_os_bits(PLIBSYS_OS_BITS)
+unic_detect_target_platform(UNIC_TARGET_PLATFORM)
+unic_detect_c_compiler(UNIC_C_COMPILER)
+unic_detect_target_os(UNIC_TARGET_OS)
+unic_detect_os_bits(UNIC_OS_BITS)
 
-if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-  AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
-  set(PLIBSYS_NATIVE_WINDOWS true)
+if ((UNIC_TARGET_OS STREQUAL windows) AND NOT (UNIC_TARGET_OS STREQUAL cygwin)
+  AND NOT (UNIC_TARGET_OS STREQUAL msys))
+  set(UNIC_NATIVE_WINDOWS true)
 endif ()
 
 if (COVERAGE)
-  if (PLIBSYS_C_COMPILER MATCHES "gcc|clang")
+  if (UNIC_C_COMPILER MATCHES "gcc|clang")
     set(CMAKE_BUILD_TYPE "Debug")
     list(APPEND CMAKE_C_FLAGS "--coverage")
   endif ()
 endif ()
 
 # CMP0042, see http://www.cmake.org/Wiki/CMake_RPATH_handling
-if (PLIBSYS_TARGET_OS STREQUAL darwin)
+if (UNIC_TARGET_OS STREQUAL darwin)
   set(CMAKE_MACOSX_RPATH TRUE)
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
@@ -46,57 +46,58 @@ if (PLIBSYS_TARGET_OS STREQUAL darwin)
   endif ("${isSystemDir}" STREQUAL "-1")
 endif ()
 
-if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/")
-  message(FATAL_ERROR "plibsys doesn't support unknown platform ${PLIBSYS_TARGET_PLATFORM}")
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${UNIC_TARGET_PLATFORM}/")
+  message(FATAL_ERROR "unic doesn't support unknown platform ${UNIC_TARGET_PLATFORM}")
 endif ()
 
-include(${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/platform.cmake)
+include(${PROJECT_SOURCE_DIR}/platforms/${UNIC_TARGET_PLATFORM}/platform.cmake)
 
-set(PLIBSYS_INCLUDE_DIR
+set(UNIC_INCLUDE_DIR
   ${PROJECT_SOURCE_DIR}/include
   )
 
-set(PLIBSYS_INCLUDE_DIRS
-  ${PLIBSYS_INCLUDE_DIR}
+set(UNIC_INCLUDE_DIRS
+  ${UNIC_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src
   ${CMAKE_BINARY_DIR}
   )
 
-set(PLIBSYS_PUBLIC_HDRS
-  ${PLIBSYS_INCLUDE_DIR}/p/atomic.h
-  ${PLIBSYS_INCLUDE_DIR}/p/types.h
-  ${PLIBSYS_INCLUDE_DIR}/p/macros.h
-  ${PLIBSYS_INCLUDE_DIR}/p/cc.h
-  ${PLIBSYS_INCLUDE_DIR}/p/arch.h
-  ${PLIBSYS_INCLUDE_DIR}/p/os.h
-  ${PLIBSYS_INCLUDE_DIR}/p/condvar.h
-  ${PLIBSYS_INCLUDE_DIR}/p/hash.h
-  ${PLIBSYS_INCLUDE_DIR}/p/err.h
-  ${PLIBSYS_INCLUDE_DIR}/p/dir.h
-  ${PLIBSYS_INCLUDE_DIR}/p/file.h
-  ${PLIBSYS_INCLUDE_DIR}/p/htable.h
-  ${PLIBSYS_INCLUDE_DIR}/p/inifile.h
-  ${PLIBSYS_INCLUDE_DIR}/plib.h
-  ${PLIBSYS_INCLUDE_DIR}/p/dl.h
-  ${PLIBSYS_INCLUDE_DIR}/p/list.h
-  ${PLIBSYS_INCLUDE_DIR}/p/main.h
-  ${PLIBSYS_INCLUDE_DIR}/p/mem.h
-  ${PLIBSYS_INCLUDE_DIR}/p/mutex.h
-  ${PLIBSYS_INCLUDE_DIR}/p/process.h
-  ${PLIBSYS_INCLUDE_DIR}/p/rwlock.h
-  ${PLIBSYS_INCLUDE_DIR}/p/sema.h
-  ${PLIBSYS_INCLUDE_DIR}/p/shm.h
-  ${PLIBSYS_INCLUDE_DIR}/p/shmbuf.h
-  ${PLIBSYS_INCLUDE_DIR}/p/socket.h
-  ${PLIBSYS_INCLUDE_DIR}/p/socketaddr.h
-  ${PLIBSYS_INCLUDE_DIR}/p/spinlock.h
-  ${PLIBSYS_INCLUDE_DIR}/p/string.h
-  ${PLIBSYS_INCLUDE_DIR}/p/profiler.h
-  ${PLIBSYS_INCLUDE_DIR}/p/tree.h
-  ${PLIBSYS_INCLUDE_DIR}/p/uthread.h
+set(UNIC_PUBLIC_HDRS
+  ${UNIC_INCLUDE_DIR}/unic/atomic.h
+  ${UNIC_INCLUDE_DIR}/unic/types.h
+  ${UNIC_INCLUDE_DIR}/unic/macros.h
+  ${UNIC_INCLUDE_DIR}/unic/cc.h
+  ${UNIC_INCLUDE_DIR}/unic/arch.h
+  ${UNIC_INCLUDE_DIR}/unic/os.h
+  ${UNIC_INCLUDE_DIR}/unic/condvar.h
+  ${UNIC_INCLUDE_DIR}/unic/hash.h
+  ${UNIC_INCLUDE_DIR}/unic/err.h
+  ${UNIC_INCLUDE_DIR}/unic/dir.h
+  ${UNIC_INCLUDE_DIR}/unic/file.h
+  ${UNIC_INCLUDE_DIR}/unic/htable.h
+  ${UNIC_INCLUDE_DIR}/unic/inifile.h
+  ${UNIC_INCLUDE_DIR}/unic.h
+  ${UNIC_INCLUDE_DIR}/unic/dl.h
+  ${UNIC_INCLUDE_DIR}/unic/list.h
+  ${UNIC_INCLUDE_DIR}/unic/main.h
+  ${UNIC_INCLUDE_DIR}/unic/mem.h
+  ${UNIC_INCLUDE_DIR}/unic/mutex.h
+  ${UNIC_INCLUDE_DIR}/unic/process.h
+  ${UNIC_INCLUDE_DIR}/unic/rwlock.h
+  ${UNIC_INCLUDE_DIR}/unic/sema.h
+  ${UNIC_INCLUDE_DIR}/unic/shm.h
+  ${UNIC_INCLUDE_DIR}/unic/shmbuf.h
+  ${UNIC_INCLUDE_DIR}/unic/socket.h
+  ${UNIC_INCLUDE_DIR}/unic/socketaddr.h
+  ${UNIC_INCLUDE_DIR}/unic/spinlock.h
+  ${UNIC_INCLUDE_DIR}/unic/string.h
+  ${UNIC_INCLUDE_DIR}/unic/profiler.h
+  ${UNIC_INCLUDE_DIR}/unic/tree.h
+  ${UNIC_INCLUDE_DIR}/unic/uthread.h
+  ${UNIC_INCLUDE_DIR}/unic/config.h
   )
 
-set(PLIBSYS_PRIVATE_HDRS
+set(UNIC_PRIVATE_HDRS
   hash-gost3411.h
   hash-md5.h
   hash-sha1.h
@@ -104,7 +105,7 @@ set(PLIBSYS_PRIVATE_HDRS
   hash-sha2-512.h
   hash-sha3.h
   err-private.h
-  plib-private.h
+  unic-private.h
   sysclose-private.h
   profiler-private.h
   tree-avl.h
@@ -112,10 +113,9 @@ set(PLIBSYS_PRIVATE_HDRS
   tree-rb.h
   tree-private.h
   uthread-private.h
-  ${CMAKE_BINARY_DIR}/plibsysconfig.h
   )
 
-set(PLIBSYS_SRCS
+set(UNIC_SRCS
   hash.c
   hash-gost3411.c
   hash-md5.c
@@ -144,49 +144,49 @@ set(PLIBSYS_SRCS
   uthread.c
   )
 
-if (PLIBSYS_NATIVE_WINDOWS)
-  set(PLIBSYS_CLOSE_MODEL win)
-elseif (PLIBSYS_TARGET_OS STREQUAL darwin)
-  set(PLIBSYS_CLOSE_MODEL darwin)
+if (UNIC_NATIVE_WINDOWS)
+  set(UNIC_CLOSE_MODEL win)
+elseif (UNIC_TARGET_OS STREQUAL darwin)
+  set(UNIC_CLOSE_MODEL darwin)
 else ()
-  set(PLIBSYS_CLOSE_MODEL unix)
+  set(UNIC_CLOSE_MODEL unix)
 endif ()
 
-if (PLIBSYS_THREAD_MODEL STREQUAL "")
-  set(PLIBSYS_THREAD_MODEL none)
+if (UNIC_THREAD_MODEL STREQUAL "")
+  set(UNIC_THREAD_MODEL none)
 endif ()
 
-if (PLIBSYS_IPC_MODEL STREQUAL "")
-  set(PLIBSYS_IPC_MODEL none)
+if (UNIC_IPC_MODEL STREQUAL "")
+  set(UNIC_IPC_MODEL none)
 endif ()
 
-if (PLIBSYS_TIME_PROFILER_MODEL STREQUAL "")
-  set(PLIBSYS_TIME_PROFILER_MODEL generic)
+if (UNIC_TIME_PROFILER_MODEL STREQUAL "")
+  set(UNIC_TIME_PROFILER_MODEL generic)
 endif ()
 
-if (PLIBSYS_DIR_MODEL STREQUAL "")
-  set(PLIBSYS_DIR_MODEL none)
+if (UNIC_DIR_MODEL STREQUAL "")
+  set(UNIC_DIR_MODEL none)
 endif ()
 
-if (PLIBSYS_LIBRARYLOADER_MODEL STREQUAL "")
-  set(PLIBSYS_LIBRARYLOADER_MODEL none)
+if (UNIC_LIBRARYLOADER_MODEL STREQUAL "")
+  set(UNIC_LIBRARYLOADER_MODEL none)
 endif ()
 
-set(PLIBSYS_PLATFORM_SRCS
-  condvar-${PLIBSYS_THREAD_MODEL}.c
-  mutex-${PLIBSYS_THREAD_MODEL}.c
-  sema-${PLIBSYS_IPC_MODEL}.c
-  shm-${PLIBSYS_IPC_MODEL}.c
-  sysclose-${PLIBSYS_CLOSE_MODEL}.c
-  uthread-${PLIBSYS_THREAD_MODEL}.c
-  profiler-${PLIBSYS_TIME_PROFILER_MODEL}.c
-  dir-${PLIBSYS_DIR_MODEL}.c
-  dl-${PLIBSYS_LIBRARYLOADER_MODEL}.c
+set(UNIC_PLATFORM_SRCS
+  condvar-${UNIC_THREAD_MODEL}.c
+  mutex-${UNIC_THREAD_MODEL}.c
+  sema-${UNIC_IPC_MODEL}.c
+  shm-${UNIC_IPC_MODEL}.c
+  sysclose-${UNIC_CLOSE_MODEL}.c
+  uthread-${UNIC_THREAD_MODEL}.c
+  profiler-${UNIC_TIME_PROFILER_MODEL}.c
+  dir-${UNIC_DIR_MODEL}.c
+  dl-${UNIC_LIBRARYLOADER_MODEL}.c
   )
 
-if (NOT PLIBSYS_IPC_MODEL STREQUAL none)
-  list(APPEND PLIBSYS_PRIVATE_HDRS ipc-private.h)
-  list(APPEND PLIBSYS_SRCS ipc.c)
+if (NOT UNIC_IPC_MODEL STREQUAL none)
+  list(APPEND UNIC_PRIVATE_HDRS ipc-private.h)
+  list(APPEND UNIC_SRCS ipc.c)
 endif ()
 
 # Save compiler flags
@@ -194,16 +194,16 @@ set(SAVED_CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS})
 set(SAVED_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
 set(SAVED_CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 
-list(APPEND CMAKE_REQUIRED_DEFINITIONS ${PLIBSYS_PLATFORM_DEFINES})
-list(APPEND CMAKE_REQUIRED_LIBRARIES ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
-list(APPEND CMAKE_REQUIRED_FLAGS ${PLIBSYS_PLATFORM_LDFLAGS})
+list(APPEND CMAKE_REQUIRED_DEFINITIONS ${UNIC_PLATFORM_DEFINES})
+list(APPEND CMAKE_REQUIRED_LIBRARIES ${UNIC_PLATFORM_LINK_LIBRARIES})
+list(APPEND CMAKE_REQUIRED_FLAGS ${UNIC_PLATFORM_LDFLAGS})
 
-set(PLIBSYS_ATOMIC_LOCK_FREE no)
+set(UNIC_ATOMIC_LOCK_FREE no)
 
-if (NOT PLIBSYS_ATOMIC_MODEL)
+if (NOT UNIC_ATOMIC_MODEL)
   message(STATUS "Checking for lock-free atomic intrinsics")
 
-  if (NOT PLIBSYS_C_COMPILER STREQUAL clang)
+  if (NOT UNIC_C_COMPILER STREQUAL clang)
     # GCC __atomic* intrinsics
     check_c_source_compiles(
       "int main () {
@@ -214,17 +214,17 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
 					  __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
 					  return 0;
 					 }"
-      PLIBSYS_ATOMIC_IMPL_GCCATOMIC
+      UNIC_ATOMIC_IMPL_GCCATOMIC
     )
 
-    if (PLIBSYS_ATOMIC_IMPL_GCCATOMIC)
-      set(PLIBSYS_ATOMIC_LOCK_FREE yes)
-      set(PLIBSYS_ATOMIC_MODEL "c11")
+    if (UNIC_ATOMIC_IMPL_GCCATOMIC)
+      set(UNIC_ATOMIC_LOCK_FREE yes)
+      set(UNIC_ATOMIC_MODEL "c11")
     endif ()
   endif ()
 
   # GCC __sync* intinsics
-  if (NOT PLIBSYS_ATOMIC_LOCK_FREE)
+  if (NOT UNIC_ATOMIC_LOCK_FREE)
     check_c_source_compiles(
       "int main () {
 					  int i;
@@ -233,98 +233,98 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
 					  __sync_fetch_and_add (&i, 1);
 					  return 0;
 					 }"
-      PLIBSYS_ATOMIC_IMPL_GCCSYNC
+      UNIC_ATOMIC_IMPL_GCCSYNC
     )
 
-    if (PLIBSYS_ATOMIC_IMPL_GCCSYNC)
-      set(PLIBSYS_ATOMIC_LOCK_FREE yes)
-      set(PLIBSYS_ATOMIC_MODEL "sync")
+    if (UNIC_ATOMIC_IMPL_GCCSYNC)
+      set(UNIC_ATOMIC_LOCK_FREE yes)
+      set(UNIC_ATOMIC_MODEL "sync")
     endif ()
   endif ()
 
-  if (NOT PLIBSYS_ATOMIC_LOCK_FREE)
-    if (PLIBSYS_TARGET_OS STREQUAL windows AND (PLIBSYS_C_COMPILER STREQUAL borland OR
-      PLIBSYS_C_COMPILER STREQUAL watcom OR
-      PLIBSYS_C_COMPILER STREQUAL icc OR
-      PLIBSYS_C_COMPILER STREQUAL msvc))
-      set(PLIBSYS_ATOMIC_LOCK_FREE true)
-      set(PLIBSYS_ATOMIC_MODEL "win")
+  if (NOT UNIC_ATOMIC_LOCK_FREE)
+    if (UNIC_TARGET_OS STREQUAL windows AND (UNIC_C_COMPILER STREQUAL borland OR
+      UNIC_C_COMPILER STREQUAL watcom OR
+      UNIC_C_COMPILER STREQUAL icc OR
+      UNIC_C_COMPILER STREQUAL msvc))
+      set(UNIC_ATOMIC_LOCK_FREE true)
+      set(UNIC_ATOMIC_MODEL "win")
     else ()
-      set(PLIBSYS_ATOMIC_LOCK_FREE no)
-      set(PLIBSYS_ATOMIC_MODEL "sim")
+      set(UNIC_ATOMIC_LOCK_FREE no)
+      set(UNIC_ATOMIC_MODEL "sim")
     endif ()
   endif ()
 
-  if (PLIBSYS_ATOMIC_LOCK_FREE)
+  if (UNIC_ATOMIC_LOCK_FREE)
     message(STATUS "Checking for lock-free atomic intrinsics - works")
   else ()
     message(STATUS "Checking for lock-free atomic intrinsics - not works")
   endif ()
 endif ()
 
-list(APPEND PLIBSYS_SRCS
-  atomic-${PLIBSYS_ATOMIC_MODEL}.c
-  spinlock-${PLIBSYS_ATOMIC_MODEL}.c
+list(APPEND UNIC_SRCS
+  atomic-${UNIC_ATOMIC_MODEL}.c
+  spinlock-${UNIC_ATOMIC_MODEL}.c
   )
 
-if (EXISTS PLIBSYS_CONFIG_FILE)
-  file(REMOVE ${PLIBSYS_CONFIG_FILE})
+if (EXISTS UNIC_CONFIG_FILE)
+  file(REMOVE ${UNIC_CONFIG_FILE})
 endif ()
 
-test_big_endian(PLIBSYS_IS_BIGENDIAN)
+test_big_endian(UNIC_IS_BIGENDIAN)
 
-check_include_file("float.h" PLIBSYS_HAVE_FLOAT_H)
-check_include_file("values.h" PLIBSYS_HAVE_VALUES_H)
-check_include_file("limits.h" PLIBSYS_HAVE_LIMITS_H)
+check_include_file("float.h" UNIC_HAVE_FLOAT_H)
+check_include_file("values.h" UNIC_HAVE_VALUES_H)
+check_include_file("limits.h" UNIC_HAVE_LIMITS_H)
 
-if (PLIBSYS_HAVE_FLOAT_H)
-  set(PLIBSYS_NEED_FLOAT_H TRUE)
-  set(PLIBSYS_FLOAT_MIN FLT_MIN)
-  set(PLIBSYS_FLOAT_MAX FLT_MAX)
-  set(PLIBSYS_DOUBLE_MIN DBL_MIN)
-  set(PLIBSYS_DOUBLE_MAX DBL_MAX)
-elseif (PLIBSYS_HAVE_VALUES_H)
-  set(PLIBSYS_NEED_VALUES_H TRUE)
-  set(PLIBSYS_FLOAT_MIN MINFLOAT)
-  set(PLIBSYS_FLOAT_MAX MAXFLOAT)
-  set(PLIBSYS_DOUBLE_MIN MINDOUBLE)
-  set(PLIBSYS_DOUBLE_MAX MAXDOUBLE)
+if (UNIC_HAVE_FLOAT_H)
+  set(UNIC_NEED_FLOAT_H TRUE)
+  set(UNIC_FLOAT_MIN FLT_MIN)
+  set(UNIC_FLOAT_MAX FLT_MAX)
+  set(UNIC_DOUBLE_MIN DBL_MIN)
+  set(UNIC_DOUBLE_MAX DBL_MAX)
+elseif (UNIC_HAVE_VALUES_H)
+  set(UNIC_NEED_VALUES_H TRUE)
+  set(UNIC_FLOAT_MIN MINFLOAT)
+  set(UNIC_FLOAT_MAX MAXFLOAT)
+  set(UNIC_DOUBLE_MIN MINDOUBLE)
+  set(UNIC_DOUBLE_MAX MAXDOUBLE)
 endif ()
 
-if (PLIBSYS_HAVE_LIMITS_H)
-  set(PLIBSYS_NEED_LIMITS_H TRUE)
-  set(PLIBSYS_SHORT_MIN SHRT_MIN)
-  set(PLIBSYS_SHORT_MAX SHRT_MAX)
-  set(PLIBSYS_USHORT_MAX USHRT_MAX)
-  set(PLIBSYS_INT_MIN INT_MIN)
-  set(PLIBSYS_INT_MAX INT_MAX)
-  set(PLIBSYS_UINT_MAX UINT_MAX)
-  set(PLIBSYS_LONG_MIN LONG_MIN)
-  set(PLIBSYS_LONG_MAX LONG_MAX)
-  set(PLIBSYS_ULONG_MAX ULONG_MAX)
-elseif (PLIBSYS_HAVE_VALUES_H)
-  set(PLIBSYS_NEED_VALUES_H TRUE)
-  set(PLIBSYS_SHORT_MIN MINSHORT)
-  set(PLIBSYS_SHORT_MAX MAXSHORT)
-  set(PLIBSYS_USHORT_MAX "(((pushort) P_MAXSHORT) * 2 + 1)")
-  set(PLIBSYS_INT_MIN MININT)
-  set(PLIBSYS_INT_MAX MAXINT)
-  set(PLIBSYS_UINT_MAX "(((puint) P_MAXINT) * 2 + 1)")
-  set(PLIBSYS_LONG_MIN MINLONG)
-  set(PLIBSYS_LONG_MAX MAXLONG)
-  set(PLIBSYS_ULONG_MAX "(((pulong) P_MAXLONG) * 2 + 1)")
+if (UNIC_HAVE_LIMITS_H)
+  set(UNIC_NEED_LIMITS_H TRUE)
+  set(UNIC_SHORT_MIN SHRT_MIN)
+  set(UNIC_SHORT_MAX SHRT_MAX)
+  set(UNIC_USHORT_MAX USHRT_MAX)
+  set(UNIC_INT_MIN INT_MIN)
+  set(UNIC_INT_MAX INT_MAX)
+  set(UNIC_UINT_MAX UINT_MAX)
+  set(UNIC_LONG_MIN LONG_MIN)
+  set(UNIC_LONG_MAX LONG_MAX)
+  set(UNIC_ULONG_MAX ULONG_MAX)
+elseif (UNIC_HAVE_VALUES_H)
+  set(UNIC_NEED_VALUES_H TRUE)
+  set(UNIC_SHORT_MIN MINSHORT)
+  set(UNIC_SHORT_MAX MAXSHORT)
+  set(UNIC_USHORT_MAX "(((pushort) U_MAXSHORT) * 2 + 1)")
+  set(UNIC_INT_MIN MININT)
+  set(UNIC_INT_MAX MAXINT)
+  set(UNIC_UINT_MAX "(((puint) U_MAXINT) * 2 + 1)")
+  set(UNIC_LONG_MIN MINLONG)
+  set(UNIC_LONG_MAX MAXLONG)
+  set(UNIC_ULONG_MAX "(((pulong) U_MAXLONG) * 2 + 1)")
 endif ()
 
-check_type_size("size_t" PLIBSYS_SIZEOF_SIZE_T)
-check_type_size("long" PLIBSYS_SIZEOF_LONG)
+check_type_size("size_t" UNIC_SIZEOF_SIZE_T)
+check_type_size("long" UNIC_SIZEOF_LONG)
 
-if (PLIBSYS_NATIVE_WINDOWS)
-  set(PLIBSYS_NEED_WINDOWS_H true)
+if (UNIC_NATIVE_WINDOWS)
+  set(UNIC_NEED_WINDOWS_H true)
 endif ()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
+configure_file(${UNIC_INCLUDE_DIR}/unic/config.h.in ${UNIC_INCLUDE_DIR}/unic/config.h)
 
-if (NOT PLIBSYS_NATIVE_WINDOWS)
+if (NOT UNIC_NATIVE_WINDOWS)
   # Check for anonymous mmap()
   message(STATUS "Checking whether mmap has anonymous mapping")
 
@@ -335,7 +335,7 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 					mmap (0, 1024, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 					return 0;
 				 }"
-    PLIBSYS_MMAP_HAS_MAP_ANON
+    UNIC_MMAP_HAS_MAP_ANON
   )
 
   check_c_source_compiles(
@@ -345,19 +345,19 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 					mmap (0, 1024, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 					return 0;
 				 }"
-    PLIBSYS_MMAP_HAS_MAP_ANONYMOUS
+    UNIC_MMAP_HAS_MAP_ANONYMOUS
   )
 
-  if (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS OR PLIBSYS_MMAP_HAS_MAP_ANON)
+  if (UNIC_MMAP_HAS_MAP_ANONYMOUS OR UNIC_MMAP_HAS_MAP_ANON)
     message(STATUS "Checking whether mmap has anonymous mapping - yes")
   else ()
     message(STATUS "Checking whether mmap has anonymous mapping - no")
   endif ()
 
-  if (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS)
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_MMAP_HAS_MAP_ANONYMOUS)
-  elseif (PLIBSYS_MMAP_HAS_MAP_ANON)
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_MMAP_HAS_MAP_ANON)
+  if (UNIC_MMAP_HAS_MAP_ANONYMOUS)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_MMAP_HAS_MAP_ANONYMOUS)
+  elseif (UNIC_MMAP_HAS_MAP_ANON)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_MMAP_HAS_MAP_ANON)
   endif ()
 
   # Check for clock_nanosleep() call
@@ -370,10 +370,10 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 					clock_nanosleep (CLOCK_MONOTONIC, 0, &time_sp, NULL);
 					return 0;
 				 }"
-    PLIBSYS_HAS_CLOCKNANOSLEEP
+    UNIC_HAS_CLOCKNANOSLEEP
   )
 
-  if (PLIBSYS_HAS_CLOCKNANOSLEEP)
+  if (UNIC_HAS_CLOCKNANOSLEEP)
     message(STATUS "Checking whether clock_nanosleep() presents - yes")
   else ()
     message(STATUS "Checking whether clock_nanosleep() presents - no")
@@ -389,21 +389,21 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 					nanosleep (&time_sp, NULL);
 					return 0;
 				 }"
-    PLIBSYS_HAS_NANOSLEEP
+    UNIC_HAS_NANOSLEEP
   )
 
-  if (PLIBSYS_HAS_NANOSLEEP)
+  if (UNIC_HAS_NANOSLEEP)
     message(STATUS "Checking whether nanosleep() presents - yes")
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_NANOSLEEP)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_NANOSLEEP)
   else ()
     message(STATUS "Checking whether nanosleep() presents - no")
   endif ()
 
   # Prefere clock_nanosleep() over nanosleep() for power consumption
-  if (PLIBSYS_HAS_CLOCKNANOSLEEP)
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_CLOCKNANOSLEEP)
-  elseif (PLIBSYS_HAS_NANOSLEEP)
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_NANOSLEEP)
+  if (UNIC_HAS_CLOCKNANOSLEEP)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_CLOCKNANOSLEEP)
+  elseif (UNIC_HAS_NANOSLEEP)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_NANOSLEEP)
   endif ()
 
   # Check for getaddrinfo() call
@@ -418,32 +418,32 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 
 					return 0;
 				 }"
-    PLIBSYS_HAS_GETADDRINFO
+    UNIC_HAS_GETADDRINFO
   )
 
-  if (PLIBSYS_HAS_GETADDRINFO)
+  if (UNIC_HAS_GETADDRINFO)
     message(STATUS "Checking whether getaddrinfo() presents - yes")
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_GETADDRINFO)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_GETADDRINFO)
   else ()
     message(STATUS "Checking whether getaddrinfo() presents - no")
   endif ()
 endif ()
 
-if (NOT PLIBSYS_RWLOCK_MODEL)
-  set(PLIBSYS_RWLOCK_MODEL ${PLIBSYS_THREAD_MODEL})
+if (NOT UNIC_RWLOCK_MODEL)
+  set(UNIC_RWLOCK_MODEL ${UNIC_THREAD_MODEL})
 else ()
-  if (NOT PLIBSYS_RWLOCK_MODEL STREQUAL general AND
-    NOT PLIBSYS_RWLOCK_MODEL STREQUAL none)
+  if (NOT UNIC_RWLOCK_MODEL STREQUAL general AND
+    NOT UNIC_RWLOCK_MODEL STREQUAL none)
     message(WARNING "It's not recommended to mix threading and read-write lock models")
   endif ()
 endif ()
 
-if (PLIBSYS_THREAD_MODEL STREQUAL posix)
+if (UNIC_THREAD_MODEL STREQUAL posix)
   # Some systems only need the difinition to be available
-  if (PLIBSYS_TARGET_OS MATCHES "darwin|aix")
-    set(PLIBSYS_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING)")
+  if (UNIC_TARGET_OS MATCHES "darwin|aix")
+    set(UNIC_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING)")
   else ()
-    set(PLIBSYS_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)")
+    set(UNIC_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)")
   endif ()
 
   # Check for thread scheduling
@@ -455,7 +455,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 				  #include <sched.h>
 
 				 int main () {
-				 	#if ${PLIBSYS_SCHED_CHECK}
+				 	#if ${UNIC_SCHED_CHECK}
 					  sched_get_priority_min (0);
 					  sched_get_priority_max (0);
 					#else
@@ -463,12 +463,12 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 					#endif
 					return 0;
 				 }"
-    PLIBSYS_HAS_POSIX_SCHEDULING
+    UNIC_HAS_POSIX_SCHEDULING
   )
 
-  if (PLIBSYS_HAS_POSIX_SCHEDULING)
+  if (UNIC_HAS_POSIX_SCHEDULING)
     message(STATUS "Checking whether POSIX thread scheduling presents - yes")
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_POSIX_SCHEDULING)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_POSIX_SCHEDULING)
   else ()
     message(STATUS "Checking whether POSIX thread scheduling presents - no")
   endif ()
@@ -485,12 +485,12 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 					pthread_attr_setstacksize (&attr, 0);
 					return 0;
 				 }"
-    PLIBSYS_HAS_POSIX_STACKSIZE
+    UNIC_HAS_POSIX_STACKSIZE
   )
 
-  if (PLIBSYS_HAS_POSIX_STACKSIZE)
+  if (UNIC_HAS_POSIX_STACKSIZE)
     message(STATUS "Checking whether POSIX thread stack size is supported - yes")
-    list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_POSIX_STACKSIZE)
+    list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_POSIX_STACKSIZE)
   else ()
     message(STATUS "Checking whether POSIX thread stack size is supported - no")
   endif ()
@@ -499,8 +499,8 @@ endif ()
 # Some platforms may have headers, but lack actual implementation,
 # thus we can let platform to override read-write lock model with
 # general implementation
-if (PLIBSYS_THREAD_MODEL STREQUAL posix AND
-  PLIBSYS_RWLOCK_MODEL STREQUAL posix)
+if (UNIC_THREAD_MODEL STREQUAL posix AND
+  UNIC_RWLOCK_MODEL STREQUAL posix)
   # Check for read-write lock support
   message(STATUS "Checking whether POSIX read-write locks are supported")
 
@@ -514,25 +514,25 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix AND
 					pthread_rwlock_destroy (&rwl);
 					return 0;
 				 }"
-    PLIBSYS_HAS_POSIX_RWLOCK
+    UNIC_HAS_POSIX_RWLOCK
   )
 
-  if (PLIBSYS_HAS_POSIX_RWLOCK)
+  if (UNIC_HAS_POSIX_RWLOCK)
     message(STATUS "Checking whether POSIX read-write locks are supported - yes")
   else ()
     message(STATUS "Checking whether POSIX read-write locks are supported - no")
-    set(PLIBSYS_RWLOCK_MODEL "general")
+    set(UNIC_RWLOCK_MODEL "general")
   endif ()
 endif ()
 
-list(APPEND PLIBSYS_PLATFORM_SRCS rwlock-${PLIBSYS_RWLOCK_MODEL}.c)
+list(APPEND UNIC_PLATFORM_SRCS rwlock-${UNIC_RWLOCK_MODEL}.c)
 
-if (PLIBSYS_NATIVE_WINDOWS)
-  set(PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>
+if (UNIC_NATIVE_WINDOWS)
+  set(UNIC_SOCKET_INCLUDES "#include <winsock2.h>
 				      #include <ws2tcpip.h>
 				      #include <windows.h>")
 else ()
-  set(PLIBSYS_SOCKET_INCLUDES "#include <sys/types.h>
+  set(UNIC_SOCKET_INCLUDES "#include <sys/types.h>
 				      #include <sys/socket.h>
 				      #include <netinet/in.h>")
 endif ()
@@ -541,17 +541,17 @@ endif ()
 message(STATUS "Checking whether socklen_t is defined")
 
 check_c_source_compiles(
-  "${PLIBSYS_SOCKET_INCLUDES}
+  "${UNIC_SOCKET_INCLUDES}
 			  int main () {
 				socklen_t len = sizeof (socklen_t);
 				return len > 0 ? 0 : -1;
 			  }"
-  PLIBSYS_HAS_SOCKLEN_T
+  UNIC_HAS_SOCKLEN_T
 )
 
-if (PLIBSYS_HAS_SOCKLEN_T)
+if (UNIC_HAS_SOCKLEN_T)
   message(STATUS "Checking whether socklen_t is defined - yes")
-  list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_SOCKLEN_T)
+  list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_SOCKLEN_T)
 else ()
   message(STATUS "Checking whether socklen_t is defined - no")
 endif ()
@@ -560,19 +560,19 @@ endif ()
 message(STATUS "Checking whether struct sockaddr_storage is defined")
 
 check_c_source_compiles(
-  "${PLIBSYS_SOCKET_INCLUDES}
+  "${UNIC_SOCKET_INCLUDES}
 			  int main () {
 				struct sockaddr_storage sock_addr;
 				sock_addr.ss_family = AF_INET;
 
 				return 0;
 			  }"
-  PLIBSYS_HAS_SOCKADDR_STORAGE
+  UNIC_HAS_SOCKADDR_STORAGE
 )
 
-if (PLIBSYS_HAS_SOCKADDR_STORAGE)
+if (UNIC_HAS_SOCKADDR_STORAGE)
   message(STATUS "Checking whether struct sockaddr_storage is defined - yes")
-  list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_SOCKADDR_STORAGE)
+  list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_SOCKADDR_STORAGE)
 else ()
   message(STATUS "Checking whether struct sockaddr_storage is defined - no")
 endif ()
@@ -581,19 +581,19 @@ endif ()
 message(STATUS "Checking whether struct sockaddr has sa_len")
 
 check_c_source_compiles(
-  "${PLIBSYS_SOCKET_INCLUDES}
+  "${UNIC_SOCKET_INCLUDES}
 			  int main () {
 				struct sockaddr sock_addr;
 				sock_addr.sa_len = 0;
 
 				return 0;
 			  }"
-  PLIBSYS_SOCKADDR_HAS_SA_LEN
+  UNIC_SOCKADDR_HAS_SA_LEN
 )
 
-if (PLIBSYS_SOCKADDR_HAS_SA_LEN)
+if (UNIC_SOCKADDR_HAS_SA_LEN)
   message(STATUS "Checking whether struct sockaddr has sa_len - yes")
-  list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_SOCKADDR_HAS_SA_LEN)
+  list(APPEND UNIC_COMPILE_DEFS -DUNIC_SOCKADDR_HAS_SA_LEN)
 else ()
   message(STATUS "Checking whether struct sockaddr has sa_len - no")
 endif ()
@@ -602,19 +602,19 @@ endif ()
 message(STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id")
 
 check_c_source_compiles(
-  "${PLIBSYS_SOCKET_INCLUDES}
+  "${UNIC_SOCKET_INCLUDES}
 			  int main () {
 				struct sockaddr_in6 sock_addr;
 				sock_addr.sin6_scope_id = 0;
 
 				return 0;
 			  }"
-  PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
+  UNIC_SOCKADDR_IN6_HAS_SCOPEID
 )
 
-if (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+if (UNIC_SOCKADDR_IN6_HAS_SCOPEID)
   message(STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id - yes")
-  list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+  list(APPEND UNIC_COMPILE_DEFS -DUNIC_SOCKADDR_IN6_HAS_SCOPEID)
 else ()
   message(STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id - no")
 endif ()
@@ -623,19 +623,19 @@ endif ()
 message(STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo")
 
 check_c_source_compiles(
-  "${PLIBSYS_SOCKET_INCLUDES}
+  "${UNIC_SOCKET_INCLUDES}
 			  int main () {
 				struct sockaddr_in6 sock_addr;
 				sock_addr.sin6_flowinfo = 0;
 
 				return 0;
 			  }"
-  PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO
+  UNIC_SOCKADDR_IN6_HAS_FLOWINFO
 )
 
-if (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+if (UNIC_SOCKADDR_IN6_HAS_FLOWINFO)
   message(STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo - yes")
-  list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+  list(APPEND UNIC_COMPILE_DEFS -DUNIC_SOCKADDR_IN6_HAS_FLOWINFO)
 else ()
   message(STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo - no")
 endif ()
@@ -643,7 +643,7 @@ endif ()
 # Check sa_family_t type size in struct sockaddr
 set(CMAKE_EXTRA_INCLUDE_FILES_OLD ${CMAKE_EXTRA_INCLUDE_FILES})
 
-if (PLIBSYS_NATIVE_WINDOWS)
+if (UNIC_NATIVE_WINDOWS)
   set(CMAKE_EXTRA_INCLUDE_FILES
     winsock2.h
     ws2tcpip.h
@@ -657,7 +657,7 @@ else ()
     )
 endif ()
 
-check_type_size("((struct sockaddr *) 0)->sa_family" PLIBSYS_SIZEOF_SAFAMILY_T LANGUAGE C)
+check_type_size("((struct sockaddr *) 0)->sa_family" UNIC_SIZEOF_SAFAMILY_T LANGUAGE C)
 
 set(CMAKE_EXTRA_INCLUDE_FILES ${CMAKE_EXTRA_INCLUDE_FILES_OLD})
 
@@ -674,33 +674,33 @@ check_c_source_compiles(
 
 				return 0;
 			  }"
-  PLIBSYS_HAS_LLDIV
+  UNIC_HAS_LLDIV
 )
 
-if (PLIBSYS_HAS_LLDIV)
+if (UNIC_HAS_LLDIV)
   message(STATUS "Checking whether lldiv() presents - yes")
-  list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_LLDIV)
+  list(APPEND UNIC_COMPILE_DEFS -DUNIC_HAS_LLDIV)
 else ()
   message(STATUS "Checking whether lldiv() presents - no")
 endif ()
 
 # Symbols visibility attributes
-if (PLIBSYS_VISIBILITY)
+if (UNIC_VISIBILITY)
   message(STATUS "Checking whether compiler supports visibility")
-  plibsys_detect_visibility(PLIBSYS_VISIBILITY_CFLAGS PLIBSYS_VISIBILITY_LDFLAGS)
+  unic_detect_visibility(UNIC_VISIBILITY_CFLAGS UNIC_VISIBILITY_LDFLAGS)
 
-  if (NOT PLIBSYS_VISIBILITY_CFLAGS AND NOT PLIBSYS_VISIBILITY_LDFLAGS)
+  if (NOT UNIC_VISIBILITY_CFLAGS AND NOT UNIC_VISIBILITY_LDFLAGS)
     message(STATUS "Checking whether compiler supports visibility - no")
-    set(PLIBSYS_VISIBILITY OFF)
+    set(UNIC_VISIBILITY OFF)
   else ()
     message(STATUS "Checking whether compiler supports visibility - yes")
 
-    if (PLIBSYS_VISIBILITY_CFLAGS)
-      list(APPEND PLIBSYS_PLATFORM_CFLAGS ${PLIBSYS_VISIBILITY_CFLAGS})
+    if (UNIC_VISIBILITY_CFLAGS)
+      list(APPEND UNIC_PLATFORM_CFLAGS ${UNIC_VISIBILITY_CFLAGS})
     endif ()
 
-    if (PLIBSYS_VISIBILITY_LDFLAGS)
-      list(APPEND PLIBSYS_PLATFORM_LDFLAGS ${PLIBSYS_VISIBILITY_LDFLAGS})
+    if (UNIC_VISIBILITY_LDFLAGS)
+      list(APPEND UNIC_PLATFORM_LDFLAGS ${UNIC_VISIBILITY_LDFLAGS})
     endif ()
   endif ()
 endif ()
@@ -712,92 +712,92 @@ set(SAVED_CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 
 # Disable useless warnings
 if (MSVC)
-  list(APPEND PLIBSYS_COMPILE_DEFS -D_CRT_SECURE_NO_WARNINGS)
-  list(APPEND PLIBSYS_COMPILE_DEFS -D_WINSOCK_DEPRECATED_NO_WARNINGS)
+  list(APPEND UNIC_COMPILE_DEFS -D_CRT_SECURE_NO_WARNINGS)
+  list(APPEND UNIC_COMPILE_DEFS -D_WINSOCK_DEPRECATED_NO_WARNINGS)
 endif ()
 
 # Prepare compile definitions
-list(APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_COMPILATION)
+list(APPEND UNIC_COMPILE_DEFS -DUNIC_COMPILATION)
 
-if (PLIBSYS_PLATFORM_DEFINES)
-  list(APPEND PLIBSYS_COMPILE_DEFS ${PLIBSYS_PLATFORM_DEFINES})
+if (UNIC_PLATFORM_DEFINES)
+  list(APPEND UNIC_COMPILE_DEFS ${UNIC_PLATFORM_DEFINES})
 endif ()
 
 # Add targets
-add_library(plibsys SHARED ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
+add_library(unic SHARED ${UNIC_SRCS} ${UNIC_PLATFORM_SRCS} ${UNIC_PUBLIC_HDRS} ${UNIC_PRIVATE_HDRS})
 
-if (PLIBSYS_BUILD_STATIC)
-  add_library(plibsysstatic STATIC ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
+if (UNIC_BUILD_STATIC)
+  add_library(unicstatic STATIC ${UNIC_SRCS} ${UNIC_PLATFORM_SRCS} ${UNIC_PUBLIC_HDRS} ${UNIC_PRIVATE_HDRS})
 endif ()
 
 # Add include directories
 if (COMMAND target_include_directories)
-  target_include_directories(plibsys PUBLIC ${PLIBSYS_INCLUDE_DIRS})
+  target_include_directories(unic PUBLIC ${UNIC_INCLUDE_DIRS})
 
-  if (PLIBSYS_BUILD_STATIC)
-    target_include_directories(plibsysstatic PUBLIC ${PLIBSYS_INCLUDE_DIRS})
+  if (UNIC_BUILD_STATIC)
+    target_include_directories(unicstatic PUBLIC ${UNIC_INCLUDE_DIRS})
   endif ()
 else ()
-  include_directories(${PLIBSYS_INCLUDE_DIRS})
+  include_directories(${UNIC_INCLUDE_DIRS})
 endif ()
 
 # Add compile definitions
 if (COMMAND target_compile_definitions)
-  target_compile_definitions(plibsys PRIVATE ${PLIBSYS_COMPILE_DEFS})
+  target_compile_definitions(unic PRIVATE ${UNIC_COMPILE_DEFS})
 
-  if (PLIBSYS_BUILD_STATIC)
-    target_compile_definitions(plibsysstatic PRIVATE ${PLIBSYS_COMPILE_DEFS} -DPLIBSYS_STATIC_COMPILATION)
+  if (UNIC_BUILD_STATIC)
+    target_compile_definitions(unicstatic PRIVATE ${UNIC_COMPILE_DEFS} -DUNIC_STATIC_COMPILATION)
   endif ()
 else ()
-  add_definitions(${PLIBSYS_COMPILE_DEFS})
+  add_definitions(${UNIC_COMPILE_DEFS})
 endif ()
 
-set_target_properties(plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set_target_properties(plibsys PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set_target_properties(plibsys PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set_target_properties(unic PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set_target_properties(unic PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set_target_properties(unic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-if (NOT PLIBSYS_TARGET_OS STREQUAL os2)
-  set_target_properties(plibsys PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+if (NOT UNIC_TARGET_OS STREQUAL os2)
+  set_target_properties(unic PROPERTIES SOVERSION ${UNIC_VERSION})
 endif ()
 
-if (PLIBSYS_BUILD_STATIC)
-  set_target_properties(plibsysstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+if (UNIC_BUILD_STATIC)
+  set_target_properties(unicstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-  if (NOT PLIBSYS_TARGET_OS STREQUAL os2)
-    set_target_properties(plibsysstatic PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+  if (NOT UNIC_TARGET_OS STREQUAL os2)
+    set_target_properties(unicstatic PROPERTIES SOVERSION ${UNIC_VERSION})
   endif ()
 endif ()
 
-if (PLIBSYS_PLATFORM_CFLAGS)
-  set_target_properties(plibsys PROPERTIES COMPILE_FLAGS "${PLIBSYS_PLATFORM_CFLAGS}")
+if (UNIC_PLATFORM_CFLAGS)
+  set_target_properties(unic PROPERTIES COMPILE_FLAGS "${UNIC_PLATFORM_CFLAGS}")
 
-  if (PLIBSYS_BUILD_STATIC)
-    set_target_properties(plibsysstatic PROPERTIES COMPILE_FLAGS "${PLIBSYS_PLATFORM_CFLAGS}")
+  if (UNIC_BUILD_STATIC)
+    set_target_properties(unicstatic PROPERTIES COMPILE_FLAGS "${UNIC_PLATFORM_CFLAGS}")
   endif ()
 endif ()
 
-if (PLIBSYS_PLATFORM_LDFLAGS)
-  set_target_properties(plibsys PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS}")
+if (UNIC_PLATFORM_LDFLAGS)
+  set_target_properties(unic PROPERTIES LINK_FLAGS "${UNIC_PLATFORM_LDFLAGS}")
 
-  if (PLIBSYS_BUILD_STATIC)
-    set_target_properties(plibsysstatic PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS}")
+  if (UNIC_BUILD_STATIC)
+    set_target_properties(unicstatic PROPERTIES LINK_FLAGS "${UNIC_PLATFORM_LDFLAGS}")
   endif ()
 endif ()
 
-target_link_libraries(plibsys ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
+target_link_libraries(unic ${UNIC_PLATFORM_LINK_LIBRARIES})
 
-if (PLIBSYS_BUILD_STATIC)
-  target_link_libraries(plibsysstatic ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
+if (UNIC_BUILD_STATIC)
+  target_link_libraries(unicstatic ${UNIC_PLATFORM_LINK_LIBRARIES})
 endif ()
 
-if (PLIBSYS_BUILD_STATIC)
-  set(PLIBSYS_INSTALL_TARGETS plibsys plibsysstatic)
+if (UNIC_BUILD_STATIC)
+  set(UNIC_INSTALL_TARGETS unic unicstatic)
 else ()
-  set(PLIBSYS_INSTALL_TARGETS plibsys)
+  set(UNIC_INSTALL_TARGETS unic)
 endif ()
 
-if (PLIBSYS_NATIVE_WINDOWS)
-  install(TARGETS ${PLIBSYS_INSTALL_TARGETS}
+if (UNIC_NATIVE_WINDOWS)
+  install(TARGETS ${UNIC_INSTALL_TARGETS}
     DESTINATION lib
     RUNTIME DESTINATION lib
     COMPONENT Core
@@ -825,49 +825,48 @@ if (NOT CMAKE_INSTALL_INCLUDEDIR)
   set(CMAKE_INSTALL_INCLUDEDIR "include")
 endif ()
 
-install(TARGETS ${PLIBSYS_INSTALL_TARGETS} EXPORT plibsys-targets
+install(TARGETS ${UNIC_INSTALL_TARGETS} EXPORT unic-targets
   DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT Core
   )
-install(TARGETS ${PLIBSYS_INSTALL_TARGETS}
+install(TARGETS ${UNIC_INSTALL_TARGETS}
   DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT Core
   )
 install(FILES
-  ${PLIBSYS_PUBLIC_HDRS}
-  ${CMAKE_BINARY_DIR}/plibsysconfig.h
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/plibsys
+  ${UNIC_PUBLIC_HDRS}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/unic
   COMPONENT Core
   )
 
 # Print summary
-set(PLIBSYS_SUMMARY
+set(UNIC_SUMMARY
   "
 	== Build configuration ==
 
-	Platfrom:               ${PLIBSYS_TARGET_OS}
-	Compiler:               ${PLIBSYS_C_COMPILER}
-	Address model:          ${PLIBSYS_OS_BITS} bit
+	Platfrom:               ${UNIC_TARGET_OS}
+	Compiler:               ${UNIC_C_COMPILER}
+	Address model:          ${UNIC_OS_BITS} bit
 
-	Thread model:           ${PLIBSYS_THREAD_MODEL}
-	RW lock model:          ${PLIBSYS_RWLOCK_MODEL}
-	IPC model:              ${PLIBSYS_IPC_MODEL}
-	DIR model:              ${PLIBSYS_DIR_MODEL}
-	Library loader model:   ${PLIBSYS_LIBRARYLOADER_MODEL}
-	Time profiler model:    ${PLIBSYS_TIME_PROFILER_MODEL}
-	Atomic model:           ${PLIBSYS_ATOMIC_MODEL}
+	Thread model:           ${UNIC_THREAD_MODEL}
+	RW lock model:          ${UNIC_RWLOCK_MODEL}
+	IPC model:              ${UNIC_IPC_MODEL}
+	DIR model:              ${UNIC_DIR_MODEL}
+	Library loader model:   ${UNIC_LIBRARYLOADER_MODEL}
+	Time profiler model:    ${UNIC_TIME_PROFILER_MODEL}
+	Atomic model:           ${UNIC_ATOMIC_MODEL}
 
-	Platform defines:       ${PLIBSYS_PLATFORM_DEFINES}
-	Platform CFLAGS:        ${PLIBSYS_PLATFORM_CFLAGS}
-	Platform LDFLAGS:       ${PLIBSYS_PLATFORM_LDFLAGS}
-	Platform libraries:     ${PLIBSYS_PLATFORM_LINK_LIBRARIES}
+	Platform defines:       ${UNIC_PLATFORM_DEFINES}
+	Platform CFLAGS:        ${UNIC_PLATFORM_CFLAGS}
+	Platform LDFLAGS:       ${UNIC_PLATFORM_LDFLAGS}
+	Platform libraries:     ${UNIC_PLATFORM_LINK_LIBRARIES}
 
-	Build static library:   ${PLIBSYS_BUILD_STATIC}
+	Build static library:   ${UNIC_BUILD_STATIC}
 	Coverage support:       ${COVERAGE}
-	Visibility:             ${PLIBSYS_VISIBILITY}
+	Visibility:             ${UNIC_VISIBILITY}
 
 ")
 
-message("${PLIBSYS_SUMMARY}")
+message("${UNIC_SUMMARY}")

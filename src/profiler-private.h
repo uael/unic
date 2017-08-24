@@ -15,11 +15,11 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
-# define PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
+#ifndef UNIC_HEADER_PTIMEPROFILER_PRIVATE_H
+# define UNIC_HEADER_PTIMEPROFILER_PRIVATE_H
 
-#include "p/macros.h"
-#include "p/types.h"
+#include "unic/macros.h"
+#include "unic/types.h"
 
 /*!@brief Time profiler opaque data structure. */
 struct profiler {
@@ -27,4 +27,4 @@ struct profiler {
   /*!@brief Ticks counter. */
   u64_t counter;
 };
-#endif /* PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H */
+#endif /* UNIC_HEADER_PTIMEPROFILER_PRIVATE_H */

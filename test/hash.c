@@ -16,35 +16,35 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 #define PCRYPTO_STRESS_LENGTH  10000
 #define PCRYPTO_MAX_UPDATES  1000000
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 static char *
@@ -66,16 +66,16 @@ general_hash_test(hash_kind_t type,
   ubyte_t *hash_dig;
   uint_t i;
 
-  crypto_hash = p_crypto_hash_new(type);
-  ASSERT((size_t) p_crypto_hash_get_length(crypto_hash) == hash_len);
-  ASSERT(p_crypto_hash_get_type(crypto_hash) == type);
-  hash_str = p_crypto_hash_get_string(crypto_hash);
+  crypto_hash = u_crypto_hash_new(type);
+  ASSERT((size_t) u_crypto_hash_get_length(crypto_hash) == hash_len);
+  ASSERT(u_crypto_hash_get_type(crypto_hash) == type);
+  hash_str = u_crypto_hash_get_string(crypto_hash);
   ASSERT(hash_str != NULL);
-  p_crypto_hash_reset(crypto_hash);
-  p_free(hash_str);
-  hash_dig = (ubyte_t *) p_malloc0(hash_len);
+  u_crypto_hash_reset(crypto_hash);
+  u_free(hash_str);
+  hash_dig = (ubyte_t *) u_malloc0(hash_len);
   ASSERT(hash_dig != NULL);
-  long_str = (byte_t *) p_malloc0(PCRYPTO_STRESS_LENGTH);
+  long_str = (byte_t *) u_malloc0(PCRYPTO_STRESS_LENGTH);
   ASSERT(long_str != NULL);
   for (i = 0; i < PCRYPTO_STRESS_LENGTH; ++i) {
     long_str[i] = (byte_t) (97 + i % 20);
@@ -83,73 +83,73 @@ general_hash_test(hash_kind_t type,
   /* Case 1 */
 
   /* Check string */
-  p_crypto_hash_update(crypto_hash, (const ubyte_t *) msg1, strlen(msg1));
-  hash_str = p_crypto_hash_get_string(crypto_hash);
+  u_crypto_hash_update(crypto_hash, (const ubyte_t *) msg1, strlen(msg1));
+  hash_str = u_crypto_hash_get_string(crypto_hash);
   ASSERT(strcmp(hash_str, hash1) == 0);
-  p_free(hash_str);
-  p_crypto_hash_reset(crypto_hash);
+  u_free(hash_str);
+  u_crypto_hash_reset(crypto_hash);
 
   /* Check digest */
   dig_len = hash_len;
-  p_crypto_hash_update(crypto_hash, (const ubyte_t *) msg1, strlen(msg1));
-  p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
+  u_crypto_hash_update(crypto_hash, (const ubyte_t *) msg1, strlen(msg1));
+  u_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
   ASSERT(dig_len == hash_len);
   for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon1[i]);
-  p_crypto_hash_reset(crypto_hash);
+  u_crypto_hash_reset(crypto_hash);
 
   /* Case 2 */
 
   /* Check string */
-  p_crypto_hash_update(crypto_hash, (const ubyte_t *) msg2, strlen(msg2));
-  hash_str = p_crypto_hash_get_string(crypto_hash);
+  u_crypto_hash_update(crypto_hash, (const ubyte_t *) msg2, strlen(msg2));
+  hash_str = u_crypto_hash_get_string(crypto_hash);
   ASSERT(strcmp(hash_str, hash2) == 0);
-  p_free(hash_str);
-  p_crypto_hash_reset(crypto_hash);
+  u_free(hash_str);
+  u_crypto_hash_reset(crypto_hash);
 
   /* Check digest */
   dig_len = hash_len;
-  p_crypto_hash_update(crypto_hash, (const ubyte_t *) msg2, strlen(msg2));
-  p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
+  u_crypto_hash_update(crypto_hash, (const ubyte_t *) msg2, strlen(msg2));
+  u_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
   ASSERT(dig_len == hash_len);
   for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon2[i]);
-  p_crypto_hash_reset(crypto_hash);
+  u_crypto_hash_reset(crypto_hash);
 
   /* Case 3 */
 
   /* Check string */
   for (i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
-    p_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
+    u_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
   }
-  hash_str = p_crypto_hash_get_string(crypto_hash);
+  hash_str = u_crypto_hash_get_string(crypto_hash);
   ASSERT(strcmp(hash_str, hash3) == 0);
-  p_free(hash_str);
-  p_crypto_hash_reset(crypto_hash);
+  u_free(hash_str);
+  u_crypto_hash_reset(crypto_hash);
 
   /* Check digest */
   dig_len = hash_len;
   for (i = 0; i < PCRYPTO_MAX_UPDATES; ++i) {
-    p_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
+    u_crypto_hash_update(crypto_hash, (const ubyte_t *) "a", 1);
   }
-  p_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
+  u_crypto_hash_get_digest(crypto_hash, hash_dig, &dig_len);
   ASSERT(dig_len == hash_len);
   for (i = 0; i < hash_len; ++i)
     ASSERT(hash_dig[i] == etalon3[i]);
-  p_crypto_hash_reset(crypto_hash);
+  u_crypto_hash_reset(crypto_hash);
 
   /* Stress test */
-  p_crypto_hash_update(
+  u_crypto_hash_update(
     crypto_hash, (const ubyte_t *) long_str,
     PCRYPTO_STRESS_LENGTH
   );
-  hash_str = p_crypto_hash_get_string(crypto_hash);
+  hash_str = u_crypto_hash_get_string(crypto_hash);
   ASSERT(strcmp(hash_str, hash_stress) == 0);
-  p_free(hash_str);
-  p_crypto_hash_reset(crypto_hash);
-  p_free(long_str);
-  p_free(hash_dig);
-  p_crypto_hash_free(crypto_hash);
+  u_free(hash_str);
+  u_crypto_hash_reset(crypto_hash);
+  u_free(long_str);
+  u_free(hash_dig);
+  u_crypto_hash_free(crypto_hash);
   return CUTE_SUCCESS;
 }
 
@@ -159,11 +159,11 @@ CUTEST(hash, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
-  ASSERT(p_crypto_hash_new(P_HASH_MD5) == NULL);
-  ASSERT(p_crypto_hash_new(P_HASH_SHA1) == NULL);
-  ASSERT(p_crypto_hash_new(P_HASH_GOST) == NULL);
-  p_mem_restore_vtable();
+  ASSERT(u_mem_set_vtable(&vtable) == true);
+  ASSERT(u_crypto_hash_new(U_HASH_MD5) == NULL);
+  ASSERT(u_crypto_hash_new(U_HASH_SHA1) == NULL);
+  ASSERT(u_crypto_hash_new(U_HASH_GOST) == NULL);
+  u_mem_restore_vtable();
   return CUTE_SUCCESS;
 }
 
@@ -174,37 +174,37 @@ CUTEST(hash, invalid) {
   byte_t *hash_str;
   ubyte_t *buf;
 
-  ASSERT(p_crypto_hash_new((hash_kind_t) -1) == NULL);
-  ASSERT(p_crypto_hash_get_length(NULL) == 0);
-  ASSERT(p_crypto_hash_get_string(NULL) == NULL);
-  ASSERT((int) p_crypto_hash_get_type(NULL) == -1);
-  p_crypto_hash_free(NULL);
-  p_crypto_hash_update(NULL, NULL, 0);
-  p_crypto_hash_get_digest(NULL, NULL, NULL);
-  p_crypto_hash_get_digest(NULL, NULL, &len);
+  ASSERT(u_crypto_hash_new((hash_kind_t) -1) == NULL);
+  ASSERT(u_crypto_hash_get_length(NULL) == 0);
+  ASSERT(u_crypto_hash_get_string(NULL) == NULL);
+  ASSERT((int) u_crypto_hash_get_type(NULL) == -1);
+  u_crypto_hash_free(NULL);
+  u_crypto_hash_update(NULL, NULL, 0);
+  u_crypto_hash_get_digest(NULL, NULL, NULL);
+  u_crypto_hash_get_digest(NULL, NULL, &len);
   ASSERT(len == 0);
-  p_crypto_hash_reset(NULL);
-  hash = p_crypto_hash_new(P_HASH_MD5);
+  u_crypto_hash_reset(NULL);
+  hash = u_crypto_hash_new(U_HASH_MD5);
   ASSERT(hash != NULL);
-  md5_len = p_crypto_hash_get_length(hash);
+  md5_len = u_crypto_hash_get_length(hash);
   ASSERT(md5_len > 0);
-  buf = (ubyte_t *) p_malloc0((size_t) md5_len);
+  buf = (ubyte_t *) u_malloc0((size_t) md5_len);
   ASSERT(buf != NULL);
-  p_crypto_hash_get_digest(hash, buf, &len);
+  u_crypto_hash_get_digest(hash, buf, &len);
   ASSERT(len == 0);
-  p_crypto_hash_update(hash, (const ubyte_t *) ("abc"), 3);
+  u_crypto_hash_update(hash, (const ubyte_t *) ("abc"), 3);
   len = ((size_t) md5_len) - 1;
-  p_crypto_hash_get_digest(hash, buf, &len);
+  u_crypto_hash_get_digest(hash, buf, &len);
   ASSERT(len == 0);
-  hash_str = p_crypto_hash_get_string(hash);
+  hash_str = u_crypto_hash_get_string(hash);
   ASSERT(strcmp(hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
-  p_free(hash_str);
-  p_crypto_hash_update(hash, (const ubyte_t *) ("abc"), 3);
-  hash_str = p_crypto_hash_get_string(hash);
+  u_free(hash_str);
+  u_crypto_hash_update(hash, (const ubyte_t *) ("abc"), 3);
+  hash_str = u_crypto_hash_get_string(hash);
   ASSERT(strcmp(hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
-  p_free(hash_str);
-  p_crypto_hash_free(hash);
-  p_free(buf);
+  u_free(hash_str);
+  u_crypto_hash_free(hash);
+  u_free(buf);
   return CUTE_SUCCESS;
 }
 
@@ -223,7 +223,7 @@ CUTEST(hash, md5) {
   };
 
   return general_hash_test(
-    P_HASH_MD5,
+    U_HASH_MD5,
     16,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -255,7 +255,7 @@ CUTEST(hash, sh1) {
   };
 
   return general_hash_test(
-    P_HASH_SHA1,
+    U_HASH_SHA1,
     20,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -287,7 +287,7 @@ CUTEST(hash, sha2_224) {
   };
 
   return general_hash_test(
-    P_HASH_SHA2_224,
+    U_HASH_SHA2_224,
     28,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -322,7 +322,7 @@ CUTEST(hash, sha2_256) {
   };
 
   return general_hash_test(
-    P_HASH_SHA2_256,
+    U_HASH_SHA2_256,
     32,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -360,7 +360,7 @@ CUTEST(hash, sha2_384) {
   };
 
   return general_hash_test(
-    P_HASH_SHA2_384,
+    U_HASH_SHA2_384,
     48,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -407,7 +407,7 @@ CUTEST(hash, sha2_512) {
   };
 
   return general_hash_test(
-    P_HASH_SHA2_512,
+    U_HASH_SHA2_512,
     64,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -439,7 +439,7 @@ CUTEST(hash, sha3_224) {
   };
 
   return general_hash_test(
-    P_HASH_SHA3_224,
+    U_HASH_SHA3_224,
     28,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -474,7 +474,7 @@ CUTEST(hash, sha3_256) {
   };
 
   return general_hash_test(
-    P_HASH_SHA3_256,
+    U_HASH_SHA3_256,
     32,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -512,7 +512,7 @@ CUTEST(hash, sha3_384) {
   };
 
   return general_hash_test(
-    P_HASH_SHA3_384,
+    U_HASH_SHA3_384,
     48,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -559,7 +559,7 @@ CUTEST(hash, sha3_512) {
   };
 
   return general_hash_test(
-    P_HASH_SHA3_512,
+    U_HASH_SHA3_512,
     64,
     "abc",
     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -597,7 +597,7 @@ CUTEST(hash, gost3411_94) {
   byte_t *r;
 
   r = general_hash_test(
-    P_HASH_GOST,
+    U_HASH_GOST,
     32,
     "This is message, length=32 bytes",
     "Suppose the original message has length = 50 bytes",
@@ -612,34 +612,34 @@ CUTEST(hash, gost3411_94) {
   if (r) {
     return r;
   }
-  gost3411_94_hash = p_crypto_hash_new(P_HASH_GOST);
+  gost3411_94_hash = u_crypto_hash_new(U_HASH_GOST);
   ASSERT(gost3411_94_hash != NULL);
 
   /* Repeat test */
-  p_crypto_hash_update(
+  u_crypto_hash_update(
     gost3411_94_hash, (const ubyte_t *) "message digest",
     14
   );
-  p_crypto_hash_update(
+  u_crypto_hash_update(
     gost3411_94_hash, (const ubyte_t *) "message digest",
     14
   );
-  p_crypto_hash_update(
+  u_crypto_hash_update(
     gost3411_94_hash, (const ubyte_t *) "message digest",
     14
   );
-  p_crypto_hash_update(
+  u_crypto_hash_update(
     gost3411_94_hash, (const ubyte_t *) "message digest",
     14
   );
-  hash_str = p_crypto_hash_get_string(gost3411_94_hash);
+  hash_str = u_crypto_hash_get_string(gost3411_94_hash);
   ASSERT(strcmp(
     hash_str,
     "1564064cce4fe1386be063f98d7ab17fc724fa7f02be4fa6847a2162be20d807"
   ) == 0);
-  p_free(hash_str);
-  p_crypto_hash_reset(gost3411_94_hash);
-  p_crypto_hash_free(gost3411_94_hash);
+  u_free(hash_str);
+  u_crypto_hash_reset(gost3411_94_hash);
+  u_crypto_hash_free(gost3411_94_hash);
   return CUTE_SUCCESS;
 }
 

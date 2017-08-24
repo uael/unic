@@ -15,9 +15,9 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/dir.h"
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/dir.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 #include "err-private.h"
 
 struct dir {
@@ -29,35 +29,35 @@ struct dir {
 };
 
 dir_t *
-p_dir_new(const byte_t *path, err_t **error) {
+u_dir_new(const byte_t *path, err_t **error) {
   dir_t *ret;
   byte_t *pathp;
-  if (P_UNLIKELY (path == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (path == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_INVALID_ARGUMENT,
+      (int) U_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
     return NULL;
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(dir_t))) == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(dir_t))) == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_NO_RESOURCES,
+      (int) U_ERR_IO_NO_RESOURCES,
       0,
       "Failed to allocate memory for directory structure"
     );
     return NULL;
   }
-  if (P_UNLIKELY (!GetFullPathNameA(path, MAX_PATH, ret->path, NULL))) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (!GetFullPathNameA(path, MAX_PATH, ret->path, NULL))) {
+    u_err_set_err_p(
       error,
-      (int) p_err_get_last_io(),
-      p_err_get_last_system(),
+      (int) u_err_get_last_io(),
+      u_err_get_last_system(),
       "Failed to call GetFullPathNameA() to get directory path"
     );
-    p_free(ret);
+    u_free(ret);
     return NULL;
   }
 
@@ -71,43 +71,43 @@ p_dir_new(const byte_t *path, err_t **error) {
 
   /* Open directory stream and retrieve the first entry */
   ret->search_handle = FindFirstFileA(ret->path, &ret->find_data);
-  if (P_UNLIKELY (ret->search_handle == INVALID_HANDLE_VALUE)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (ret->search_handle == INVALID_HANDLE_VALUE)) {
+    u_err_set_err_p(
       error,
-      (int) p_err_get_last_io(),
-      p_err_get_last_system(),
+      (int) u_err_get_last_io(),
+      u_err_get_last_system(),
       "Failed to call FindFirstFileA() to open directory stream"
     );
-    p_free(ret);
+    u_free(ret);
     return NULL;
   }
   ret->cached = true;
-  ret->orig_path = p_strdup(path);
+  ret->orig_path = u_strdup(path);
   return ret;
 }
 
 bool
-p_dir_create(const byte_t *path,
+u_dir_create(const byte_t *path,
   int mode,
   err_t **error) {
-  P_UNUSED (mode);
-  if (P_UNLIKELY (path == NULL)) {
-    p_err_set_err_p(
+  U_UNUSED (mode);
+  if (U_UNLIKELY (path == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_INVALID_ARGUMENT,
+      (int) U_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
     return false;
   }
-  if (p_dir_is_exists(path)) {
+  if (u_dir_is_exists(path)) {
     return true;
   }
-  if (P_UNLIKELY (CreateDirectoryA(path, NULL) == 0)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (CreateDirectoryA(path, NULL) == 0)) {
+    u_err_set_err_p(
       error,
-      (int) p_err_get_last_io(),
-      p_err_get_last_system(),
+      (int) u_err_get_last_io(),
+      u_err_get_last_system(),
       "Failed to call CreateDirectoryA() to create directory"
     );
     return false;
@@ -117,31 +117,31 @@ p_dir_create(const byte_t *path,
 }
 
 bool
-p_dir_remove(const byte_t *path,
+u_dir_remove(const byte_t *path,
   err_t **error) {
-  if (P_UNLIKELY (path == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (path == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_INVALID_ARGUMENT,
+      (int) U_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
     return false;
   }
-  if (!p_dir_is_exists(path)) {
-    p_err_set_err_p(
+  if (!u_dir_is_exists(path)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_NOT_EXISTS,
+      (int) U_ERR_IO_NOT_EXISTS,
       0,
       "Specified directory doesn't exist"
     );
     return false;
   }
-  if (P_UNLIKELY (RemoveDirectoryA(path) == 0)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (RemoveDirectoryA(path) == 0)) {
+    u_err_set_err_p(
       error,
-      (int) p_err_get_last_io(),
-      p_err_get_last_system(),
+      (int) u_err_get_last_io(),
+      u_err_get_last_system(),
       "Failed to call RemoveDirectoryA() to remove directory"
     );
     return false;
@@ -151,9 +151,9 @@ p_dir_remove(const byte_t *path,
 }
 
 bool
-p_dir_is_exists(const byte_t *path) {
+u_dir_is_exists(const byte_t *path) {
   DWORD dwAttrs;
-  if (P_UNLIKELY (path == NULL)) {
+  if (U_UNLIKELY (path == NULL)) {
     return false;
   }
   dwAttrs = GetFileAttributesA(path);
@@ -162,22 +162,22 @@ p_dir_is_exists(const byte_t *path) {
 }
 
 byte_t *
-p_dir_get_path(const dir_t *dir) {
-  if (P_UNLIKELY (dir == NULL)) {
+u_dir_get_path(const dir_t *dir) {
+  if (U_UNLIKELY (dir == NULL)) {
     return NULL;
   }
-  return p_strdup(dir->orig_path);
+  return u_strdup(dir->orig_path);
 }
 
 dirent_t *
-p_dir_get_next_entry(dir_t *dir,
+u_dir_get_next_entry(dir_t *dir,
   err_t **error) {
   dirent_t *ret;
   DWORD dwAttrs;
-  if (P_UNLIKELY (dir == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (dir == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_INVALID_ARGUMENT,
+      (int) U_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
@@ -186,20 +186,20 @@ p_dir_get_next_entry(dir_t *dir,
   if (dir->cached == true) {
     dir->cached = false;
   } else {
-    if (P_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
-      p_err_set_err_p(
+    if (U_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
+      u_err_set_err_p(
         error,
-        (int) P_ERR_IO_INVALID_ARGUMENT,
+        (int) U_ERR_IO_INVALID_ARGUMENT,
         0,
         "Not a valid (or closed) directory stream"
       );
       return NULL;
     }
-    if (P_UNLIKELY (!FindNextFileA(dir->search_handle, &dir->find_data))) {
-      p_err_set_err_p(
+    if (U_UNLIKELY (!FindNextFileA(dir->search_handle, &dir->find_data))) {
+      u_err_set_err_p(
         error,
-        (int) p_err_get_last_io(),
-        p_err_get_last_system(),
+        (int) u_err_get_last_io(),
+        u_err_get_last_system(),
         "Failed to call FindNextFileA() to read directory stream"
       );
       FindClose(dir->search_handle);
@@ -207,56 +207,56 @@ p_dir_get_next_entry(dir_t *dir,
       return NULL;
     }
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(dirent_t))) == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(dirent_t))) == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_NO_RESOURCES,
+      (int) U_ERR_IO_NO_RESOURCES,
       0,
       "Failed to allocate memory for directory entry"
     );
     return NULL;
   }
-  ret->name = p_strdup(dir->find_data.cFileName);
+  ret->name = u_strdup(dir->find_data.cFileName);
   dwAttrs = dir->find_data.dwFileAttributes;
   if (dwAttrs & FILE_ATTRIBUTE_DIRECTORY) {
-    ret->type = P_DIRENT_DIR;
+    ret->type = U_DIRENT_DIR;
   } else if (dwAttrs & FILE_ATTRIBUTE_DEVICE) {
-    ret->type = P_DIRENT_OTHER;
+    ret->type = U_DIRENT_OTHER;
   } else {
-    ret->type = P_DIRENT_FILE;
+    ret->type = U_DIRENT_FILE;
   }
   return ret;
 }
 
 bool
-p_dir_rewind(dir_t *dir,
+u_dir_rewind(dir_t *dir,
   err_t **error) {
-  if (P_UNLIKELY (dir == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (dir == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_INVALID_ARGUMENT,
+      (int) U_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
     return false;
   }
   if (dir->search_handle != INVALID_HANDLE_VALUE) {
-    if (P_UNLIKELY (FindClose(dir->search_handle) == 0)) {
-      p_err_set_err_p(
+    if (U_UNLIKELY (FindClose(dir->search_handle) == 0)) {
+      u_err_set_err_p(
         error,
-        (int) p_err_get_last_io(),
-        p_err_get_last_system(),
+        (int) u_err_get_last_io(),
+        u_err_get_last_system(),
         "Failed to call FindClose() to close directory stream"
       );
       return false;
     }
   }
   dir->search_handle = FindFirstFileA(dir->path, &dir->find_data);
-  if (P_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
+    u_err_set_err_p(
       error,
-      (int) p_err_get_last_io(),
-      p_err_get_last_system(),
+      (int) u_err_get_last_io(),
+      u_err_get_last_system(),
       "Failed to call FindFirstFileA() to open directory stream"
     );
     dir->cached = false;
@@ -268,14 +268,14 @@ p_dir_rewind(dir_t *dir,
 }
 
 void
-p_dir_free(dir_t *dir) {
+u_dir_free(dir_t *dir) {
   if (dir == NULL) {
     return;
   }
-  if (P_LIKELY (dir->search_handle != INVALID_HANDLE_VALUE)) {
-    if (P_UNLIKELY (!FindClose(dir->search_handle)))
-      P_ERROR ("dir_t::p_dir_free: FindClose() failed");
+  if (U_LIKELY (dir->search_handle != INVALID_HANDLE_VALUE)) {
+    if (U_UNLIKELY (!FindClose(dir->search_handle)))
+      U_ERROR ("dir_t::u_dir_free: FindClose() failed");
   }
-  p_free(dir->orig_path);
-  p_free(dir);
+  u_free(dir->orig_path);
+  u_free(dir);
 }

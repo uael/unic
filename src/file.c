@@ -15,24 +15,24 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/err.h"
-#include "p/file.h"
+#include "unic/err.h"
+#include "unic/file.h"
 #include "err-private.h"
 
-#ifndef P_OS_WIN
+#ifndef U_OS_WIN
 # include <unistd.h>
 #endif
 
 bool
-p_file_is_exists(const byte_t *file) {
-#ifdef P_OS_WIN
+u_file_is_exists(const byte_t *file) {
+#ifdef U_OS_WIN
   DWORD attrs;
 #endif
 
-  if (P_UNLIKELY (file == NULL)) {
+  if (U_UNLIKELY (file == NULL)) {
     return false;
   }
-#ifdef P_OS_WIN
+#ifdef U_OS_WIN
   attrs = GetFileAttributesA((LPCSTR) file);
   return (
     attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0
@@ -43,28 +43,28 @@ p_file_is_exists(const byte_t *file) {
 }
 
 bool
-p_file_remove(const byte_t *file, err_t **error) {
+u_file_remove(const byte_t *file, err_t **error) {
   bool result;
 
-  if (P_UNLIKELY (file == NULL)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (file == NULL)) {
+    u_err_set_err_p(
       error,
-      (int) P_ERR_IO_INVALID_ARGUMENT,
+      (int) U_ERR_IO_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
     );
     return false;
   }
-#ifdef P_OS_WIN
+#ifdef U_OS_WIN
   result = (bool) (DeleteFileA((LPCSTR) file) != 0);
 #else
   result = (bool) (unlink(file) == 0);
 #endif
-  if (P_UNLIKELY (!result)) {
-    p_err_set_err_p(
+  if (U_UNLIKELY (!result)) {
+    u_err_set_err_p(
       error,
-      (int) p_err_get_last_io(),
-      p_err_get_last_system(),
+      (int) u_err_get_last_io(),
+      u_err_get_last_system(),
       "Failed to remove file"
     );
   }

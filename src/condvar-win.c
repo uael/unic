@@ -21,9 +21,9 @@
  * See: https://github.com/python/cpython/blob/master/Python/condvar.h
  */
 
-#include "p/atomic.h"
-#include "p/mem.h"
-#include "p/condvar.h"
+#include "unic/atomic.h"
+#include "unic/mem.h"
+#include "unic/condvar.h"
 
 typedef VOID (WINAPI
   *InitializeConditionVariableFunc)(
@@ -128,7 +128,7 @@ pp_condvar_init_vista(condvar_t *cond) {
 
 static void
 pp_condvar_close_vista(condvar_t *cond) {
-  P_UNUSED (cond);
+  U_UNUSED (cond);
 }
 
 static bool
@@ -158,18 +158,18 @@ pp_condvar_broadcast_vista(condvar_t *cond) {
 static bool
 pp_condvar_init_xp(condvar_t *cond) {
   PCondVariableXP *cv_xp;
-  if ((cond->cv = p_malloc0(sizeof(PCondVariableXP))) == NULL) {
-    P_ERROR (
+  if ((cond->cv = u_malloc0(sizeof(PCondVariableXP))) == NULL) {
+    U_ERROR (
       "condvar_t::pp_condvar_init_xp: failed to allocate memory (internal)");
     return false;
   }
   cv_xp = ((PCondVariableXP *) cond->cv);
   cv_xp->waiters_count = 0;
   cv_xp->waiters_sema = CreateSemaphoreA(NULL, 0, MAXLONG, NULL);
-  if (P_UNLIKELY (cv_xp->waiters_sema == NULL)) {
-    P_ERROR (
+  if (U_UNLIKELY (cv_xp->waiters_sema == NULL)) {
+    U_ERROR (
       "condvar_t::pp_condvar_init_xp: failed to initialize semaphore");
-    p_free(cond->cv);
+    u_free(cond->cv);
     cond->cv = NULL;
     return false;
   }
@@ -179,19 +179,19 @@ pp_condvar_init_xp(condvar_t *cond) {
 static void
 pp_condvar_close_xp(condvar_t *cond) {
   CloseHandle(((PCondVariableXP *) cond->cv)->waiters_sema);
-  p_free(cond->cv);
+  u_free(cond->cv);
 }
 
 static bool
 pp_condvar_wait_xp(condvar_t *cond, mutex_t *mutex) {
   PCondVariableXP *cv_xp = ((PCondVariableXP *) cond->cv);
   DWORD wait;
-  p_atomic_int_inc(&cv_xp->waiters_count);
-  p_mutex_unlock(mutex);
+  u_atomic_int_inc(&cv_xp->waiters_count);
+  u_mutex_unlock(mutex);
   wait = WaitForSingleObjectEx(cv_xp->waiters_sema, INFINITE, false);
-  p_mutex_lock(mutex);
+  u_mutex_lock(mutex);
   if (wait != WAIT_OBJECT_0) {
-    p_atomic_int_add(&cv_xp->waiters_count, -1);
+    u_atomic_int_add(&cv_xp->waiters_count, -1);
   }
   return wait == WAIT_OBJECT_0 ? true : false;
 }
@@ -199,8 +199,8 @@ pp_condvar_wait_xp(condvar_t *cond, mutex_t *mutex) {
 static bool
 pp_condvar_signal_xp(condvar_t *cond) {
   PCondVariableXP *cv_xp = ((PCondVariableXP *) cond->cv);
-  if (p_atomic_int_get(&cv_xp->waiters_count) > 0) {
-    p_atomic_int_add(&cv_xp->waiters_count, -1);
+  if (u_atomic_int_get(&cv_xp->waiters_count) > 0) {
+    u_atomic_int_add(&cv_xp->waiters_count, -1);
     return ReleaseSemaphore(cv_xp->waiters_sema, 1, 0) != 0 ? true : false;
   }
   return true;
@@ -210,9 +210,9 @@ static bool
 pp_condvar_broadcast_xp(condvar_t *cond) {
   PCondVariableXP *cv_xp = ((PCondVariableXP *) cond->cv);
   int waiters;
-  waiters = p_atomic_int_get(&cv_xp->waiters_count);
+  waiters = u_atomic_int_get(&cv_xp->waiters_count);
   if (waiters > 0) {
-    p_atomic_int_set(&cv_xp->waiters_count, 0);
+    u_atomic_int_set(&cv_xp->waiters_count, 0);
     return ReleaseSemaphore(cv_xp->waiters_sema, waiters, 0) != 0 ? true
       : false;
   }
@@ -220,61 +220,61 @@ pp_condvar_broadcast_xp(condvar_t *cond) {
 }
 
 condvar_t *
-p_condvar_new(void) {
+u_condvar_new(void) {
   condvar_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(condvar_t))) == NULL)) {
-    P_ERROR ("condvar_t::p_condvar_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(condvar_t))) == NULL)) {
+    U_ERROR ("condvar_t::u_condvar_new: failed to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (pp_condvar_init_func(ret) != true)) {
-    P_ERROR ("condvar_t::p_condvar_new: failed to initialize");
-    p_free(ret);
+  if (U_UNLIKELY (pp_condvar_init_func(ret) != true)) {
+    U_ERROR ("condvar_t::u_condvar_new: failed to initialize");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 void
-p_condvar_free(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_free(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return;
   }
   pp_condvar_close_func(cond);
-  p_free(cond);
+  u_free(cond);
 }
 
 bool
-p_condvar_wait(condvar_t *cond,
+u_condvar_wait(condvar_t *cond,
   mutex_t *mutex) {
-  if (P_UNLIKELY (cond == NULL || mutex == NULL)) {
+  if (U_UNLIKELY (cond == NULL || mutex == NULL)) {
     return false;
   }
   return pp_condvar_wait_func(cond, mutex);
 }
 
 bool
-p_condvar_signal(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_signal(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return false;
   }
   return pp_condvar_signal_func(cond);
 }
 
 bool
-p_condvar_broadcast(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_broadcast(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return false;
   }
   return pp_condvar_brdcast_func(cond);
 }
 
 void
-p_condvar_init(void) {
+u_condvar_init(void) {
   HMODULE hmodule;
   hmodule = GetModuleHandleA("kernel32.dll");
-  if (P_UNLIKELY (hmodule == NULL)) {
-    P_ERROR (
-      "condvar_t::p_condvar_init: failed to load kernel32.dll module");
+  if (U_UNLIKELY (hmodule == NULL)) {
+    U_ERROR (
+      "condvar_t::u_condvar_init: failed to load kernel32.dll module");
     return;
   }
   pp_condvar_vista_table.cv_init =
@@ -282,7 +282,7 @@ p_condvar_init(void) {
       hmodule,
       "InitializeConditionVariable"
     );
-  if (P_LIKELY (pp_condvar_vista_table.cv_init != NULL)) {
+  if (U_LIKELY (pp_condvar_vista_table.cv_init != NULL)) {
     pp_condvar_vista_table.cv_wait =
       (SleepConditionVariableCSFunc) GetProcAddress(
         hmodule,
@@ -313,7 +313,7 @@ p_condvar_init(void) {
 }
 
 void
-p_condvar_shutdown(void) {
+u_condvar_shutdown(void) {
   memset(
     &pp_condvar_vista_table, 0,
     sizeof(pp_condvar_vista_table));

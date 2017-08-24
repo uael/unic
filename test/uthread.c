@@ -16,22 +16,22 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 static int thread_wakes_1 = 0;
 static int thread_wakes_2 = 0;
 static int thread_to_wakes = 0;
 static volatile bool is_threads_working = false;
-static P_HANDLE thread1_id = (P_HANDLE) NULL;
-static P_HANDLE thread2_id = (P_HANDLE) NULL;
+static U_HANDLE thread1_id = (U_HANDLE) NULL;
+static U_HANDLE thread2_id = (U_HANDLE) NULL;
 static uthread_t *thread1_obj = NULL;
 static uthread_t *thread2_obj = NULL;
 static uthread_key_t *tls_key = NULL;
@@ -40,26 +40,26 @@ static volatile int free_counter = 0;
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 void
 free_with_check(ptr_t mem) {
-  p_free(mem);
-  p_atomic_int_inc(&free_counter);
+  u_free(mem);
+  u_atomic_int_inc(&free_counter);
 }
 
 static void *
@@ -68,23 +68,23 @@ test_thread_func(void *data) {
 
   counter = (int *) (data);
   if ((*counter) == 1) {
-    thread1_id = p_uthread_current_id();
-    thread1_obj = p_uthread_current();
+    thread1_id = u_uthread_current_id();
+    thread1_obj = u_uthread_current();
   } else {
-    thread2_id = p_uthread_current_id();
-    thread2_obj = p_uthread_current();
+    thread2_id = u_uthread_current_id();
+    thread2_obj = u_uthread_current();
   }
-  p_uthread_set_local(tls_key, (ptr_t) p_uthread_current_id());
+  u_uthread_set_local(tls_key, (ptr_t) u_uthread_current_id());
   *counter = 0;
   while (is_threads_working == true) {
-    p_uthread_sleep(5);
+    u_uthread_sleep(5);
     ++(*counter);
-    p_uthread_yield();
-    if (p_uthread_get_local(tls_key) != (ptr_t) p_uthread_current_id()) {
-      p_uthread_exit(-1);
+    u_uthread_yield();
+    if (u_uthread_get_local(tls_key) != (ptr_t) u_uthread_current_id()) {
+      u_uthread_exit(-1);
     }
   }
-  p_uthread_exit(*counter);
+  u_uthread_exit(*counter);
   return NULL;
 }
 
@@ -96,12 +96,12 @@ test_thread_nonjoinable_func(void *data) {
   counter = (int *) (data);
   is_threads_working = true;
   for (i = thread_to_wakes; i > 0; --i) {
-    p_uthread_sleep(5);
+    u_uthread_sleep(5);
     ++(*counter);
-    p_uthread_yield();
+    u_uthread_yield();
   }
   is_threads_working = false;
-  p_uthread_exit(0);
+  u_uthread_exit(0);
   return NULL;
 }
 
@@ -115,36 +115,36 @@ test_thread_tls_func(void *data) {
   int *tls_new_value;
 
   self_thread_free = *((int *) data);
-  tls_value = (int *) p_malloc0(sizeof(int));
+  tls_value = (int *) u_malloc0(sizeof(int));
   *tls_value = 0;
-  p_uthread_set_local(tls_key, (ptr_t) tls_value);
+  u_uthread_set_local(tls_key, (ptr_t) tls_value);
   prev_tls = 0;
   counter = 0;
   while (is_threads_working == true) {
-    p_uthread_sleep(5);
-    last_tls = (int *) p_uthread_get_local(tls_key);
+    u_uthread_sleep(5);
+    last_tls = (int *) u_uthread_get_local(tls_key);
     if ((*last_tls) != prev_tls) {
-      p_uthread_exit(-1);
+      u_uthread_exit(-1);
     }
-    tls_new_value = (int *) p_malloc0(sizeof(int));
+    tls_new_value = (int *) u_malloc0(sizeof(int));
     *tls_new_value = (*last_tls) + 1;
     prev_tls = (*last_tls) + 1;
-    p_uthread_replace_local(tls_key, (ptr_t) tls_new_value);
+    u_uthread_replace_local(tls_key, (ptr_t) tls_new_value);
     if (self_thread_free) {
-      p_free(last_tls);
+      u_free(last_tls);
     }
     ++counter;
-    p_uthread_yield();
+    u_uthread_yield();
   }
   if (self_thread_free) {
-    last_tls = (int *) p_uthread_get_local(tls_key);
+    last_tls = (int *) u_uthread_get_local(tls_key);
     if ((*last_tls) != prev_tls) {
-      p_uthread_exit(-1);
+      u_uthread_exit(-1);
     }
-    p_free(last_tls);
-    p_uthread_replace_local(tls_key, (ptr_t) NULL);
+    u_free(last_tls);
+    u_uthread_replace_local(tls_key, (ptr_t) NULL);
   }
-  p_uthread_exit(counter);
+  u_uthread_exit(counter);
   return NULL;
 }
 
@@ -153,12 +153,12 @@ test_thread_tls_create_func(void *data) {
   int *tls_value;
   int *tls_value_2;
 
-  tls_value = (int *) p_malloc0(sizeof(int));
+  tls_value = (int *) u_malloc0(sizeof(int));
   *tls_value = 0;
-  p_uthread_set_local(tls_key, (ptr_t) tls_value);
-  tls_value_2 = (int *) p_malloc0(sizeof(int));
+  u_uthread_set_local(tls_key, (ptr_t) tls_value);
+  tls_value_2 = (int *) u_malloc0(sizeof(int));
   *tls_value_2 = 0;
-  p_uthread_set_local(tls_key_2, (ptr_t) tls_value_2);
+  u_uthread_set_local(tls_key_2, (ptr_t) tls_value_2);
   return NULL;
 }
 
@@ -167,57 +167,57 @@ CUTEST(uthread, nomem) {
   mem_vtable_t vtable;
   ptr_t tls_value;
 
-  thread_key = p_uthread_local_new(p_free);
+  thread_key = u_uthread_local_new(u_free);
   ASSERT(thread_key != NULL);
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
+  ASSERT(u_mem_set_vtable(&vtable) == true);
   thread_wakes_1 = 0;
   thread_wakes_2 = 0;
-  ASSERT(p_uthread_create((uthread_fn_t) test_thread_func,
+  ASSERT(u_uthread_create((uthread_fn_t) test_thread_func,
     (ptr_t) &thread_wakes_1,
     true
   ) == NULL);
-  ASSERT(p_uthread_create_full((uthread_fn_t) test_thread_func,
+  ASSERT(u_uthread_create_full((uthread_fn_t) test_thread_func,
     (ptr_t) &thread_wakes_2,
     true,
-    P_UTHREAD_PRIORITY_NORMAL,
+    U_UTHREAD_PRIORITY_NORMAL,
     0
   ) == NULL);
-  ASSERT(p_uthread_current() == NULL);
-  ASSERT(p_uthread_local_new(NULL) == NULL);
-  p_uthread_exit(0);
-  p_uthread_set_local(thread_key, PINT_TO_POINTER (10));
-  tls_value = p_uthread_get_local(thread_key);
+  ASSERT(u_uthread_current() == NULL);
+  ASSERT(u_uthread_local_new(NULL) == NULL);
+  u_uthread_exit(0);
+  u_uthread_set_local(thread_key, PINT_TO_POINTER (10));
+  tls_value = u_uthread_get_local(thread_key);
   if (tls_value != NULL) {
     ASSERT(tls_value == PINT_TO_POINTER(10));
-    p_uthread_set_local(thread_key, NULL);
+    u_uthread_set_local(thread_key, NULL);
   }
-  p_uthread_replace_local(thread_key, PINT_TO_POINTER (12));
-  tls_value = p_uthread_get_local(thread_key);
+  u_uthread_replace_local(thread_key, PINT_TO_POINTER (12));
+  tls_value = u_uthread_get_local(thread_key);
   if (tls_value != NULL) {
     ASSERT(tls_value == PINT_TO_POINTER(12));
-    p_uthread_set_local(thread_key, NULL);
+    u_uthread_set_local(thread_key, NULL);
   }
-  p_mem_restore_vtable();
-  p_uthread_local_free(thread_key);
+  u_mem_restore_vtable();
+  u_uthread_local_free(thread_key);
   return CUTE_SUCCESS;
 }
 
 CUTEST(uthread, bad_input) {
-  ASSERT(p_uthread_create(NULL, NULL, false) == NULL);
-  ASSERT(p_uthread_create_full(NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0)
+  ASSERT(u_uthread_create(NULL, NULL, false) == NULL);
+  ASSERT(u_uthread_create_full(NULL, NULL, false, U_UTHREAD_PRIORITY_NORMAL, 0)
     == NULL);
-  ASSERT(p_uthread_join(NULL) == -1);
-  ASSERT(p_uthread_set_priority(NULL, P_UTHREAD_PRIORITY_NORMAL) == false);
-  ASSERT(p_uthread_get_local(NULL) == NULL);
-  p_uthread_set_local(NULL, NULL);
-  p_uthread_replace_local(NULL, NULL);
-  p_uthread_ref(NULL);
-  p_uthread_unref(NULL);
-  p_uthread_local_free(NULL);
-  p_uthread_exit(0);
+  ASSERT(u_uthread_join(NULL) == -1);
+  ASSERT(u_uthread_set_priority(NULL, U_UTHREAD_PRIORITY_NORMAL) == false);
+  ASSERT(u_uthread_get_local(NULL) == NULL);
+  u_uthread_set_local(NULL, NULL);
+  u_uthread_replace_local(NULL, NULL);
+  u_uthread_ref(NULL);
+  u_uthread_unref(NULL);
+  u_uthread_local_free(NULL);
+  u_uthread_exit(0);
   return CUTE_SUCCESS;
 }
 
@@ -228,43 +228,43 @@ CUTEST(uthread, general) {
 
   thread_wakes_1 = 1;
   thread_wakes_2 = 2;
-  thread1_id = (P_HANDLE) NULL;
-  thread2_id = (P_HANDLE) NULL;
+  thread1_id = (U_HANDLE) NULL;
+  thread2_id = (U_HANDLE) NULL;
   thread1_obj = NULL;
   thread2_obj = NULL;
-  tls_key = p_uthread_local_new(NULL);
+  tls_key = u_uthread_local_new(NULL);
   ASSERT(tls_key != NULL);
   is_threads_working = true;
-  thr1 = p_uthread_create((uthread_fn_t) test_thread_func,
+  thr1 = u_uthread_create((uthread_fn_t) test_thread_func,
     (ptr_t) &thread_wakes_1,
     true
   );
-  thr2 = p_uthread_create_full((uthread_fn_t) test_thread_func,
+  thr2 = u_uthread_create_full((uthread_fn_t) test_thread_func,
     (ptr_t) &thread_wakes_2,
     true,
-    P_UTHREAD_PRIORITY_NORMAL,
+    U_UTHREAD_PRIORITY_NORMAL,
     64 * 1024
   );
-  p_uthread_ref(thr1);
-  p_uthread_set_priority(thr1, P_UTHREAD_PRIORITY_NORMAL);
+  u_uthread_ref(thr1);
+  u_uthread_set_priority(thr1, U_UTHREAD_PRIORITY_NORMAL);
   ASSERT(thr1 != NULL);
   ASSERT(thr2 != NULL);
-  p_uthread_sleep(5);
+  u_uthread_sleep(5);
   is_threads_working = false;
-  ASSERT(p_uthread_join(thr1) == thread_wakes_1);
-  ASSERT(p_uthread_join(thr2) == thread_wakes_2);
+  ASSERT(u_uthread_join(thr1) == thread_wakes_1);
+  ASSERT(u_uthread_join(thr2) == thread_wakes_2);
   ASSERT(thread1_id != thread2_id);
-  ASSERT(thread1_id != p_uthread_current_id() &&
-    thread2_id != p_uthread_current_id());
+  ASSERT(thread1_id != u_uthread_current_id() &&
+    thread2_id != u_uthread_current_id());
   ASSERT(thread1_obj == thr1);
   ASSERT(thread2_obj == thr2);
-  p_uthread_local_free(tls_key);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
-  p_uthread_unref(thr1);
-  cur_thr = p_uthread_current();
+  u_uthread_local_free(tls_key);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
+  u_uthread_unref(thr1);
+  cur_thr = u_uthread_current();
   ASSERT(cur_thr != NULL);
-  ASSERT(p_uthread_ideal_count() > 0);
+  ASSERT(u_uthread_ideal_count() > 0);
   return CUTE_SUCCESS;
 }
 
@@ -274,18 +274,18 @@ CUTEST(uthread, nonjoinable) {
   thread_wakes_1 = 0;
   thread_to_wakes = 100;
   is_threads_working = true;
-  thr1 = p_uthread_create((uthread_fn_t) test_thread_nonjoinable_func,
+  thr1 = u_uthread_create((uthread_fn_t) test_thread_nonjoinable_func,
     (ptr_t) &thread_wakes_1,
     false
   );
   ASSERT(thr1 != NULL);
-  p_uthread_sleep(2);
-  ASSERT(p_uthread_join(thr1) == -1);
+  u_uthread_sleep(2);
+  ASSERT(u_uthread_join(thr1) == -1);
   while (is_threads_working == true) {
-    p_uthread_sleep(5);
+    u_uthread_sleep(5);
   }
   ASSERT(thread_wakes_1 == thread_to_wakes);
-  p_uthread_unref(thr1);
+  u_uthread_unref(thr1);
   return CUTE_SUCCESS;
 }
 
@@ -296,77 +296,77 @@ CUTEST(uthread, tls) {
   int self_thread_free;
 
   /* With destroy notification */
-  tls_key = p_uthread_local_new(free_with_check);
+  tls_key = u_uthread_local_new(free_with_check);
   is_threads_working = true;
   free_counter = 0;
   self_thread_free = 0;
-  thr1 = p_uthread_create((uthread_fn_t) test_thread_tls_func,
+  thr1 = u_uthread_create((uthread_fn_t) test_thread_tls_func,
     (ptr_t) &self_thread_free,
     true
   );
-  thr2 = p_uthread_create((uthread_fn_t) test_thread_tls_func,
+  thr2 = u_uthread_create((uthread_fn_t) test_thread_tls_func,
     (ptr_t) &self_thread_free,
     true
   );
   ASSERT(thr1 != NULL);
   ASSERT(thr2 != NULL);
-  p_uthread_sleep(50);
+  u_uthread_sleep(50);
   is_threads_working = false;
   total_counter = 0;
-  total_counter += (p_uthread_join(thr1) + 1);
-  total_counter += (p_uthread_join(thr2) + 1);
+  total_counter += (u_uthread_join(thr1) + 1);
+  total_counter += (u_uthread_join(thr2) + 1);
   ASSERT(total_counter == free_counter);
-  p_uthread_local_free(tls_key);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
+  u_uthread_local_free(tls_key);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
 
   /* Without destroy notification */
-  tls_key = p_uthread_local_new(NULL);
+  tls_key = u_uthread_local_new(NULL);
   free_counter = 0;
   is_threads_working = true;
   self_thread_free = 1;
-  thr1 = p_uthread_create((uthread_fn_t) test_thread_tls_func,
+  thr1 = u_uthread_create((uthread_fn_t) test_thread_tls_func,
     (ptr_t) &self_thread_free,
     true
   );
-  thr2 = p_uthread_create((uthread_fn_t) test_thread_tls_func,
+  thr2 = u_uthread_create((uthread_fn_t) test_thread_tls_func,
     (ptr_t) &self_thread_free,
     true
   );
   ASSERT(thr1 != NULL);
   ASSERT(thr2 != NULL);
-  p_uthread_sleep(50);
+  u_uthread_sleep(50);
   is_threads_working = false;
   total_counter = 0;
-  total_counter += (p_uthread_join(thr1) + 1);
-  total_counter += (p_uthread_join(thr2) + 1);
+  total_counter += (u_uthread_join(thr1) + 1);
+  total_counter += (u_uthread_join(thr2) + 1);
   ASSERT(total_counter > 0);
   ASSERT(free_counter == 0);
-  p_uthread_local_free(tls_key);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
+  u_uthread_local_free(tls_key);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
 
   /* With implicit thread exit */
-  tls_key = p_uthread_local_new(free_with_check);
-  tls_key_2 = p_uthread_local_new(free_with_check);
+  tls_key = u_uthread_local_new(free_with_check);
+  tls_key_2 = u_uthread_local_new(free_with_check);
   free_counter = 0;
-  thr1 = p_uthread_create((uthread_fn_t) test_thread_tls_create_func,
+  thr1 = u_uthread_create((uthread_fn_t) test_thread_tls_create_func,
     NULL,
     true
   );
-  thr2 = p_uthread_create((uthread_fn_t) test_thread_tls_create_func,
+  thr2 = u_uthread_create((uthread_fn_t) test_thread_tls_create_func,
     NULL,
     true
   );
   ASSERT(thr1 != NULL);
   ASSERT(thr2 != NULL);
-  p_uthread_join(thr1);
-  p_uthread_join(thr2);
+  u_uthread_join(thr1);
+  u_uthread_join(thr2);
   ASSERT(free_counter == 4);
-  p_uthread_local_free(tls_key);
-  p_uthread_local_free(tls_key_2);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
+  u_uthread_local_free(tls_key);
+  u_uthread_local_free(tls_key_2);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
   return CUTE_SUCCESS;
 }
 

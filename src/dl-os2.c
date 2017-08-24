@@ -19,38 +19,38 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
-#include "p/err.h"
-#include "p/file.h"
-#include "p/dl.h"
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/err.h"
+#include "unic/file.h"
+#include "unic/dl.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 
-typedef HMODULE plibrary_handle;
+typedef HMODULE unic_handle;
 
 struct dl {
-  plibrary_handle handle;
+  unic_handle handle;
   APIRET last_error;
 };
 
 static void
-pp_dl_clean_handle(plibrary_handle handle);
+pp_dl_clean_handle(unic_handle handle);
 
 static void
-pp_dl_clean_handle(plibrary_handle handle) {
+pp_dl_clean_handle(unic_handle handle) {
   APIRET ulrc;
   while ((ulrc = DosFreeModule(handle)) == ERROR_INTERRUPT);
-  if (P_UNLIKELY (ulrc != NO_ERROR))
-    P_ERROR (
+  if (U_UNLIKELY (ulrc != NO_ERROR))
+    U_ERROR (
       "dl_t::pp_dl_clean_handle: DosFreeModule() failed");
 }
 
 dl_t *
-p_dl_new(const byte_t *path) {
+u_dl_new(const byte_t *path) {
   dl_t *loader = NULL;
-  plibrary_handle handle = NULLHANDLE;
+  unic_handle handle = NULLHANDLE;
   UCHAR load_err[256];
   APIRET ulrc;
-  if (!p_file_is_exists(path)) {
+  if (!u_file_is_exists(path)) {
     return NULL;
   }
   while ((
@@ -59,12 +59,12 @@ p_dl_new(const byte_t *path) {
       (PSZ) path,
       (PHMODULE) & handle
     )) == ERROR_INTERRUPT) {}
-  if (P_UNLIKELY (ulrc != NO_ERROR)) {
-    P_ERROR ("dl_t::p_dl_new: DosLoadModule() failed");
+  if (U_UNLIKELY (ulrc != NO_ERROR)) {
+    U_ERROR ("dl_t::u_dl_new: DosLoadModule() failed");
     return NULL;
   }
-  if (P_UNLIKELY ((loader = p_malloc0(sizeof(dl_t))) == NULL)) {
-    P_ERROR ("dl_t::p_dl_new: failed to allocate memory");
+  if (U_UNLIKELY ((loader = u_malloc0(sizeof(dl_t))) == NULL)) {
+    U_ERROR ("dl_t::u_dl_new: failed to allocate memory");
     pp_dl_clean_handle(handle);
     return NULL;
   }
@@ -74,17 +74,17 @@ p_dl_new(const byte_t *path) {
 }
 
 fn_addr_t
-p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
+u_dl_get_symbol(dl_t *loader, const byte_t *sym) {
   PFN func_addr = NULL;
   APIRET ulrc;
-  if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
+  if (U_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL)) {
     return NULL;
   }
-  if (P_UNLIKELY (
+  if (U_UNLIKELY (
     (ulrc = DosQueryProcAddr(loader->handle, 0, (PSZ) sym, &func_addr))
       != NO_ERROR)) {
-    P_ERROR (
-      "dl_t::p_dl_get_symbol: DosQueryProcAddr() failed");
+    U_ERROR (
+      "dl_t::u_dl_get_symbol: DosQueryProcAddr() failed");
     loader->last_error = ulrc;
     return NULL;
   }
@@ -93,16 +93,16 @@ p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
 }
 
 void
-p_dl_free(dl_t *loader) {
-  if (P_UNLIKELY (loader == NULL)) {
+u_dl_free(dl_t *loader) {
+  if (U_UNLIKELY (loader == NULL)) {
     return;
   }
   pp_dl_clean_handle(loader->handle);
-  p_free(loader);
+  u_free(loader);
 }
 
 byte_t *
-p_dl_get_last_error(dl_t *loader) {
+u_dl_get_last_error(dl_t *loader) {
   if (loader == NULL) {
     return NULL;
   }
@@ -110,15 +110,15 @@ p_dl_get_last_error(dl_t *loader) {
     case NO_ERROR:
       return NULL;
     case ERROR_INVALID_HANDLE:
-      return p_strdup("Invalid resource handler");
+      return u_strdup("Invalid resource handler");
     case ERROR_INVALID_NAME:
-      return p_strdup("Invalid procedure name");
+      return u_strdup("Invalid procedure name");
     default:
-      return p_strdup("Unknown error");
+      return u_strdup("Unknown error");
   }
 }
 
 bool
-p_dl_is_ref_counted(void) {
+u_dl_is_ref_counted(void) {
   return true;
 }

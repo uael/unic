@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PLIBSYS_HEADER_PSYSCLOSE_PRIVATE_H
-# define PLIBSYS_HEADER_PSYSCLOSE_PRIVATE_H
+#ifndef UNIC_HEADER_PSYSCLOSE_PRIVATE_H
+# define UNIC_HEADER_PSYSCLOSE_PRIVATE_H
 
-#include "p/macros.h"
-#include "p/types.h"
+#include "unic/macros.h"
+#include "unic/types.h"
 
 /*!@brief Safely closes a file descriptor.
  * @param fd File descriptor to close.
  * @return -1 in case of success, 0 otherwise.
  */
 int
-p_sys_close(int fd);
+u_sys_close(int fd);
 
-#endif /* PLIBSYS_HEADER_PSYSCLOSE_PRIVATE_H */
+#endif /* UNIC_HEADER_PSYSCLOSE_PRIVATE_H */

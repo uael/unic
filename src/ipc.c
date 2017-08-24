@@ -15,39 +15,39 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/hash.h"
-#include "p/string.h"
+#include "unic/mem.h"
+#include "unic/hash.h"
+#include "unic/string.h"
 #include "sysclose-private.h"
 
-#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
+#if !defined (U_OS_WIN) && !defined (U_OS_OS2)
 # include <errno.h>
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <sys/ipc.h>
 #endif
 
-#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
+#if !defined (U_OS_WIN) && !defined (U_OS_OS2)
 byte_t *
-p_ipc_unix_get_temp_dir(void) {
+u_ipc_unix_get_temp_dir(void) {
   byte_t *str, *ret;
   size_t len;
 
-#ifdef P_tmpdir
-  if (strlen(P_tmpdir) > 0)
-    str = p_strdup(P_tmpdir);
+#ifdef U_tmpdir
+  if (strlen(U_tmpdir) > 0)
+    str = u_strdup(U_tmpdir);
   else
-    return p_strdup("/tmp/");
+    return u_strdup("/tmp/");
 #else
   const byte_t *tmp_env;
 
   tmp_env = getenv ("TMPDIR");
 
   if (tmp_env != NULL)
-    str = p_strdup (tmp_env);
+    str = u_strdup (tmp_env);
   else
-    return p_strdup ("/tmp/");
-#endif /* P_tmpdir */
+    return u_strdup ("/tmp/");
+#endif /* U_tmpdir */
 
   /* Now we need to ensure that we have only the one trailing slash */
   len = strlen(str);
@@ -55,8 +55,8 @@ p_ipc_unix_get_temp_dir(void) {
   *(str + ++len) = '\0';
 
   /* len + / + zero symbol */
-  if (P_UNLIKELY ((ret = p_malloc0(len + 2)) == NULL)) {
-    p_free(str);
+  if (U_UNLIKELY ((ret = u_malloc0(len + 2)) == NULL)) {
+    u_free(str);
     return NULL;
   }
 
@@ -69,88 +69,88 @@ p_ipc_unix_get_temp_dir(void) {
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
 int
-p_ipc_unix_create_key_file(const byte_t *file_name) {
+u_ipc_unix_create_key_file(const byte_t *file_name) {
   int fd;
 
-  if (P_UNLIKELY (file_name == NULL))
+  if (U_UNLIKELY (file_name == NULL))
     return -1;
 
   if ((fd = open(file_name, O_CREAT | O_EXCL | O_RDONLY, 0640)) == -1)
     /* file already exists */
     return (errno == EEXIST) ? 1 : -1;
   else
-    return p_sys_close(fd);
+    return u_sys_close(fd);
 }
 
 int
-p_ipc_unix_get_ftok_key(const byte_t *file_name) {
+u_ipc_unix_get_ftok_key(const byte_t *file_name) {
   struct stat st_info;
 
-  if (P_UNLIKELY (file_name == NULL))
+  if (U_UNLIKELY (file_name == NULL))
     return -1;
 
-  if (P_UNLIKELY (stat(file_name, &st_info) == -1))
+  if (U_UNLIKELY (stat(file_name, &st_info) == -1))
     return -1;
 
   return ftok(file_name, 'P');
 }
-#endif /* !P_OS_WIN && !P_OS_OS2 */
+#endif /* !U_OS_WIN && !U_OS_OS2 */
 
 /* Returns a platform-independent key for IPC usage, object name for Windows and
  * a file name to use with ftok () for UNIX-like systems */
 byte_t *
-p_ipc_get_platform_key(const byte_t *name, bool posix) {
+u_ipc_get_platform_key(const byte_t *name, bool posix) {
   hash_t *sha1;
   byte_t *hash_str;
-#if defined (P_OS_WIN) || defined (P_OS_OS2)
-  P_UNUSED (posix);
+#if defined (U_OS_WIN) || defined (U_OS_OS2)
+  U_UNUSED (posix);
 #else
   byte_t *path_name, *tmp_path;
 #endif
-  if (P_UNLIKELY (name == NULL)) {
+  if (U_UNLIKELY (name == NULL)) {
     return NULL;
   }
-  if (P_UNLIKELY ((sha1 = p_crypto_hash_new(P_HASH_SHA1)) == NULL)) {
+  if (U_UNLIKELY ((sha1 = u_crypto_hash_new(U_HASH_SHA1)) == NULL)) {
     return NULL;
   }
-  p_crypto_hash_update(sha1, (const ubyte_t *) name, strlen(name));
-  hash_str = p_crypto_hash_get_string(sha1);
-  p_crypto_hash_free(sha1);
-  if (P_UNLIKELY (hash_str == NULL)) {
+  u_crypto_hash_update(sha1, (const ubyte_t *) name, strlen(name));
+  hash_str = u_crypto_hash_get_string(sha1);
+  u_crypto_hash_free(sha1);
+  if (U_UNLIKELY (hash_str == NULL)) {
     return NULL;
   }
-#if defined (P_OS_WIN) || defined (P_OS_OS2)
+#if defined (U_OS_WIN) || defined (U_OS_OS2)
   return hash_str;
 #else
   if (posix) {
     /* POSIX semaphores which are named kinda like '/semname'.
      * Some implementations of POSIX semaphores has restriction for
      * the name as of max 14 characters, best to use this limit */
-    if (P_UNLIKELY ((path_name = p_malloc0(15)) == NULL)) {
-      p_free(hash_str);
+    if (U_UNLIKELY ((path_name = u_malloc0(15)) == NULL)) {
+      u_free(hash_str);
       return NULL;
     }
 
     strcpy(path_name, "/");
     strncat(path_name, hash_str, 13);
   } else {
-    tmp_path = p_ipc_unix_get_temp_dir();
+    tmp_path = u_ipc_unix_get_temp_dir();
 
     /* tmp dir + filename + zero symbol */
-    path_name = p_malloc0(strlen(tmp_path) + strlen(hash_str) + 1);
+    path_name = u_malloc0(strlen(tmp_path) + strlen(hash_str) + 1);
 
-    if (P_UNLIKELY ((path_name) == NULL)) {
-      p_free(tmp_path);
-      p_free(hash_str);
+    if (U_UNLIKELY ((path_name) == NULL)) {
+      u_free(tmp_path);
+      u_free(hash_str);
       return NULL;
     }
 
     strcpy(path_name, tmp_path);
     strcat(path_name, hash_str);
-    p_free(tmp_path);
+    u_free(tmp_path);
   }
 
-  p_free(hash_str);
+  u_free(hash_str);
   return path_name;
 #endif
 }

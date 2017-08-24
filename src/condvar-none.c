@@ -15,46 +15,46 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/condvar.h"
+#include "unic/condvar.h"
 
 struct condvar {
   int hdl;
 };
 
 condvar_t *
-p_condvar_new(void) {
+u_condvar_new(void) {
   return NULL;
 }
 
 void
-p_condvar_free(condvar_t *cond) {
-  P_UNUSED (cond);
+u_condvar_free(condvar_t *cond) {
+  U_UNUSED (cond);
 }
 
 bool
-p_condvar_wait(condvar_t *cond,
+u_condvar_wait(condvar_t *cond,
   mutex_t *mutex) {
-  P_UNUSED (cond);
-  P_UNUSED (mutex);
+  U_UNUSED (cond);
+  U_UNUSED (mutex);
   return false;
 }
 
 bool
-p_condvar_signal(condvar_t *cond) {
-  P_UNUSED (cond);
+u_condvar_signal(condvar_t *cond) {
+  U_UNUSED (cond);
   return false;
 }
 
 bool
-p_condvar_broadcast(condvar_t *cond) {
-  P_UNUSED (cond);
+u_condvar_broadcast(condvar_t *cond) {
+  U_UNUSED (cond);
   return false;
 }
 
 void
-p_condvar_init(void) {
+u_condvar_init(void) {
 }
 
 void
-p_condvar_shutdown(void) {
+u_condvar_shutdown(void) {
 }

@@ -15,19 +15,19 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/dir.h"
+#include "unic/dir.h"
 
 struct dir {
   int hdl;
 };
 
 dir_t *
-p_dir_new(const byte_t *path,
+u_dir_new(const byte_t *path,
   err_t **error) {
-  P_UNUSED (path);
-  p_err_set_err_p(
+  U_UNUSED (path);
+  u_err_set_err_p(
     error,
-    (int) P_ERR_IO_NOT_IMPLEMENTED,
+    (int) U_ERR_IO_NOT_IMPLEMENTED,
     0,
     "No directory implementation"
   );
@@ -35,14 +35,14 @@ p_dir_new(const byte_t *path,
 }
 
 bool
-p_dir_create(const byte_t *path,
+u_dir_create(const byte_t *path,
   int mode,
   err_t **error) {
-  P_UNUSED (path);
-  P_UNUSED (mode);
-  p_err_set_err_p(
+  U_UNUSED (path);
+  U_UNUSED (mode);
+  u_err_set_err_p(
     error,
-    (int) P_ERR_IO_NOT_IMPLEMENTED,
+    (int) U_ERR_IO_NOT_IMPLEMENTED,
     0,
     "No directory implementation"
   );
@@ -50,12 +50,12 @@ p_dir_create(const byte_t *path,
 }
 
 bool
-p_dir_remove(const byte_t *path,
+u_dir_remove(const byte_t *path,
   err_t **error) {
-  P_UNUSED (path);
-  p_err_set_err_p(
+  U_UNUSED (path);
+  u_err_set_err_p(
     error,
-    (int) P_ERR_IO_NOT_IMPLEMENTED,
+    (int) U_ERR_IO_NOT_IMPLEMENTED,
     0,
     "No directory implementation"
   );
@@ -63,24 +63,24 @@ p_dir_remove(const byte_t *path,
 }
 
 bool
-p_dir_is_exists(const byte_t *path) {
-  P_UNUSED (path);
+u_dir_is_exists(const byte_t *path) {
+  U_UNUSED (path);
   return false;
 }
 
 byte_t *
-p_dir_get_path(const dir_t *dir) {
-  P_UNUSED (dir);
+u_dir_get_path(const dir_t *dir) {
+  U_UNUSED (dir);
   return NULL;
 }
 
 dirent_t *
-p_dir_get_next_entry(dir_t *dir,
+u_dir_get_next_entry(dir_t *dir,
   err_t **error) {
-  P_UNUSED (dir);
-  p_err_set_err_p(
+  U_UNUSED (dir);
+  u_err_set_err_p(
     error,
-    (int) P_ERR_IO_NOT_IMPLEMENTED,
+    (int) U_ERR_IO_NOT_IMPLEMENTED,
     0,
     "No directory implementation"
   );
@@ -88,12 +88,12 @@ p_dir_get_next_entry(dir_t *dir,
 }
 
 bool
-p_dir_rewind(dir_t *dir,
+u_dir_rewind(dir_t *dir,
   err_t **error) {
-  P_UNUSED (dir);
-  p_err_set_err_p(
+  U_UNUSED (dir);
+  u_err_set_err_p(
     error,
-    (int) P_ERR_IO_NOT_IMPLEMENTED,
+    (int) U_ERR_IO_NOT_IMPLEMENTED,
     0,
     "No directory implementation"
   );
@@ -101,6 +101,6 @@ p_dir_rewind(dir_t *dir,
 }
 
 void
-p_dir_free(dir_t *dir) {
-  P_UNUSED (dir);
+u_dir_free(dir_t *dir) {
+  U_UNUSED (dir);
 }

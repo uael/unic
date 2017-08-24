@@ -17,39 +17,39 @@
 
 /* SHA2-256 interface implementation for #hash_t */
 
-#ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA2_256_H
-# define PLIBSYS_HEADER_PCRYPTOHASHSHA2_256_H
+#ifndef UNIC_HEADER_PCRYPTOHASHSHA2_256_H
+# define UNIC_HEADER_PCRYPTOHASHSHA2_256_H
 
-#include "p/types.h"
-#include "p/macros.h"
+#include "unic/types.h"
+#include "unic/macros.h"
 
 typedef struct PHashSHA2_256_ PHashSHA2_256;
 
 PHashSHA2_256 *
-p_crypto_hash_sha2_256_new(void);
+u_crypto_hash_sha2_256_new(void);
 
 void
-p_crypto_hash_sha2_256_update(PHashSHA2_256 *ctx, const ubyte_t *data,
+u_crypto_hash_sha2_256_update(PHashSHA2_256 *ctx, const ubyte_t *data,
   size_t len);
 
 void
-p_crypto_hash_sha2_256_finish(PHashSHA2_256 *ctx);
+u_crypto_hash_sha2_256_finish(PHashSHA2_256 *ctx);
 
 const ubyte_t *
-p_crypto_hash_sha2_256_digest(PHashSHA2_256 *ctx);
+u_crypto_hash_sha2_256_digest(PHashSHA2_256 *ctx);
 
 void
-p_crypto_hash_sha2_256_reset(PHashSHA2_256 *ctx);
+u_crypto_hash_sha2_256_reset(PHashSHA2_256 *ctx);
 
 void
-p_crypto_hash_sha2_256_free(PHashSHA2_256 *ctx);
+u_crypto_hash_sha2_256_free(PHashSHA2_256 *ctx);
 
 PHashSHA2_256 *
-p_crypto_hash_sha2_224_new(void);
+u_crypto_hash_sha2_224_new(void);
 
-#define p_crypto_hash_sha2_224_update p_crypto_hash_sha2_256_update
-#define p_crypto_hash_sha2_224_finish p_crypto_hash_sha2_256_finish
-#define p_crypto_hash_sha2_224_digest p_crypto_hash_sha2_256_digest
-#define p_crypto_hash_sha2_224_reset  p_crypto_hash_sha2_256_reset
-#define p_crypto_hash_sha2_224_free   p_crypto_hash_sha2_256_free
-#endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA2_256_H */
+#define u_crypto_hash_sha2_224_update u_crypto_hash_sha2_256_update
+#define u_crypto_hash_sha2_224_finish u_crypto_hash_sha2_256_finish
+#define u_crypto_hash_sha2_224_digest u_crypto_hash_sha2_256_digest
+#define u_crypto_hash_sha2_224_reset  u_crypto_hash_sha2_256_reset
+#define u_crypto_hash_sha2_224_free   u_crypto_hash_sha2_256_free
+#endif /* UNIC_HEADER_PCRYPTOHASHSHA2_256_H */

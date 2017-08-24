@@ -17,39 +17,39 @@
 
 /* SHA2-512 interface implementation for #hash_t */
 
-#ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
-# define PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H
+#ifndef UNIC_HEADER_PCRYPTOHASHSHA2_512_H
+# define UNIC_HEADER_PCRYPTOHASHSHA2_512_H
 
-#include "p/types.h"
-#include "p/macros.h"
+#include "unic/types.h"
+#include "unic/macros.h"
 
 typedef struct PHashSHA2_512_ PHashSHA2_512;
 
 PHashSHA2_512 *
-p_crypto_hash_sha2_512_new(void);
+u_crypto_hash_sha2_512_new(void);
 
 void
-p_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx, const ubyte_t *data,
+u_crypto_hash_sha2_512_update(PHashSHA2_512 *ctx, const ubyte_t *data,
   size_t len);
 
 void
-p_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx);
+u_crypto_hash_sha2_512_finish(PHashSHA2_512 *ctx);
 
 const ubyte_t *
-p_crypto_hash_sha2_512_digest(PHashSHA2_512 *ctx);
+u_crypto_hash_sha2_512_digest(PHashSHA2_512 *ctx);
 
 void
-p_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx);
+u_crypto_hash_sha2_512_reset(PHashSHA2_512 *ctx);
 
 void
-p_crypto_hash_sha2_512_free(PHashSHA2_512 *ctx);
+u_crypto_hash_sha2_512_free(PHashSHA2_512 *ctx);
 
 PHashSHA2_512 *
-p_crypto_hash_sha2_384_new(void);
+u_crypto_hash_sha2_384_new(void);
 
-#define p_crypto_hash_sha2_384_update p_crypto_hash_sha2_512_update
-#define p_crypto_hash_sha2_384_finish p_crypto_hash_sha2_512_finish
-#define p_crypto_hash_sha2_384_digest p_crypto_hash_sha2_512_digest
-#define p_crypto_hash_sha2_384_reset  p_crypto_hash_sha2_512_reset
-#define p_crypto_hash_sha2_384_free   p_crypto_hash_sha2_512_free
-#endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA2_512_H */
+#define u_crypto_hash_sha2_384_update u_crypto_hash_sha2_512_update
+#define u_crypto_hash_sha2_384_finish u_crypto_hash_sha2_512_finish
+#define u_crypto_hash_sha2_384_digest u_crypto_hash_sha2_512_digest
+#define u_crypto_hash_sha2_384_reset  u_crypto_hash_sha2_512_reset
+#define u_crypto_hash_sha2_384_free   u_crypto_hash_sha2_512_free
+#endif /* UNIC_HEADER_PCRYPTOHASHSHA2_512_H */

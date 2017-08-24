@@ -15,11 +15,11 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
+#include "unic/mem.h"
 #include "tree-bst.h"
 
 bool
-p_tree_bst_insert(PTreeBaseNode **root_node,
+u_tree_bst_insert(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -40,7 +40,7 @@ p_tree_bst_insert(PTreeBaseNode **root_node,
     }
   }
   if ((*cur_node) == NULL) {
-    if (P_UNLIKELY ((*cur_node = p_malloc0(sizeof(PTreeBaseNode))) == NULL)) {
+    if (U_UNLIKELY ((*cur_node = u_malloc0(sizeof(PTreeBaseNode))) == NULL)) {
       return false;
     }
     (*cur_node)->key = key;
@@ -60,7 +60,7 @@ p_tree_bst_insert(PTreeBaseNode **root_node,
 }
 
 bool
-p_tree_bst_remove(PTreeBaseNode **root_node,
+u_tree_bst_remove(PTreeBaseNode **root_node,
   cmp_data_fn_t compare_func,
   ptr_t data,
   destroy_fn_t key_destroy_func,
@@ -84,7 +84,7 @@ p_tree_bst_remove(PTreeBaseNode **root_node,
       break;
     }
   }
-  if (P_UNLIKELY (cur_node == NULL)) {
+  if (U_UNLIKELY (cur_node == NULL)) {
     return false;
   }
   if (cur_node->left != NULL && cur_node->right != NULL) {
@@ -105,11 +105,11 @@ p_tree_bst_remove(PTreeBaseNode **root_node,
   if (value_destroy_func != NULL) {
     value_destroy_func(cur_node->value);
   }
-  p_free(cur_node);
+  u_free(cur_node);
   return true;
 }
 
 void
-p_tree_bst_node_free(PTreeBaseNode *node) {
-  p_free(node);
+u_tree_bst_node_free(PTreeBaseNode *node) {
+  u_free(node);
 }

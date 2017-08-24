@@ -18,8 +18,8 @@
 /* Hash table organized like this: table[hash key]->[list with values]
  * Note: this implementation is not intended to use on huge loads */
 
-#include "p/mem.h"
-#include "p/htable.h"
+#include "unic/mem.h"
+#include "unic/htable.h"
 
 typedef struct bucket bucket_t;
 
@@ -35,7 +35,7 @@ struct htable {
 };
 
 /* Size of unique hash keys in hash table */
-#define P_HASH_TABLE_SIZE 101
+#define U_HASH_TABLE_SIZE 101
 
 static uint_t
 pp_htable_calc_hash(const_ptr_t pointer, size_t modulo);
@@ -47,7 +47,7 @@ pp_htable_find_node(const htable_t *table,
 static uint_t
 pp_htable_calc_hash(const_ptr_t pointer, size_t modulo) {
   /* As simple as we can :) */
-  return (uint_t) (((size_t) (P_POINTER_TO_INT(pointer) + 37)) % modulo);
+  return (uint_t) (((size_t) (U_POINTER_TO_INT(pointer) + 37)) % modulo);
 }
 
 static bucket_t *
@@ -65,35 +65,35 @@ pp_htable_find_node(const htable_t *table, const_ptr_t key) {
 }
 
 htable_t *
-p_htable_new(void) {
+u_htable_new(void) {
   htable_t *ret;
 
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(htable_t))) == NULL)) {
-    P_ERROR ("htable_t::p_htable_new: failed(1) to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(htable_t))) == NULL)) {
+    U_ERROR ("htable_t::u_htable_new: failed(1) to allocate memory");
     return NULL;
   }
-  if (P_UNLIKELY (
-    (ret->table = p_malloc0(P_HASH_TABLE_SIZE * sizeof(bucket_t *)))
+  if (U_UNLIKELY (
+    (ret->table = u_malloc0(U_HASH_TABLE_SIZE * sizeof(bucket_t *)))
       == NULL)) {
-    P_ERROR ("htable_t::p_htable_new: failed(2) to allocate memory");
-    p_free(ret);
+    U_ERROR ("htable_t::u_htable_new: failed(2) to allocate memory");
+    u_free(ret);
     return NULL;
   }
-  ret->size = P_HASH_TABLE_SIZE;
+  ret->size = U_HASH_TABLE_SIZE;
   return ret;
 }
 
 void
-p_htable_insert(htable_t *table, ptr_t key, ptr_t value) {
+u_htable_insert(htable_t *table, ptr_t key, ptr_t value) {
   bucket_t *node;
   uint_t hash;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return;
   }
   if ((node = pp_htable_find_node(table, key)) == NULL) {
-    if (P_UNLIKELY ((node = p_malloc0(sizeof(bucket_t))) == NULL)) {
-      P_ERROR ("htable_t::p_htable_insert: failed to allocate memory");
+    if (U_UNLIKELY ((node = u_malloc0(sizeof(bucket_t))) == NULL)) {
+      U_ERROR ("htable_t::u_htable_insert: failed to allocate memory");
       return;
     }
     hash = pp_htable_calc_hash(key, table->size);
@@ -109,10 +109,10 @@ p_htable_insert(htable_t *table, ptr_t key, ptr_t value) {
 }
 
 ptr_t
-p_htable_lookup(const htable_t *table, const_ptr_t key) {
+u_htable_lookup(const htable_t *table, const_ptr_t key) {
   bucket_t *node;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return NULL;
   }
   return ((node = pp_htable_find_node(table, key)) == NULL)
@@ -120,64 +120,64 @@ p_htable_lookup(const htable_t *table, const_ptr_t key) {
 }
 
 list_t *
-p_htable_keys(const htable_t *table) {
+u_htable_keys(const htable_t *table) {
   list_t *ret = NULL;
   bucket_t *node;
   uint_t i;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return NULL;
   }
   for (i = 0; i < table->size; ++i) {
     for (node = table->table[i]; node != NULL; node = node->next) {
-      ret = p_list_append(ret, node->key);
+      ret = u_list_append(ret, node->key);
     }
   }
   return ret;
 }
 
 list_t *
-p_htable_values(const htable_t *table) {
+u_htable_values(const htable_t *table) {
   list_t *ret = NULL;
   bucket_t *node;
   uint_t i;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return NULL;
   }
   for (i = 0; i < table->size; ++i) {
     for (node = table->table[i]; node != NULL; node = node->next) {
-      ret = p_list_append(ret, node->value);
+      ret = u_list_append(ret, node->value);
     }
   }
   return ret;
 }
 
 void
-p_htable_free(htable_t *table) {
+u_htable_free(htable_t *table) {
   bucket_t *node, *next_node;
   uint_t i;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return;
   }
   for (i = 0; i < table->size; ++i) {
     for (node = table->table[i]; node != NULL;) {
       next_node = node->next;
-      p_free(node);
+      u_free(node);
       node = next_node;
     }
   }
-  p_free(table->table);
-  p_free(table);
+  u_free(table->table);
+  u_free(table);
 }
 
 void
-p_htable_remove(htable_t *table, const_ptr_t key) {
+u_htable_remove(htable_t *table, const_ptr_t key) {
   bucket_t *node, *prev_node;
   uint_t hash;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return;
   }
   if (pp_htable_find_node(table, key) != NULL) {
@@ -191,7 +191,7 @@ p_htable_remove(htable_t *table, const_ptr_t key) {
         } else {
           prev_node->next = node->next;
         }
-        p_free(node);
+        u_free(node);
         break;
       } else {
         prev_node = node;
@@ -202,14 +202,14 @@ p_htable_remove(htable_t *table, const_ptr_t key) {
 }
 
 list_t *
-p_htable_lookup_by_value(const htable_t *table, const_ptr_t val,
+u_htable_lookup_by_value(const htable_t *table, const_ptr_t val,
   cmp_fn_t func) {
   list_t *ret = NULL;
   bucket_t *node;
   uint_t i;
   bool res;
 
-  if (P_UNLIKELY (table == NULL)) {
+  if (U_UNLIKELY (table == NULL)) {
     return NULL;
   }
   for (i = 0; i < table->size; ++i) {
@@ -220,7 +220,7 @@ p_htable_lookup_by_value(const htable_t *table, const_ptr_t val,
         res = (func(node->value, val) == 0);
       }
       if (res) {
-        ret = p_list_append(ret, node->key);
+        ret = u_list_append(ret, node->key);
       }
     }
   }

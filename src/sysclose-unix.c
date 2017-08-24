@@ -18,21 +18,21 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "p/err.h"
+#include "unic/err.h"
 #include "sysclose-private.h"
 
 int
-p_sys_close(int fd) {
-#if defined (EINTR) && defined (P_OS_HPUX)
+u_sys_close(int fd) {
+#if defined (EINTR) && defined (U_OS_HPUX)
   int res, err_code;
 
   for (;;) {
     res = close (fd);
 
-    if (P_LIKELY (res == 0))
+    if (U_LIKELY (res == 0))
       return 0;
 
-    err_code = p_err_get_last_system ();
+    err_code = u_err_get_last_system ();
 
     if (err_code == EINTR)
       continue;

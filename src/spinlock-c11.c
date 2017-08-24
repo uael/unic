@@ -15,10 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/mem.h"
-#include "p/spinlock.h"
+#include "unic/mem.h"
+#include "unic/spinlock.h"
 
-#ifdef P_CC_SUN
+#ifdef U_CC_SUN
 # define PSPINLOCK_INT_CAST(x) (int *) (x)
 #else
 # define PSPINLOCK_INT_CAST(x) x
@@ -28,19 +28,19 @@ struct spinlock {
 };
 
 spinlock_t *
-p_spinlock_new(void) {
+u_spinlock_new(void) {
   spinlock_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(spinlock_t))) == NULL)) {
-    P_ERROR ("spinlock_t::p_spinlock_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(spinlock_t))) == NULL)) {
+    U_ERROR ("spinlock_t::u_spinlock_new: failed to allocate memory");
     return NULL;
   }
   return ret;
 }
 
 bool
-p_spinlock_lock(spinlock_t *spinlock) {
+u_spinlock_lock(spinlock_t *spinlock) {
   int tmp_int;
-  if (P_UNLIKELY (spinlock == NULL)) {
+  if (U_UNLIKELY (spinlock == NULL)) {
     return false;
   }
   do {
@@ -57,9 +57,9 @@ p_spinlock_lock(spinlock_t *spinlock) {
 }
 
 bool
-p_spinlock_trylock(spinlock_t *spinlock) {
+u_spinlock_trylock(spinlock_t *spinlock) {
   int tmp_int = 0;
-  if (P_UNLIKELY (spinlock == NULL)) {
+  if (U_UNLIKELY (spinlock == NULL)) {
     return false;
   }
   return (bool) __atomic_compare_exchange_n(
@@ -73,8 +73,8 @@ p_spinlock_trylock(spinlock_t *spinlock) {
 }
 
 bool
-p_spinlock_unlock(spinlock_t *spinlock) {
-  if (P_UNLIKELY (spinlock == NULL)) {
+u_spinlock_unlock(spinlock_t *spinlock) {
+  if (U_UNLIKELY (spinlock == NULL)) {
     return false;
   }
   __atomic_store_4(PSPINLOCK_INT_CAST (&(spinlock->spin)), 0, __ATOMIC_RELEASE);
@@ -82,6 +82,6 @@ p_spinlock_unlock(spinlock_t *spinlock) {
 }
 
 void
-p_spinlock_free(spinlock_t *spinlock) {
-  p_free(spinlock);
+u_spinlock_free(spinlock_t *spinlock) {
+  u_free(spinlock);
 }

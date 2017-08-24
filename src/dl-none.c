@@ -15,36 +15,36 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/dl.h"
+#include "unic/dl.h"
 
 dl_t *
-p_dl_new(const byte_t *path) {
-  P_ERROR ("dl_t::p_dl_new: not implemented");
+u_dl_new(const byte_t *path) {
+  U_ERROR ("dl_t::u_dl_new: not implemented");
   return NULL;
 }
 
 fn_addr_t
-p_dl_get_symbol(dl_t *loader, const byte_t *sym) {
-  P_UNUSED (loader);
-  P_UNUSED (sym);
-  P_ERROR ("dl_t::p_dl_get_symbol: not implemented");
+u_dl_get_symbol(dl_t *loader, const byte_t *sym) {
+  U_UNUSED (loader);
+  U_UNUSED (sym);
+  U_ERROR ("dl_t::u_dl_get_symbol: not implemented");
   return NULL;
 }
 
 void
-p_dl_free(dl_t *loader) {
-  P_UNUSED (loader);
-  P_ERROR ("dl_t::p_dl_free: not implemented");
+u_dl_free(dl_t *loader) {
+  U_UNUSED (loader);
+  U_ERROR ("dl_t::u_dl_free: not implemented");
 }
 
 byte_t *
-p_dl_get_last_error(dl_t *loader) {
-  P_UNUSED (loader);
-  P_ERROR ("dl_t::p_dl_get_last_error: not implemented");
+u_dl_get_last_error(dl_t *loader) {
+  U_UNUSED (loader);
+  U_ERROR ("dl_t::u_dl_get_last_error: not implemented");
   return NULL;
 }
 
 bool
-p_dl_is_ref_counted(void) {
+u_dl_is_ref_counted(void) {
   return false;
 }

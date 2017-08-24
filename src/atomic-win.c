@@ -16,20 +16,20 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p/atomic.h"
+#include "unic/atomic.h"
 
 /* Prepare MemoryBarrier() */
-#if defined (P_CC_WATCOM) || defined (P_CC_BORLAND)
+#if defined (U_CC_WATCOM) || defined (U_CC_BORLAND)
 # if defined (_M_X64) || defined (_M_AMD64)
 #   define MemoryBarrier __faststorefence
 # elseif defined (_M_IA64)
 #   define MemoryBarrier __mf
 # else
-#   ifdef P_CC_WATCOM
+#   ifdef U_CC_WATCOM
 inline
 #   else
 FORCEINLINE
-#   endif /* P_CC_WATCOM */
+#   endif /* U_CC_WATCOM */
 VOID MemoryBarrier (VOID)
 {
   LONG Barrier = 0;
@@ -39,8 +39,8 @@ VOID MemoryBarrier (VOID)
   }
 }
 # endif /* _M_X64 || _M_AMD64 */
-#endif /* P_CC_WATCOM || P_CC_BORLAND */
-#if !defined (P_OS_WIN64) && (defined (P_CC_MSVC) && _MSC_VER > 1200)
+#endif /* U_CC_WATCOM || U_CC_BORLAND */
+#if !defined (U_OS_WIN64) && (defined (U_CC_MSVC) && _MSC_VER > 1200)
 /* Tell compiler about intrinsics to suppress warnings,
  * see: https://msdn.microsoft.com/en-us/library/hh977023.aspx */
 # include <intrin.h>
@@ -51,8 +51,8 @@ VOID MemoryBarrier (VOID)
 # pragma intrinsic(_InterlockedOr)
 # pragma intrinsic(_InterlockedXor)
 #endif
-#if (defined (P_CC_MSVC) && _MSC_VER <= 1200) || defined (P_CC_WATCOM) \
- || defined (P_CC_BORLAND)
+#if (defined (U_CC_MSVC) && _MSC_VER <= 1200) || defined (U_CC_WATCOM) \
+ || defined (U_CC_BORLAND)
 /* Inlined versions for older compilers */
 static LONG
 ppInterlockedAnd (LONG volatile *atomic,
@@ -109,30 +109,30 @@ ppInterlockedXor (LONG volatile *atomic,
 /* http://msdn.microsoft.com/en-us/library/ms684122(v=vs.85).aspx */
 
 int
-p_atomic_int_get(const volatile int *atomic) {
+u_atomic_int_get(const volatile int *atomic) {
   MemoryBarrier();
   return *atomic;
 }
 
 void
-p_atomic_int_set(volatile int *atomic,
+u_atomic_int_set(volatile int *atomic,
   int val) {
   *atomic = val;
   MemoryBarrier();
 }
 
 void
-p_atomic_int_inc(volatile int *atomic) {
+u_atomic_int_inc(volatile int *atomic) {
   InterlockedIncrement((LONG volatile *) atomic);
 }
 
 bool
-p_atomic_int_dec_and_test(volatile int *atomic) {
+u_atomic_int_dec_and_test(volatile int *atomic) {
   return InterlockedDecrement((LONG volatile *) atomic) == 0 ? true : false;
 }
 
 bool
-p_atomic_int_compare_and_exchange(volatile int *atomic,
+u_atomic_int_compare_and_exchange(volatile int *atomic,
   int oldval,
   int newval) {
   return InterlockedCompareExchange((LONG volatile *) atomic,
@@ -142,38 +142,38 @@ p_atomic_int_compare_and_exchange(volatile int *atomic,
 }
 
 int
-p_atomic_int_add(volatile int *atomic,
+u_atomic_int_add(volatile int *atomic,
   int val) {
   return (int) InterlockedExchangeAdd((LONG volatile *) atomic, (LONG) val);
 }
 
 uint_t
-p_atomic_int_and(volatile uint_t *atomic,
+u_atomic_int_and(volatile uint_t *atomic,
   uint_t val) {
   return (uint_t) InterlockedAnd((LONG volatile *) atomic, (LONG) val);
 }
 
 uint_t
-p_atomic_int_or(volatile uint_t *atomic,
+u_atomic_int_or(volatile uint_t *atomic,
   uint_t val) {
   return (uint_t) InterlockedOr((LONG volatile *) atomic, (LONG) val);
 }
 
 uint_t
-p_atomic_int_xor(volatile uint_t *atomic,
+u_atomic_int_xor(volatile uint_t *atomic,
   uint_t val) {
   return (uint_t) InterlockedXor((LONG volatile *) atomic, (LONG) val);
 }
 
 ptr_t
-p_atomic_pointer_get(const volatile void *atomic) {
+u_atomic_pointer_get(const volatile void *atomic) {
   const volatile ptr_t *ptr = (const volatile ptr_t *) atomic;
   MemoryBarrier();
   return *ptr;
 }
 
 void
-p_atomic_pointer_set(volatile void *atomic,
+u_atomic_pointer_set(volatile void *atomic,
   ptr_t val) {
   volatile ptr_t *ptr = (volatile ptr_t *) atomic;
   *ptr = val;
@@ -181,7 +181,7 @@ p_atomic_pointer_set(volatile void *atomic,
 }
 
 bool
-p_atomic_pointer_compare_and_exchange(volatile void *atomic,
+u_atomic_pointer_compare_and_exchange(volatile void *atomic,
   ptr_t oldval,
   ptr_t newval) {
   return InterlockedCompareExchangePointer((volatile PVOID *) atomic,
@@ -190,9 +190,9 @@ p_atomic_pointer_compare_and_exchange(volatile void *atomic,
 }
 
 ssize_t
-p_atomic_pointer_add(volatile void *atomic,
+u_atomic_pointer_add(volatile void *atomic,
   ssize_t val) {
-#if PLIBSYS_SIZEOF_VOID_P == 8
+#if UNIC_SIZEOF_VOID_P == 8
   return (ssize_t) InterlockedExchangeAdd64((LONGLONG volatile *) atomic,
     (LONGLONG) val);
 #else
@@ -201,9 +201,9 @@ p_atomic_pointer_add(volatile void *atomic,
 }
 
 size_t
-p_atomic_pointer_and(volatile void *atomic,
+u_atomic_pointer_and(volatile void *atomic,
   size_t val) {
-#if PLIBSYS_SIZEOF_VOID_P == 8
+#if UNIC_SIZEOF_VOID_P == 8
   return (size_t) InterlockedAnd64((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
   return (size_t) InterlockedAnd((LONG volatile *) atomic, (LONG) val);
@@ -211,9 +211,9 @@ p_atomic_pointer_and(volatile void *atomic,
 }
 
 size_t
-p_atomic_pointer_or(volatile void *atomic,
+u_atomic_pointer_or(volatile void *atomic,
   size_t val) {
-#if PLIBSYS_SIZEOF_VOID_P == 8
+#if UNIC_SIZEOF_VOID_P == 8
   return (size_t) InterlockedOr64((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
   return (size_t) InterlockedOr((LONG volatile *) atomic, (LONG) val);
@@ -221,9 +221,9 @@ p_atomic_pointer_or(volatile void *atomic,
 }
 
 size_t
-p_atomic_pointer_xor(volatile void *atomic,
+u_atomic_pointer_xor(volatile void *atomic,
   size_t val) {
-#if PLIBSYS_SIZEOF_VOID_P == 8
+#if UNIC_SIZEOF_VOID_P == 8
   return (size_t) InterlockedXor64((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
   return (size_t) InterlockedXor((LONG volatile *) atomic, (LONG) val);
@@ -231,14 +231,14 @@ p_atomic_pointer_xor(volatile void *atomic,
 }
 
 bool
-p_atomic_is_lock_free(void) {
+u_atomic_is_lock_free(void) {
   return true;
 }
 
 void
-p_atomic_thread_init(void) {
+u_atomic_thread_init(void) {
 }
 
 void
-p_atomic_thread_shutdown(void) {
+u_atomic_thread_shutdown(void) {
 }

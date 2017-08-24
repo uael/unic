@@ -17,32 +17,32 @@
 
 /* GOST R 34.11-94 interface implementation for #hash_t */
 
-#ifndef PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
-# define PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
+#ifndef UNIC_HEADER_PCRYPTOHASHGOST3411_H
+# define UNIC_HEADER_PCRYPTOHASHGOST3411_H
 
-#include "p/types.h"
-#include "p/macros.h"
+#include "unic/types.h"
+#include "unic/macros.h"
 
 typedef struct PHashGOST3411_ PHashGOST3411;
 
 PHashGOST3411 *
-p_crypto_hash_gost3411_new(void);
+u_crypto_hash_gost3411_new(void);
 
 void
-p_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
+u_crypto_hash_gost3411_update(PHashGOST3411 *ctx,
   const ubyte_t *data,
   size_t len);
 
 void
-p_crypto_hash_gost3411_finish(PHashGOST3411 *ctx);
+u_crypto_hash_gost3411_finish(PHashGOST3411 *ctx);
 
 const ubyte_t *
-p_crypto_hash_gost3411_digest(PHashGOST3411 *ctx);
+u_crypto_hash_gost3411_digest(PHashGOST3411 *ctx);
 
 void
-p_crypto_hash_gost3411_reset(PHashGOST3411 *ctx);
+u_crypto_hash_gost3411_reset(PHashGOST3411 *ctx);
 
 void
-p_crypto_hash_gost3411_free(PHashGOST3411 *ctx);
+u_crypto_hash_gost3411_free(PHashGOST3411 *ctx);
 
-#endif /* PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H */
+#endif /* UNIC_HEADER_PCRYPTOHASHGOST3411_H */

@@ -16,15 +16,15 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 static int alloc_counter = 0;
 static int realloc_counter = 0;
@@ -53,7 +53,7 @@ CUTEST(main, general) {
 }
 
 CUTEST(main, double) {
-  p_libsys_init_full(NULL);
+  u_libsys_init_full(NULL);
   return CUTE_SUCCESS;
   return CUTE_SUCCESS;
 }
@@ -66,19 +66,19 @@ CUTEST(main, vtable) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  p_libsys_init_full(&vtable);
+  u_libsys_init_full(&vtable);
   alloc_counter = 0;
   realloc_counter = 0;
   free_counter = 0;
-  buf = (byte_t *) p_malloc0(10);
-  new_buf = (byte_t *) p_realloc((ptr_t) buf, 20);
+  buf = (byte_t *) u_malloc0(10);
+  new_buf = (byte_t *) u_realloc((ptr_t) buf, 20);
   ASSERT(new_buf != NULL);
   buf = new_buf;
-  p_free(buf);
+  u_free(buf);
   ASSERT(alloc_counter > 0);
   ASSERT(realloc_counter > 0);
   ASSERT(free_counter > 0);
-  ASSERT(strcmp(p_libsys_version(), PLIBSYS_VERSION_STR) == 0);
+  ASSERT(strcmp(u_libsys_version(), UNIC_VERSION_STR) == 0);
   return CUTE_SUCCESS;
 }
 

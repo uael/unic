@@ -17,59 +17,59 @@
 
 /* SHA-3 (Keccak) interface implementation for #hash_t */
 
-#ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA3_H
-# define PLIBSYS_HEADER_PCRYPTOHASHSHA3_H
+#ifndef UNIC_HEADER_PCRYPTOHASHSHA3_H
+# define UNIC_HEADER_PCRYPTOHASHSHA3_H
 
-#include "p/types.h"
-#include "p/macros.h"
+#include "unic/types.h"
+#include "unic/macros.h"
 
 typedef struct PHashSHA3_ PHashSHA3;
 
 void
-p_crypto_hash_sha3_update(PHashSHA3 *ctx, const ubyte_t *data, size_t len);
+u_crypto_hash_sha3_update(PHashSHA3 *ctx, const ubyte_t *data, size_t len);
 
 void
-p_crypto_hash_sha3_finish(PHashSHA3 *ctx);
+u_crypto_hash_sha3_finish(PHashSHA3 *ctx);
 
 const ubyte_t *
-p_crypto_hash_sha3_digest(PHashSHA3 *ctx);
+u_crypto_hash_sha3_digest(PHashSHA3 *ctx);
 
 void
-p_crypto_hash_sha3_reset(PHashSHA3 *ctx);
+u_crypto_hash_sha3_reset(PHashSHA3 *ctx);
 
 void
-p_crypto_hash_sha3_free(PHashSHA3 *ctx);
+u_crypto_hash_sha3_free(PHashSHA3 *ctx);
 
 PHashSHA3 *
-p_crypto_hash_sha3_224_new(void);
+u_crypto_hash_sha3_224_new(void);
 
 PHashSHA3 *
-p_crypto_hash_sha3_256_new(void);
+u_crypto_hash_sha3_256_new(void);
 
 PHashSHA3 *
-p_crypto_hash_sha3_384_new(void);
+u_crypto_hash_sha3_384_new(void);
 
 PHashSHA3 *
-p_crypto_hash_sha3_512_new(void);
+u_crypto_hash_sha3_512_new(void);
 
-#define p_crypto_hash_sha3_224_update p_crypto_hash_sha3_update
-#define p_crypto_hash_sha3_224_finish p_crypto_hash_sha3_finish
-#define p_crypto_hash_sha3_224_digest p_crypto_hash_sha3_digest
-#define p_crypto_hash_sha3_224_reset  p_crypto_hash_sha3_reset
-#define p_crypto_hash_sha3_224_free   p_crypto_hash_sha3_free
-#define p_crypto_hash_sha3_256_update p_crypto_hash_sha3_update
-#define p_crypto_hash_sha3_256_finish p_crypto_hash_sha3_finish
-#define p_crypto_hash_sha3_256_digest p_crypto_hash_sha3_digest
-#define p_crypto_hash_sha3_256_reset  p_crypto_hash_sha3_reset
-#define p_crypto_hash_sha3_256_free   p_crypto_hash_sha3_free
-#define p_crypto_hash_sha3_384_update p_crypto_hash_sha3_update
-#define p_crypto_hash_sha3_384_finish p_crypto_hash_sha3_finish
-#define p_crypto_hash_sha3_384_digest p_crypto_hash_sha3_digest
-#define p_crypto_hash_sha3_384_reset  p_crypto_hash_sha3_reset
-#define p_crypto_hash_sha3_384_free   p_crypto_hash_sha3_free
-#define p_crypto_hash_sha3_512_update p_crypto_hash_sha3_update
-#define p_crypto_hash_sha3_512_finish p_crypto_hash_sha3_finish
-#define p_crypto_hash_sha3_512_digest p_crypto_hash_sha3_digest
-#define p_crypto_hash_sha3_512_reset  p_crypto_hash_sha3_reset
-#define p_crypto_hash_sha3_512_free   p_crypto_hash_sha3_free
-#endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA3_H */
+#define u_crypto_hash_sha3_224_update u_crypto_hash_sha3_update
+#define u_crypto_hash_sha3_224_finish u_crypto_hash_sha3_finish
+#define u_crypto_hash_sha3_224_digest u_crypto_hash_sha3_digest
+#define u_crypto_hash_sha3_224_reset  u_crypto_hash_sha3_reset
+#define u_crypto_hash_sha3_224_free   u_crypto_hash_sha3_free
+#define u_crypto_hash_sha3_256_update u_crypto_hash_sha3_update
+#define u_crypto_hash_sha3_256_finish u_crypto_hash_sha3_finish
+#define u_crypto_hash_sha3_256_digest u_crypto_hash_sha3_digest
+#define u_crypto_hash_sha3_256_reset  u_crypto_hash_sha3_reset
+#define u_crypto_hash_sha3_256_free   u_crypto_hash_sha3_free
+#define u_crypto_hash_sha3_384_update u_crypto_hash_sha3_update
+#define u_crypto_hash_sha3_384_finish u_crypto_hash_sha3_finish
+#define u_crypto_hash_sha3_384_digest u_crypto_hash_sha3_digest
+#define u_crypto_hash_sha3_384_reset  u_crypto_hash_sha3_reset
+#define u_crypto_hash_sha3_384_free   u_crypto_hash_sha3_free
+#define u_crypto_hash_sha3_512_update u_crypto_hash_sha3_update
+#define u_crypto_hash_sha3_512_finish u_crypto_hash_sha3_finish
+#define u_crypto_hash_sha3_512_digest u_crypto_hash_sha3_digest
+#define u_crypto_hash_sha3_512_reset  u_crypto_hash_sha3_reset
+#define u_crypto_hash_sha3_512_free   u_crypto_hash_sha3_free
+#endif /* UNIC_HEADER_PCRYPTOHASHSHA3_H */

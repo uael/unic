@@ -16,15 +16,15 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 static byte_t test_str[] = "This is a test string!";
 
@@ -34,7 +34,7 @@ static int read_count = 0;
 
 static int write_count = 0;
 
-#ifndef P_OS_HPUX
+#ifndef U_OS_HPUX
 
 volatile static bool is_working = false;
 
@@ -43,21 +43,21 @@ shmbuf_test_write_thread(void) {
   shmbuf_t *buffer;
   ssize_t op_result;
 
-  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   if (buffer == NULL) {
-    p_uthread_exit(1);
+    u_uthread_exit(1);
   }
   while (is_working == true) {
-    p_uthread_sleep(3);
-    op_result = p_shmbuf_get_free_space(buffer, NULL);
+    u_uthread_sleep(3);
+    op_result = u_shmbuf_get_free_space(buffer, NULL);
 
     if (op_result < 0) {
       if (is_thread_exit > 0) {
         break;
       } else {
         ++is_thread_exit;
-        p_shmbuf_free(buffer);
-        p_uthread_exit(1);
+        u_shmbuf_free(buffer);
+        u_uthread_exit(1);
       }
     }
 
@@ -66,22 +66,22 @@ shmbuf_test_write_thread(void) {
     }
 
     op_result =
-      p_shmbuf_write(buffer, (ptr_t) test_str, sizeof(test_str), NULL);
+      u_shmbuf_write(buffer, (ptr_t) test_str, sizeof(test_str), NULL);
 
     if (op_result < 0) {
       if (is_thread_exit > 0) {
         break;
       } else {
         ++is_thread_exit;
-        p_shmbuf_free(buffer);
-        p_uthread_exit(1);
+        u_shmbuf_free(buffer);
+        u_uthread_exit(1);
       }
     }
 
     if (op_result != sizeof(test_str)) {
       ++is_thread_exit;
-      p_shmbuf_free(buffer);
-      p_uthread_exit(1);
+      u_shmbuf_free(buffer);
+      u_uthread_exit(1);
     }
 
     ++read_count;
@@ -89,8 +89,8 @@ shmbuf_test_write_thread(void) {
 
   ++is_thread_exit;
 
-  p_shmbuf_free(buffer);
-  p_uthread_exit(0);
+  u_shmbuf_free(buffer);
+  u_uthread_exit(0);
 
   return NULL;
 }
@@ -101,22 +101,22 @@ shmbuf_test_read_thread(void) {
   shmbuf_t *buffer;
   byte_t test_buf[sizeof(test_str)];
 
-  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   if (buffer == NULL) {
-    p_uthread_exit(1);
+    u_uthread_exit(1);
   }
 
   while (is_working == true) {
-    p_uthread_sleep(3);
-    op_result = p_shmbuf_get_used_space(buffer, NULL);
+    u_uthread_sleep(3);
+    op_result = u_shmbuf_get_used_space(buffer, NULL);
 
     if (op_result < 0) {
       if (is_thread_exit > 0) {
         break;
       } else {
         ++is_thread_exit;
-        p_shmbuf_free(buffer);
-        p_uthread_exit(1);
+        u_shmbuf_free(buffer);
+        u_uthread_exit(1);
       }
     }
 
@@ -125,28 +125,28 @@ shmbuf_test_read_thread(void) {
     }
 
     op_result =
-      p_shmbuf_read(buffer, (ptr_t) test_buf, sizeof(test_buf), NULL);
+      u_shmbuf_read(buffer, (ptr_t) test_buf, sizeof(test_buf), NULL);
 
     if (op_result < 0) {
       if (is_thread_exit > 0) {
         break;
       } else {
         ++is_thread_exit;
-        p_shmbuf_free(buffer);
-        p_uthread_exit(1);
+        u_shmbuf_free(buffer);
+        u_uthread_exit(1);
       }
     }
 
     if (op_result != sizeof(test_buf)) {
       ++is_thread_exit;
-      p_shmbuf_free(buffer);
-      p_uthread_exit(1);
+      u_shmbuf_free(buffer);
+      u_uthread_exit(1);
     }
 
     if (strncmp(test_buf, test_str, sizeof(test_buf)) != 0) {
       ++is_thread_exit;
-      p_shmbuf_free(buffer);
-      p_uthread_exit(1);
+      u_shmbuf_free(buffer);
+      u_uthread_exit(1);
     }
 
     ++write_count;
@@ -154,30 +154,30 @@ shmbuf_test_read_thread(void) {
 
   ++is_thread_exit;
 
-  p_shmbuf_free(buffer);
-  p_uthread_exit(0);
+  u_shmbuf_free(buffer);
+  u_uthread_exit(0);
 
   return NULL;
 }
 
-#endif /* !P_OS_HPUX */
+#endif /* !U_OS_HPUX */
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED(nbytes);
+  U_UNUSED(nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED(block);
-  P_UNUSED(nbytes);
+  U_UNUSED(block);
+  U_UNUSED(nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED(block);
+  U_UNUSED(block);
 }
 
 CUTEST(shmbuf, nomem) {
@@ -187,11 +187,11 @@ CUTEST(shmbuf, nomem) {
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
 
-  ASSERT(p_mem_set_vtable(&vtable) == true);
+  ASSERT(u_mem_set_vtable(&vtable) == true);
 
-  ASSERT(p_shmbuf_new("shm_test_buffer", 1024, NULL) == NULL);
+  ASSERT(u_shmbuf_new("shm_test_buffer", 1024, NULL) == NULL);
 
-  p_mem_restore_vtable();
+  u_mem_restore_vtable();
 
   return CUTE_SUCCESS;
 }
@@ -199,16 +199,16 @@ CUTEST(shmbuf, nomem) {
 CUTEST(shmbuf, bad_input) {
   shmbuf_t *buf;
 
-  ASSERT(p_shmbuf_new(NULL, 0, NULL) == NULL);
-  ASSERT(p_shmbuf_read(NULL, NULL, 0, NULL) == -1);
-  ASSERT(p_shmbuf_write(NULL, NULL, 0, NULL) == -1);
-  ASSERT(p_shmbuf_get_free_space(NULL, NULL) == -1);
-  ASSERT(p_shmbuf_get_used_space(NULL, NULL) == -1);
-  buf = p_shmbuf_new("shm_invalid_buffer", 0, NULL);
-  p_shmbuf_take_ownership(buf);
-  p_shmbuf_free(buf);
-  p_shmbuf_clear(NULL);
-  p_shmbuf_free(NULL);
+  ASSERT(u_shmbuf_new(NULL, 0, NULL) == NULL);
+  ASSERT(u_shmbuf_read(NULL, NULL, 0, NULL) == -1);
+  ASSERT(u_shmbuf_write(NULL, NULL, 0, NULL) == -1);
+  ASSERT(u_shmbuf_get_free_space(NULL, NULL) == -1);
+  ASSERT(u_shmbuf_get_used_space(NULL, NULL) == -1);
+  buf = u_shmbuf_new("shm_invalid_buffer", 0, NULL);
+  u_shmbuf_take_ownership(buf);
+  u_shmbuf_free(buf);
+  u_shmbuf_clear(NULL);
+  u_shmbuf_free(NULL);
 
   return CUTE_SUCCESS;
 }
@@ -219,95 +219,95 @@ CUTEST(shmbuf, general) {
   shmbuf_t *buffer;
 
   /* Buffer may be from the previous test on UNIX systems */
-  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   ASSERT(buffer != NULL);
-  p_shmbuf_take_ownership(buffer);
-  p_shmbuf_free(buffer);
-  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  u_shmbuf_take_ownership(buffer);
+  u_shmbuf_free(buffer);
+  buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   ASSERT(buffer != NULL);
 
-  ASSERT(p_shmbuf_get_free_space(buffer, NULL) == 1024);
-  ASSERT(p_shmbuf_get_used_space(buffer, NULL) == 0);
-  p_shmbuf_clear(buffer);
-  ASSERT(p_shmbuf_get_free_space(buffer, NULL) == 1024);
-  ASSERT(p_shmbuf_get_used_space(buffer, NULL) == 0);
+  ASSERT(u_shmbuf_get_free_space(buffer, NULL) == 1024);
+  ASSERT(u_shmbuf_get_used_space(buffer, NULL) == 0);
+  u_shmbuf_clear(buffer);
+  ASSERT(u_shmbuf_get_free_space(buffer, NULL) == 1024);
+  ASSERT(u_shmbuf_get_used_space(buffer, NULL) == 0);
 
   memset(test_buf, 0, sizeof(test_buf));
 
   ASSERT(
-    p_shmbuf_write(buffer, (ptr_t) test_str, sizeof(test_str), NULL)
+    u_shmbuf_write(buffer, (ptr_t) test_str, sizeof(test_str), NULL)
       == sizeof(test_str));
   ASSERT(
-    p_shmbuf_get_free_space(buffer, NULL) == (1024 - sizeof(test_str)));
-  ASSERT(p_shmbuf_get_used_space(buffer, NULL) == sizeof(test_str));
+    u_shmbuf_get_free_space(buffer, NULL) == (1024 - sizeof(test_str)));
+  ASSERT(u_shmbuf_get_used_space(buffer, NULL) == sizeof(test_str));
   ASSERT(
-    p_shmbuf_read(buffer, (ptr_t) test_buf, sizeof(test_buf), NULL)
+    u_shmbuf_read(buffer, (ptr_t) test_buf, sizeof(test_buf), NULL)
       == sizeof(test_str));
   ASSERT(
-    p_shmbuf_read(buffer, (ptr_t) test_buf, sizeof(test_buf), NULL) == 0);
+    u_shmbuf_read(buffer, (ptr_t) test_buf, sizeof(test_buf), NULL) == 0);
 
   ASSERT(strncmp(test_buf, test_str, sizeof(test_str)) == 0);
-  ASSERT(p_shmbuf_get_free_space(buffer, NULL) == 1024);
-  ASSERT(p_shmbuf_get_used_space(buffer, NULL) == 0);
+  ASSERT(u_shmbuf_get_free_space(buffer, NULL) == 1024);
+  ASSERT(u_shmbuf_get_used_space(buffer, NULL) == 0);
 
-  p_shmbuf_clear(buffer);
+  u_shmbuf_clear(buffer);
 
-  large_buf = (byte_t *) p_malloc0(2048);
+  large_buf = (byte_t *) u_malloc0(2048);
   ASSERT(large_buf != NULL);
-  ASSERT(p_shmbuf_write(buffer, (ptr_t) large_buf, 2048, NULL) == 0);
+  ASSERT(u_shmbuf_write(buffer, (ptr_t) large_buf, 2048, NULL) == 0);
 
-  p_free(large_buf);
-  p_shmbuf_free(buffer);
+  u_free(large_buf);
+  u_shmbuf_free(buffer);
 
   return CUTE_SUCCESS;
 }
 
-#ifndef P_OS_HPUX
+#ifndef U_OS_HPUX
 
 CUTEST(shmbuf, thread) {
   shmbuf_t *buffer;
   uthread_t *thr1, *thr2;
 
   /* Buffer may be from the previous test on UNIX systems */
-  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   ASSERT(buffer != NULL);
-  p_shmbuf_take_ownership(buffer);
-  p_shmbuf_free(buffer);
+  u_shmbuf_take_ownership(buffer);
+  u_shmbuf_free(buffer);
 
   is_thread_exit = 0;
   read_count = 0;
   write_count = 0;
   is_working = true;
 
-  buffer = p_shmbuf_new("shm_test_buffer", 1024, NULL);
+  buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   ASSERT(buffer != NULL);
 
   thr1 =
-    p_uthread_create((uthread_fn_t) shmbuf_test_write_thread, NULL, true);
+    u_uthread_create((uthread_fn_t) shmbuf_test_write_thread, NULL, true);
   ASSERT(thr1 != NULL);
 
   thr2 =
-    p_uthread_create((uthread_fn_t) shmbuf_test_read_thread, NULL, true);
+    u_uthread_create((uthread_fn_t) shmbuf_test_read_thread, NULL, true);
   ASSERT(thr1 != NULL);
 
-  p_uthread_sleep(50);
+  u_uthread_sleep(50);
 
   is_working = false;
 
-  ASSERT(p_uthread_join(thr1) == 0);
-  ASSERT(p_uthread_join(thr2) == 0);
+  ASSERT(u_uthread_join(thr1) == 0);
+  ASSERT(u_uthread_join(thr2) == 0);
 
   ASSERT(read_count > 0);
   ASSERT(write_count > 0);
 
-  p_shmbuf_free(buffer);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
+  u_shmbuf_free(buffer);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
 
   return CUTE_SUCCESS;
 }
 
-#endif /* !P_OS_HPUX */
+#endif /* !U_OS_HPUX */
 
 int
 main(int ac, char **av) {

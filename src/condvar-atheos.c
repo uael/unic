@@ -18,11 +18,11 @@
 #include <atheos/semaphore.h>
 #include <atheos/threads.h>
 
-#include "p/condvar.h"
-#include "p/spinlock.h"
-#include "p/atomic.h"
-#include "p/mem.h"
-#include "p/string.h"
+#include "unic/condvar.h"
+#include "unic/spinlock.h"
+#include "unic/atomic.h"
+#include "unic/mem.h"
+#include "unic/string.h"
 
 typedef struct _PCondThread {
   thread_id thread;
@@ -36,48 +36,48 @@ struct condvar {
 };
 
 condvar_t *
-p_condvar_new(void) {
+u_condvar_new(void) {
   condvar_t *ret;
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(condvar_t))) == NULL)) {
-    P_ERROR ("condvar_t::p_condvar_new: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(condvar_t))) == NULL)) {
+    U_ERROR ("condvar_t::u_condvar_new: failed to allocate memory");
     return NULL;
   }
-  if ((ret->lock = p_spinlock_new()) == NULL) {
-    P_ERROR ("condvar_t::p_condvar_new: failed to initialize");
-    p_free(ret);
+  if ((ret->lock = u_spinlock_new()) == NULL) {
+    U_ERROR ("condvar_t::u_condvar_new: failed to initialize");
+    u_free(ret);
     return NULL;
   }
   return ret;
 }
 
 void
-p_condvar_free(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_free(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return;
   }
   if ((cond->wait_count > 0) || (cond->wait_head != NULL))
-    P_WARNING (
-      "condvar_t::p_condvar_free: destroying while threads are waiting");
-  p_spinlock_free(cond->lock);
-  p_free(cond);
+    U_WARNING (
+      "condvar_t::u_condvar_free: destroying while threads are waiting");
+  u_spinlock_free(cond->lock);
+  u_free(cond);
 }
 
 bool
-p_condvar_wait(condvar_t *cond,
+u_condvar_wait(condvar_t *cond,
   mutex_t *mutex) {
   PCondThread *wait_thread;
-  if (P_UNLIKELY (cond == NULL || mutex == NULL)) {
+  if (U_UNLIKELY (cond == NULL || mutex == NULL)) {
     return false;
   }
-  if ((wait_thread = p_malloc0(sizeof(PCondThread))) == NULL) {
-    P_ERROR ("condvar_t::p_condvar_wait: failed to allocate memory");
+  if ((wait_thread = u_malloc0(sizeof(PCondThread))) == NULL) {
+    U_ERROR ("condvar_t::u_condvar_wait: failed to allocate memory");
     return false;
   }
   wait_thread->thread = get_thread_id(NULL);
   wait_thread->next = NULL;
-  if (p_spinlock_lock(cond->lock) != true) {
-    P_ERROR (
-      "condvar_t::p_condvar_wait: failed to lock internal spinlock");
+  if (u_spinlock_lock(cond->lock) != true) {
+    U_ERROR (
+      "condvar_t::u_condvar_wait: failed to lock internal spinlock");
     return false;
   }
   if (cond->wait_head != NULL) {
@@ -85,40 +85,40 @@ p_condvar_wait(condvar_t *cond,
   } else {
     cond->wait_head = wait_thread;
   }
-  p_atomic_int_inc((volatile int *) &cond->wait_count);
-  if (p_spinlock_unlock(cond->lock) != true) {
-    P_ERROR (
-      "condvar_t::p_condvar_wait: failed to unlock internal spinlock");
+  u_atomic_int_inc((volatile int *) &cond->wait_count);
+  if (u_spinlock_unlock(cond->lock) != true) {
+    U_ERROR (
+      "condvar_t::u_condvar_wait: failed to unlock internal spinlock");
     return false;
   }
-  if (p_mutex_unlock(mutex) != true) {
-    P_ERROR ("condvar_t::p_condvar_wait: failed to unlock mutex");
+  if (u_mutex_unlock(mutex) != true) {
+    U_ERROR ("condvar_t::u_condvar_wait: failed to unlock mutex");
     return false;
   }
   suspend_thread(wait_thread->thread);
-  if (p_mutex_lock(mutex) != true) {
-    P_ERROR ("condvar_t::p_condvar_wait: failed to lock mutex");
+  if (u_mutex_lock(mutex) != true) {
+    U_ERROR ("condvar_t::u_condvar_wait: failed to lock mutex");
     return false;
   }
   return true;
 }
 
 bool
-p_condvar_signal(condvar_t *cond) {
+u_condvar_signal(condvar_t *cond) {
   PCondThread *wait_thread;
   thread_info thr_info;
-  if (P_UNLIKELY (cond == NULL)) {
+  if (U_UNLIKELY (cond == NULL)) {
     return false;
   }
-  if (p_spinlock_lock(cond->lock) != true) {
-    P_ERROR (
-      "condvar_t::p_condvar_signal: failed to lock internal spinlock");
+  if (u_spinlock_lock(cond->lock) != true) {
+    U_ERROR (
+      "condvar_t::u_condvar_signal: failed to lock internal spinlock");
     return false;
   }
   if (cond->wait_head == NULL) {
-    if (p_spinlock_unlock(cond->lock) != true) {
-      P_ERROR (
-        "condvar_t::p_condvar_signal(1): failed to unlock internal spinlock");
+    if (u_spinlock_unlock(cond->lock) != true) {
+      U_ERROR (
+        "condvar_t::u_condvar_signal(1): failed to unlock internal spinlock");
       return false;
     } else {
       return true;
@@ -126,10 +126,10 @@ p_condvar_signal(condvar_t *cond) {
   }
   wait_thread = cond->wait_head;
   cond->wait_head = wait_thread->next;
-  p_atomic_int_add((volatile int *) &cond->wait_count, -1);
-  if (p_spinlock_unlock(cond->lock) != true) {
-    P_ERROR (
-      "condvar_t::p_condvar_signal(2): failed to unlock internal spinlock");
+  u_atomic_int_add((volatile int *) &cond->wait_count, -1);
+  if (u_spinlock_unlock(cond->lock) != true) {
+    U_ERROR (
+      "condvar_t::u_condvar_signal(2): failed to unlock internal spinlock");
     return false;
   }
   memset(&thr_info, 0, sizeof(thr_info));
@@ -139,27 +139,27 @@ p_condvar_signal(condvar_t *cond) {
     }
   }
   resume_thread(wait_thread->thread);
-  p_free(wait_thread);
+  u_free(wait_thread);
   return true;
 }
 
 bool
-p_condvar_broadcast(condvar_t *cond) {
-  if (P_UNLIKELY (cond == NULL)) {
+u_condvar_broadcast(condvar_t *cond) {
+  if (U_UNLIKELY (cond == NULL)) {
     return false;
   }
   PCondThread *cur_thread;
   PCondThread *next_thread;
   thread_info thr_info;
-  if (p_spinlock_lock(cond->lock) != true) {
-    P_ERROR (
-      "condvar_t::p_condvar_broadcast: failed to lock internal spinlock");
+  if (u_spinlock_lock(cond->lock) != true) {
+    U_ERROR (
+      "condvar_t::u_condvar_broadcast: failed to lock internal spinlock");
     return false;
   }
   if (cond->wait_head == NULL) {
-    if (p_spinlock_unlock(cond->lock) != true) {
-      P_ERROR (
-        "condvar_t::p_condvar_broadcast(1): failed to unlock internal spinlock");
+    if (u_spinlock_unlock(cond->lock) != true) {
+      U_ERROR (
+        "condvar_t::u_condvar_broadcast(1): failed to unlock internal spinlock");
       return false;
     } else {
       return true;
@@ -175,23 +175,23 @@ p_condvar_broadcast(condvar_t *cond) {
     }
     resume_thread(cur_thread->thread);
     next_thread = cur_thread->next;
-    p_free(cur_thread);
+    u_free(cur_thread);
     cur_thread = next_thread;
   } while (cur_thread != NULL);
   cond->wait_head = NULL;
   cond->wait_count = 0;
-  if (p_spinlock_unlock(cond->lock) != true) {
-    P_ERROR (
-      "condvar_t::p_condvar_broadcast(2): failed to unlock internal spinlock");
+  if (u_spinlock_unlock(cond->lock) != true) {
+    U_ERROR (
+      "condvar_t::u_condvar_broadcast(2): failed to unlock internal spinlock");
     return false;
   }
   return true;
 }
 
 void
-p_condvar_init(void) {
+u_condvar_init(void) {
 }
 
 void
-p_condvar_shutdown(void) {
+u_condvar_shutdown(void) {
 }

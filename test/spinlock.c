@@ -16,15 +16,15 @@
  */
 
 #include "cute.h"
-#include "plib.h"
+#include "unic.h"
 
 CUTEST_DATA {
   int dummy;
 };
 
-CUTEST_SETUP { p_libsys_init(); }
+CUTEST_SETUP { u_libsys_init(); }
 
-CUTEST_TEARDOWN { p_libsys_shutdown(); }
+CUTEST_TEARDOWN { u_libsys_shutdown(); }
 
 #define PSPINLOCK_MAX_VAL 10
 
@@ -33,20 +33,20 @@ static spinlock_t *global_spinlock = NULL;
 
 ptr_t
 pmem_alloc(size_t nbytes) {
-  P_UNUSED (nbytes);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 ptr_t
 pmem_realloc(ptr_t block, size_t nbytes) {
-  P_UNUSED (block);
-  P_UNUSED (nbytes);
+  U_UNUSED (block);
+  U_UNUSED (nbytes);
   return (ptr_t) NULL;
 }
 
 void
 pmem_free(ptr_t block) {
-  P_UNUSED (block);
+  U_UNUSED (block);
 }
 
 static void *
@@ -54,22 +54,22 @@ spinlock_test_thread(void) {
   int i;
 
   for (i = 0; i < 1000; ++i) {
-    if (!p_spinlock_trylock(global_spinlock)) {
-      if (!p_spinlock_lock(global_spinlock)) {
-        p_uthread_exit(1);
+    if (!u_spinlock_trylock(global_spinlock)) {
+      if (!u_spinlock_lock(global_spinlock)) {
+        u_uthread_exit(1);
       }
     }
     if (spinlock_test_val == PSPINLOCK_MAX_VAL) {
       --spinlock_test_val;
     } else {
-      p_uthread_sleep(1);
+      u_uthread_sleep(1);
       ++spinlock_test_val;
     }
-    if (!p_spinlock_unlock(global_spinlock)) {
-      p_uthread_exit(1);
+    if (!u_spinlock_unlock(global_spinlock)) {
+      u_uthread_exit(1);
     }
   }
-  p_uthread_exit(0);
+  u_uthread_exit(0);
   return NULL;
 }
 
@@ -79,17 +79,17 @@ CUTEST(spinlock, nomem) {
   vtable.free = pmem_free;
   vtable.malloc = pmem_alloc;
   vtable.realloc = pmem_realloc;
-  ASSERT(p_mem_set_vtable(&vtable) == true);
-  ASSERT(p_spinlock_new() == NULL);
-  p_mem_restore_vtable();
+  ASSERT(u_mem_set_vtable(&vtable) == true);
+  ASSERT(u_spinlock_new() == NULL);
+  u_mem_restore_vtable();
   return CUTE_SUCCESS;
 }
 
 CUTEST(spinlock, bad_input) {
-  ASSERT(p_spinlock_lock(NULL) == false);
-  ASSERT(p_spinlock_unlock(NULL) == false);
-  ASSERT(p_spinlock_trylock(NULL) == false);
-  p_spinlock_free(NULL);
+  ASSERT(u_spinlock_lock(NULL) == false);
+  ASSERT(u_spinlock_unlock(NULL) == false);
+  ASSERT(u_spinlock_trylock(NULL) == false);
+  u_spinlock_free(NULL);
   return CUTE_SUCCESS;
 }
 
@@ -97,18 +97,18 @@ CUTEST(spinlock, general) {
   uthread_t *thr1, *thr2;
 
   spinlock_test_val = PSPINLOCK_MAX_VAL;
-  global_spinlock = p_spinlock_new();
+  global_spinlock = u_spinlock_new();
   ASSERT(global_spinlock != NULL);
-  thr1 = p_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
+  thr1 = u_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-  thr2 = p_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
+  thr2 = u_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-  ASSERT(p_uthread_join(thr1) == 0);
-  ASSERT(p_uthread_join(thr2) == 0);
+  ASSERT(u_uthread_join(thr1) == 0);
+  ASSERT(u_uthread_join(thr2) == 0);
   ASSERT(spinlock_test_val == PSPINLOCK_MAX_VAL);
-  p_uthread_unref(thr1);
-  p_uthread_unref(thr2);
-  p_spinlock_free(global_spinlock);
+  u_uthread_unref(thr1);
+  u_uthread_unref(thr2);
+  u_spinlock_free(global_spinlock);
   return CUTE_SUCCESS;
 }
 

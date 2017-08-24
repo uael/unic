@@ -1,0 +1,70 @@
+#ifndef UNIC_HEADER_UNICCONFIG_H
+#define UNIC_HEADER_UNICCONFIG_H
+
+#define UNIC_VERSION_MAJOR @UNIC_VERSION_MAJOR@
+#define UNIC_VERSION_MINOR @UNIC_VERSION_MINOR@
+#define UNIC_VERSION_PATCH @UNIC_VERSION_PATCH@
+#define UNIC_VERSION_STR "@UNIC_VERSION@"
+#define UNIC_VERSION @UNIC_VERSION_NUM@
+
+#cmakedefine UNIC_NEED_WINDOWS_H
+#cmakedefine UNIC_NEED_FLOAT_H
+#cmakedefine UNIC_NEED_LIMITS_H
+#cmakedefine UNIC_NEED_VALUES_H
+#cmakedefine UNIC_IS_BIGENDIAN
+#cmakedefine UNIC_SIZEOF_SAFAMILY_T @UNIC_SIZEOF_SAFAMILY_T@
+
+#define UNIC_NTDDI_VERSION_FROM_WIN32_WINNT2(ver)    ver##0000
+#define UNIC_NTDDI_VERSION_FROM_WIN32_WINNT(ver)     UNIC_NTDDI_VERSION_FROM_WIN32_WINNT2(ver)
+
+#ifdef UNIC_NEED_WINDOWS_H
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x501
+#  endif
+#  ifndef NTDDI_VERSION
+#    define NTDDI_VERSION UNIC_NTDDI_VERSION_FROM_WIN32_WINNT(_WIN32_WINNT)
+#  endif
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <windows.h>
+#endif
+
+#include "unic/macros.h"
+
+#ifdef UNIC_NEED_FLOAT_H
+#  include <float.h>
+#endif
+
+#ifdef UNIC_NEED_LIMITS_H
+#  include <limits.h>
+#endif
+
+#ifdef UNIC_NEED_VALUES_H
+#  include <values.h>
+#endif
+
+#define U_MINFLOAT    @UNIC_FLOAT_MIN@
+#define U_MAXFLOAT    @UNIC_FLOAT_MAX@
+#define U_MINDOUBLE   @UNIC_DOUBLE_MIN@
+#define U_MAXDOUBLE   @UNIC_DOUBLE_MAX@
+#define U_MINSHORT    @UNIC_SHORT_MIN@
+#define U_MAXSHORT    @UNIC_SHORT_MAX@
+#define U_MAXUSHORT   @UNIC_USHORT_MAX@
+#define U_MININT      @UNIC_INT_MIN@
+#define U_MAXINT      @UNIC_INT_MAX@
+#define U_MAXUINT     @UNIC_UINT_MAX@
+#define U_MINLONG     @UNIC_LONG_MIN@
+#define U_MAXLONG     @UNIC_LONG_MAX@
+#define U_MAXULONG    @UNIC_ULONG_MAX@
+
+#define UNIC_SIZEOF_VOID_P @CMAKE_SIZEOF_VOID_P@
+#define UNIC_SIZEOF_SIZE_T @UNIC_SIZEOF_SIZE_T@
+#define UNIC_SIZEOF_LONG @UNIC_SIZEOF_LONG@
+
+#ifdef UNIC_IS_BIGENDIAN
+#  define U_BYTE_ORDER U_BIG_ENDIAN
+#else
+#  define U_BYTE_ORDER U_LITTLE_ENDIAN
+#endif
+
+#endif /* UNIC_HEADER_UNICCONFIG_H */

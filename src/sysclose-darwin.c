@@ -72,7 +72,7 @@ extern int
 ___close_nocancel(int fd);
 
 int
-p_sys_close(int fd) {
+u_sys_close(int fd) {
   return ___close_nocancel(fd);
 }
 #undef close_implementation
