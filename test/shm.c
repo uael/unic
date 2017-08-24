@@ -29,7 +29,8 @@ CUTEST_TEARDOWN { p_libsys_shutdown(); }
 
 static void *
 shm_test_thread(void *arg) {
-  int i, rand_num;
+  uint_t i;
+  int rand_num;
   size_t shm_size;
   ptr_t addr;
   shm_t *shm;
