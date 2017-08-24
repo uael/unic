@@ -52,34 +52,27 @@
  * overridden.
  */
 
-/* If the non-cancelable variants of all system calls have already been chosen,
- * do nothing. */
-#if !__DARWIN_NON_CANCELABLE
-# if __DARWIN_UNIX03 && !__DARWIN_ONLY_UNIX_CONFORMANCE
-/* When there's a choice between UNIX2003 and pre-UNIX2003 and UNIX2003 has
- * been chosen. */
-extern int close$NOCANCEL$UNIX2003 (int fd);
-#   define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
-# elif !__DARWIN_UNIX03 && !__DARWIN_ONLY_UNIX_CONFORMANCE
+#include "sysclose-private.h"
 
-/* When there's a choice between UNIX2003 and pre-UNIX2003 and pre-UNIX2003
- * has been chosen. There's no close$NOCANCEL symbol in this case, so use
- * close$NOCANCEL$UNIX2003 as the implementation. It does the same thing that
- * close$NOCANCEL would do. */
-extern int
-close$NOCANCEL$UNIX2003(int fd);
-
-#   define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL$UNIX2003
+#ifndef ___close_nocancel
+# if !__DARWIN_ONLY_UNIX_CONFORMANCE
+/*
+ * When there's a choice between UNIX2003 and pre-UNIX2003. There's no
+ * close$NOCANCEL symbol in this case, so use close$NOCANCEL$UNIX2003 as the
+ * implementation. It does the same thing that close$NOCANCEL would do.
+ */
+#   define ___close_nocancel close$NOCANCEL$UNIX2003
 # else
-/* When only UNIX2003 is supported. */
-extern int close$NOCANCEL (int fd);
-#   define PLIBSYS_CLOSE_INTERFACE close$NOCANCEL
+/* When only UNIX2003 is supported: */
+#   define ___close_nocancel close$NOCANCEL
 # endif
 #endif
 
-#include "sysclose-private.h"
+extern "C" int
+___close_nocancel(int fd);
 
 int
 p_sys_close(int fd) {
-  return PLIBSYS_CLOSE_INTERFACE(fd);
+  return ___close_nocancel(fd);
 }
+#undef close_implementation
