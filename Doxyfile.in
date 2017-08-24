@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # General configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = plibsys
+PROJECT_NAME           = unic
 PROJECT_NUMBER         = @VERSION@
 OUTPUT_DIRECTORY       = doc
 OUTPUT_LANGUAGE        = English
@@ -58,9 +58,9 @@ RECURSIVE              = YES
 # certain files from those directories.
 
 EXCLUDE_PATTERNS       = Makefile.*       \
-                         pcryptohash-*.*  \
-                         ptree-*.*        \
-                         plibsys.h        \
+                         hash-*.*  \
+                         tree-*.*        \
+                         unic.h        \
                          *-private.h      \
                          CMakeLists.txt
 
@@ -132,7 +132,7 @@ RTF_EXTENSIONS_FILE    =
 #---------------------------------------------------------------------------
 GENERATE_MAN           = NO
 MAN_OUTPUT             = man
-MAN_EXTENSION          = .3plibsys
+MAN_EXTENSION          = .3unic
 MAN_LINKS              = YES
 #---------------------------------------------------------------------------
 # configuration options related to the XML output
@@ -147,9 +147,7 @@ EXPAND_ONLY_PREDEF     = YES
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = "P_BEGIN_DECLS="                       \
-                         "P_END_DECLS="                         \
-                         "DOXYGEN_SHOULD_SKIP_THIS"             \
+PREDEFINED             = "DOXYGEN_SHOULD_SKIP_THIS"             \
                          "DOXYGEN"
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

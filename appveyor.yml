@@ -1,13 +1,7 @@
 environment:
-        COVERITY_SCAN_PROJECT_NAME:       "saprykin/plibsys"
-        COVERITY_SCAN_NOTIFICATION_EMAIL: "xelfium@gmail.com"
-        COVERITY_SCAN_TOKEN:
-                secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
-
         matrix:
                 - CMAKE_GENERATOR: "Watcom WMake"
                   USE_WATCOM:      "1"
-                  SKIP_TESTS:      "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
                   USE_MINGW_493:   "1"
@@ -43,7 +37,6 @@ environment:
                 - CMAKE_GENERATOR: "Visual Studio 12 2013 Win64"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015 Win64"
-                  USE_COVERITY:    "1"
                 - CMAKE_GENERATOR: "NMake Makefiles"
                   USE_LLVM:        "1"
 
@@ -51,14 +44,14 @@ os: Visual Studio 2015
 
 configuration: Release
 
-version: 0.0.1.{build}
+version: 0.1.0+{build}
 
 branches:
         only:
                 - master
                 - appveyor_test
 
-clone_folder: c:\projects\plibsys
+clone_folder: c:\projects\unic
 
 cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
@@ -159,29 +152,17 @@ install:
 
 build_script:
         - ps: >-
-                $BUILD_DIR = "c:\projects\plibsys-build";
+                $BUILD_DIR = "c:\projects\unic-build";
 
                 New-Item -ItemType directory -Path $BUILD_DIR | Out-Null;
                 Set-Location $BUILD_DIR | Out-Null;
-
-                If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test" -And -Not ($env:SKIP_TESTS -eq "1")) {
-                        $VAR_BOOST_TESTS = "-DPLIBSYS_TESTS_STATIC=ON";
-
-                        If ($env:USE_MSYS64 -eq "1" -And -Not ($env:USE_MINGW64 -eq "1")) {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=/c/Libraries/boost_1_62_0";
-                        } ElseIf ($env:USE_CYGWIN -eq "1") {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=/cygdrive/c/Libraries/boost_1_62_0";
-                        } Else {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=C:/Libraries/boost_1_62_0";
-                        }
-                }
 
                 If ($env:USE_MSYS64 -eq "1") {
                         if ($env:USE_MINGW64 -eq "1") {
                                 $BUILD_TYPE = "";
                         } Else {
-                                $BUILD_TYPE   = "-DCMAKE_BUILD_TYPE=$env:configuration";  
-                                $CTEST_PARAMS = @("-E", "pshm|psemaphore");
+                                $BUILD_TYPE   = "-DCMAKE_BUILD_TYPE=$env:configuration";
+                                $CTEST_PARAMS = @("-E", "shm|sema");
                         }
 
                         $BUILD_COMMAND = "make";
@@ -205,10 +186,8 @@ build_script:
                         $BUILD_COMMAND = "make";
                         $BUILD_PARAMS  = @("-j", "2");
 
-                        If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                                & bash -lc 'cygserver-config --yes';
-                                & cygrunsrv -S cygserver;
-                        }
+                        & bash -lc 'cygserver-config --yes';
+                        & cygrunsrv -S cygserver;
                 } ElseIf ($env:USE_LLVM -eq "1") {
                         pushd "$env:VS140COMNTOOLS\..\..\VC\bin\amd64"
                         cmd /c "vcvars64.bat&set" |
@@ -227,37 +206,15 @@ build_script:
                         $CMAKE_CXX_COMPILER = "-DCMAKE_CXX_COMPILER=cl.exe"
                 } ElseIf ($env:USE_WATCOM -eq "1") {
                         $BUILD_COMMAND = "wmake";
-                        $SKIP_TESTS    = "1"
                 } Else {
                         If ($env:USE_OLD_MSBUILD -eq "1") {
                                 $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
                         }
 
                         $BUILD_COMMAND = "msbuild";
-                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
+                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\unic.sln", "/p:Configuration=$env:configuration", "/m");
                 }
 
-                If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        & nuget install PublishCoverity -o $BUILD_DIR -excludeversion;
-
-                        $COVERITY_EXE = "$BUILD_DIR\PublishCoverity\tools\PublishCoverity.exe";
-
-                        # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
-
-                        & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
-
-                        & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
-                        & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
-
-                        Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
-                }
-
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../unic;
                 & $BUILD_COMMAND $BUILD_PARAMS;
-
-                If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        If (-Not ($env:SKIP_TESTS -eq "1")) {
-                                & ctest $CTEST_PARAMS --output-on-failure -V -C Release;
-                        }
-                }
+                & ctest $CTEST_PARAMS --output-on-failure -V -C Release;

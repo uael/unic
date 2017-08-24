@@ -95,7 +95,7 @@ $! -----------------------------------------------------------
 $!
 $ if (f$getsyi("HW_MODEL") .lt. 1024)
 $ then
-$      'vo_c' "%PLIBSYS-F-NOTSUP, VAX platform is not supported, sorry :("
+$      'vo_c' "%UNIC-F-NOTSUP, VAX platform is not supported, sorry :("
 $      goto common_exit
 $ else
 $      arch_name = ""
@@ -112,7 +112,7 @@ $      patch         = f$element(1, "-", min_ver_patch)
 $!
 $      if maj_ver .lts. "8" .or. min_ver .lts. "4"
 $      then
-$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
+$          'vo_c' "%UNIC-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
 $          goto common_exit
 $      endif
 $ endif
@@ -218,13 +218,13 @@ $ endif
 $!
 $ if is_tests .eqs. "1" .and. boost_root .eqs. ""
 $ then
-$     'vo_c' "%PLIBSYS-I-NOTESTS, tests couldn't be built without BOOST_ROOT parameter, disabling."
+$     'vo_c' "%UNIC-I-NOTESTS, tests couldn't be built without BOOST_ROOT parameter, disabling."
 $     is_tests = 0
 $ endif
 $!
 $ if is_tests .eqs. "0" .and. boost_root .nes. ""
 $ then
-$     'vo_c' "%PLIBSYS-I-BOOSTIGN, BOOST_ROOT parameter will be ignored without tests enabled."
+$     'vo_c' "%UNIC-I-BOOSTIGN, BOOST_ROOT parameter will be ignored without tests enabled."
 $ endif
 $!
 $! Prepare build directory
@@ -255,7 +255,7 @@ $!
 $! Generate platform-specific config file
 $! --------------------------------------
 $!
-$ if f$search("plibsysconfig.h") .nes. "" then delete plibsysconfig.h;*
+$ if f$search("include/unic/config.h") .nes. "" then delete include/unic/config.h;*
 $!
 $! Get the version number
 $! ----------------------
@@ -267,27 +267,27 @@ $     read/end=version_loop_end vhf line_in
 $!
 $     if line_in .eqs. "" then goto version_loop
 $!
-$     if f$locate("set (PLIBSYS_VERSION_MAJOR ", line_in) .eq. 0
+$     if f$locate("set (UNIC_VERSION_MAJOR ", line_in) .eq. 0
 $     then
-$         plibsys_vmajor = f$element(2, " ", line_in) - ")"
+$         unic_vmajor = f$element(2, " ", line_in) - ")"
 $         i = i + 1
 $     endif
 $!
-$     if f$locate("set (PLIBSYS_VERSION_MINOR ", line_in) .eq. 0
+$     if f$locate("set (UNIC_VERSION_MINOR ", line_in) .eq. 0
 $     then
-$         plibsys_vminor = f$element(2, " ", line_in) - ")"
+$         unic_vminor = f$element(2, " ", line_in) - ")"
 $         i = i + 1
 $     endif
 $!
-$     if f$locate("set (PLIBSYS_VERSION_PATCH ", line_in) .eq. 0
+$     if f$locate("set (UNIC_VERSION_PATCH ", line_in) .eq. 0
 $     then
-$         plibsys_vpatch = f$element(2, " ", line_in) - ")"
+$         unic_vpatch = f$element(2, " ", line_in) - ")"
 $         i = i + 1
 $     endif
 $!
-$     if f$locate("set (PLIBSYS_VERSION_NUM ", line_in) .eq. 0
+$     if f$locate("set (UNIC_VERSION_NUM ", line_in) .eq. 0
 $     then
-$         plibsys_vnum = f$element(2, " ", line_in) - ")"
+$         unic_vnum = f$element(2, " ", line_in) - ")"
 $         i = i + 1
 $     endif
 $!
@@ -298,73 +298,73 @@ $!
 $! Write config file
 $! -----------------
 $!
-$ open/write/error=config_write_end chf plibsysconfig.h
-$ write chf "#ifndef PLIBSYS_HEADER_PLIBSYSCONFIG_H"
-$ write chf "#define PLIBSYS_HEADER_PLIBSYSCONFIG_H"
+$ open/write/error=config_write_end chf include/unic/config.h
+$ write chf "#ifndef UNIC_HEADER_UNICCONFIG_H"
+$ write chf "#define UNIC_HEADER_UNICCONFIG_H"
 $ write chf ""
-$ write chf "#define PLIBSYS_VERSION_MAJOR ''plibsys_vmajor'"
-$ write chf "#define PLIBSYS_VERSION_MINOR ''plibsys_vminor'"
-$ write chf "#define PLIBSYS_VERSION_PATCH ''plibsys_vpatch'"
-$ write chf "#define PLIBSYS_VERSION_STR ""''plibsys_vmajor'.''plibsys_vminor'.''plibsys_vpatch'"""
-$ write chf "#define PLIBSYS_VERSION ''plibsys_vnum'"
+$ write chf "#define UNIC_VERSION_MAJOR ''unic_vmajor'"
+$ write chf "#define UNIC_VERSION_MINOR ''unic_vminor'"
+$ write chf "#define UNIC_VERSION_PATCH ''unic_vpatch'"
+$ write chf "#define UNIC_VERSION_STR ""''unic_vmajor'.''unic_vminor'.''unic_vpatch'"""
+$ write chf "#define UNIC_VERSION ''unic_vnum'"
 $ write chf ""
-$ write chf "#define PLIBSYS_SIZEOF_SAFAMILY_T 1"
+$ write chf "#define UNIC_SIZEOF_SAFAMILY_T 1"
 $ write chf ""
 $ write chf "#include <pmacros.h>"
 $ write chf ""
 $ write chf "#include <float.h>"
 $ write chf "#include <limits.h>"
 $ write chf ""
-$ write chf "P_BEGIN_DECLS"
+$ write chf "U_BEGIN_DECLS"
 $ write chf ""
-$ write chf "#define P_MINFLOAT    FLT_MIN"
-$ write chf "#define P_MAXFLOAT    FLT_MAX"
-$ write chf "#define P_MINDOUBLE   DBL_MIN"
-$ write chf "#define P_MAXDOUBLE   DBL_MAX"
-$ write chf "#define P_MINSHORT    SHRT_MIN"
-$ write chf "#define P_MAXSHORT    SHRT_MAX"
-$ write chf "#define P_MAXUSHORT   USHRT_MAX"
-$ write chf "#define P_MININT      INT_MIN"
-$ write chf "#define P_MAXINT      INT_MAX"
-$ write chf "#define P_MAXUINT     UINT_MAX"
-$ write chf "#define P_MINLONG     LONG_MIN"
-$ write chf "#define P_MAXLONG     LONG_MAX"
-$ write chf "#define P_MAXULONG    ULONG_MAX"
+$ write chf "#define U_MINFLOAT    FLT_MIN"
+$ write chf "#define U_MAXFLOAT    FLT_MAX"
+$ write chf "#define U_MINDOUBLE   DBL_MIN"
+$ write chf "#define U_MAXDOUBLE   DBL_MAX"
+$ write chf "#define U_MINSHORT    SHRT_MIN"
+$ write chf "#define U_MAXSHORT    SHRT_MAX"
+$ write chf "#define U_MAXUSHORT   USHRT_MAX"
+$ write chf "#define U_MININT      INT_MIN"
+$ write chf "#define U_MAXINT      INT_MAX"
+$ write chf "#define U_MAXUINT     UINT_MAX"
+$ write chf "#define U_MINLONG     LONG_MIN"
+$ write chf "#define U_MAXLONG     LONG_MAX"
+$ write chf "#define U_MAXULONG    ULONG_MAX"
 $ write chf ""
-$ write chf "#define PLIBSYS_MMAP_HAS_MAP_ANONYMOUS"
-$ write chf "#define PLIBSYS_HAS_NANOSLEEP"
-$ write chf "#define PLIBSYS_HAS_GETADDRINFO"
-$ write chf "#define PLIBSYS_HAS_POSIX_SCHEDULING"
-$ write chf "#define PLIBSYS_HAS_POSIX_STACKSIZE"
-$ write chf "#define PLIBSYS_HAS_SOCKADDR_STORAGE"
-$ write chf "#define PLIBSYS_SOCKADDR_HAS_SA_LEN"
-$ write chf "#define PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID"
-$ write chf "#define PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO"
+$ write chf "#define UNIC_MMAP_HAS_MAP_ANONYMOUS"
+$ write chf "#define UNIC_HAS_NANOSLEEP"
+$ write chf "#define UNIC_HAS_GETADDRINFO"
+$ write chf "#define UNIC_HAS_POSIX_SCHEDULING"
+$ write chf "#define UNIC_HAS_POSIX_STACKSIZE"
+$ write chf "#define UNIC_HAS_SOCKADDR_STORAGE"
+$ write chf "#define UNIC_SOCKADDR_HAS_SA_LEN"
+$ write chf "#define UNIC_SOCKADDR_IN6_HAS_SCOPEID"
+$ write chf "#define UNIC_SOCKADDR_IN6_HAS_FLOWINFO"
 $ write chf ""
 $!
 $ if build_64 .eqs. "1"
 $ then
-$     write chf "#define PLIBSYS_SIZEOF_VOID_P 8"
-$     write chf "#define PLIBSYS_SIZEOF_SIZE_T 8"
+$     write chf "#define UNIC_SIZEOF_VOID_P 8"
+$     write chf "#define UNIC_SIZEOF_SIZE_T 8"
 $ else
-$     write chf "#define PLIBSYS_SIZEOF_VOID_P 4"
-$     write chf "#define PLIBSYS_SIZEOF_SIZE_T 4"
+$     write chf "#define UNIC_SIZEOF_VOID_P 4"
+$     write chf "#define UNIC_SIZEOF_SIZE_T 4"
 $ endif
 $!
-$ write chf "#define PLIBSYS_SIZEOF_LONG 4"
+$ write chf "#define UNIC_SIZEOF_LONG 4"
 $ write chf ""
 $!
 $ if big_endian .eqs. "1"
 $ then
-$     write chf "#define P_BYTE_ORDER P_BIG_ENDIAN"
+$     write chf "#define U_BYTE_ORDER U_BIG_ENDIAN"
 $ else
-$     write chf "#define P_BYTE_ORDER P_LITTLE_ENDIAN"
+$     write chf "#define U_BYTE_ORDER U_LITTLE_ENDIAN"
 $ endif
 $!
 $ write chf ""
-$ write chf "P_END_DECLS"
+$ write chf "U_END_DECLS"
 $ write chf ""
-$ write chf "#endif /* PLIBSYS_HEADER_PLIBSYSCONFIG_H */"
+$ write chf "#endif /* UNIC_HEADER_UNICCONFIG_H */"
 $ config_write_end:
 $     close chf
 $!
@@ -373,7 +373,7 @@ $! -------------------------------
 $!
 $ cc_link_params = ""
 $ cc_params = "/NAMES=(AS_IS,SHORTENED)"
-$ cc_params = cc_params + "/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT,_POSIX_EXIT)"
+$ cc_params = cc_params + "/DEFINE=(UNIC_COMPILATION,_REENTRANT,_POSIX_EXIT)"
 $ cc_params = cc_params + "/INCLUDE_DIRECTORY=(''objdir',''base_src_dir')"
 $ cc_params = cc_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
 $!
@@ -397,15 +397,15 @@ $ else
 $     cc_link_params = "/NODEBUG/NOTRACEBACK"
 $ endif
 $!
-$ plibsys_src = "patomic-decc.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
-$ plibsys_src = plibsys_src + " pcryptohash-sha1.c pcryptohash-sha2-256.c pcryptohash-sha2-512.c"
-$ plibsys_src = plibsys_src + " pcryptohash-sha3.c pcryptohash.c pdir-posix.c pdir.c"
-$ plibsys_src = plibsys_src + " perror.c pfile.c phashtable.c pinifile.c pipc.c plibraryloader-posix.c"
-$ plibsys_src = plibsys_src + " plist.c pmain.c pmem.c pmutex-posix.c pprocess.c prwlock-posix.c"
-$ plibsys_src = plibsys_src + " psemaphore-posix.c pshm-posix.c pshmbuffer.c psocket.c"
-$ plibsys_src = plibsys_src + " psocketaddress.c pspinlock-decc.c pstring.c psysclose-unix.c"
-$ plibsys_src = plibsys_src + " ptimeprofiler-posix.c ptimeprofiler.c ptree-avl.c ptree-bst.c"
-$ plibsys_src = plibsys_src + " ptree-rb.c ptree.c puthread-posix.c puthread.c"
+$ unic_src = "patomic-decc.c condvar-posix.c hash-gost3411.c hash-md5.c"
+$ unic_src = unic_src + " hash-sha1.c hash-sha2-256.c hash-sha2-512.c"
+$ unic_src = unic_src + " hash-sha3.c hash.c dir-posix.c dir.c"
+$ unic_src = unic_src + " err.c file.c htable.c inifile.c ipc.c dl-posix.c"
+$ unic_src = unic_src + " list.c main.c mem.c mutex-posix.c process.c rwlock-posix.c"
+$ unic_src = unic_src + " sema-posix.c shm-posix.c shmbuf.c socket.c"
+$ unic_src = unic_src + " socketaddr.c spinlock-decc.c string.c sysclose-unix.c"
+$ unic_src = unic_src + " profiler-posix.c profiler.c tree-avl.c tree-bst.c"
+$ unic_src = unic_src + " tree-rb.c tree.c uthread-posix.c uthread.c"
 $!
 $! Inform about building
 $! ---------------------
@@ -422,11 +422,11 @@ $! -----------------------
 $!
 $ 'vo_c' "Compiling object modules..."
 $ src_counter = 0
-$ plibsys_src = f$edit(plibsys_src, "COMPRESS")
-$ plibsys_objs = ""
+$ unic_src = f$edit(unic_src, "COMPRESS")
+$ unic_objs = ""
 $!
 $ src_loop:
-$     next_src = f$element (src_counter, " ", plibsys_src)
+$     next_src = f$element (src_counter, " ", unic_src)
 $     if next_src .nes. "" .and. next_src .nes. " "
 $     then
 $         'vo_c' "[CC] ''next_src'"
@@ -435,37 +435,37 @@ $!
 $         src_counter = src_counter + 1
 $!
 $         obj_file = f$extract (0, f$length (next_src) - 1, next_src) + "obj"
-$         plibsys_objs = plibsys_objs + "''obj_file',"
+$         unic_objs = unic_objs + "''obj_file',"
 $         purge 'obj_file'
 $!
 $         goto src_loop
 $     endif
 $!
-$ plibsys_objs = f$extract (0, f$length (plibsys_objs) - 1, plibsys_objs)
+$ unic_objs = f$extract (0, f$length (unic_objs) - 1, unic_objs)
 $!
 $! Create library
 $! --------------
 $!
 $ 'vo_c' "Creating object library..."
-$ library/CREATE/INSERT/REPLACE /LIST=PLIBSYS.LIS PLIBSYS.OLB 'plibsys_objs'
-$ library/COMPRESS PLIBSYS.OLB
-$ purge PLIBSYS.OLB
-$ purge PLIBSYS.LIS
+$ library/CREATE/INSERT/REPLACE /LIST=UNIC.LIS UNIC.OLB 'unic_objs'
+$ library/COMPRESS UNIC.OLB
+$ purge UNIC.OLB
+$ purge UNIC.LIS
 $!
 $ 'vo_c' "Creating shared library..."
-$ link/SHAREABLE=PLIBSYS.EXE /MAP=PLIBSYS.MAP 'cc_link_params' 'plibsys_objs', [-]plibsys.opt/OPTION
-$ purge PLIBSYS.EXE
-$ purge PLIBSYS.MAP
+$ link/SHAREABLE=UNIC.EXE /MAP=UNIC.MAP 'cc_link_params' 'unic_objs', [-]unic.opt/OPTION
+$ purge UNIC.EXE
+$ purge UNIC.MAP
 $!
 $! Testing area
 $! ------------
 $!
 $ build_tests:
-$ test_list_full = "patomic pcondvariable pcryptohash pdir"
-$ test_list_full = test_list_full + " perror pfile phashtable pinifile plibraryloader plist"
-$ test_list_full = test_list_full + " pmacros pmain pmem pmutex pprocess prwlock psemaphore"
-$ test_list_full = test_list_full + " pshm pshmbuffer psocket psocketaddress pspinlock pstring"
-$ test_list_full = test_list_full + " ptimeprofiler ptree ptypes puthread"
+$ test_list_full = "atomic condvar hash dir"
+$ test_list_full = test_list_full + " err file htable inifile dl list"
+$ test_list_full = test_list_full + " macros main mem mutex process rwlock sema"
+$ test_list_full = test_list_full + " shm shmbuf socket socketaddr spinlock string"
+$ test_list_full = test_list_full + " profiler tree types uthread"
 $!
 $ if is_tests .eqs. "0"
 $ then
@@ -475,10 +475,10 @@ $!
 $! Write link options file
 $! -----------------------
 $!
-$ if f$search("plibsys_link.opt") .nes. "" then delete plibsys_link.opt;*
+$ if f$search("unic_link.opt") .nes. "" then delete unic_link.opt;*
 $!
-$ open/write/error=link_write_end lhf plibsys_link.opt
-$ write lhf "''objdir'PLIBSYS.EXE/SHARE"
+$ open/write/error=link_write_end lhf unic_link.opt
+$ write lhf "''objdir'UNIC.EXE/SHARE"
 $ write lhf ""
 $ link_write_end:
 $     close lhf
@@ -488,17 +488,17 @@ $! -------------------------
 $!
 $ if test_list .nes. ""
 $ then
-$     plibsys_tests = f$edit(test_list, "TRIM")
+$     unic_tests = f$edit(test_list, "TRIM")
 $ else
-$     plibsys_tests = test_list_full
+$     unic_tests = test_list_full
 $ endif
 $!
 $ 'vo_c' "Compiling test executables..."
 $ test_counter = 0
-$ plibsys_tests = f$edit(plibsys_tests, "COMPRESS")
+$ unic_tests = f$edit(unic_tests, "COMPRESS")
 $!
 $ cxx_params = "/INCLUDE=(''objdir',''base_src_dir',""''boost_root'"")"
-$ cxx_params = cxx_params + "/DEFINE=(__USE_STD_IOSTREAM,PLIBSYS_TESTS_STATIC)/NAMES=(AS_IS, SHORTENED)"
+$ cxx_params = cxx_params + "/DEFINE=(__USE_STD_IOSTREAM,UNIC_TESTS_STATIC)/NAMES=(AS_IS, SHORTENED)"
 $ cxx_params = cxx_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
 $!
 $ if build_64 .eqs. "1"
@@ -537,7 +537,7 @@ $     cxx_params = cxx_params + "/DEBUG/NOOPTIMIZE/LIST/SHOW=ALL"
 $ endif
 $!
 $ test_loop:
-$     next_test = f$element (test_counter, " ", plibsys_tests)
+$     next_test = f$element (test_counter, " ", unic_tests)
 $     if next_test .nes. "" .and. next_test .nes. " "
 $     then
 $         next_test = next_test + "_test"
@@ -545,7 +545,7 @@ $         'vo_c' "[CXX    ] ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
-$          cxxlink 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
+$          cxxlink 'next_test'.obj,'objdir'unic_link.opt/OPTION /THREADS_ENABLE
 $!
 $         if f$search("CXX_REPOSITORY.DIR") .nes. ""
 $         then
@@ -594,13 +594,13 @@ $         'vo_c' "[RUN ] ''next_test'"
 $!
 $         define/user/nolog sys$error NL:
 $         define/user/nolog sys$output NL:
-$         define/user/nolog plibsys 'objdir'PLIBSYS.EXE
+$         define/user/nolog unic 'objdir'UNIC.EXE
 $         define/user/nolog test_imgdir 'objdir'
 $!
 $         xrun := $test_imgdir:'next_test'_test.exe
-$         if next_test .eqs. "plibraryloader"
+$         if next_test .eqs. "dl"
 $         then
-$             xrun 'objdir'PLIBSYS.EXE
+$             xrun 'objdir'UNIC.EXE
 $         else
 $             xrun
 $         endif
@@ -623,7 +623,7 @@ $!
 $! In case of error during the last test
 $ deassign/user/nolog sys$error
 $ deassign/user/nolog sys$output
-$ deassign/user/nolog plibsys
+$ deassign/user/nolog unic
 $ deassign/user/nolog test_imgdir
 $!
 $ common_exit:
