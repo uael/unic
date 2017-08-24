@@ -68,7 +68,7 @@
 # endif
 #endif
 
-extern "C" int
+extern int
 ___close_nocancel(int fd);
 
 int
