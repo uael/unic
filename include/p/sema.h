@@ -100,12 +100,12 @@ enum sema_access {
 
 typedef enum sema_access sema_access_t;
 
-/*!@brief Creates a new #PSemaphore object.
+/*!@brief Creates a new #sema_t object.
  * @param name Semaphore name.
  * @param init_val Initial semaphore value.
  * @param mod Creation mode.
  * @param[out] err Error report object, NULL to ignore.
- * @return Pointer to a newly created #PSemaphore object in case of success,
+ * @return Pointer to a newly created #sema_t object in case of success,
  * NULL otherwise.
  * @since 0.0.1
  *
@@ -141,7 +141,7 @@ P_API void
 p_sema_take_ownership(sema_t *sem);
 
 /*!@brief Acquires (P operation) a semaphore.
- * @param sem #PSemaphore to acquire.
+ * @param sem #sema_t to acquire.
  * @param[out] error Error report object, NULL to ignore.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
@@ -150,7 +150,7 @@ P_API bool
 p_sema_acquire(sema_t *sem, err_t **error);
 
 /*!@brief Releases (V operation) a semaphore.
- * @param sem #PSemaphore to release.
+ * @param sem #sema_t to release.
  * @param[out] error Error report object, NULL to ignore.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
@@ -158,8 +158,8 @@ p_sema_acquire(sema_t *sem, err_t **error);
 P_API bool
 p_sema_release(sema_t *sem, err_t **error);
 
-/*!@brief Frees #PSemaphore object.
- * @param sem #PSemaphore to free.
+/*!@brief Frees #sema_t object.
+ * @param sem #sema_t to free.
  * @since 0.0.1
  *
  * It doesn't release an acquired semaphore, be careful to not to make a

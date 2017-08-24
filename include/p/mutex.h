@@ -58,15 +58,15 @@
 /*!@brief Mutex opaque data structure. */
 typedef struct mutex mutex_t;
 
-/*!@brief Creates a new #PMutex object.
- * @return Pointer to a newly created #PMutex object.
+/*!@brief Creates a new #mutex_t object.
+ * @return Pointer to a newly created #mutex_t object.
  * @since 0.0.1
  */
 P_API mutex_t *
 p_mutex_new(void);
 
 /*!@brief Locks a mutex.
- * @param mutex #PMutex to lock.
+ * @param mutex #mutex_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock the mutex recursively - it may lead to an application
@@ -79,7 +79,7 @@ P_API bool
 p_mutex_lock(mutex_t *mutex);
 
 /*!@brief Tries to lock a mutex immediately.
- * @param mutex #PMutex to lock.
+ * @param mutex #mutex_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock the mutex recursively - it may lead to an application
@@ -92,7 +92,7 @@ P_API bool
 p_mutex_trylock(mutex_t *mutex);
 
 /*!@brief Releases a locked mutex.
- * @param mutex #PMutex to release.
+ * @param mutex #mutex_t to release.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not use this function on non-locked mutexes - behavior may be
@@ -106,8 +106,8 @@ p_mutex_trylock(mutex_t *mutex);
 P_API bool
 p_mutex_unlock(mutex_t *mutex);
 
-/*!@brief Frees #PMutex object.
- * @param mutex #PMutex to free.
+/*!@brief Frees #mutex_t object.
+ * @param mutex #mutex_t to free.
  * @since 0.0.1
  * @warning It doesn't unlock @a mutex before freeing memory, so you should do
  * it manually.

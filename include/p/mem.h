@@ -29,7 +29,7 @@
  *
  * By default p_* routines are mapped to system calls, thus only NULL-checking
  * is additionally performed. If you want to use the custom memory allocator,
- * then fill in #PMemVTable structure and pass it to the p_mem_set_vtable(). To
+ * then fill in #mem_vtable_t structure and pass it to the p_mem_set_vtable(). To
  * restore system calls back use p_mem_restore_vtable().
  *
  * Be careful when using the custom memory allocator: all memory chunks

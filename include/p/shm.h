@@ -95,12 +95,12 @@ enum shm_access {
 
 typedef enum shm_access shm_access_t;
 
-/*!@brief Creates a new #PShm object.
+/*!@brief Creates a new #shm_t object.
  * @param name Shared memory name.
  * @param size Size of the memory segment in bytes, can't be changed later.
- * @param perms Memory segment permissions, see #PShmAccessPerms.
+ * @param perms Memory segment permissions, see #shm_access_t.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to a newly created #PShm object in case of success, NULL
+ * @return Pointer to a newly created #shm_t object in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */
@@ -125,8 +125,8 @@ p_shm_new(const byte_t *name, size_t size, shm_access_t perms, err_t **error);
 P_API void
 p_shm_take_ownership(shm_t *shm);
 
-/*!@brief Frees #PShm object.
- * @param shm #PShm to free.
+/*!@brief Frees #shm_t object.
+ * @param shm #shm_t to free.
  * @since 0.0.1
  *
  * It doesn't unlock a given shared memory segment, be careful to not to make a
@@ -135,8 +135,8 @@ p_shm_take_ownership(shm_t *shm);
 P_API void
 p_shm_free(shm_t *shm);
 
-/*!@brief Locks #PShm object for usage.
- * @param shm #PShm to lock.
+/*!@brief Locks #shm_t object for usage.
+ * @param shm #shm_t to lock.
  * @param[out] error Error report object, NULL to ignore.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
@@ -147,8 +147,8 @@ p_shm_free(shm_t *shm);
 P_API bool
 p_shm_lock(shm_t *shm, err_t **error);
 
-/*!@brief Unlocks #PShm object.
- * @param shm #PShm to unlock.
+/*!@brief Unlocks #shm_t object.
+ * @param shm #shm_t to unlock.
  * @param[out] error Error report object, NULL to ignore.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
@@ -156,16 +156,16 @@ p_shm_lock(shm_t *shm, err_t **error);
 P_API bool
 p_shm_unlock(shm_t *shm, err_t **error);
 
-/*!@brief Gets a starting address of a #PShm memory segment.
- * @param shm #PShm to get the address for.
+/*!@brief Gets a starting address of a #shm_t memory segment.
+ * @param shm #shm_t to get the address for.
  * @return Pointer to the starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
 P_API ptr_t
 p_shm_get_address(const shm_t *shm);
 
-/*!@brief Gets the size of a #PShm memory segment.
- * @param shm #PShm to get the size for.
+/*!@brief Gets the size of a #shm_t memory segment.
+ * @param shm #shm_t to get the size for.
  * @return Size of the given memory segment in case of success, 0 otherwise.
  * @since 0.0.1
  *

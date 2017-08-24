@@ -19,7 +19,7 @@
  * @brief Time profiler
  * @author Alexander Saprykin
  *
- * #PTimeProfiler acts like a time cronometer: in any moment of time you can
+ * #profiler_t acts like a time cronometer: in any moment of time you can
  * make a time slice to see how much time elapsed since the last slice or timer
  * start.
  *
@@ -40,14 +40,14 @@
 /*!@brief Time profiler opaque data structure. */
 typedef struct profiler profiler_t;
 
-/*!@brief Creates a new #PTimeProfiler object.
- * @return Pointer to a newly created #PTimeProfiler object.
+/*!@brief Creates a new #profiler_t object.
+ * @return Pointer to a newly created #profiler_t object.
  * @since 0.0.1
  */
 P_API profiler_t *
 p_profiler_new(void);
 
-/*!@brief Resets the #PTimeProfiler's internal counter to zero.
+/*!@brief Resets the #profiler_t's internal counter to zero.
  * @param profiler Time profiler to reset.
  * @since 0.0.1
  *
@@ -65,8 +65,8 @@ p_profiler_reset(profiler_t *profiler);
 P_API u64_t
 p_profiler_elapsed_usecs(const profiler_t *profiler);
 
-/*!@brief Frees #PTimeProfiler object.
- * @param profiler #PTimeProfiler to free.
+/*!@brief Frees #profiler_t object.
+ * @param profiler #profiler_t to free.
  * @since 0.0.1
  */
 P_API void

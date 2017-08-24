@@ -109,7 +109,7 @@ create_test_ini_file(bool last_empty_section) {
 }
 
 CUTEST(inifile, nomem) {
-  ini_file_t *ini;
+  inifile_t *ini;
   mem_vtable_t vtable;
   list_t *section_list;
 
@@ -146,7 +146,7 @@ CUTEST(inifile, nomem) {
 }
 
 CUTEST(inifile, bad_input) {
-  ini_file_t *ini;
+  inifile_t *ini;
 
   ini = NULL;
   p_inifile_free(ini);
@@ -190,7 +190,7 @@ CUTEST(inifile, bad_input) {
 }
 
 CUTEST(inifile, read) {
-  ini_file_t *ini;
+  inifile_t *ini;
   byte_t *str;
   list_t *list;
   list_t *iter;

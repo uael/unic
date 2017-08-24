@@ -33,7 +33,7 @@ typedef struct PIniSection_ {
   list_t *keys;
 } PIniSection;
 
-struct ini_file {
+struct inifile {
   byte_t *path;
   list_t *sections;
   bool is_parsed;
@@ -53,7 +53,7 @@ static void
 pp_inifile_section_free(PIniSection *section);
 
 static byte_t *
-pp_inifile_find_parameter(const ini_file_t *file,
+pp_inifile_find_parameter(const inifile_t *file,
   const byte_t *section, const byte_t *key);
 
 static PIniParameter *
@@ -104,7 +104,7 @@ pp_inifile_section_free(PIniSection *section) {
 }
 
 static byte_t *
-pp_inifile_find_parameter(const ini_file_t *file, const byte_t *section,
+pp_inifile_find_parameter(const inifile_t *file, const byte_t *section,
   const byte_t *key) {
   list_t *item;
   if (P_UNLIKELY (
@@ -129,13 +129,13 @@ pp_inifile_find_parameter(const ini_file_t *file, const byte_t *section,
   return NULL;
 }
 
-ini_file_t *
+inifile_t *
 p_inifile_new(const byte_t *path) {
-  ini_file_t *ret;
+  inifile_t *ret;
   if (P_UNLIKELY (path == NULL)) {
     return NULL;
   }
-  if (P_UNLIKELY ((ret = p_malloc0(sizeof(ini_file_t))) == NULL)) {
+  if (P_UNLIKELY ((ret = p_malloc0(sizeof(inifile_t))) == NULL)) {
     return NULL;
   }
   if (P_UNLIKELY ((ret->path = p_strdup(path)) == NULL)) {
@@ -147,7 +147,7 @@ p_inifile_new(const byte_t *path) {
 }
 
 void
-p_inifile_free(ini_file_t *file) {
+p_inifile_free(inifile_t *file) {
   if (P_UNLIKELY (file == NULL)) {
     return;
   }
@@ -158,7 +158,7 @@ p_inifile_free(ini_file_t *file) {
 }
 
 bool
-p_inifile_parse(ini_file_t *file,
+p_inifile_parse(inifile_t *file,
   err_t **error) {
   PIniSection *section;
   PIniParameter *param;
@@ -278,13 +278,13 @@ p_inifile_parse(ini_file_t *file,
     }
   }
   if (P_UNLIKELY (fclose(in_file) != 0))
-    P_WARNING ("ini_file_t::p_inifile_parse: fclose() failed");
+    P_WARNING ("inifile_t::p_inifile_parse: fclose() failed");
   file->is_parsed = true;
   return true;
 }
 
 bool
-p_inifile_is_parsed(const ini_file_t *file) {
+p_inifile_is_parsed(const inifile_t *file) {
   if (P_UNLIKELY (file == NULL)) {
     return false;
   }
@@ -292,7 +292,7 @@ p_inifile_is_parsed(const ini_file_t *file) {
 }
 
 list_t *
-p_inifile_sections(const ini_file_t *file) {
+p_inifile_sections(const inifile_t *file) {
   list_t *ret;
   list_t *sec;
   if (P_UNLIKELY (file == NULL || file->is_parsed == false)) {
@@ -306,7 +306,7 @@ p_inifile_sections(const ini_file_t *file) {
 }
 
 list_t *
-p_inifile_keys(const ini_file_t *file,
+p_inifile_keys(const inifile_t *file,
   const byte_t *section) {
   list_t *ret;
   list_t *item;
@@ -331,7 +331,7 @@ p_inifile_keys(const ini_file_t *file,
 }
 
 bool
-p_inifile_is_key_exists(const ini_file_t *file,
+p_inifile_is_key_exists(const inifile_t *file,
   const byte_t *section,
   const byte_t *key) {
   list_t *item;
@@ -358,7 +358,7 @@ p_inifile_is_key_exists(const ini_file_t *file,
 }
 
 byte_t *
-p_inifile_parameter_string(const ini_file_t *file,
+p_inifile_parameter_string(const inifile_t *file,
   const byte_t *section,
   const byte_t *key,
   const byte_t *default_val) {
@@ -370,7 +370,7 @@ p_inifile_parameter_string(const ini_file_t *file,
 }
 
 int
-p_inifile_parameter_int(const ini_file_t *file,
+p_inifile_parameter_int(const inifile_t *file,
   const byte_t *section,
   const byte_t *key,
   int default_val) {
@@ -385,7 +385,7 @@ p_inifile_parameter_int(const ini_file_t *file,
 }
 
 double
-p_inifile_parameter_double(const ini_file_t *file,
+p_inifile_parameter_double(const inifile_t *file,
   const byte_t *section,
   const byte_t *key,
   double default_val) {
@@ -400,7 +400,7 @@ p_inifile_parameter_double(const ini_file_t *file,
 }
 
 bool
-p_inifile_parameter_boolean(const ini_file_t *file,
+p_inifile_parameter_boolean(const inifile_t *file,
   const byte_t *section,
   const byte_t *key,
   bool default_val) {
@@ -423,7 +423,7 @@ p_inifile_parameter_boolean(const ini_file_t *file,
 }
 
 list_t *
-p_inifile_parameter_list(const ini_file_t *file,
+p_inifile_parameter_list(const inifile_t *file,
   const byte_t *section,
   const byte_t *key) {
   list_t *ret = NULL;

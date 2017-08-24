@@ -23,7 +23,7 @@
  * scheduler of the operating system. It allows to do things in parallel or
  * concurrently.
  *
- * #PUThread provides a convinient way of multithreading support using native
+ * #uthread_t provides a convinient way of multithreading support using native
  * routines to provide the best performance on the target system.
  *
  * To create the thread use the p_uthread_create() or p_uthread_create_full()
@@ -31,7 +31,7 @@
  * before proceeding further. Thus you can synchronize threads' execution within
  * the main thread.
  *
- * A reference counter mechanism is used to keep track of a #PUThread structure.
+ * A reference counter mechanism is used to keep track of a #uthread_t structure.
  * It means that the structure will be freed automatically when the reference
  * counter becomes zero. Use p_uthread_ref() to hold the structure and
  * p_uthread_unref() to decrement the counter back. A running thread holds a
@@ -49,7 +49,7 @@
  * systems may require administrative privileges to change the thread priority
  * (i.e. Linux). Windows always respects thread priorities.
  *
- * To put the current thread (even if it was not created using the #PUThread
+ * To put the current thread (even if it was not created using the #uthread_t
  * routines) in a sleep state use p_uthread_sleep().
  *
  * You can give a hint to the scheduler that the current thread do not need an
@@ -59,7 +59,7 @@
  * calling thread, though the scheduler can ingnore it.
  *
  * A thread local storage (TLS) is provided. The TLS key's value can be accessed
- * through a reference key defined as a #PUThreadKey. A TLS reference key is
+ * through a reference key defined as a #uthread_tKey. A TLS reference key is
  * some sort of a token which has an associated value. But every thread has its
  * own token value though using the same token object.
  *
@@ -79,7 +79,7 @@
 #include "p/macros.h"
 #include "p/types.h"
 
-/*!@brief Typedef for a #PUThread running method. */
+/*!@brief Typedef for a #uthread_t running method. */
 typedef ptr_t (*uthread_fn_t)(ptr_t arg);
 
 /*!@brief Thread opaque data type. */
@@ -118,14 +118,14 @@ enum uthread_prio {
 
 typedef enum uthread_prio uthread_prio_t;
 
-/*!@brief Creates a new #PUThread and starts it.
+/*!@brief Creates a new #uthread_t and starts it.
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create a joinable thread or not.
  * @param prio Thread priority.
  * @param stack_size Thread stack size, in bytes. Leave zero to use a default
  * value.
- * @return Pointer to #PUThread in case of success, NULL otherwise.
+ * @return Pointer to #uthread_t in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
  * not need to call p_uthread_ref() explicitly on the returned value.
@@ -134,12 +134,12 @@ P_API uthread_t *
 p_uthread_create_full(uthread_fn_t func, ptr_t data, bool joinable,
   uthread_prio_t prio, size_t stack_size);
 
-/*!@brief Creates a #PUThread and starts it. A short version of
+/*!@brief Creates a #uthread_t and starts it. A short version of
  * p_uthread_create_full().
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create a joinable thread or not.
- * @return Pointer to #PUThread in case of success, NULL otherwise.
+ * @return Pointer to #uthread_t in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
  * not need to call p_uthread_ref() explicitly on the returned value.
@@ -222,18 +222,18 @@ P_API int
 p_uthread_ideal_count(void);
 
 /*!@brief Increments a thread reference counter
- * @param thread #PUThread to increment the reference counter.
+ * @param thread #uthread_t to increment the reference counter.
  * @since 0.0.1
- * @note The #PUThread object will not be removed until the reference counter is
+ * @note The #uthread_t object will not be removed until the reference counter is
  * positive.
  */
 P_API void
 p_uthread_ref(uthread_t *thread);
 
 /*!@brief Decrements a thread reference counter
- * @param thread #PUThread to decrement the reference counter.
+ * @param thread #uthread_t to decrement the reference counter.
  * @since 0.0.1
- * @note When the reference counter becomes zero the #PUThread is removed from
+ * @note When the reference counter becomes zero the #uthread_t is removed from
  * the memory.
  */
 P_API void

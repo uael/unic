@@ -22,7 +22,7 @@
  * A shared memory buffer works like any other buffer but it is built upon a
  * shared memory region instead of the process-only address space. Thus it
  * inherits all the advantages and disadvantages of shared memory behavior. You
- * should read about #PShm before using this buffer implementation to understand
+ * should read about #shm_t before using this buffer implementation to understand
  * underlying restrictions.
  *
  * The shared memory buffer is process-wide and identified by its name across
@@ -32,7 +32,7 @@
  *
  * All read/write operations are completely thread- and process-safe, which
  * means that no other synchronization primitive is required, even for inter-
- * process access. A #PShm locking mechanism is used for access synchronization.
+ * process access. A #shm_t locking mechanism is used for access synchronization.
  *
  * The buffer is cyclic and non-overridable which means that you wouldn't get
  * buffer overflow and wouldn't override previously written data until reading
@@ -54,7 +54,7 @@
  *
  * You can take ownership of the shared memory buffer with
  * p_shmbuf_take_ownership() to explicitly remove it from the system after
- * closing. Please refer to the #PShm description to understand the intention of
+ * closing. Please refer to the #shm_t description to understand the intention of
  * this action.
  */
 #ifndef P_SHMBUF_H__
@@ -67,11 +67,11 @@
 /*!@brief Shared memory buffer opaque data structure. */
 typedef struct shmbuf shmbuf_t;
 
-/*!@brief Creates a new #PShmBuffer structure.
+/*!@brief Creates a new #shm_tBuffer structure.
  * @param name Unique buffer name.
  * @param size Buffer size in bytes, can't be changed later.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to the #PShmBuffer structure in case of success, NULL
+ * @return Pointer to the #shm_tBuffer structure in case of success, NULL
  * otherwise.
  * @since 0.0.1
  *
@@ -81,8 +81,8 @@ typedef struct shmbuf shmbuf_t;
 P_API shmbuf_t *
 p_shmbuf_new(const byte_t *name, size_t size, err_t **error);
 
-/*!@brief Frees #PShmBuffer structure.
- * @param buf #PShmBuffer to free.
+/*!@brief Frees #shm_tBuffer structure.
+ * @param buf #shm_tBuffer to free.
  * @since 0.0.1
  *
  * Note that a buffer will be completely removed from the system only after the
@@ -110,7 +110,7 @@ P_API void
 p_shmbuf_take_ownership(shmbuf_t *buf);
 
 /*!@brief Tries to read data from a shared memory buffer.
- * @param buf #PShmBuffer to read data from.
+ * @param buf #shm_tBuffer to read data from.
  * @param[out] storage Output buffer to put data in.
  * @param len Storage size in bytes.
  * @param[out] error Error report object, NULL to ignore.
@@ -122,7 +122,7 @@ P_API int
 p_shmbuf_read(shmbuf_t *buf, ptr_t storage, size_t len, err_t **error);
 
 /*!@brief Tries to write data into a shared memory buffer.
- * @param buf #PShmBuffer to write data into.
+ * @param buf #shm_tBuffer to write data into.
  * @param data Data to write.
  * @param len Data size in bytes.
  * @param[out] error Error report object, NULL to ignore.
@@ -136,7 +136,7 @@ P_API ssize_t
 p_shmbuf_write(shmbuf_t *buf, ptr_t data, size_t len, err_t **error);
 
 /*!@brief Gets free space in the shared memory buffer.
- * @param buf #PShmBuffer to check space in.
+ * @param buf #shm_tBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Free space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
@@ -145,7 +145,7 @@ P_API ssize_t
 p_shmbuf_get_free_space(shmbuf_t *buf, err_t **error);
 
 /*!@brief Gets used space in the shared memory buffer.
- * @param buf #PShmBuffer to check space in.
+ * @param buf #shm_tBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Used space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
@@ -154,7 +154,7 @@ P_API ssize_t
 p_shmbuf_get_used_space(shmbuf_t *buf, err_t **error);
 
 /*!@brief Clears all data in the buffer and fills it with zeros.
- * @param buf #PShmBuffer to clear.
+ * @param buf #shm_tBuffer to clear.
  * @since 0.0.1
  */
 P_API void

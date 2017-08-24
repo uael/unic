@@ -68,7 +68,7 @@
 /*!@brief Opaque data structure for handling a cryptographic hash context. */
 typedef struct hash hash_t;
 
-/*!@brief Cryptographic hash function types for #PCryptoHash. */
+/*!@brief Cryptographic hash function types for #hash_t. */
 enum hash_kind {
 
   /*!@brief MD5 hash function.
@@ -129,9 +129,9 @@ enum hash_kind {
 
 typedef enum hash_kind hash_kind_t;
 
-/*!@brief Initializes a new #PCryptoHash context.
+/*!@brief Initializes a new #hash_t context.
  * @param type Hash function type to use, can't be changed later.
- * @return Newly initialized #PCryptoHash context in case of success, NULL
+ * @return Newly initialized #hash_t context in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */
@@ -139,7 +139,7 @@ P_API hash_t *
 p_crypto_hash_new(hash_kind_t type);
 
 /*!@brief Adds a new chunk of data for hashing.
- * @param hash #PCryptoHash context to add @a data to.
+ * @param hash #hash_t context to add @a data to.
  * @param data Data to add for hashing.
  * @param len Data length, in bytes.
  * @note After calling p_crypto_hash_get_string() or p_crypto_hash_get_digest()
@@ -150,7 +150,7 @@ P_API void
 p_crypto_hash_update(hash_t *hash, const ubyte_t *data, size_t len);
 
 /*!@brief Resets a hash state.
- * @param hash #PCryptoHash context to reset.
+ * @param hash #hash_t context to reset.
  * @since 0.0.1
  *
  * After a reset the hash context becomes open for updating, but all previously
@@ -161,7 +161,7 @@ P_API void
 p_crypto_hash_reset(hash_t *hash);
 
 /*!@brief Gets a hash in a hexidemical representation.
- * @param hash #PCryptoHash context to get a string from.
+ * @param hash #hash_t context to get a string from.
  * @return NULL-terminated string with the hexidemical representation of a hash
  * state in case of success, NULL otherwise. The string should be freed with
  * p_free() after using it.
@@ -173,7 +173,7 @@ P_API byte_t *
 p_crypto_hash_get_string(hash_t *hash);
 
 /*!@brief Gets a hash in a raw representation.
- * @param hash #PCryptoHash context to get a digest from.
+ * @param hash #hash_t context to get a digest from.
  * @param buf Buffer to store the digest with the hash raw representation.
  * @param[in,out] len Size of @a buf when calling, count of written bytes
  * after.
@@ -185,7 +185,7 @@ P_API void
 p_crypto_hash_get_digest(hash_t *hash, ubyte_t *buf, size_t *len);
 
 /*!@brief Gets a hash digest length depending on its type.
- * @param hash #PCryptoHash context to get the length for.
+ * @param hash #hash_t context to get the length for.
  * @return Length (in bytes) of the given hash depending on its type in case of
  * success, -1 otherwise.
  * @note This length doesn't match a string hash representation.
@@ -195,7 +195,7 @@ P_API ssize_t
 p_crypto_hash_get_length(const hash_t *hash);
 
 /*!@brief Gets a hash function type.
- * @param hash #PCryptoHash context to get the type for.
+ * @param hash #hash_t context to get the type for.
  * @return Hash function type used in the given context.
  * @since 0.0.1
  */
@@ -203,7 +203,7 @@ P_API hash_kind_t
 p_crypto_hash_get_type(const hash_t *hash);
 
 /*!@brief Frees a previously initialized hash context.
- * @param hash #PCryptoHash context to free.
+ * @param hash #hash_t context to free.
  * @since 0.0.1
  */
 P_API void

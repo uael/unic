@@ -73,7 +73,7 @@ typedef void (*fn_addr_t)(void);
  *
  * If you are loading the already loaded shared library, an operating system
  * increments corresponding reference count and decrements it after freeing
- * #PLibraryLoader, thus the shared library would be unloaded from the address
+ * #dl_t, thus the shared library would be unloaded from the address
  * space only when the counter becomes zero.
  */
 P_API dl_t *
@@ -92,15 +92,15 @@ p_dl_new(const byte_t *path);
 P_API fn_addr_t
 p_dl_get_symbol(dl_t *loader, const byte_t *sym);
 
-/*!@brief Frees memory and allocated resources of #PLibraryLoader.
- * @param loader #PLibraryLoader object to free.
+/*!@brief Frees memory and allocated resources of #dl_t.
+ * @param loader #dl_t object to free.
  * @since 0.0.1
  */
 P_API void
 p_dl_free(dl_t *loader);
 
 /*!@brief Gets the last occurred error.
- * @param loader #PLibraryLoader object to get error for.
+ * @param loader #dl_t object to get error for.
  * @return Human readable error string in case of success, NULL otherwise.
  * @since 0.0.1
  * @version 0.0.3 @p loader parameter was added.

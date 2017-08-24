@@ -51,15 +51,15 @@
 /*!@brief Spinlock opaque data structure. */
 typedef struct spinlock spinlock_t;
 
-/*!@brief Creates a new #PSpinLock object.
- * @return Pointer to a newly created #PSpinLock object.
+/*!@brief Creates a new #spinlock_t object.
+ * @return Pointer to a newly created #spinlock_t object.
  * @since 0.0.1
  */
 P_API spinlock_t *
 p_spinlock_new(void);
 
 /*!@brief Locks a spinlock.
- * @param spinlock #PSpinLock to lock.
+ * @param spinlock #spinlock_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
@@ -76,7 +76,7 @@ P_API bool
 p_spinlock_lock(spinlock_t *spinlock);
 
 /*!@brief Tries to lock a spinlock immediately.
- * @param spinlock #PSpinLock to lock.
+ * @param spinlock #spinlock_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
@@ -93,7 +93,7 @@ P_API bool
 p_spinlock_trylock(spinlock_t *spinlock);
 
 /*!@brief Releases a locked spinlock.
- * @param spinlock #PSpinLock to release.
+ * @param spinlock #spinlock_t to release.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  *
@@ -108,8 +108,8 @@ p_spinlock_trylock(spinlock_t *spinlock);
 P_API bool
 p_spinlock_unlock(spinlock_t *spinlock);
 
-/*!@brief Frees #PSpinLock object.
- * @param spinlock #PSpinLock to free.
+/*!@brief Frees #spinlock_t object.
+ * @param spinlock #spinlock_t to free.
  * @since 0.0.1
  *
  * It doesn't unlock @a spinlock before freeing memory, so you should do it

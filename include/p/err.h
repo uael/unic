@@ -42,7 +42,7 @@
  * access the last network error code.
  *
  * All error codes are splitted into the several domains. Every error should
- * belong to one of the domains described in #PErrorDomain. Think of an error
+ * belong to one of the domains described in #err_domain_t. Think of an error
  * domain as a logical subsystem.
  *
  * Every error domain has its own enumeration with the list of possible error

@@ -53,10 +53,10 @@
  * numbers manually. The list doesn't support strings with spaces - such strings
  * will be splitted.
  *
- * To parse a file, create #PIniFile with p_inifile_new() and then parse it
+ * To parse a file, create #inifile_t with p_inifile_new() and then parse it
  * with the p_inifile_parse() routine.
  *
- * #PIniFile handles (skips) UTF-8/16/32 BOM characters (marks).
+ * #inifile_t handles (skips) UTF-8/16/32 BOM characters (marks).
  *
  * Example of the INI file contents:
  * @code
@@ -90,76 +90,76 @@
 #include "p/err.h"
 
 /*!@brief INI file opaque data structure. */
-typedef struct ini_file ini_file_t;
+typedef struct inifile inifile_t;
 
-/*!@brief Creates a new #PIniFile for parsing.
+/*!@brief Creates a new #inifile_t for parsing.
  * @param path Path to a file to parse.
- * @return Newly allocated #PIniFile in case of success, NULL otherwise.
+ * @return Newly allocated #inifile_t in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_API ini_file_t *
+P_API inifile_t *
 p_inifile_new(const byte_t *path);
 
-/*!@brief Frees memory and allocated resources of #PIniFile.
- * @param file #PIniFile to free.
+/*!@brief Frees memory and allocated resources of #inifile_t.
+ * @param file #inifile_t to free.
  * @since 0.0.1
  */
 P_API void
-p_inifile_free(ini_file_t *file);
+p_inifile_free(inifile_t *file);
 
-/*!@brief Parses given #PIniFile.
- * @param file #PIniFile file to parse.
+/*!@brief Parses given #inifile_t.
+ * @param file #inifile_t file to parse.
  * @param[out] error Error report object, NULL to ignore.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  */
 P_API bool
-p_inifile_parse(ini_file_t *file, err_t **error);
+p_inifile_parse(inifile_t *file, err_t **error);
 
-/*!@brief Checks whether #PIniFile was already parsed or not.
- * @param file #PIniFile to check.
+/*!@brief Checks whether #inifile_t was already parsed or not.
+ * @param file #inifile_t to check.
  * @return true if the file was already parsed, false otherwise.
  * @since 0.0.1
  */
 P_API bool
-p_inifile_is_parsed(const ini_file_t *file);
+p_inifile_is_parsed(const inifile_t *file);
 
 /*!@brief Gets all the sections from a given file.
- * @param file #PIniFile to get the sections from. The @a file should be parsed
+ * @param file #inifile_t to get the sections from. The @a file should be parsed
  * before.
- * @return #PList of section names.
+ * @return #list_t of section names.
  * @since 0.0.1
  * @note It's a caller responsibility to p_free() each returned string and to
  * free the returned list with p_list_free().
  */
 P_API list_t *
-p_inifile_sections(const ini_file_t *file);
+p_inifile_sections(const inifile_t *file);
 
 /*!@brief Gets all the keys from a given section.
- * @param file #PIniFile to get the keys from. The @a file should be parsed
+ * @param file #inifile_t to get the keys from. The @a file should be parsed
  * before.
  * @param section Section name to get the keys from.
- * @return #PList of key names.
+ * @return #list_t of key names.
  * @since 0.0.1
  * @note It's a caller responsibility to p_free() each returned string and to
  * free the returned list with p_list_free().
  */
 P_API list_t *
-p_inifile_keys(const ini_file_t *file, const byte_t *section);
+p_inifile_keys(const inifile_t *file, const byte_t *section);
 
 /*!@brief Checks whether a key exists.
- * @param file #PIniFile to check in. The @a file should be parsed before.
+ * @param file #inifile_t to check in. The @a file should be parsed before.
  * @param section Section to check the key in.
  * @param key Key to check.
  * @return true if @a key exists, false otherwise.
  * @since 0.0.1
  */
 P_API bool
-p_inifile_is_key_exists(const ini_file_t *file, const byte_t *section,
+p_inifile_is_key_exists(const inifile_t *file, const byte_t *section,
   const byte_t *key);
 
 /*!@brief Gets specified parameter's value as a string.
- * @param file #PIniFile to get the value from. The @a file should be parsed
+ * @param file #inifile_t to get the value from. The @a file should be parsed
  * before.
  * @param section Section to get the value from.
  * @param key Key to get the value from.
@@ -170,11 +170,11 @@ p_inifile_is_key_exists(const ini_file_t *file, const byte_t *section,
  * usage.
  */
 P_API byte_t *
-p_inifile_parameter_string(const ini_file_t *file, const byte_t *section,
+p_inifile_parameter_string(const inifile_t *file, const byte_t *section,
   const byte_t *key, const byte_t *default_val);
 
 /*!@brief Gets specified parameter's value as an integer.
- * @param file #PIniFile to get the value from. The @a file should be parsed
+ * @param file #inifile_t to get the value from. The @a file should be parsed
  * before.
  * @param section Section to get the value from.
  * @param key Key to get the value from.
@@ -183,11 +183,11 @@ p_inifile_parameter_string(const ini_file_t *file, const byte_t *section,
  * @since 0.0.1
  */
 P_API int
-p_inifile_parameter_int(const ini_file_t *file, const byte_t *section,
+p_inifile_parameter_int(const inifile_t *file, const byte_t *section,
   const byte_t *key, int default_val);
 
 /*!@brief Gets specified parameter's value as a floating point.
- * @param file #PIniFile to get the value from. The @a file should be parsed
+ * @param file #inifile_t to get the value from. The @a file should be parsed
  * before.
  * @param section Section to get the value from.
  * @param key Key to get the value from.
@@ -196,11 +196,11 @@ p_inifile_parameter_int(const ini_file_t *file, const byte_t *section,
  * @since 0.0.1
  */
 P_API double
-p_inifile_parameter_double(const ini_file_t *file, const byte_t *section,
+p_inifile_parameter_double(const inifile_t *file, const byte_t *section,
   const byte_t *key, double default_val);
 
 /*!@brief Gets specified parameter's value as a boolean.
- * @param file #PIniFile to get the value from. The @a file should be parsed
+ * @param file #inifile_t to get the value from. The @a file should be parsed
  * before.
  * @param section Section to get the value from.
  * @param key Key to get the value from.
@@ -210,23 +210,23 @@ p_inifile_parameter_double(const ini_file_t *file, const byte_t *section,
  */
 
 P_API bool
-p_inifile_parameter_boolean(const ini_file_t *file, const byte_t *section,
+p_inifile_parameter_boolean(const inifile_t *file, const byte_t *section,
   const byte_t *key, bool default_val);
 
 /*!@brief Gets specified parameter's value as a list of strings separated with
  * the spaces or tabs.
- * @param file #PIniFile to get the value from. The @a file should be parsed
+ * @param file #inifile_t to get the value from. The @a file should be parsed
  * before.
  * @param section Section to get the value from.
  * @param key Key to get the value from.
- * @return #PList of strings. NULL will be returned if no parameter with the
+ * @return #list_t of strings. NULL will be returned if no parameter with the
  * given name exists.
  * @since 0.0.1
  * @note It's a caller responsibility to p_free() each returned string and to
  * free the returned list with p_list_free().
  */
 P_API list_t *
-p_inifile_parameter_list(const ini_file_t *file, const byte_t *section,
+p_inifile_parameter_list(const inifile_t *file, const byte_t *section,
   const byte_t *key);
 
 #endif /* !P_INIFILE_H__ */

@@ -62,15 +62,15 @@
 /*!@brief Read-write lock opaque data structure. */
 typedef struct rwlock rwlock_t;
 
-/*!@brief Creates a new #PRWLock object.
- * @return Pointer to a newly created #PRWLock object.
+/*!@brief Creates a new #rwlock_t object.
+ * @return Pointer to a newly created #rwlock_t object.
  * @since 0.0.1
  */
 P_API rwlock_t *
 p_rwlock_new(void);
 
 /*!@brief Locks a read-write lock for reading.
- * @param lock #PRWLock to lock.
+ * @param lock #rwlock_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
@@ -83,7 +83,7 @@ P_API bool
 p_rwlock_reader_lock(rwlock_t *lock);
 
 /*!@brief Tries to lock a read-write lock for reading immediately.
- * @param lock #PRWLock to lock.
+ * @param lock #rwlock_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
@@ -96,7 +96,7 @@ P_API bool
 p_rwlock_reader_trylock(rwlock_t *lock);
 
 /*!@brief Releases a locked for reading read-write lock.
- * @param lock #PRWLock to release.
+ * @param lock #rwlock_t to release.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not use this function on non-locked read-write locks - behavior
@@ -113,7 +113,7 @@ P_API bool
 p_rwlock_reader_unlock(rwlock_t *lock);
 
 /*!@brief Locks a read-write lock for writing.
- * @param lock #PRWLock to lock.
+ * @param lock #rwlock_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
@@ -126,7 +126,7 @@ P_API bool
 p_rwlock_writer_lock(rwlock_t *lock);
 
 /*!@brief Tries to lock a read-write lock immediately.
- * @param lock #PRWLock to lock.
+ * @param lock #rwlock_t to lock.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not lock a read-write lock recursively - it may lead to an
@@ -139,7 +139,7 @@ P_API bool
 p_rwlock_writer_trylock(rwlock_t *lock);
 
 /*!@brief Releases a locked for writing read-write lock.
- * @param lock #PRWLock to release.
+ * @param lock #rwlock_t to release.
  * @return true in case of success, false otherwise.
  * @since 0.0.1
  * @warning Do not use this function on non-locked read-write locks - behavior
@@ -155,8 +155,8 @@ p_rwlock_writer_trylock(rwlock_t *lock);
 P_API bool
 p_rwlock_writer_unlock(rwlock_t *lock);
 
-/*!@brief Frees a #PRWLock object.
- * @param lock #PRWLock to free.
+/*!@brief Frees a #rwlock_t object.
+ * @param lock #rwlock_t to free.
  * @since 0.0.1
  * @warning It doesn't unlock the @a lock before freeing memory, so you should
  * do it manually.

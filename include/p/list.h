@@ -27,10 +27,10 @@
  * As the singly linked list is a linear collection of the nodes with the
  * sequential access, it has an O(N) average complexity for appending, removing
  * and searching operations. Prepending a node takes O(1) constant time. Thus it
- * is not intended for heavy usage, please refer to #PHashTable or #PTree if you
+ * is not intended for heavy usage, please refer to #htable_t or #tree_t if you
  * are working with large data sets.
  *
- * Before the first usage you must initialize a #PList variable to NULL. After
+ * Before the first usage you must initialize a #list_t variable to NULL. After
  * that you can use the p_list_append(), p_list_prepend(), p_list_remove() and
  * p_list_reverse() routines to update that variable:
  * @code
@@ -42,7 +42,7 @@
  *
  * list = p_list_append (list, data);
  * @endcode
- * #PList stores only the pointers to the data, so you must free used memory
+ * #list_t stores only the pointers to the data, so you must free used memory
  * manually, p_list_free() only frees list's internal memory, not the data it
  * stores the pointers for. The best approach to free used memory is the
  * p_list_foreach() routine:
@@ -61,7 +61,7 @@
  * list = p_list_append (list, P_INT_TO_POINTER (12));
  * a = P_POINTER_TO_INT (list->data);
  * @endcode
- * #PList can store several nodes with the same pointer value, but
+ * #list_t can store several nodes with the same pointer value, but
  * p_list_remove() will remove only the first matching node.
  *
  * If you need to add large amount of nodes at once it is better to prepend them
@@ -87,7 +87,7 @@ struct list {
 };
 
 /*!@brief Appends data to a list.
- * @param list #PList for appending the data.
+ * @param list #list_t for appending the data.
  * @param data Data to append.
  * @return Pointer to the updated list in case of success, @a list otherwise.
  * @since 0.0.1
@@ -158,7 +158,7 @@ P_API size_t
 p_list_length(const list_t *list);
 
 /*!@brief Prepends data to a list.
- * @param list #PList for prepending the data.
+ * @param list #list_t for prepending the data.
  * @param data Data to prepend.
  * @return Pointer to the updated list in case of success, @a list otherwise.
  * @since 0.0.1
@@ -170,7 +170,7 @@ P_API list_t *
 p_list_prepend(list_t *list, ptr_t data) P_GNUC_WARN_UNUSED_RESULT;
 
 /*!@brief Reverses the list order.
- * @param list #PList to reverse the order.
+ * @param list #list_t to reverse the order.
  * @return Pointer to the top of the reversed list.
  * @since 0.0.1
  */

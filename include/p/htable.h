@@ -34,11 +34,11 @@
  * values is placed in every slot.
  *
  * This is a simple hash table implementation which is not intended for heavy
- * usage (several thousands), see #PTree if you need the best performance on
+ * usage (several thousands), see #tree_t if you need the best performance on
  * large data sets. This implementation doesn't support multi-inserts when
  * several values belong to the same key.
  *
- * Note that #PHashTable stores keys and values only as pointers, so you need
+ * Note that #htable_t stores keys and values only as pointers, so you need
  * to free used memory manually, p_htable_free() will not do it in any way.
  *
  * Integers (up to 32 bits) can be stored in pointers using #P_POINTER_TO_INT
@@ -55,7 +55,7 @@
 typedef struct htable htable_t;
 
 /*!@brief Initializes a new hash table.
- * @return Pointer to a  newly initialized #PHashTable structure in case of
+ * @return Pointer to a  newly initialized #htable_t structure in case of
  * success, NULL otherwise.
  * @since 0.0.1
  * @note Free with p_htable_free() after usage.
@@ -107,7 +107,7 @@ p_htable_keys(const htable_t *table);
 P_API list_t *
 p_htable_values(const htable_t *table);
 
-/*!@brief Frees a previously initialized #PHashTable.
+/*!@brief Frees a previously initialized #htable_t.
  * @param table Hash table to free.
  * @since 0.0.1
  */
