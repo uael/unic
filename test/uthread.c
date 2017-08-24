@@ -77,7 +77,7 @@ test_thread_func(void *data) {
   p_uthread_set_local(tls_key, (ptr_t) p_uthread_current_id());
   *counter = 0;
   while (is_threads_working == true) {
-    p_uthread_sleep(10);
+    p_uthread_sleep(5);
     ++(*counter);
     p_uthread_yield();
     if (p_uthread_get_local(tls_key) != (ptr_t) p_uthread_current_id()) {
@@ -96,7 +96,7 @@ test_thread_nonjoinable_func(void *data) {
   counter = (int *) (data);
   is_threads_working = true;
   for (i = thread_to_wakes; i > 0; --i) {
-    p_uthread_sleep(10);
+    p_uthread_sleep(5);
     ++(*counter);
     p_uthread_yield();
   }
@@ -121,7 +121,7 @@ test_thread_tls_func(void *data) {
   prev_tls = 0;
   counter = 0;
   while (is_threads_working == true) {
-    p_uthread_sleep(10);
+    p_uthread_sleep(5);
     last_tls = (int *) p_uthread_get_local(tls_key);
     if ((*last_tls) != prev_tls) {
       p_uthread_exit(-1);
@@ -279,10 +279,10 @@ CUTEST(uthread, nonjoinable) {
     false
   );
   ASSERT(thr1 != NULL);
-  p_uthread_sleep(3);
+  p_uthread_sleep(2);
   ASSERT(p_uthread_join(thr1) == -1);
   while (is_threads_working == true) {
-    p_uthread_sleep(10);
+    p_uthread_sleep(5);
   }
   ASSERT(thread_wakes_1 == thread_to_wakes);
   p_uthread_unref(thr1);

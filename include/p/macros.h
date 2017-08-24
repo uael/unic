@@ -95,7 +95,7 @@
 #ifdef __cplusplus
 # define P_C_DECL extern "C"
 #else
-# define P_C_DECL
+# define P_C_DECL extern
 #endif
 
 #if defined(P_CC_MSVC) || defined(P_CC_BORLAND) || defined(P_CC_WATCOM) || \
@@ -103,7 +103,9 @@
     (defined(P_OS_WIN) && defined(P_CC_PGI)) || \
     ((defined(P_OS_WIN) || defined(P_OS_CYGWIN) || defined(P_OS_MSYS)) && \
     defined(P_CC_GNU))
-# ifdef PLIBSYS_COMPILE
+# if defined(PLIBSYS_STATIC_COMPILATION) || defined(PLIBSYS_STATIC)
+#   define P_GLOBAL_API P_C_DECL
+# elif defined(PLIBSYS_COMPILATION)
 #   define P_GLOBAL_API P_C_DECL __declspec(dllexport)
 # else
 #   define P_GLOBAL_API P_C_DECL __declspec(dllimport)

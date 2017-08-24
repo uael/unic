@@ -743,13 +743,13 @@ endif ()
 
 # Add compile definitions
 if (COMMAND target_compile_definitions)
-  target_compile_definitions(plibsys PRIVATE ${PLIBSYS_COMPILE_DEFS} -DPLIBSYS_COMPILE)
+  target_compile_definitions(plibsys PRIVATE ${PLIBSYS_COMPILE_DEFS})
 
   if (PLIBSYS_BUILD_STATIC)
-    target_compile_definitions(plibsysstatic PRIVATE ${PLIBSYS_COMPILE_DEFS})
+    target_compile_definitions(plibsysstatic PRIVATE ${PLIBSYS_COMPILE_DEFS} -DPLIBSYS_STATIC_COMPILATION)
   endif ()
 else ()
-  add_definitions(${PLIBSYS_COMPILE_DEFS} -DPLIBSYS_COMPILE)
+  add_definitions(${PLIBSYS_COMPILE_DEFS})
 endif ()
 
 set_target_properties(plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
