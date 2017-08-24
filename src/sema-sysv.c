@@ -27,17 +27,17 @@
 #include "ipc-private.h"
 
 #define P_SEM_SUFFIX    "_p_sem_object"
-#define P_SEM_INVALID_HDL  -1
+#define P_SEM_INVALID_HDL  (-1)
 
 struct sembuf sem_lock = {0, -1, SEM_UNDO};
 
 struct sembuf sem_unlock = {0, 1, SEM_UNDO};
 
-typedef union p_semun_ {
+typedef union semun {
   int val;
   struct semid_ds *buf;
   ushort_t *array;
-} p_semun;
+} semun_t;
 
 typedef int sema_hdl_t;
 
@@ -60,7 +60,8 @@ pp_sema_clean_handle(sema_t *sem);
 static bool
 pp_sema_create_handle(sema_t *sem, err_t **error) {
   int built;
-  p_semun semun_op;
+  semun_t semun_op;
+  
   if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
     p_err_set_err_p(
       error,
@@ -137,14 +138,12 @@ pp_sema_create_handle(sema_t *sem, err_t **error) {
 
 static void
 pp_sema_clean_handle(sema_t *sem) {
-  if (sem->sem_hdl != P_SEM_INVALID_HDL &&
-    sem->sem_created == true &&
-    semctl(sem->sem_hdl, 0, IPC_RMID) == -1)
-    P_ERROR (
-      "sema_t::pp_sema_clean_handle: semctl() with IPC_RMID failed");
-  if (sem->file_created == true &&
-    sem->platform_key != NULL &&
-    unlink(sem->platform_key) == -1)
+  if (sem->sem_hdl != P_SEM_INVALID_HDL 
+    && sem->sem_created == true 
+    && semctl(sem->sem_hdl, 0, IPC_RMID) == -1)
+    P_ERROR ("sema_t::pp_sema_clean_handle: semctl() with IPC_RMID failed");
+  if (sem->file_created == true && sem->platform_key != NULL 
+    && unlink(sem->platform_key) == -1)
     P_ERROR ("sema_t::pp_sema_clean_handle: unlink() failed");
   sem->file_created = false;
   sem->sem_created = false;
@@ -153,15 +152,13 @@ pp_sema_clean_handle(sema_t *sem) {
 }
 
 sema_t *
-p_sema_new(const byte_t *name,
-  int init_val,
-  sema_access_t mode,
-  err_t **error) {
+p_sema_new(const byte_t *name, int init_val, sema_access_t mode, err_t **err) {
   sema_t *ret;
   byte_t *new_name;
+  
   if (P_UNLIKELY (name == NULL || init_val < 0)) {
     p_err_set_err_p(
-      error,
+      err,
       (int) P_ERR_IPC_INVALID_ARGUMENT,
       0,
       "Invalid input argument"
@@ -170,7 +167,7 @@ p_sema_new(const byte_t *name,
   }
   if (P_UNLIKELY ((ret = p_malloc0(sizeof(sema_t))) == NULL)) {
     p_err_set_err_p(
-      error,
+      err,
       (int) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for semaphore"
@@ -180,7 +177,7 @@ p_sema_new(const byte_t *name,
   if (P_UNLIKELY (
     (new_name = p_malloc0(strlen(name) + strlen(P_SEM_SUFFIX) + 1)) == NULL)) {
     p_err_set_err_p(
-      error,
+      err,
       (int) P_ERR_IPC_NO_RESOURCES,
       0,
       "Failed to allocate memory for semaphore"
@@ -194,7 +191,7 @@ p_sema_new(const byte_t *name,
   ret->init_val = init_val;
   ret->mode = mode;
   p_free(new_name);
-  if (P_UNLIKELY (pp_sema_create_handle(ret, error) == false)) {
+  if (P_UNLIKELY (pp_sema_create_handle(ret, err) == false)) {
     p_sema_free(ret);
     return NULL;
   }
@@ -214,6 +211,7 @@ p_sema_acquire(sema_t *sem,
   err_t **error) {
   bool ret;
   int res;
+  
   if (P_UNLIKELY (sem == NULL)) {
     p_err_set_err_p(
       error,
@@ -252,10 +250,10 @@ p_sema_acquire(sema_t *sem,
 }
 
 bool
-p_sema_release(sema_t *sem,
-  err_t **error) {
+p_sema_release(sema_t *sem, err_t **error) {
   bool ret;
   int res;
+  
   if (P_UNLIKELY (sem == NULL)) {
     p_err_set_err_p(
       error,

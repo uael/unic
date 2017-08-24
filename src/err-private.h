@@ -18,6 +18,7 @@
 #ifndef PLIBSYS_HEADER_PERROR_PRIVATE_H
 # define PLIBSYS_HEADER_PERROR_PRIVATE_H
 
+#include "p/err.h"
 #include "p/macros.h"
 #include "p/types.h"
 
@@ -44,7 +45,7 @@ p_err_get_ipc_from_system(int err_code);
 /*!@brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
-err_ipc_t
+P_API err_ipc_t
 p_err_get_last_ipc(void);
 
 #endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */

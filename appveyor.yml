@@ -192,10 +192,8 @@ build_script:
                         $BUILD_COMMAND = "make";
                         $BUILD_PARAMS  = @("-j", "2");
 
-                        If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                                & bash -lc 'cygserver-config --yes';
-                                & cygrunsrv -S cygserver;
-                        }
+                        & bash -lc 'cygserver-config --yes';
+                        & cygrunsrv -S cygserver;
                 } ElseIf ($env:USE_LLVM -eq "1") {
                         pushd "$env:VS140COMNTOOLS\..\..\VC\bin\amd64"
                         cmd /c "vcvars64.bat&set" |
