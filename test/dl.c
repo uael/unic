@@ -94,7 +94,6 @@ CUTEST(dl, nomem) {
 CUTEST(dl, general) {
   dl_t *loader;
   byte_t *err_msg;
-  void (*shutdown_func)(void);
 
   /* We assume that 3rd argument is ourself library path */
   ASSERT(self->ac > 1);
@@ -130,12 +129,16 @@ CUTEST(dl, general) {
   err_msg = p_dl_get_last_error(loader);
   ASSERT(err_msg != NULL);
   p_free(err_msg);
-  shutdown_func = (void (*)(void)) p_dl_get_symbol(loader, "p_libsys_shutdown");
-  if (shutdown_func == NULL) {
-    shutdown_func =
+  self->st_fn = (void (*)(void)) p_dl_get_symbol(loader, "p_libsys_shutdown");
+  if (self->st_fn == NULL) {
+    self->st_fn =
       (void (*)(void)) p_dl_get_symbol(loader, "_p_libsys_shutdown");
   }
-  ASSERT(shutdown_func != NULL);
+#ifdef P_CC_WATCOM
+  ASSERT(self->st_fn == NULL);
+#else
+  ASSERT(self->st_fn != NULL);
+#endif
   err_msg = p_dl_get_last_error(loader);
   p_free(err_msg);
   p_dl_free(loader);
