@@ -45,6 +45,37 @@
 #include "unic/types.h"
 #include "unic/macros.h"
 
+#if defined UNIC_HAVE_STDATOMIC_H
+# include <stdatomic.h>
+# define UNIC_ATOMIC_C11
+#elif defined UNIC_HAVE_ATOMIC_INTRIN
+# define UNIC_ATOMIC_INTRIN
+# ifdef UNIC_HAVE_INTRIN_H
+#   include <intrin.h>
+# endif
+#elif defined UNIC_HAVE_SYNC_INTRIN
+# define UNIC_ATOMIC_SYNC_INTRIN
+# ifdef UNIC_HAVE_INTRIN_H
+#   include <intrin.h>
+# endif
+#elif defined U_OS_WIN && (defined U_CC_WATCOM || defined U_CC_BORLAND || \
+      defined U_CC_MSVC || defined U_CC_INTEL)
+# define UNIC_ATOMIC_WIN
+# ifdef UNIC_HAVE_INTRIN_H
+#   include <intrin.h>
+# endif
+#elif defined U_CC_DEC && (defined UNIC_HAVE_BUILTINS_H || \
+      defined UNIC_HAVE_MACHINE_BUILTINS_H)
+# define UNIC_ATOMIC_DECC
+# if defined UNIC_HAVE_BUILTINS_H
+#   include <builtins.h>
+# elif defined UNIC_HAVE_MACHINE_BUILTINS_H
+#   include <machine/builtins.h>
+# endif
+#else
+# define UNIC_ATOMIC_SIM
+#endif
+
 /*!@brief Gets #int value from @a atomic.
  * @param atomic Pointer to #int to get the value from.
  * @return Integer value.

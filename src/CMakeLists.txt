@@ -200,43 +200,39 @@ list(APPEND CMAKE_REQUIRED_FLAGS ${UNIC_PLATFORM_LDFLAGS})
 
 set(UNIC_ATOMIC_LOCK_FREE no)
 
+check_c_source_compiles(
+  "int main () {
+    int i, tmp_int = 0;
+    __atomic_store_4 (&i, 0, __ATOMIC_SEQ_CST);
+    __atomic_compare_exchange_n (&i, &tmp_int, 1, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
+    return 0;
+  }"
+  UNIC_HAVE_ATOMIC_INTRIN
+)
+check_c_source_compiles(
+  "int main () {
+    int i;
+    __sync_synchronize ();
+    __sync_bool_compare_and_swap (&i, 0, 1);
+    __sync_fetch_and_add (&i, 1);
+    return 0;
+  }"
+  UNIC_HAVE_SYNC_INTRIN
+)
+
 if (NOT UNIC_ATOMIC_MODEL)
   message(STATUS "Checking for lock-free atomic intrinsics")
-
-  if (NOT UNIC_C_COMPILER STREQUAL clang)
-    # GCC __atomic* intrinsics
-    check_c_source_compiles(
-      "int main () {
-					  int i, tmp_int = 0;
-					  __atomic_store_4 (&i, 0, __ATOMIC_SEQ_CST);
-					  __atomic_compare_exchange_n (&i, &tmp_int, 1, 0,
-								       __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-					  __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
-					  return 0;
-					 }"
-      UNIC_ATOMIC_IMPL_GCCATOMIC
-    )
-
-    if (UNIC_ATOMIC_IMPL_GCCATOMIC)
-      set(UNIC_ATOMIC_LOCK_FREE yes)
-      set(UNIC_ATOMIC_MODEL "c11")
-    endif ()
+    
+  # GCC __atomic* intrinsics
+  if (UNIC_HAVE_ATOMIC_INTRIN)
+    set(UNIC_ATOMIC_LOCK_FREE yes)
+    set(UNIC_ATOMIC_MODEL "c11")
   endif ()
 
   # GCC __sync* intinsics
   if (NOT UNIC_ATOMIC_LOCK_FREE)
-    check_c_source_compiles(
-      "int main () {
-					  int i;
-					  __sync_synchronize ();
-					  __sync_bool_compare_and_swap (&i, 0, 1);
-					  __sync_fetch_and_add (&i, 1);
-					  return 0;
-					 }"
-      UNIC_ATOMIC_IMPL_GCCSYNC
-    )
-
-    if (UNIC_ATOMIC_IMPL_GCCSYNC)
+    if (UNIC_HAVE_SYNC_INTRIN)
       set(UNIC_ATOMIC_LOCK_FREE yes)
       set(UNIC_ATOMIC_MODEL "sync")
     endif ()
@@ -263,7 +259,7 @@ if (NOT UNIC_ATOMIC_MODEL)
 endif ()
 
 list(APPEND UNIC_SRCS
-  atomic-${UNIC_ATOMIC_MODEL}.c
+  atomic.c
   spinlock-${UNIC_ATOMIC_MODEL}.c
   )
 
@@ -273,9 +269,82 @@ endif ()
 
 test_big_endian(UNIC_IS_BIGENDIAN)
 
+check_include_file("arpa/inet.h" UNIC_HAVE_ARPA_INET_H)
+check_include_file("assert.h" UNIC_HAVE_ASSERT_H)
+check_include_file("atheos/semaphore.h" UNIC_HAVE_ATHEOS_SEMAPHORE_H)
+check_include_file("atheos/sysinfo.h" UNIC_HAVE_ATHEOS_SYSINFO_H)
+check_include_file("atheos/threads.h" UNIC_HAVE_ATHEOS_THREADS_H)
+check_include_file("atheos/tld.h" UNIC_HAVE_ATHEOS_TLD_H)
+check_include_file("be/kernel/OS.h" UNIC_HAVE_BE_KERNEL_OS_H)
+check_include_file("be/kernel/image.h" UNIC_HAVE_BE_KERNEL_IMAGE_H)
+check_include_file("builtins.h" UNIC_HAVE_BUILTINS_H)
+check_include_file("ctype.h" UNIC_HAVE_CTYPE_H)
+check_include_file("dirent.h" UNIC_HAVE_DIRENT_H)
+check_include_file("dl.h" UNIC_HAVE_DL_H)
+check_include_file("dlfcn.h" UNIC_HAVE_DLFCN_H)
+check_include_file("efndef.h" UNIC_HAVE_EFNDEF_H)
+check_include_file("errno.h" UNIC_HAVE_ERRNO_H)
+check_include_file("fcntl.h" UNIC_HAVE_FCNTL_H)
 check_include_file("float.h" UNIC_HAVE_FLOAT_H)
-check_include_file("values.h" UNIC_HAVE_VALUES_H)
+check_include_file("iledef.h" UNIC_HAVE_ILEDEF_H)
+check_include_file("intrin.h" UNIC_HAVE_INTRIN_H)
+check_include_file("inttypes.h" UNIC_HAVE_INTTYPES_H)
+check_include_file("iosbdef.h" UNIC_HAVE_IOSBDEF_H)
+check_include_file("kernel/OS.h" UNIC_HAVE_KERNEL_OS_H)
+check_include_file("kernel/scheduler.h" UNIC_HAVE_KERNEL_SCHEDULER_H)
+check_include_file("lib$routines.h" UNIC_HAVE_LIB$ROUTINES_H)
 check_include_file("limits.h" UNIC_HAVE_LIMITS_H)
+check_include_file("mach/mach_time.h" UNIC_HAVE_MACH_MACH_TIME_H)
+check_include_file("machine/builtins.h" UNIC_HAVE_MACHINE_BUILTINS_H)
+check_include_file("math.h" UNIC_HAVE_MATH_H)
+check_include_file("memory.h" UNIC_HAVE_MEMORY_H)
+check_include_file("netdb.h" UNIC_HAVE_NETDB_H)
+check_include_file("netinet/in.h" UNIC_HAVE_NETINET_IN_H)
+check_include_file("os2.h" UNIC_HAVE_OS2_H)
+check_include_file("pmacros.h" UNIC_HAVE_PMACROS_H)
+check_include_file("process.h" UNIC_HAVE_PROCESS_H)
+check_include_file("pthread.h" UNIC_HAVE_PTHREAD_H)
+check_include_file("sched.h" UNIC_HAVE_SCHED_H)
+check_include_file("semaphore.h" UNIC_HAVE_SEMAPHORE_H)
+check_include_file("signal.h" UNIC_HAVE_SIGNAL_H)
+check_include_file("ssdef.h" UNIC_HAVE_SSDEF_H)
+check_include_file("starlet.h" UNIC_HAVE_STARLET_H)
+check_include_file("stdarg.h" UNIC_HAVE_STDARG_H)
+check_include_file("stdatomic.h" UNIC_HAVE_STDATOMIC_H)
+check_include_file("stdbool.h" UNIC_HAVE_STDBOOL_H)
+check_include_file("stddef.h" UNIC_HAVE_STDDEF_H)
+check_include_file("stdint.h" UNIC_HAVE_STDINT_H)
+check_include_file("stdio.h" UNIC_HAVE_STDIO_H)
+check_include_file("stdlib.h" UNIC_HAVE_STDLIB_H)
+check_include_file("string.h" UNIC_HAVE_STRING_H)
+check_include_file("stropts.h" UNIC_HAVE_STROPTS_H)
+check_include_file("stsdef.h" UNIC_HAVE_STSDEF_H)
+check_include_file("support/TLS.h" UNIC_HAVE_SUPPORT_TLS_H)
+check_include_file("syidef.h" UNIC_HAVE_SYIDEF_H)
+check_include_file("synch.h" UNIC_HAVE_SYNCH_H)
+check_include_file("sys/ipc.h" UNIC_HAVE_SYS_IPC_H)
+check_include_file("sys/mman.h" UNIC_HAVE_SYS_MMAN_H)
+check_include_file("sys/param.h" UNIC_HAVE_SYS_PARAM_H)
+check_include_file("sys/poll.h" UNIC_HAVE_SYS_POLL_H)
+check_include_file("sys/pstat.h" UNIC_HAVE_SYS_PSTAT_H)
+check_include_file("sys/select.h" UNIC_HAVE_SYS_SELECT_H)
+check_include_file("sys/sem.h" UNIC_HAVE_SYS_SEM_H)
+check_include_file("sys/shm.h" UNIC_HAVE_SYS_SHM_H)
+check_include_file("sys/socket.h" UNIC_HAVE_SYS_SOCKET_H)
+check_include_file("sys/stat.h" UNIC_HAVE_SYS_STAT_H)
+check_include_file("sys/sysctl.h" UNIC_HAVE_SYS_SYSCTL_H)
+check_include_file("sys/syspage.h" UNIC_HAVE_SYS_SYSPAGE_H)
+check_include_file("sys/time.h" UNIC_HAVE_SYS_TIME_H)
+check_include_file("sys/types.h" UNIC_HAVE_SYS_TYPES_H)
+check_include_file("sys/utsname.h" UNIC_HAVE_SYS_UTSNAME_H)
+check_include_file("thread.h" UNIC_HAVE_THREAD_H)
+check_include_file("time.h" UNIC_HAVE_TIME_H)
+check_include_file("tis.h" UNIC_HAVE_TIS_H)
+check_include_file("unistd.h" UNIC_HAVE_UNISTD_H)
+check_include_file("values.h" UNIC_HAVE_VALUES_H)
+check_include_file("windows.h" UNIC_HAVE_WINDOWS_H)
+check_include_file("winsock2.h" UNIC_HAVE_WINSOCK2_H)
+check_include_file("ws2tcpip.h" UNIC_HAVE_WS2TCPIP_H)
 
 if (UNIC_HAVE_FLOAT_H)
   set(UNIC_NEED_FLOAT_H TRUE)
