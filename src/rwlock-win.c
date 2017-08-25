@@ -19,7 +19,7 @@
 
 #include "unic/mem.h"
 #include "unic/atomic.h"
-#include "unic/uthread.h"
+#include "unic/thread.h"
 #include "unic/rwlock.h"
 
 #define U_RWLOCK_XP_MAX_SPIN 4000
@@ -269,7 +269,7 @@ pp_rwlock_start_read_xp(rwlock_t *lock) {
       }
     } else {
       if (U_LIKELY (i < U_RWLOCK_XP_MAX_SPIN)) {
-        u_uthread_yield();
+        u_thread_yield();
         continue;
       }
       counter = U_RWLOCK_XP_SET_WAITING (tmp_lock,
@@ -366,7 +366,7 @@ pp_rwlock_start_write_xp(rwlock_t *lock) {
       }
     } else {
       if (U_LIKELY (i < U_RWLOCK_XP_MAX_SPIN)) {
-        u_uthread_yield();
+        u_thread_yield();
         continue;
       }
       counter = U_RWLOCK_XP_SET_WAITING (tmp_lock,

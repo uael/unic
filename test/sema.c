@@ -47,7 +47,7 @@ sema_test_thread(void) {
 
   sem = u_sema_new("u_sema_test_object", 1, U_SEMA_OPEN, NULL);
   if (sem == NULL) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
   for (i = 0; i < 1000; ++i) {
     if (!u_sema_acquire(sem, NULL)) {
@@ -55,12 +55,12 @@ sema_test_thread(void) {
         sema_test_val = PSEMAPHORE_MAX_VAL;
         break;
       }
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
     if (sema_test_val == PSEMAPHORE_MAX_VAL) {
       --sema_test_val;
     } else {
-      u_uthread_sleep(1);
+      u_thread_sleep(1);
       ++sema_test_val;
     }
     if (!u_sema_release(sem, NULL)) {
@@ -68,12 +68,12 @@ sema_test_thread(void) {
         sema_test_val = PSEMAPHORE_MAX_VAL;
         break;
       }
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
   }
   ++is_thread_exit;
   u_sema_free(sem);
-  u_uthread_exit(0);
+  u_thread_exit(0);
   return NULL;
 }
 
@@ -142,7 +142,7 @@ CUTEST(sema, general) {
 }
 
 CUTEST(sema, thread) {
-  uthread_t *thr1, *thr2;
+  thread_t *thr1, *thr2;
   sema_t *sem;
 
   sem = u_sema_new("u_sema_test_object", 10, U_SEMA_CREATE, NULL);
@@ -152,12 +152,12 @@ CUTEST(sema, thread) {
   sem = NULL;
   is_thread_exit = 0;
   sema_test_val = PSEMAPHORE_MAX_VAL;
-  thr1 = u_uthread_create((uthread_fn_t) sema_test_thread, NULL, true);
+  thr1 = u_thread_create((thread_fn_t) sema_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-  thr2 = u_uthread_create((uthread_fn_t) sema_test_thread, NULL, true);
+  thr2 = u_thread_create((thread_fn_t) sema_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-  ASSERT(u_uthread_join(thr1) == 0);
-  ASSERT(u_uthread_join(thr2) == 0);
+  ASSERT(u_thread_join(thr1) == 0);
+  ASSERT(u_thread_join(thr2) == 0);
   ASSERT(sema_test_val == PSEMAPHORE_MAX_VAL);
   ASSERT(u_sema_acquire(sem, NULL) == false);
   ASSERT(u_sema_release(sem, NULL) == false);
@@ -167,8 +167,8 @@ CUTEST(sema, thread) {
   ASSERT(sem != NULL);
   u_sema_take_ownership(sem);
   u_sema_free(sem);
-  u_uthread_unref(thr1);
-  u_uthread_unref(thr2);
+  u_thread_unref(thr1);
+  u_thread_unref(thr2);
   return CUTE_SUCCESS;
 }
 

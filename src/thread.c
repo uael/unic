@@ -25,9 +25,9 @@
 
 #include "unic/mem.h"
 #include "unic/spinlock.h"
-#include "unic/uthread.h"
+#include "unic/thread.h"
 #include "unic/string.h"
-#include "uthread-private.h"
+#include "thread-private.h"
 
 #ifdef U_OS_OS2
 # define INCL_DOSPROCESS
@@ -84,101 +84,101 @@ typedef void (WINAPI *SystemInfoFunc)(LPSYSTEM_INFO);
 #endif
 
 extern void
-u_uthread_init_internal(void);
+u_thread_init_internal(void);
 
 extern void
-u_uthread_shutdown_internal(void);
+u_thread_shutdown_internal(void);
 
 extern void
-u_uthread_exit_internal(void);
+u_thread_exit_internal(void);
 
 extern void
-u_uthread_wait_internal(uthread_t *thread);
+u_thread_wait_internal(thread_t *thread);
 
 extern void
-u_uthread_free_internal(uthread_t *thread);
+u_thread_free_internal(thread_t *thread);
 
-extern uthread_t *
-u_uthread_create_internal(uthread_fn_t func,
+extern thread_t *
+u_thread_create_internal(thread_fn_t func,
   bool joinable,
-  uthread_prio_t prio,
+  thread_prio_t prio,
   size_t stack_size);
 
 static void
-pp_uthread_cleanup(ptr_t data);
+pp_thread_cleanup(ptr_t data);
 
 static ptr_t
-pp_uthread_proxy(ptr_t data);
+pp_thread_proxy(ptr_t data);
 
 #ifndef U_OS_WIN
 # if !defined (UNIC_HAS_CLOCKNANOSLEEP) && !defined (UNIC_HAS_NANOSLEEP)
-static int pp_uthread_nanosleep (u32_t msec);
+static int pp_thread_nanosleep (u32_t msec);
 # endif
 #endif
 
-static uthread_key_t *pp_uthread_specific_data = NULL;
+static thread_key_t *pp_thread_specific_data = NULL;
 
-static spinlock_t *pp_uthread_new_spin = NULL;
+static spinlock_t *pp_thread_new_spin = NULL;
 
 static void
-pp_uthread_cleanup(ptr_t data) {
-  u_uthread_unref(data);
+pp_thread_cleanup(ptr_t data) {
+  u_thread_unref(data);
 }
 
 static ptr_t
-pp_uthread_proxy(ptr_t data) {
-  PUThreadBase *base_thread = data;
-  u_uthread_set_local(pp_uthread_specific_data, data);
-  u_spinlock_lock(pp_uthread_new_spin);
-  u_spinlock_unlock(pp_uthread_new_spin);
+pp_thread_proxy(ptr_t data) {
+  thread_base_t *base_thread = data;
+  u_thread_set_local(pp_thread_specific_data, data);
+  u_spinlock_lock(pp_thread_new_spin);
+  u_spinlock_unlock(pp_thread_new_spin);
   base_thread->func(base_thread->data);
   return NULL;
 }
 
 void
-u_uthread_init(void) {
-  if (U_LIKELY (pp_uthread_specific_data == NULL)) {
-    pp_uthread_specific_data =
-      u_uthread_local_new((destroy_fn_t) pp_uthread_cleanup);
+u_thread_init(void) {
+  if (U_LIKELY (pp_thread_specific_data == NULL)) {
+    pp_thread_specific_data =
+      u_thread_local_new((destroy_fn_t) pp_thread_cleanup);
   }
-  if (U_LIKELY (pp_uthread_new_spin == NULL)) {
-    pp_uthread_new_spin = u_spinlock_new();
+  if (U_LIKELY (pp_thread_new_spin == NULL)) {
+    pp_thread_new_spin = u_spinlock_new();
   }
-  u_uthread_init_internal();
+  u_thread_init_internal();
 }
 
 void
-u_uthread_shutdown(void) {
-  uthread_t *cur_thread;
-  if (U_LIKELY (pp_uthread_specific_data != NULL)) {
-    cur_thread = u_uthread_get_local(pp_uthread_specific_data);
+u_thread_shutdown(void) {
+  thread_t *cur_thread;
+  if (U_LIKELY (pp_thread_specific_data != NULL)) {
+    cur_thread = u_thread_get_local(pp_thread_specific_data);
     if (U_UNLIKELY (cur_thread != NULL)) {
-      u_uthread_unref(cur_thread);
-      u_uthread_set_local(pp_uthread_specific_data, NULL);
+      u_thread_unref(cur_thread);
+      u_thread_set_local(pp_thread_specific_data, NULL);
     }
-    u_uthread_local_free(pp_uthread_specific_data);
-    pp_uthread_specific_data = NULL;
+    u_thread_local_free(pp_thread_specific_data);
+    pp_thread_specific_data = NULL;
   }
-  if (U_LIKELY (pp_uthread_new_spin != NULL)) {
-    u_spinlock_free(pp_uthread_new_spin);
-    pp_uthread_new_spin = NULL;
+  if (U_LIKELY (pp_thread_new_spin != NULL)) {
+    u_spinlock_free(pp_thread_new_spin);
+    pp_thread_new_spin = NULL;
   }
-  u_uthread_shutdown_internal();
+  u_thread_shutdown_internal();
 }
 
-uthread_t *
-u_uthread_create_full(uthread_fn_t func,
+thread_t *
+u_thread_create_full(thread_fn_t func,
   ptr_t data,
   bool joinable,
-  uthread_prio_t prio,
+  thread_prio_t prio,
   size_t stack_size) {
-  PUThreadBase *base_thread;
+  thread_base_t *base_thread;
   if (U_UNLIKELY (func == NULL)) {
     return NULL;
   }
-  u_spinlock_lock(pp_uthread_new_spin);
-  base_thread = (PUThreadBase *) u_uthread_create_internal(
-    pp_uthread_proxy,
+  u_spinlock_lock(pp_thread_new_spin);
+  base_thread = (thread_base_t *) u_thread_create_internal(
+    pp_thread_proxy,
     joinable,
     prio,
     stack_size
@@ -190,66 +190,66 @@ u_uthread_create_full(uthread_fn_t func,
     base_thread->func = func;
     base_thread->data = data;
   }
-  u_spinlock_unlock(pp_uthread_new_spin);
-  return (uthread_t *) base_thread;
+  u_spinlock_unlock(pp_thread_new_spin);
+  return (thread_t *) base_thread;
 }
 
-uthread_t *
-u_uthread_create(uthread_fn_t func,
+thread_t *
+u_thread_create(thread_fn_t func,
   ptr_t data,
   bool joinable) {
   /* All checks will be inside */
-  return u_uthread_create_full(
-    func, data, joinable, U_UTHREAD_PRIORITY_INHERIT,
+  return u_thread_create_full(
+    func, data, joinable, U_thread_PRIORITY_INHERIT,
     0
   );
 }
 
 void
-u_uthread_exit(int code) {
-  PUThreadBase *base_thread = (PUThreadBase *) u_uthread_current();
+u_thread_exit(int code) {
+  thread_base_t *base_thread = (thread_base_t *) u_thread_current();
   if (U_UNLIKELY (base_thread == NULL)) {
     return;
   }
   if (U_UNLIKELY (base_thread->ours == false)) {
     U_WARNING (
-      "uthread_t::u_uthread_exit: u_uthread_exit() cannot be called from an unknown thread");
+      "thread_t::u_thread_exit: u_thread_exit() cannot be called from an unknown thread");
     return;
   }
   base_thread->ret_code = code;
-  u_uthread_exit_internal();
+  u_thread_exit_internal();
 }
 
 int
-u_uthread_join(uthread_t *thread) {
-  PUThreadBase *base_thread;
+u_thread_join(thread_t *thread) {
+  thread_base_t *base_thread;
   if (U_UNLIKELY (thread == NULL)) {
     return -1;
   }
-  base_thread = (PUThreadBase *) thread;
+  base_thread = (thread_base_t *) thread;
   if (base_thread->joinable == false) {
     return -1;
   }
-  u_uthread_wait_internal(thread);
+  u_thread_wait_internal(thread);
   return base_thread->ret_code;
 }
 
-uthread_t *
-u_uthread_current(void) {
-  PUThreadBase *base_thread = u_uthread_get_local(pp_uthread_specific_data);
+thread_t *
+u_thread_current(void) {
+  thread_base_t *base_thread = u_thread_get_local(pp_thread_specific_data);
   if (U_UNLIKELY (base_thread == NULL)) {
-    if (U_UNLIKELY ((base_thread = u_malloc0(sizeof(PUThreadBase))) == NULL)) {
-      U_ERROR ("uthread_t::u_uthread_current: failed to allocate memory");
+    if (U_UNLIKELY ((base_thread = u_malloc0(sizeof(thread_base_t))) == NULL)) {
+      U_ERROR ("thread_t::u_thread_current: failed to allocate memory");
       return NULL;
     }
     base_thread->ref_count = 1;
-    u_uthread_set_local(pp_uthread_specific_data, base_thread);
+    u_thread_set_local(pp_thread_specific_data, base_thread);
   }
-  return (uthread_t *) base_thread;
+  return (thread_t *) base_thread;
 }
 
 int
-u_uthread_ideal_count(void) {
+u_thread_ideal_count(void) {
 #if defined (U_OS_WIN)
   SYSTEM_INFO sys_info;
   SystemInfoFunc sys_info_func;
@@ -265,7 +265,7 @@ u_uthread_ideal_count(void) {
   }
   if (U_UNLIKELY (sys_info_func == NULL)) {
     U_ERROR (
-      "uthread_t::u_uthread_ideal_count: failed to get address of system info procedure");
+      "thread_t::u_thread_ideal_count: failed to get address of system info procedure");
     return 1;
   }
   sys_info_func(&sys_info);
@@ -276,7 +276,7 @@ u_uthread_ideal_count(void) {
   if (U_LIKELY (pstat_getdynamic (&psd, sizeof (psd), 1, 0) != -1))
     return (int) psd.psd_proc_cnt;
   else {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call pstat_getdynamic()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call pstat_getdynamic()");
     return 1;
   }
 #elif defined (U_OS_IRIX)
@@ -285,7 +285,7 @@ u_uthread_ideal_count(void) {
   cores = sysconf (_SC_NPROC_ONLN);
 
   if (U_UNLIKELY (cores < 0)) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call sysconf(_SC_NPROC_ONLN)");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call sysconf(_SC_NPROC_ONLN)");
     cores = 1;
   }
 
@@ -299,7 +299,7 @@ u_uthread_ideal_count(void) {
   mib[1] = HW_NCPU;
 
   if (U_UNLIKELY (sysctl (mib, 2, &cores, &len, NULL, 0) == -1)) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call sysctl()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call sysctl()");
     return 1;
   }
 
@@ -322,14 +322,14 @@ u_uthread_ideal_count(void) {
   status = lib$get_ef (&efn);
 
   if (U_UNLIKELY (!$VMS_STATUS_SUCCESS (status))) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call lib$get_ef()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call lib$get_ef()");
     return 1;
   }
 
   status = sys$getsyi (efn, NULL, NULL, itmlst, &iosb, tis_io_complete, 0);
 
   if (U_UNLIKELY (!$VMS_STATUS_SUCCESS (status))) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call sys$getsyiw()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call sys$getsyiw()");
     lib$free_ef (&efn);
     return 1;
   }
@@ -337,13 +337,13 @@ u_uthread_ideal_count(void) {
   status = tis_synch (efn, &iosb);
 
   if (U_UNLIKELY (!$VMS_STATUS_SUCCESS (status))) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call tis_synch()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call tis_synch()");
     lib$free_ef (&efn);
     return 1;
   }
 
   if (U_UNLIKELY (iosb.iosb$l_getxxi_status != SS$_NORMAL)) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: l_getxxi_status is not normal");
+    U_WARNING ("thread_t::u_thread_ideal_count: l_getxxi_status is not normal");
     lib$free_ef (&efn);
     return 1;
   }
@@ -359,7 +359,7 @@ u_uthread_ideal_count(void) {
            QSV_NUMPROCESSORS,
            &cores,
            sizeof (cores)) != NO_ERROR)) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call DosQuerySysInfo()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call DosQuerySysInfo()");
     return 1;
   }
 
@@ -376,7 +376,7 @@ u_uthread_ideal_count(void) {
   system_info sys_info;
 
   if (U_UNLIKELY (get_system_info_v (&sys_info, SYS_INFO_VERSION) != 0)) {
-    U_WARNING ("uthread_t::u_uthread_ideal_count: failed to call get_system_info_v()");
+    U_WARNING ("thread_t::u_thread_ideal_count: failed to call get_system_info_v()");
     return 1;
   }
 
@@ -385,7 +385,7 @@ u_uthread_ideal_count(void) {
   struct scoutsname utsn;
 
   if (U_UNLIKELY (__scoinfo (&utsn, sizeof (utsn)) == -1)) {
-    U_ERROR ("uthread_t::u_uthread_ideal_count: failed to call __scoinfo()");
+    U_ERROR ("thread_t::u_thread_ideal_count: failed to call __scoinfo()");
     return 1;
   }
 
@@ -397,7 +397,7 @@ u_uthread_ideal_count(void) {
 
   if (U_UNLIKELY (cores == -1)) {
     U_WARNING (
-      "uthread_t::u_uthread_ideal_count: failed to call sysconf(_SC_NPROCESSORS_ONLN)");
+      "thread_t::u_thread_ideal_count: failed to call sysconf(_SC_NPROCESSORS_ONLN)");
     return 1;
   }
 
@@ -408,23 +408,23 @@ u_uthread_ideal_count(void) {
 }
 
 void
-u_uthread_ref(uthread_t *thread) {
+u_thread_ref(thread_t *thread) {
   if (U_UNLIKELY (thread == NULL)) {
     return;
   }
-  u_atomic_int_inc(&((PUThreadBase *) thread)->ref_count);
+  u_atomic_int_inc(&((thread_base_t *) thread)->ref_count);
 }
 
 void
-u_uthread_unref(uthread_t *thread) {
-  PUThreadBase *base_thread;
+u_thread_unref(thread_t *thread) {
+  thread_base_t *base_thread;
   if (U_UNLIKELY (thread == NULL)) {
     return;
   }
-  base_thread = (PUThreadBase *) thread;
+  base_thread = (thread_base_t *) thread;
   if (u_atomic_int_dec_and_test(&base_thread->ref_count) == true) {
     if (base_thread->ours == true) {
-      u_uthread_free_internal(thread);
+      u_thread_free_internal(thread);
     } else {
       u_free(thread);
     }
@@ -435,7 +435,7 @@ u_uthread_unref(uthread_t *thread) {
 # if !defined (UNIC_HAS_CLOCKNANOSLEEP) && !defined (UNIC_HAS_NANOSLEEP)
 #   include <sys/select.h>
 #   include <sys/time.h>
-static int pp_uthread_nanosleep (u32_t msec)
+static int pp_thread_nanosleep (u32_t msec)
 {
   int  rc;
   struct timeval tstart, tstop, tremain, time2wait;
@@ -471,7 +471,7 @@ static int pp_uthread_nanosleep (u32_t msec)
 #endif
 
 int
-u_uthread_sleep(u32_t msec) {
+u_thread_sleep(u32_t msec) {
 #if defined (U_OS_WIN)
   Sleep(msec);
   return 0;
@@ -506,6 +506,6 @@ u_uthread_sleep(u32_t msec) {
 
   return 0;
 #else
-  return pp_uthread_nanosleep (msec);
+  return pp_thread_nanosleep (msec);
 #endif
 }

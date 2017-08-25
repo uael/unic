@@ -55,20 +55,20 @@ mutex_test_thread(void) {
   for (i = 0; i < 100; ++i) {
     if (!u_mutex_trylock(global_mutex)) {
       if (!u_mutex_lock(global_mutex)) {
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
     if (mutex_test_val == 10) {
       --mutex_test_val;
     } else {
-      u_uthread_sleep(1);
+      u_thread_sleep(1);
       ++mutex_test_val;
     }
     if (!u_mutex_unlock(global_mutex)) {
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
   }
-  u_uthread_exit(0);
+  u_thread_exit(0);
   return NULL;
 }
 
@@ -95,20 +95,20 @@ CUTEST(mutex, bad_input) {
 }
 
 CUTEST(mutex, general) {
-  uthread_t *thr1, *thr2;
+  thread_t *thr1, *thr2;
 
   global_mutex = u_mutex_new();
   ASSERT(global_mutex != NULL);
   mutex_test_val = 10;
-  thr1 = u_uthread_create((uthread_fn_t) mutex_test_thread, NULL, true);
+  thr1 = u_thread_create((thread_fn_t) mutex_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-  thr2 = u_uthread_create((uthread_fn_t) mutex_test_thread, NULL, true);
+  thr2 = u_thread_create((thread_fn_t) mutex_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-  ASSERT(u_uthread_join(thr1) == 0);
-  ASSERT(u_uthread_join(thr2) == 0);
+  ASSERT(u_thread_join(thr1) == 0);
+  ASSERT(u_thread_join(thr2) == 0);
   ASSERT(mutex_test_val == 10);
-  u_uthread_unref(thr1);
-  u_uthread_unref(thr2);
+  u_thread_unref(thr1);
+  u_thread_unref(thr2);
   u_mutex_free(global_mutex);
   return CUTE_SUCCESS;
 }

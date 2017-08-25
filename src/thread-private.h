@@ -15,15 +15,15 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UNIC_HEADER_PUTHREAD_PRIVATE_H
-# define UNIC_HEADER_PUTHREAD_PRIVATE_H
+#ifndef UNIC_HEADER_Pthread_PRIVATE_H
+# define UNIC_HEADER_Pthread_PRIVATE_H
 
 #include "unic/macros.h"
 #include "unic/types.h"
-#include "unic/uthread.h"
+#include "unic/thread.h"
 
 /*!@brief Base thread structure */
-typedef struct PUThreadBase_ {
+typedef struct thread_base {
 
   /*!@brief Reference counter. */
   int ref_count;
@@ -38,13 +38,13 @@ typedef struct PUThreadBase_ {
   bool joinable;
 
   /*!@brief Thread routine. */
-  uthread_fn_t func;
+  thread_fn_t func;
 
   /*!@brief Thread input data. */
   ptr_t data;
 
   /*!@brief Thread priority. */
-  uthread_prio_t prio;
-} PUThreadBase;
+  thread_prio_t prio;
+} thread_base_t;
 
-#endif /* UNIC_HEADER_PUTHREAD_PRIVATE_H */
+#endif /* UNIC_HEADER_Pthread_PRIVATE_H */

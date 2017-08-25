@@ -60,14 +60,14 @@ producer_test_thread(void *a) {
     if (!u_mutex_lock(cond_mutex)) {
       is_working = false;
       u_condvar_broadcast(queue_full_cond);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
     while (thread_queue >= PCONDTEST_MAX_QUEUE && is_working == true) {
       if (!u_condvar_wait(queue_empty_cond, cond_mutex)) {
         is_working = false;
         u_condvar_broadcast(queue_full_cond);
         u_mutex_unlock(cond_mutex);
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
     if (is_working) {
@@ -77,16 +77,16 @@ producer_test_thread(void *a) {
     if (!u_condvar_broadcast(queue_full_cond)) {
       is_working = false;
       u_mutex_unlock(cond_mutex);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
     if (!u_mutex_unlock(cond_mutex)) {
       is_working = false;
       u_condvar_broadcast(queue_full_cond);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
   }
   u_condvar_broadcast(queue_full_cond);
-  u_uthread_exit(0);
+  u_thread_exit(0);
   return NULL;
 }
 
@@ -97,14 +97,14 @@ consumer_test_thread(void *a) {
     if (!u_mutex_lock(cond_mutex)) {
       is_working = false;
       u_condvar_signal(queue_empty_cond);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
     while (thread_queue <= 0 && is_working == true) {
       if (!u_condvar_wait(queue_full_cond, cond_mutex)) {
         is_working = false;
         u_condvar_signal(queue_empty_cond);
         u_mutex_unlock(cond_mutex);
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
     if (is_working) {
@@ -114,16 +114,16 @@ consumer_test_thread(void *a) {
     if (!u_condvar_signal(queue_empty_cond)) {
       is_working = false;
       u_mutex_unlock(cond_mutex);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
     if (!u_mutex_unlock(cond_mutex)) {
       is_working = false;
       u_condvar_signal(queue_empty_cond);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
   }
   u_condvar_signal(queue_empty_cond);
-  u_uthread_exit(0);
+  u_thread_exit(0);
   return NULL;
 }
 
@@ -148,7 +148,7 @@ CUTEST(condvar, bad_input) {
 }
 
 CUTEST(condvar, general) {
-  uthread_t *thr1, *thr2, *thr3;
+  thread_t *thr1, *thr2, *thr3;
 
   queue_empty_cond = u_condvar_new();
   ASSERT(queue_empty_cond != NULL);
@@ -159,23 +159,23 @@ CUTEST(condvar, general) {
   is_working = true;
   thread_wakeups = 0;
   thread_queue = 0;
-  thr1 = u_uthread_create((uthread_fn_t) producer_test_thread, NULL, true);
+  thr1 = u_thread_create((thread_fn_t) producer_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-  thr2 = u_uthread_create((uthread_fn_t) consumer_test_thread, NULL, true);
+  thr2 = u_thread_create((thread_fn_t) consumer_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-  thr3 = u_uthread_create((uthread_fn_t) consumer_test_thread, NULL, true);
+  thr3 = u_thread_create((thread_fn_t) consumer_test_thread, NULL, true);
   ASSERT(thr3 != NULL);
   ASSERT(u_condvar_broadcast(queue_empty_cond) == true);
   ASSERT(u_condvar_broadcast(queue_full_cond) == true);
-  u_uthread_sleep(40);
+  u_thread_sleep(40);
   is_working = false;
-  ASSERT(u_uthread_join(thr1) == 0);
-  ASSERT(u_uthread_join(thr2) == 0);
-  ASSERT(u_uthread_join(thr3) == 0);
+  ASSERT(u_thread_join(thr1) == 0);
+  ASSERT(u_thread_join(thr2) == 0);
+  ASSERT(u_thread_join(thr3) == 0);
   ASSERT(thread_wakeups > 0 && thread_queue >= 0 && thread_queue <= 10);
-  u_uthread_unref(thr1);
-  u_uthread_unref(thr2);
-  u_uthread_unref(thr3);
+  u_thread_unref(thr1);
+  u_thread_unref(thr2);
+  u_thread_unref(thr3);
   u_condvar_free(queue_empty_cond);
   u_condvar_free(queue_full_cond);
   u_mutex_free(cond_mutex);

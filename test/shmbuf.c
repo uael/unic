@@ -45,10 +45,10 @@ shmbuf_test_write_thread(void) {
 
   buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   if (buffer == NULL) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
   while (is_working == true) {
-    u_uthread_sleep(3);
+    u_thread_sleep(3);
     op_result = u_shmbuf_get_free_space(buffer, NULL);
 
     if (op_result < 0) {
@@ -57,7 +57,7 @@ shmbuf_test_write_thread(void) {
       } else {
         ++is_thread_exit;
         u_shmbuf_free(buffer);
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
 
@@ -74,14 +74,14 @@ shmbuf_test_write_thread(void) {
       } else {
         ++is_thread_exit;
         u_shmbuf_free(buffer);
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
 
     if (op_result != sizeof(test_str)) {
       ++is_thread_exit;
       u_shmbuf_free(buffer);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
 
     ++read_count;
@@ -90,7 +90,7 @@ shmbuf_test_write_thread(void) {
   ++is_thread_exit;
 
   u_shmbuf_free(buffer);
-  u_uthread_exit(0);
+  u_thread_exit(0);
 
   return NULL;
 }
@@ -103,11 +103,11 @@ shmbuf_test_read_thread(void) {
 
   buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
   if (buffer == NULL) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
 
   while (is_working == true) {
-    u_uthread_sleep(3);
+    u_thread_sleep(3);
     op_result = u_shmbuf_get_used_space(buffer, NULL);
 
     if (op_result < 0) {
@@ -116,7 +116,7 @@ shmbuf_test_read_thread(void) {
       } else {
         ++is_thread_exit;
         u_shmbuf_free(buffer);
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
 
@@ -133,20 +133,20 @@ shmbuf_test_read_thread(void) {
       } else {
         ++is_thread_exit;
         u_shmbuf_free(buffer);
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
 
     if (op_result != sizeof(test_buf)) {
       ++is_thread_exit;
       u_shmbuf_free(buffer);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
 
     if (strncmp(test_buf, test_str, sizeof(test_buf)) != 0) {
       ++is_thread_exit;
       u_shmbuf_free(buffer);
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
 
     ++write_count;
@@ -155,7 +155,7 @@ shmbuf_test_read_thread(void) {
   ++is_thread_exit;
 
   u_shmbuf_free(buffer);
-  u_uthread_exit(0);
+  u_thread_exit(0);
 
   return NULL;
 }
@@ -266,7 +266,7 @@ CUTEST(shmbuf, general) {
 
 CUTEST(shmbuf, thread) {
   shmbuf_t *buffer;
-  uthread_t *thr1, *thr2;
+  thread_t *thr1, *thr2;
 
   /* Buffer may be from the previous test on UNIX systems */
   buffer = u_shmbuf_new("shm_test_buffer", 1024, NULL);
@@ -283,26 +283,26 @@ CUTEST(shmbuf, thread) {
   ASSERT(buffer != NULL);
 
   thr1 =
-    u_uthread_create((uthread_fn_t) shmbuf_test_write_thread, NULL, true);
+    u_thread_create((thread_fn_t) shmbuf_test_write_thread, NULL, true);
   ASSERT(thr1 != NULL);
 
   thr2 =
-    u_uthread_create((uthread_fn_t) shmbuf_test_read_thread, NULL, true);
+    u_thread_create((thread_fn_t) shmbuf_test_read_thread, NULL, true);
   ASSERT(thr1 != NULL);
 
-  u_uthread_sleep(50);
+  u_thread_sleep(50);
 
   is_working = false;
 
-  ASSERT(u_uthread_join(thr1) == 0);
-  ASSERT(u_uthread_join(thr2) == 0);
+  ASSERT(u_thread_join(thr1) == 0);
+  ASSERT(u_thread_join(thr2) == 0);
 
   ASSERT(read_count > 0);
   ASSERT(write_count > 0);
 
   u_shmbuf_free(buffer);
-  u_uthread_unref(thr1);
-  u_uthread_unref(thr2);
+  u_thread_unref(thr1);
+  u_thread_unref(thr2);
 
   return CUTE_SUCCESS;
 }

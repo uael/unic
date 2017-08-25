@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/*!@file unic/uthread.h
+/*!@file unic/thread.h
  * @brief Multithreading support
  * @author Alexander Saprykin
  *
@@ -23,18 +23,18 @@
  * scheduler of the operating system. It allows to do things in parallel or
  * concurrently.
  *
- * #uthread_t provides a convinient way of multithreading support using native
+ * #thread_t provides a convinient way of multithreading support using native
  * routines to provide the best performance on the target system.
  *
- * To create the thread use the u_uthread_create() or u_uthread_create_full()
+ * To create the thread use the u_thread_create() or u_thread_create_full()
  * routines. Joinable threads allow to wait until their execution is finished
  * before proceeding further. Thus you can synchronize threads' execution within
  * the main thread.
  *
- * A reference counter mechanism is used to keep track of a #uthread_t structure.
+ * A reference counter mechanism is used to keep track of a #thread_t structure.
  * It means that the structure will be freed automatically when the reference
- * counter becomes zero. Use u_uthread_ref() to hold the structure and
- * u_uthread_unref() to decrement the counter back. A running thread holds a
+ * counter becomes zero. Use u_thread_ref() to hold the structure and
+ * u_thread_unref() to decrement the counter back. A running thread holds a
  * reference to itself structure, so you do not require to hold a reference
  * to the thread while it is running.
  *
@@ -49,110 +49,110 @@
  * systems may require administrative privileges to change the thread priority
  * (i.e. Linux). Windows always respects thread priorities.
  *
- * To put the current thread (even if it was not created using the #uthread_t
- * routines) in a sleep state use u_uthread_sleep().
+ * To put the current thread (even if it was not created using the #thread_t
+ * routines) in a sleep state use u_thread_sleep().
  *
  * You can give a hint to the scheduler that the current thread do not need an
- * execution time with the u_uthread_yield() routine. This is useful when some
+ * execution time with the u_thread_yield() routine. This is useful when some
  * of the threads are in an idle state so you do not want to waste a CPU time.
  * This only tells to the scheduler to skip the current scheduling cycle for the
  * calling thread, though the scheduler can ingnore it.
  *
  * A thread local storage (TLS) is provided. The TLS key's value can be accessed
- * through a reference key defined as a #uthread_tKey. A TLS reference key is
+ * through a reference key defined as a #thread_tKey. A TLS reference key is
  * some sort of a token which has an associated value. But every thread has its
  * own token value though using the same token object.
  *
  * After creating the TLS reference key every thread can use it to access a
- * local-specific value. Use the u_uthread_local_new() call to create the TLS
+ * local-specific value. Use the u_thread_local_new() call to create the TLS
  * reference key and pass it to every thread which needs local-specific values.
  * You can also provide a destroy notification function which would be called
  * upon a TLS key removal which is usually performed on the thread exit.
  *
- * There are two calls to set a TLS key's value: u_uthread_set_local() and
- * u_uthread_replace_local(). The only difference is that the former one calls
+ * There are two calls to set a TLS key's value: u_thread_set_local() and
+ * u_thread_replace_local(). The only difference is that the former one calls
  * the provided destroy notification function before replacing the old value.
  */
-#ifndef U_UTHREAD_H__
-# define U_UTHREAD_H__
+#ifndef U_thread_H__
+# define U_thread_H__
 
 #include "unic/macros.h"
 #include "unic/types.h"
 
-/*!@brief Typedef for a #uthread_t running method. */
-typedef ptr_t (*uthread_fn_t)(ptr_t arg);
+/*!@brief Typedef for a #thread_t running method. */
+typedef ptr_t (*thread_fn_t)(ptr_t arg);
 
 /*!@brief Thread opaque data type. */
-typedef struct uthread uthread_t;
+typedef struct thread thread_t;
 
 /*!@brief TLS key opaque data type. */
-typedef struct uthread_key uthread_key_t;
+typedef struct thread_key thread_key_t;
 
 /*!@brief Thread priority. */
-enum uthread_prio {
+enum thread_prio {
 
   /*!@brief Inherits the caller thread priority. Default priority. */
-  U_UTHREAD_PRIORITY_INHERIT = 0,
+  U_thread_PRIORITY_INHERIT = 0,
 
   /*!@brief Scheduled only when no other threads are running. */
-  U_UTHREAD_PRIORITY_IDLE = 1,
+  U_thread_PRIORITY_IDLE = 1,
 
-  /*!@brief Scheduled less often than #U_UTHREAD_PRIORITY_LOW. */
-  U_UTHREAD_PRIORITY_LOWEST = 2,
+  /*!@brief Scheduled less often than #U_thread_PRIORITY_LOW. */
+  U_thread_PRIORITY_LOWEST = 2,
 
-  /*!@brief Scheduled less often than #U_UTHREAD_PRIORITY_NORMAL. */
-  U_UTHREAD_PRIORITY_LOW = 3,
+  /*!@brief Scheduled less often than #U_thread_PRIORITY_NORMAL. */
+  U_thread_PRIORITY_LOW = 3,
 
   /*!@brief Operating system's default priority. */
-  U_UTHREAD_PRIORITY_NORMAL = 4,
+  U_thread_PRIORITY_NORMAL = 4,
 
-  /*!@brief Scheduled more often than #U_UTHREAD_PRIORITY_NORMAL. */
-  U_UTHREAD_PRIORITY_HIGH = 5,
+  /*!@brief Scheduled more often than #U_thread_PRIORITY_NORMAL. */
+  U_thread_PRIORITY_HIGH = 5,
 
-  /*!@brief Scheduled more often than #U_UTHREAD_PRIORITY_HIGH. */
-  U_UTHREAD_PRIORITY_HIGHEST = 6,
+  /*!@brief Scheduled more often than #U_thread_PRIORITY_HIGH. */
+  U_thread_PRIORITY_HIGHEST = 6,
 
   /*!@brief Scheduled as often as possible. */
-  U_UTHREAD_PRIORITY_TIMECRITICAL = 7
+  U_thread_PRIORITY_TIMECRITICAL = 7
 };
 
-typedef enum uthread_prio uthread_prio_t;
+typedef enum thread_prio thread_prio_t;
 
-/*!@brief Creates a new #uthread_t and starts it.
+/*!@brief Creates a new #thread_t and starts it.
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create a joinable thread or not.
  * @param prio Thread priority.
  * @param stack_size Thread stack size, in bytes. Leave zero to use a default
  * value.
- * @return Pointer to #uthread_t in case of success, NULL otherwise.
+ * @return Pointer to #thread_t in case of success, NULL otherwise.
  * @since 0.0.1
- * @note Unreference the returned value after use with u_uthread_unref(). You do
- * not need to call u_uthread_ref() explicitly on the returned value.
+ * @note Unreference the returned value after use with u_thread_unref(). You do
+ * not need to call u_thread_ref() explicitly on the returned value.
  */
-U_API uthread_t *
-u_uthread_create_full(uthread_fn_t func, ptr_t data, bool joinable,
-  uthread_prio_t prio, size_t stack_size);
+U_API thread_t *
+u_thread_create_full(thread_fn_t func, ptr_t data, bool joinable,
+  thread_prio_t prio, size_t stack_size);
 
-/*!@brief Creates a #uthread_t and starts it. A short version of
- * u_uthread_create_full().
+/*!@brief Creates a #thread_t and starts it. A short version of
+ * u_thread_create_full().
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create a joinable thread or not.
- * @return Pointer to #uthread_t in case of success, NULL otherwise.
+ * @return Pointer to #thread_t in case of success, NULL otherwise.
  * @since 0.0.1
- * @note Unreference the returned value after use with u_uthread_unref(). You do
- * not need to call u_uthread_ref() explicitly on the returned value.
+ * @note Unreference the returned value after use with u_thread_unref(). You do
+ * not need to call u_thread_ref() explicitly on the returned value.
  */
-U_API uthread_t *
-u_uthread_create(uthread_fn_t func, ptr_t data, bool joinable);
+U_API thread_t *
+u_thread_create(thread_fn_t func, ptr_t data, bool joinable);
 
 /*!@brief Exits from the currently running (caller) thread.
  * @param code Exit code.
  * @since 0.0.1
  */
 U_API void
-u_uthread_exit(int code);
+u_thread_exit(int code);
 
 /*!@brief Waits for the selected thread to become finished.
  * @param thread Thread to wait for.
@@ -161,7 +161,7 @@ u_uthread_exit(int code);
  * @note Thread must be joinable to return the non-negative result.
  */
 U_API int
-u_uthread_join(uthread_t *thread);
+u_thread_join(thread_t *thread);
 
 /*!@brief Sleeps the current thread (caller) for a specified amount of time.
  * @param msec Milliseconds to sleep.
@@ -169,7 +169,7 @@ u_uthread_join(uthread_t *thread);
  * @since 0.0.1
  */
 U_API int
-u_uthread_sleep(u32_t msec);
+u_thread_sleep(u32_t msec);
 
 /*!@brief Sets a thread priority.
  * @param thread Thread to set the priority for.
@@ -178,7 +178,7 @@ u_uthread_sleep(u32_t msec);
  * @since 0.0.1
  */
 U_API bool
-u_uthread_set_priority(uthread_t *thread, uthread_prio_t prio);
+u_thread_set_priority(thread_t *thread, thread_prio_t prio);
 
 /*!@brief Tells the scheduler to skip the current (caller) thread in the current
  * planning stage.
@@ -188,7 +188,7 @@ u_uthread_set_priority(uthread_t *thread, uthread_prio_t prio);
  * current period, but it may ignore this call.
  */
 U_API void
-u_uthread_yield(void);
+u_thread_yield(void);
 
 /*!@brief Gets an ID of the current (caller) thread.
  * @return The ID of the current thread.
@@ -198,7 +198,7 @@ u_uthread_yield(void);
  * only gives you the uniquer ID of the thread accross the system.
  */
 U_API U_HANDLE
-u_uthread_current_id(void);
+u_thread_current_id(void);
 
 /*!@brief Gets a thread structure of the current (caller) thread.
  * @return The thread structure of the current thread.
@@ -210,8 +210,8 @@ u_uthread_current_id(void);
  * outside the library. But you should not use thread manipulation routines over
  * that structure.
  */
-U_API uthread_t *
-u_uthread_current(void);
+U_API thread_t *
+u_thread_current(void);
 
 /*!@brief Gets the ideal number of threads for the system based on the number of
  * avaialble CPUs and cores (physical and logical).
@@ -219,33 +219,33 @@ u_uthread_current(void);
  * @since 0.0.3
  */
 U_API int
-u_uthread_ideal_count(void);
+u_thread_ideal_count(void);
 
 /*!@brief Increments a thread reference counter
- * @param thread #uthread_t to increment the reference counter.
+ * @param thread #thread_t to increment the reference counter.
  * @since 0.0.1
- * @note The #uthread_t object will not be removed until the reference counter is
+ * @note The #thread_t object will not be removed until the reference counter is
  * positive.
  */
 U_API void
-u_uthread_ref(uthread_t *thread);
+u_thread_ref(thread_t *thread);
 
 /*!@brief Decrements a thread reference counter
- * @param thread #uthread_t to decrement the reference counter.
+ * @param thread #thread_t to decrement the reference counter.
  * @since 0.0.1
- * @note When the reference counter becomes zero the #uthread_t is removed from
+ * @note When the reference counter becomes zero the #thread_t is removed from
  * the memory.
  */
 U_API void
-u_uthread_unref(uthread_t *thread);
+u_thread_unref(thread_t *thread);
 
 /*!@brief Create a new TLS reference key.
  * @param free_func TLS key destroy notification call, leave NULL if not need.
  * @return New TLS reference key in case of success, NULL otherwise.
  * @since 0.0.1
  */
-U_API uthread_key_t *
-u_uthread_local_new(destroy_fn_t free_func);
+U_API thread_key_t *
+u_thread_local_new(destroy_fn_t free_func);
 
 /*!@brief Frees a TLS reference key.
  * @param key TLS reference key to free.
@@ -255,7 +255,7 @@ u_uthread_local_new(destroy_fn_t free_func);
  * access the TLS slot.
  */
 U_API void
-u_uthread_local_free(uthread_key_t *key);
+u_thread_local_free(thread_key_t *key);
 
 /*!@brief Gets a TLS value.
  * @param key TLS reference key to get the value for.
@@ -265,7 +265,7 @@ u_uthread_local_free(uthread_key_t *key);
  * the NULL value will be returned to tolerance the failure.
  */
 U_API ptr_t
-u_uthread_get_local(uthread_key_t *key);
+u_thread_get_local(thread_key_t *key);
 
 /*!@brief Sets a TLS value.
  * @param key TLS reference key to set the value for.
@@ -274,10 +274,10 @@ u_uthread_get_local(uthread_key_t *key);
  * @note This call may fail only in case of abnormal use or program behavior.
  *
  * It doesn't call the destructor notification function provided with
- * u_uthread_local_new().
+ * u_thread_local_new().
  */
 U_API void
-u_uthread_set_local(uthread_key_t *key, ptr_t value);
+u_thread_set_local(thread_key_t *key, ptr_t value);
 
 /*!@brief Replaces a TLS value.
  * @param key TLS reference key to replace the value for.
@@ -286,10 +286,10 @@ u_uthread_set_local(uthread_key_t *key, ptr_t value);
  * @note This call may fail only in case of abnormal use or program behavior.
  *
  * This call does perform the notification function provided with
- * u_uthread_local_new() on the old TLS value. This is the only difference with
- * u_uthread_set_local().
+ * u_thread_local_new() on the old TLS value. This is the only difference with
+ * u_thread_set_local().
  */
 U_API void
-u_uthread_replace_local(uthread_key_t *key, ptr_t value);
+u_thread_replace_local(thread_key_t *key, ptr_t value);
 
-#endif /* !U_UTHREAD_H__ */
+#endif /* !U_thread_H__ */

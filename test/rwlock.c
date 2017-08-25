@@ -59,26 +59,26 @@ reader_thread_func(void *data) {
   U_UNUSED(data);
   counter = 0;
   while (u_atomic_int_get(&writers_counter) == 0) {
-    u_uthread_sleep(2);
+    u_thread_sleep(2);
   }
   while (is_threads_working == true) {
-    u_uthread_sleep(2);
+    u_thread_sleep(2);
     if (u_rwlock_reader_trylock(test_rwlock) == false) {
       if (u_rwlock_reader_lock(test_rwlock) == false) {
-        u_uthread_exit(-1);
+        u_thread_exit(-1);
       }
     }
     if (strcmp(string_buf, PRWLOCK_TEST_STRING_1) != 0 &&
       strcmp(string_buf, PRWLOCK_TEST_STRING_2) != 0) {
       u_rwlock_reader_unlock(test_rwlock);
-      u_uthread_exit(-1);
+      u_thread_exit(-1);
     }
     if (u_rwlock_reader_unlock(test_rwlock) == false) {
-      u_uthread_exit(-1);
+      u_thread_exit(-1);
     }
     ++counter;
   }
-  u_uthread_exit(counter);
+  u_thread_exit(counter);
   return NULL;
 }
 
@@ -90,21 +90,21 @@ writer_thread_func(void *data) {
   U_UNUSED(string_num = PPOINTER_TO_INT(data));
   counter = 0;
   while (is_threads_working == true) {
-    u_uthread_sleep(2);
+    u_thread_sleep(2);
     if (u_rwlock_writer_trylock(test_rwlock) == false) {
       if (u_rwlock_writer_lock(test_rwlock) == false) {
-        u_uthread_exit(-1);
+        u_thread_exit(-1);
       }
     }
     memset(string_buf, 0, sizeof(string_buf));
     strcpy(string_buf, PRWLOCK_TEST_STRING_1);
     if (u_rwlock_writer_unlock(test_rwlock) == false) {
-      u_uthread_exit(-1);
+      u_thread_exit(-1);
     }
     ++counter;
     u_atomic_int_inc((&writers_counter));
   }
-  u_uthread_exit(counter);
+  u_thread_exit(counter);
   return NULL;
 }
 
@@ -132,28 +132,28 @@ CUTEST(rwlock, bad_input) {
 }
 
 CUTEST(rwlock, general) {
-  uthread_t *reader_thr1;
-  uthread_t *writer_thr1;
-  uthread_t *reader_thr2;
-  uthread_t *writer_thr2;
+  thread_t *reader_thr1;
+  thread_t *writer_thr1;
+  thread_t *reader_thr2;
+  thread_t *writer_thr2;
 
   test_rwlock = u_rwlock_new();
   ASSERT(test_rwlock != NULL);
   is_threads_working = true;
   writers_counter = 0;
-  reader_thr1 = u_uthread_create((uthread_fn_t) reader_thread_func,
+  reader_thr1 = u_thread_create((thread_fn_t) reader_thread_func,
     NULL,
     true
   );
-  reader_thr2 = u_uthread_create((uthread_fn_t) reader_thread_func,
+  reader_thr2 = u_thread_create((thread_fn_t) reader_thread_func,
     NULL,
     true
   );
-  writer_thr1 = u_uthread_create((uthread_fn_t) writer_thread_func,
+  writer_thr1 = u_thread_create((thread_fn_t) writer_thread_func,
     NULL,
     true
   );
-  writer_thr2 = u_uthread_create((uthread_fn_t) writer_thread_func,
+  writer_thr2 = u_thread_create((thread_fn_t) writer_thread_func,
     NULL,
     true
   );
@@ -161,16 +161,16 @@ CUTEST(rwlock, general) {
   ASSERT(reader_thr2 != NULL);
   ASSERT(writer_thr1 != NULL);
   ASSERT(writer_thr2 != NULL);
-  u_uthread_sleep(50);
+  u_thread_sleep(50);
   is_threads_working = false;
-  ASSERT(u_uthread_join(reader_thr1) > 0);
-  ASSERT(u_uthread_join(reader_thr2) > 0);
-  ASSERT(u_uthread_join(writer_thr1) > 0);
-  ASSERT(u_uthread_join(writer_thr2) > 0);
-  u_uthread_unref(reader_thr1);
-  u_uthread_unref(reader_thr2);
-  u_uthread_unref(writer_thr1);
-  u_uthread_unref(writer_thr2);
+  ASSERT(u_thread_join(reader_thr1) > 0);
+  ASSERT(u_thread_join(reader_thr2) > 0);
+  ASSERT(u_thread_join(writer_thr1) > 0);
+  ASSERT(u_thread_join(writer_thr2) > 0);
+  u_thread_unref(reader_thr1);
+  u_thread_unref(reader_thr2);
+  u_thread_unref(writer_thr1);
+  u_thread_unref(writer_thr2);
   u_rwlock_free(test_rwlock);
   return CUTE_SUCCESS;
 }

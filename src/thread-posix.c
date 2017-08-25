@@ -21,9 +21,9 @@
 
 #include "unic/mem.h"
 #include "unic/atomic.h"
-#include "unic/uthread.h"
+#include "unic/thread.h"
 #include "unic/string.h"
-#include "uthread-private.h"
+#include "thread-private.h"
 
 #ifdef U_OS_SCO
 # include "unic/pmutex.h"
@@ -58,48 +58,48 @@
 # endif
 #endif
 
-typedef pthread_t puthread_hdl;
+typedef pthread_t thread_hdl_t;
 
-struct uthread {
-  PUThreadBase base;
-  puthread_hdl hdl;
+struct thread {
+  thread_base_t base;
+  thread_hdl_t hdl;
 };
 
-struct uthread_key {
+struct thread_key {
   pthread_key_t *key;
   destroy_fn_t free_func;
 };
 #ifdef U_OS_SCO
-static mutex_t *pp_uthread_tls_mutex = NULL;
+static mutex_t *pp_thread_tls_mutex = NULL;
 #endif
 #ifdef UNIC_HAS_POSIX_SCHEDULING
-static bool pp_uthread_get_unix_priority(uthread_prio_t prio,
+static bool pp_thread_get_unix_priority(thread_prio_t prio,
   int *sched_policy, int *sched_priority);
 #endif
 
 static pthread_key_t *
-pp_uthread_get_tls_key(uthread_key_t *key);
+pp_thread_get_tls_key(thread_key_t *key);
 
 #ifdef UNIC_HAS_POSIX_SCHEDULING
 static bool
-pp_uthread_get_unix_priority(uthread_prio_t prio, int *sched_policy,
+pp_thread_get_unix_priority(thread_prio_t prio, int *sched_policy,
   int *sched_priority) {
   int lowBound, upperBound;
   int prio_min, prio_max;
   int native_prio;
 
 #ifdef SCHED_IDLE
-  if (prio == U_UTHREAD_PRIORITY_IDLE) {
+  if (prio == U_thread_PRIORITY_IDLE) {
     *sched_policy = SCHED_IDLE;
     *sched_priority = 0;
     return true;
   }
 
-  lowBound = (int) U_UTHREAD_PRIORITY_LOWEST;
+  lowBound = (int) U_thread_PRIORITY_LOWEST;
 #else
-  lowBound = (int) U_UTHREAD_PRIORITY_IDLE;
+  lowBound = (int) U_thread_PRIORITY_IDLE;
 #endif
-  upperBound = (int) U_UTHREAD_PRIORITY_TIMECRITICAL;
+  upperBound = (int) U_thread_PRIORITY_TIMECRITICAL;
 
   prio_min = sched_get_priority_min(*sched_policy);
   prio_max = sched_get_priority_max(*sched_policy);
@@ -123,31 +123,31 @@ pp_uthread_get_unix_priority(uthread_prio_t prio, int *sched_policy,
 #endif
 
 static pthread_key_t *
-pp_uthread_get_tls_key(uthread_key_t *key) {
+pp_thread_get_tls_key(thread_key_t *key) {
   pthread_key_t *thread_key;
   thread_key = (pthread_key_t *) u_atomic_pointer_get((ptr_t) &key->key);
   if (U_LIKELY (thread_key != NULL)) {
     return thread_key;
   }
 #ifdef U_OS_SCO
-  u_mutex_lock (pp_uthread_tls_mutex);
+  u_mutex_lock (pp_thread_tls_mutex);
 
   thread_key = key->key;
 
   if (U_LIKELY (thread_key == NULL)) {
 #endif
   if (U_UNLIKELY ((thread_key = u_malloc0(sizeof(pthread_key_t))) == NULL)) {
-    U_ERROR ("uthread_t::pp_uthread_get_tls_key: failed to allocate memory");
+    U_ERROR ("thread_t::pp_thread_get_tls_key: failed to allocate memory");
 #ifdef U_OS_SCO
-    u_mutex_unlock (pp_uthread_tls_mutex);
+    u_mutex_unlock (pp_thread_tls_mutex);
 #endif
     return NULL;
   }
   if (U_UNLIKELY (pthread_key_create(thread_key, key->free_func) != 0)) {
-    U_ERROR ("uthread_t::pp_uthread_get_tls_key: pthread_key_create() failed");
+    U_ERROR ("thread_t::pp_thread_get_tls_key: pthread_key_create() failed");
     u_free(thread_key);
 #ifdef U_OS_SCO
-    u_mutex_unlock (pp_uthread_tls_mutex);
+    u_mutex_unlock (pp_thread_tls_mutex);
 #endif
     return NULL;
   }
@@ -157,7 +157,7 @@ pp_uthread_get_tls_key(uthread_key_t *key) {
     (ptr_t) thread_key
   ) == false)) {
     if (U_UNLIKELY (pthread_key_delete(*thread_key) != 0)) {
-      U_ERROR ("uthread_t::pp_uthread_get_tls_key: pthread_key_delete() failed");
+      U_ERROR ("thread_t::pp_thread_get_tls_key: pthread_key_delete() failed");
       u_free(thread_key);
       return NULL;
     }
@@ -168,39 +168,39 @@ pp_uthread_get_tls_key(uthread_key_t *key) {
   key->key = thread_key;
 }
 
-u_mutex_unlock (pp_uthread_tls_mutex);
+u_mutex_unlock (pp_thread_tls_mutex);
 #endif
   return thread_key;
 }
 
 void
-u_uthread_init_internal(void) {
+u_thread_init_internal(void) {
 #ifdef U_OS_SCO
-  if (U_LIKELY (pp_uthread_tls_mutex == NULL))
-    pp_uthread_tls_mutex = u_mutex_new ();
+  if (U_LIKELY (pp_thread_tls_mutex == NULL))
+    pp_thread_tls_mutex = u_mutex_new ();
 #endif
 }
 
 void
-u_uthread_shutdown_internal(void) {
+u_thread_shutdown_internal(void) {
 #ifdef U_OS_SCO
-  if (U_LIKELY (pp_uthread_tls_mutex != NULL)) {
-    u_mutex_free (pp_uthread_tls_mutex);
-    pp_uthread_tls_mutex = NULL;
+  if (U_LIKELY (pp_thread_tls_mutex != NULL)) {
+    u_mutex_free (pp_thread_tls_mutex);
+    pp_thread_tls_mutex = NULL;
   }
 #endif
 }
 
 void
-u_uthread_win32_thread_detach(void) {
+u_thread_win32_thread_detach(void) {
 }
 
-uthread_t *
-u_uthread_create_internal(uthread_fn_t func,
+thread_t *
+u_thread_create_internal(thread_fn_t func,
   bool joinable,
-  uthread_prio_t prio,
+  thread_prio_t prio,
   size_t stack_size) {
-  uthread_t *ret;
+  thread_t *ret;
   pthread_attr_t attr;
   int create_code;
 #ifdef UNIC_HAS_POSIX_SCHEDULING
@@ -211,13 +211,13 @@ u_uthread_create_internal(uthread_fn_t func,
 #if defined (UNIC_HAS_POSIX_STACKSIZE) && defined (_SC_THREAD_STACK_MIN)
   long min_stack;
 #endif
-  if (U_UNLIKELY ((ret = u_malloc0(sizeof(uthread_t))) == NULL)) {
-    U_ERROR ("uthread_t::u_uthread_create_internal: failed to allocate memory");
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(thread_t))) == NULL)) {
+    U_ERROR ("thread_t::u_thread_create_internal: failed to allocate memory");
     return NULL;
   }
   ret->base.joinable = joinable;
   if (U_UNLIKELY (pthread_attr_init(&attr) != 0)) {
-    U_ERROR ("uthread_t::u_uthread_create_internal: pthread_attr_init() failed");
+    U_ERROR ("thread_t::u_thread_create_internal: pthread_attr_init() failed");
     u_free(ret);
     return NULL;
   }
@@ -227,20 +227,20 @@ u_uthread_create_internal(uthread_fn_t func,
       : PTHREAD_CREATE_DETACHED
   ) != 0)) {
     U_ERROR (
-      "uthread_t::u_uthread_create_internal: pthread_attr_setdetachstate() failed");
+      "thread_t::u_thread_create_internal: pthread_attr_setdetachstate() failed");
     pthread_attr_destroy(&attr);
     u_free(ret);
     return NULL;
   }
 #ifdef UNIC_HAS_POSIX_SCHEDULING
-  if (prio == U_UTHREAD_PRIORITY_INHERIT) {
+  if (prio == U_thread_PRIORITY_INHERIT) {
     if (U_UNLIKELY (
       pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED) != 0))
       U_WARNING (
-        "uthread_t::u_uthread_create_internal: pthread_attr_setinheritsched() failed");
+        "thread_t::u_thread_create_internal: pthread_attr_setinheritsched() failed");
   } else {
     if (U_LIKELY (pthread_attr_getschedpolicy(&attr, &sched_policy) == 0)) {
-      if (U_LIKELY (pp_uthread_get_unix_priority(prio,
+      if (U_LIKELY (pp_thread_get_unix_priority(prio,
         &sched_policy,
         &native_prio) == true)) {
         memset(&sched, 0, sizeof(sched));
@@ -251,13 +251,13 @@ u_uthread_create_internal(uthread_fn_t func,
             pthread_attr_setschedpolicy(&attr, sched_policy) != 0 ||
             pthread_attr_setschedparam(&attr, &sched) != 0))
           U_WARNING (
-            "uthread_t::u_uthread_create_internal: failed to set priority");
+            "thread_t::u_thread_create_internal: failed to set priority");
       } else
         U_WARNING (
-          "uthread_t::u_uthread_create_internal: pp_uthread_get_unix_priority() failed");
+          "thread_t::u_thread_create_internal: pp_thread_get_unix_priority() failed");
     } else
       U_WARNING (
-        "uthread_t::u_uthread_create_internal: pthread_attr_getschedpolicy() failed");
+        "thread_t::u_thread_create_internal: pthread_attr_getschedpolicy() failed");
   }
 #endif
 #ifdef UNIC_HAS_POSIX_STACKSIZE
@@ -270,11 +270,11 @@ u_uthread_create_internal(uthread_fn_t func,
         stack_size = (size_t) min_stack;
     } else
       U_WARNING (
-        "uthread_t::u_uthread_create_internal: sysconf() with _SC_THREAD_STACK_MIN failed");
+        "thread_t::u_thread_create_internal: sysconf() with _SC_THREAD_STACK_MIN failed");
 
     if (U_UNLIKELY (pthread_attr_setstacksize(&attr, stack_size) != 0))
       U_WARNING (
-        "uthread_t::u_uthread_create_internal: pthread_attr_setstacksize() failed");
+        "thread_t::u_thread_create_internal: pthread_attr_setstacksize() failed");
   }
 # endif
 #endif
@@ -288,7 +288,7 @@ u_uthread_create_internal(uthread_fn_t func,
   }
 #endif
   if (U_UNLIKELY (create_code != 0)) {
-    U_ERROR ("uthread_t::u_uthread_create_internal: pthread_create() failed");
+    U_ERROR ("thread_t::u_thread_create_internal: pthread_create() failed");
     pthread_attr_destroy(&attr);
     u_free(ret);
     return NULL;
@@ -299,29 +299,29 @@ u_uthread_create_internal(uthread_fn_t func,
 }
 
 void
-u_uthread_exit_internal(void) {
+u_thread_exit_internal(void) {
   pthread_exit(U_INT_TO_POINTER (0));
 }
 
 void
-u_uthread_wait_internal(uthread_t *thread) {
+u_thread_wait_internal(thread_t *thread) {
   if (U_UNLIKELY (pthread_join(thread->hdl, NULL) != 0))
-    U_ERROR ("uthread_t::u_uthread_wait_internal: pthread_join() failed");
+    U_ERROR ("thread_t::u_thread_wait_internal: pthread_join() failed");
 }
 
 void
-u_uthread_free_internal(uthread_t *thread) {
+u_thread_free_internal(thread_t *thread) {
   u_free(thread);
 }
 
 void
-u_uthread_yield(void) {
+u_thread_yield(void) {
   sched_yield();
 }
 
 bool
-u_uthread_set_priority(uthread_t *thread,
-  uthread_prio_t prio) {
+u_thread_set_priority(thread_t *thread,
+  thread_prio_t prio) {
 #ifdef UNIC_HAS_POSIX_SCHEDULING
   struct sched_param sched;
   int policy;
@@ -333,14 +333,14 @@ u_uthread_set_priority(uthread_t *thread,
 #ifdef UNIC_HAS_POSIX_SCHEDULING
   if (U_UNLIKELY (pthread_getschedparam(thread->hdl, &policy, &sched) != 0)) {
     U_ERROR (
-      "uthread_t::u_uthread_set_priority: pthread_getschedparam() failed");
+      "thread_t::u_thread_set_priority: pthread_getschedparam() failed");
     return false;
   }
 
   if (U_UNLIKELY (
-    pp_uthread_get_unix_priority(prio, &policy, &native_prio) == false)) {
+    pp_thread_get_unix_priority(prio, &policy, &native_prio) == false)) {
     U_ERROR (
-      "uthread_t::u_uthread_set_priority: pp_uthread_get_unix_priority() failed");
+      "thread_t::u_thread_set_priority: pp_thread_get_unix_priority() failed");
     return false;
   }
 
@@ -349,7 +349,7 @@ u_uthread_set_priority(uthread_t *thread,
 
   if (U_UNLIKELY (pthread_setschedparam(thread->hdl, policy, &sched) != 0)) {
     U_ERROR (
-      "uthread_t::u_uthread_set_priority: pthread_setschedparam() failed");
+      "thread_t::u_thread_set_priority: pthread_setschedparam() failed");
     return false;
   }
 #endif
@@ -358,15 +358,15 @@ u_uthread_set_priority(uthread_t *thread,
 }
 
 U_HANDLE
-u_uthread_current_id(void) {
+u_thread_current_id(void) {
   return (U_HANDLE) ((size_t) pthread_self());
 }
 
-uthread_key_t *
-u_uthread_local_new(destroy_fn_t free_func) {
-  uthread_key_t *ret;
-  if (U_UNLIKELY ((ret = u_malloc0(sizeof(uthread_key_t))) == NULL)) {
-    U_ERROR ("uthread_t::u_uthread_local_new: failed to allocate memory");
+thread_key_t *
+u_thread_local_new(destroy_fn_t free_func) {
+  thread_key_t *ret;
+  if (U_UNLIKELY ((ret = u_malloc0(sizeof(thread_key_t))) == NULL)) {
+    U_ERROR ("thread_t::u_thread_local_new: failed to allocate memory");
     return NULL;
   }
   ret->free_func = free_func;
@@ -374,7 +374,7 @@ u_uthread_local_new(destroy_fn_t free_func) {
 }
 
 void
-u_uthread_local_free(uthread_key_t *key) {
+u_thread_local_free(thread_key_t *key) {
   if (U_UNLIKELY (key == NULL)) {
     return;
   }
@@ -382,7 +382,7 @@ u_uthread_local_free(uthread_key_t *key) {
 }
 
 ptr_t
-u_uthread_get_local(uthread_key_t *key) {
+u_thread_get_local(thread_key_t *key) {
   pthread_key_t *tls_key;
 #ifdef U_OS_SCO
   ptr_t value;
@@ -390,7 +390,7 @@ u_uthread_get_local(uthread_key_t *key) {
   if (U_UNLIKELY (key == NULL)) {
     return NULL;
   }
-  if (U_UNLIKELY ((tls_key = pp_uthread_get_tls_key(key)) == NULL)) {
+  if (U_UNLIKELY ((tls_key = pp_thread_get_tls_key(key)) == NULL)) {
     return NULL;
   }
 #ifdef U_OS_SCO
@@ -404,28 +404,28 @@ u_uthread_get_local(uthread_key_t *key) {
 }
 
 void
-u_uthread_set_local(uthread_key_t *key,
+u_thread_set_local(thread_key_t *key,
   ptr_t value) {
   pthread_key_t *tls_key;
   if (U_UNLIKELY (key == NULL)) {
     return;
   }
-  tls_key = pp_uthread_get_tls_key(key);
+  tls_key = pp_thread_get_tls_key(key);
   if (U_LIKELY (tls_key != NULL)) {
     if (U_UNLIKELY (pthread_setspecific(*tls_key, value) != 0))
-      U_ERROR ("uthread_t::u_uthread_set_local: pthread_setspecific() failed");
+      U_ERROR ("thread_t::u_thread_set_local: pthread_setspecific() failed");
   }
 }
 
 void
-u_uthread_replace_local(uthread_key_t *key,
+u_thread_replace_local(thread_key_t *key,
   ptr_t value) {
   pthread_key_t *tls_key;
   ptr_t old_value;
   if (U_UNLIKELY (key == NULL)) {
     return;
   }
-  tls_key = pp_uthread_get_tls_key(key);
+  tls_key = pp_thread_get_tls_key(key);
   if (U_UNLIKELY (tls_key == NULL)) {
     return;
   }
@@ -439,5 +439,5 @@ u_uthread_replace_local(uthread_key_t *key,
     key->free_func(old_value);
   }
   if (U_UNLIKELY (pthread_setspecific(*tls_key, value) != 0))
-    U_ERROR ("uthread_t::u_uthread_replace_local: pthread_setspecific() failed");
+    U_ERROR ("thread_t::u_thread_replace_local: pthread_setspecific() failed");
 }

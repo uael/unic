@@ -37,10 +37,10 @@ extern void
 u_socket_close_once(void);
 
 extern void
-u_uthread_init(void);
+u_thread_init(void);
 
 extern void
-u_uthread_shutdown(void);
+u_thread_shutdown(void);
 
 extern void
 u_condvar_init(void);
@@ -73,7 +73,7 @@ u_libsys_init(void) {
   u_mem_init();
   u_atomic_thread_init();
   u_socket_init_once();
-  u_uthread_init();
+  u_thread_init();
   u_condvar_init();
   u_rwlock_init();
   u_profiler_init();
@@ -95,7 +95,7 @@ u_libsys_shutdown(void) {
   u_profiler_shutdown();
   u_rwlock_shutdown();
   u_condvar_shutdown();
-  u_uthread_shutdown();
+  u_thread_shutdown();
   u_socket_close_once();
   u_atomic_thread_shutdown();
   u_mem_shutdown();
@@ -109,7 +109,7 @@ u_libsys_version(void) {
 #ifdef U_OS_WIN
 
 extern void
-u_uthread_win32_thread_detach(void);
+u_thread_win32_thread_detach(void);
 
 BOOL WINAPI
 DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
@@ -119,7 +119,7 @@ DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     case DLL_PROCESS_ATTACH:
       break;
     case DLL_THREAD_DETACH:
-      u_uthread_win32_thread_detach();
+      u_thread_win32_thread_detach();
       break;
     case DLL_PROCESS_DETACH:
       break;

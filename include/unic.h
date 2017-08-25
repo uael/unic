@@ -48,6 +48,6 @@
 #include "unic/profiler.h"
 #include "unic/tree.h"
 #include "unic/types.h"
-#include "unic/uthread.h"
+#include "unic/thread.h"
 
 #endif /* !U_H__ */

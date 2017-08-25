@@ -93,7 +93,7 @@ set(UNIC_PUBLIC_HDRS
   ${UNIC_INCLUDE_DIR}/unic/string.h
   ${UNIC_INCLUDE_DIR}/unic/profiler.h
   ${UNIC_INCLUDE_DIR}/unic/tree.h
-  ${UNIC_INCLUDE_DIR}/unic/uthread.h
+  ${UNIC_INCLUDE_DIR}/unic/thread.h
   ${UNIC_INCLUDE_DIR}/unic/config.h
   )
 
@@ -112,10 +112,11 @@ set(UNIC_PRIVATE_HDRS
   tree-bst.h
   tree-rb.h
   tree-private.h
-  uthread-private.h
+  thread-private.h
   )
 
 set(UNIC_SRCS
+  atomic.c
   hash.c
   hash-gost3411.c
   hash-md5.c
@@ -141,7 +142,7 @@ set(UNIC_SRCS
   tree-avl.c
   tree-bst.c
   tree-rb.c
-  uthread.c
+  thread.c
   )
 
 if (UNIC_NATIVE_WINDOWS)
@@ -178,7 +179,7 @@ set(UNIC_PLATFORM_SRCS
   sema-${UNIC_IPC_MODEL}.c
   shm-${UNIC_IPC_MODEL}.c
   sysclose-${UNIC_CLOSE_MODEL}.c
-  uthread-${UNIC_THREAD_MODEL}.c
+  thread-${UNIC_THREAD_MODEL}.c
   profiler-${UNIC_TIME_PROFILER_MODEL}.c
   dir-${UNIC_DIR_MODEL}.c
   dl-${UNIC_LIBRARYLOADER_MODEL}.c
@@ -259,7 +260,6 @@ if (NOT UNIC_ATOMIC_MODEL)
 endif ()
 
 list(APPEND UNIC_SRCS
-  atomic.c
   spinlock-${UNIC_ATOMIC_MODEL}.c
   )
 

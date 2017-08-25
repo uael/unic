@@ -56,20 +56,20 @@ spinlock_test_thread(void) {
   for (i = 0; i < 1000; ++i) {
     if (!u_spinlock_trylock(global_spinlock)) {
       if (!u_spinlock_lock(global_spinlock)) {
-        u_uthread_exit(1);
+        u_thread_exit(1);
       }
     }
     if (spinlock_test_val == PSPINLOCK_MAX_VAL) {
       --spinlock_test_val;
     } else {
-      u_uthread_sleep(1);
+      u_thread_sleep(1);
       ++spinlock_test_val;
     }
     if (!u_spinlock_unlock(global_spinlock)) {
-      u_uthread_exit(1);
+      u_thread_exit(1);
     }
   }
-  u_uthread_exit(0);
+  u_thread_exit(0);
   return NULL;
 }
 
@@ -94,20 +94,20 @@ CUTEST(spinlock, bad_input) {
 }
 
 CUTEST(spinlock, general) {
-  uthread_t *thr1, *thr2;
+  thread_t *thr1, *thr2;
 
   spinlock_test_val = PSPINLOCK_MAX_VAL;
   global_spinlock = u_spinlock_new();
   ASSERT(global_spinlock != NULL);
-  thr1 = u_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
+  thr1 = u_thread_create((thread_fn_t) spinlock_test_thread, NULL, true);
   ASSERT(thr1 != NULL);
-  thr2 = u_uthread_create((uthread_fn_t) spinlock_test_thread, NULL, true);
+  thr2 = u_thread_create((thread_fn_t) spinlock_test_thread, NULL, true);
   ASSERT(thr2 != NULL);
-  ASSERT(u_uthread_join(thr1) == 0);
-  ASSERT(u_uthread_join(thr2) == 0);
+  ASSERT(u_thread_join(thr1) == 0);
+  ASSERT(u_thread_join(thr2) == 0);
   ASSERT(spinlock_test_val == PSPINLOCK_MAX_VAL);
-  u_uthread_unref(thr1);
-  u_uthread_unref(thr2);
+  u_thread_unref(thr1);
+  u_thread_unref(thr2);
   u_spinlock_free(global_spinlock);
   return CUTE_SUCCESS;
 }

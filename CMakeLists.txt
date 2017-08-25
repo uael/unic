@@ -103,7 +103,7 @@ if (UNIC_TESTS)
   unic_add_test_executable(profiler_test test/profiler.c)
   unic_add_test_executable(tree_test test/tree.c)
   unic_add_test_executable(types_test test/types.c)
-  unic_add_test_executable(uthread_test test/uthread.c)
+  unic_add_test_executable(thread_test test/thread.c)
 
   add_custom_target(tests
     DEPENDS ${UNIT_TEST_TARGETS}

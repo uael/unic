@@ -98,7 +98,7 @@
  *
  * Multithreading
  * - @link
- * unic/uthread.h Thread
+ * unic/thread.h Thread
  * @endlink
  * - @link
  * unic/mutex.h Mutex

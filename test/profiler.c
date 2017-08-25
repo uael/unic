@@ -69,21 +69,21 @@ CUTEST(profiler, general) {
 
   profiler = u_profiler_new();
   ASSERT(profiler != NULL);
-  u_uthread_sleep(50);
+  u_thread_sleep(50);
   prev_val = u_profiler_elapsed_usecs(profiler);
   ASSERT(prev_val > 0);
-  u_uthread_sleep(100);
+  u_thread_sleep(100);
   val = u_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
   prev_val = val;
-  u_uthread_sleep(1000);
+  u_thread_sleep(1000);
   val = u_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
   u_profiler_reset(profiler);
-  u_uthread_sleep(15);
+  u_thread_sleep(15);
   prev_val = u_profiler_elapsed_usecs(profiler);
   ASSERT(prev_val > 0);
-  u_uthread_sleep(178);
+  u_thread_sleep(178);
   val = u_profiler_elapsed_usecs(profiler);
   ASSERT(val > prev_val);
   u_profiler_free(profiler);

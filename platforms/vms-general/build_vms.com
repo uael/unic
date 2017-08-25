@@ -25,7 +25,7 @@ $!    DEBUG         Build in debug mode.
 $!    CLEAN         Only perform clean after the previous build.
 $!    TESTS=(x)     Build library tests. Comma separated test names or leave
 $!                  empty to build all the tests.
-$!                  Example 1 (curtain tests): TESTS=(pmem,puthread)
+$!                  Example 1 (curtain tests): TESTS=(pmem,pthread)
 $!                  Example 2 (all tests): TESTS
 $!    RUN_TESTS     Runs all tests.
 $!    BOOST_ROOT=x  Boost root directory.
@@ -405,7 +405,7 @@ $ unic_src = unic_src + " list.c main.c mem.c mutex-posix.c process.c rwlock-pos
 $ unic_src = unic_src + " sema-posix.c shm-posix.c shmbuf.c socket.c"
 $ unic_src = unic_src + " socketaddr.c spinlock-decc.c string.c sysclose-unix.c"
 $ unic_src = unic_src + " profiler-posix.c profiler.c tree-avl.c tree-bst.c"
-$ unic_src = unic_src + " tree-rb.c tree.c uthread-posix.c uthread.c"
+$ unic_src = unic_src + " tree-rb.c tree.c thread-posix.c thread.c"
 $!
 $! Inform about building
 $! ---------------------
@@ -465,7 +465,7 @@ $ test_list_full = "atomic condvar hash dir"
 $ test_list_full = test_list_full + " err file htable inifile dl list"
 $ test_list_full = test_list_full + " macros main mem mutex process rwlock sema"
 $ test_list_full = test_list_full + " shm shmbuf socket socketaddr spinlock string"
-$ test_list_full = test_list_full + " profiler tree types uthread"
+$ test_list_full = test_list_full + " profiler tree types thread"
 $!
 $ if is_tests .eqs. "0"
 $ then

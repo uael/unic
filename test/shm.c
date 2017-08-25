@@ -36,25 +36,25 @@ shm_test_thread(void *arg) {
   shm_t *shm;
 
   if (arg == NULL) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
   shm = (shm_t *) arg;
   rand_num = rand() % 127;
   shm_size = u_shm_get_size(shm);
   addr = u_shm_get_address(shm);
   if (shm_size == 0 || addr == NULL) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
   if (!u_shm_lock(shm, NULL)) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
   for (i = 0; i < shm_size; ++i) {
     *(((byte_t *) addr) + i) = (byte_t) rand_num;
   }
   if (!u_shm_unlock(shm, NULL)) {
-    u_uthread_exit(1);
+    u_thread_exit(1);
   }
-  u_uthread_exit(0);
+  u_thread_exit(0);
   return NULL;
 }
 
@@ -210,7 +210,7 @@ CUTEST(shm, general) {
 
 CUTEST(shm, thread) {
   shm_t *shm;
-  uthread_t *thr1, *thr2, *thr3;
+  thread_t *thr1, *thr2, *thr3;
   ptr_t addr;
   int i, val;
   bool test_ok;
@@ -239,15 +239,15 @@ CUTEST(shm, thread) {
   ASSERT(u_shm_get_size(shm) == 1024 * 1024);
   addr = u_shm_get_address(shm);
   ASSERT(addr != NULL);
-  thr1 = u_uthread_create((uthread_fn_t) shm_test_thread, (ptr_t) shm, true);
+  thr1 = u_thread_create((thread_fn_t) shm_test_thread, (ptr_t) shm, true);
   ASSERT(thr1 != NULL);
-  thr2 = u_uthread_create((uthread_fn_t) shm_test_thread, (ptr_t) shm, true);
+  thr2 = u_thread_create((thread_fn_t) shm_test_thread, (ptr_t) shm, true);
   ASSERT(thr2 != NULL);
-  thr3 = u_uthread_create((uthread_fn_t) shm_test_thread, (ptr_t) shm, true);
+  thr3 = u_thread_create((thread_fn_t) shm_test_thread, (ptr_t) shm, true);
   ASSERT(thr3 != NULL);
-  ASSERT(u_uthread_join(thr1) == 0);
-  ASSERT(u_uthread_join(thr2) == 0);
-  ASSERT(u_uthread_join(thr3) == 0);
+  ASSERT(u_thread_join(thr1) == 0);
+  ASSERT(u_thread_join(thr2) == 0);
+  ASSERT(u_thread_join(thr3) == 0);
   test_ok = true;
   val = *((byte_t *) addr);
   for (i = 1; i < 1024 * 1024; ++i) {
@@ -257,9 +257,9 @@ CUTEST(shm, thread) {
     }
   }
   ASSERT(test_ok == true);
-  u_uthread_unref(thr1);
-  u_uthread_unref(thr2);
-  u_uthread_unref(thr3);
+  u_thread_unref(thr1);
+  u_thread_unref(thr2);
+  u_thread_unref(thr3);
   u_shm_free(shm);
   return CUTE_SUCCESS;
 }
