@@ -73,8 +73,8 @@
  * u_thread_replace_local(). The only difference is that the former one calls
  * the provided destroy notification function before replacing the old value.
  */
-#ifndef U_thread_H__
-# define U_thread_H__
+#ifndef U_THREAD_H__
+# define U_THREAD_H__
 
 #include "unic/macros.h"
 #include "unic/types.h"
@@ -92,28 +92,28 @@ typedef struct thread_key thread_key_t;
 enum thread_prio {
 
   /*!@brief Inherits the caller thread priority. Default priority. */
-  U_thread_PRIORITY_INHERIT = 0,
+  U_THREAD_PRIORITY_INHERIT = 0,
 
   /*!@brief Scheduled only when no other threads are running. */
-  U_thread_PRIORITY_IDLE = 1,
+  U_THREAD_PRIORITY_IDLE = 1,
 
-  /*!@brief Scheduled less often than #U_thread_PRIORITY_LOW. */
-  U_thread_PRIORITY_LOWEST = 2,
+  /*!@brief Scheduled less often than #U_THREAD_PRIORITY_LOW. */
+  U_THREAD_PRIORITY_LOWEST = 2,
 
-  /*!@brief Scheduled less often than #U_thread_PRIORITY_NORMAL. */
-  U_thread_PRIORITY_LOW = 3,
+  /*!@brief Scheduled less often than #U_THREAD_PRIORITY_NORMAL. */
+  U_THREAD_PRIORITY_LOW = 3,
 
   /*!@brief Operating system's default priority. */
-  U_thread_PRIORITY_NORMAL = 4,
+  U_THREAD_PRIORITY_NORMAL = 4,
 
-  /*!@brief Scheduled more often than #U_thread_PRIORITY_NORMAL. */
-  U_thread_PRIORITY_HIGH = 5,
+  /*!@brief Scheduled more often than #U_THREAD_PRIORITY_NORMAL. */
+  U_THREAD_PRIORITY_HIGH = 5,
 
-  /*!@brief Scheduled more often than #U_thread_PRIORITY_HIGH. */
-  U_thread_PRIORITY_HIGHEST = 6,
+  /*!@brief Scheduled more often than #U_THREAD_PRIORITY_HIGH. */
+  U_THREAD_PRIORITY_HIGHEST = 6,
 
   /*!@brief Scheduled as often as possible. */
-  U_thread_PRIORITY_TIMECRITICAL = 7
+  U_THREAD_PRIORITY_TIMECRITICAL = 7
 };
 
 typedef enum thread_prio thread_prio_t;
@@ -292,4 +292,4 @@ u_thread_set_local(thread_key_t *key, ptr_t value);
 U_API void
 u_thread_replace_local(thread_key_t *key, ptr_t value);
 
-#endif /* !U_thread_H__ */
+#endif /* !U_THREAD_H__ */

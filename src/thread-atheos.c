@@ -45,7 +45,7 @@ pp_thread_get_tls_key(thread_key_t *key);
 static int
 pp_thread_get_atheos_priority(thread_prio_t prio) {
   switch (prio) {
-    case U_thread_PRIORITY_INHERIT: {
+    case U_THREAD_PRIORITY_INHERIT: {
       thread_info thr_info;
       memset(&thr_info, 0, sizeof(thr_info));
       if (U_UNLIKELY (get_thread_info(get_thread_id(NULL), &thr_info) != 0)) {
@@ -56,19 +56,19 @@ pp_thread_get_atheos_priority(thread_prio_t prio) {
         return thr_info.ti_priority;
       }
     }
-    case U_thread_PRIORITY_IDLE:
+    case U_THREAD_PRIORITY_IDLE:
       return IDLE_PRIORITY;
-    case U_thread_PRIORITY_LOWEST:
+    case U_THREAD_PRIORITY_LOWEST:
       return LOW_PRIORITY / 2;
-    case U_thread_PRIORITY_LOW:
+    case U_THREAD_PRIORITY_LOW:
       return LOW_PRIORITY;
-    case U_thread_PRIORITY_NORMAL:
+    case U_THREAD_PRIORITY_NORMAL:
       return NORMAL_PRIORITY;
-    case U_thread_PRIORITY_HIGH:
+    case U_THREAD_PRIORITY_HIGH:
       return DISPLAY_PRIORITY;
-    case U_thread_PRIORITY_HIGHEST:
+    case U_THREAD_PRIORITY_HIGHEST:
       return URGENT_DISPLAY_PRIORITY;
-    case U_thread_PRIORITY_TIMECRITICAL:
+    case U_THREAD_PRIORITY_TIMECRITICAL:
       return REALTIME_PRIORITY;
   }
 }

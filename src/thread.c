@@ -200,7 +200,7 @@ u_thread_create(thread_fn_t func,
   bool joinable) {
   /* All checks will be inside */
   return u_thread_create_full(
-    func, data, joinable, U_thread_PRIORITY_INHERIT,
+    func, data, joinable, U_THREAD_PRIORITY_INHERIT,
     0
   );
 }

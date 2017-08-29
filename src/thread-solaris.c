@@ -60,8 +60,8 @@ pp_thread_get_tls_key(thread_key_t *key);
 static int
 pp_thread_get_unix_priority(thread_prio_t prio) {
   int lowBound, upperBound;
-  lowBound = (int) U_thread_PRIORITY_IDLE;
-  upperBound = (int) U_thread_PRIORITY_TIMECRITICAL;
+  lowBound = (int) U_THREAD_PRIORITY_IDLE;
+  upperBound = (int) U_THREAD_PRIORITY_TIMECRITICAL;
   return ((int) prio - lowBound) *
     (UNIC_THREAD_MAX_PRIO - UNIC_THREAD_MIN_PRIO) / upperBound +
     UNIC_THREAD_MIN_PRIO;

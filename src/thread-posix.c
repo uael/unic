@@ -89,17 +89,17 @@ pp_thread_get_unix_priority(thread_prio_t prio, int *sched_policy,
   int native_prio;
 
 #ifdef SCHED_IDLE
-  if (prio == U_thread_PRIORITY_IDLE) {
+  if (prio == U_THREAD_PRIORITY_IDLE) {
     *sched_policy = SCHED_IDLE;
     *sched_priority = 0;
     return true;
   }
 
-  lowBound = (int) U_thread_PRIORITY_LOWEST;
+  lowBound = (int) U_THREAD_PRIORITY_LOWEST;
 #else
-  lowBound = (int) U_thread_PRIORITY_IDLE;
+  lowBound = (int) U_THREAD_PRIORITY_IDLE;
 #endif
-  upperBound = (int) U_thread_PRIORITY_TIMECRITICAL;
+  upperBound = (int) U_THREAD_PRIORITY_TIMECRITICAL;
 
   prio_min = sched_get_priority_min(*sched_policy);
   prio_max = sched_get_priority_max(*sched_policy);
@@ -233,7 +233,7 @@ u_thread_create_internal(thread_fn_t func,
     return NULL;
   }
 #ifdef UNIC_HAS_POSIX_SCHEDULING
-  if (prio == U_thread_PRIORITY_INHERIT) {
+  if (prio == U_THREAD_PRIORITY_INHERIT) {
     if (U_UNLIKELY (
       pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED) != 0))
       U_WARNING (

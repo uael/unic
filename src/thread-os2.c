@@ -72,7 +72,7 @@ static void
 pp_thread_get_os2_priority(thread_prio_t prio, PULONG thr_class,
   PLONG thr_level) {
   switch (prio) {
-    case U_thread_PRIORITY_INHERIT: {
+    case U_THREAD_PRIORITY_INHERIT: {
       APIRET ulrc;
       PTIB ptib = NULL;
       if (U_UNLIKELY (DosGetInfoBlocks(&ptib, NULL) != NO_ERROR)) {
@@ -86,37 +86,37 @@ pp_thread_get_os2_priority(thread_prio_t prio, PULONG thr_class,
       }
       return;
     }
-    case U_thread_PRIORITY_IDLE: {
+    case U_THREAD_PRIORITY_IDLE: {
       *thr_class = PRTYC_IDLETIME;
       *thr_level = 0;
       return;
     }
-    case U_thread_PRIORITY_LOWEST: {
+    case U_THREAD_PRIORITY_LOWEST: {
       *thr_class = PRTYC_REGULAR;
       *thr_level = PRTYD_MINIMUM;
       return;
     }
-    case U_thread_PRIORITY_LOW: {
+    case U_THREAD_PRIORITY_LOW: {
       *thr_class = PRTYC_REGULAR;
       *thr_level = PRTYD_MINIMUM / 2;
       return;
     }
-    case U_thread_PRIORITY_NORMAL: {
+    case U_THREAD_PRIORITY_NORMAL: {
       *thr_class = PRTYC_REGULAR;
       *thr_level = 0;
       return;
     }
-    case U_thread_PRIORITY_HIGH: {
+    case U_THREAD_PRIORITY_HIGH: {
       *thr_class = PRTYC_REGULAR;
       *thr_level = PRTYD_MAXIMUM / 2;
       return;
     }
-    case U_thread_PRIORITY_HIGHEST: {
+    case U_THREAD_PRIORITY_HIGHEST: {
       *thr_class = PRTYC_REGULAR;
       *thr_level = PRTYD_MAXIMUM;
       return;
     }
-    case U_thread_PRIORITY_TIMECRITICAL: {
+    case U_THREAD_PRIORITY_TIMECRITICAL: {
       *thr_class = PRTYC_TIMECRITICAL;
       *thr_level = 0;
       return;
@@ -259,7 +259,7 @@ u_thread_create_internal(thread_fn_t func,
     u_free(ret);
     return NULL;
   }
-  ret->base.prio = U_thread_PRIORITY_INHERIT;
+  ret->base.prio = U_THREAD_PRIORITY_INHERIT;
   u_thread_set_priority(ret, prio);
   return ret;
 }

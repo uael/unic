@@ -225,28 +225,28 @@ u_thread_set_priority(thread_t *thread,
     return false;
   }
   switch (prio) {
-    case U_thread_PRIORITY_IDLE:
+    case U_THREAD_PRIORITY_IDLE:
       native_prio = THREAD_PRIORITY_IDLE;
       break;
-    case U_thread_PRIORITY_LOWEST:
+    case U_THREAD_PRIORITY_LOWEST:
       native_prio = THREAD_PRIORITY_LOWEST;
       break;
-    case U_thread_PRIORITY_LOW:
+    case U_THREAD_PRIORITY_LOW:
       native_prio = THREAD_PRIORITY_BELOW_NORMAL;
       break;
-    case U_thread_PRIORITY_NORMAL:
+    case U_THREAD_PRIORITY_NORMAL:
       native_prio = THREAD_PRIORITY_NORMAL;
       break;
-    case U_thread_PRIORITY_HIGH:
+    case U_THREAD_PRIORITY_HIGH:
       native_prio = THREAD_PRIORITY_ABOVE_NORMAL;
       break;
-    case U_thread_PRIORITY_HIGHEST:
+    case U_THREAD_PRIORITY_HIGHEST:
       native_prio = THREAD_PRIORITY_HIGHEST;
       break;
-    case U_thread_PRIORITY_TIMECRITICAL:
+    case U_THREAD_PRIORITY_TIMECRITICAL:
       native_prio = THREAD_PRIORITY_TIME_CRITICAL;
       break;
-    case U_thread_PRIORITY_INHERIT:
+    case U_THREAD_PRIORITY_INHERIT:
     default:
       native_prio = GetThreadPriority(GetCurrentThread());
       break;

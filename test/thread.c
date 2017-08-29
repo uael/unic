@@ -182,7 +182,7 @@ CUTEST(thread, nomem) {
   ASSERT(u_thread_create_full((thread_fn_t) test_thread_func,
     (ptr_t) &thread_wakes_2,
     true,
-    U_thread_PRIORITY_NORMAL,
+    U_THREAD_PRIORITY_NORMAL,
     0
   ) == NULL);
   ASSERT(u_thread_current() == NULL);
@@ -207,10 +207,10 @@ CUTEST(thread, nomem) {
 
 CUTEST(thread, bad_input) {
   ASSERT(u_thread_create(NULL, NULL, false) == NULL);
-  ASSERT(u_thread_create_full(NULL, NULL, false, U_thread_PRIORITY_NORMAL, 0)
+  ASSERT(u_thread_create_full(NULL, NULL, false, U_THREAD_PRIORITY_NORMAL, 0)
     == NULL);
   ASSERT(u_thread_join(NULL) == -1);
-  ASSERT(u_thread_set_priority(NULL, U_thread_PRIORITY_NORMAL) == false);
+  ASSERT(u_thread_set_priority(NULL, U_THREAD_PRIORITY_NORMAL) == false);
   ASSERT(u_thread_get_local(NULL) == NULL);
   u_thread_set_local(NULL, NULL);
   u_thread_replace_local(NULL, NULL);
@@ -242,11 +242,11 @@ CUTEST(thread, general) {
   thr2 = u_thread_create_full((thread_fn_t) test_thread_func,
     (ptr_t) &thread_wakes_2,
     true,
-    U_thread_PRIORITY_NORMAL,
+    U_THREAD_PRIORITY_NORMAL,
     64 * 1024
   );
   u_thread_ref(thr1);
-  u_thread_set_priority(thr1, U_thread_PRIORITY_NORMAL);
+  u_thread_set_priority(thr1, U_THREAD_PRIORITY_NORMAL);
   ASSERT(thr1 != NULL);
   ASSERT(thr2 != NULL);
   u_thread_sleep(5);

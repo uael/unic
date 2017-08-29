@@ -66,7 +66,7 @@ pp_thread_beos_proxy(ptr_t data);
 static int
 pp_thread_get_beos_priority(thread_prio_t prio) {
   switch (prio) {
-    case U_thread_PRIORITY_INHERIT: {
+    case U_THREAD_PRIORITY_INHERIT: {
       thread_info thr_info;
       memset(&thr_info, 0, sizeof(thr_info));
       if (U_UNLIKELY (get_thread_info(find_thread(NULL), &thr_info) != B_OK)) {
@@ -77,19 +77,19 @@ pp_thread_get_beos_priority(thread_prio_t prio) {
         return thr_info.priority;
       }
     }
-    case U_thread_PRIORITY_IDLE:
+    case U_THREAD_PRIORITY_IDLE:
       return B_LOW_PRIORITY;
-    case U_thread_PRIORITY_LOWEST:
+    case U_THREAD_PRIORITY_LOWEST:
       return B_NORMAL_PRIORITY / 4;
-    case U_thread_PRIORITY_LOW:
+    case U_THREAD_PRIORITY_LOW:
       return B_NORMAL_PRIORITY / 2;
-    case U_thread_PRIORITY_NORMAL:
+    case U_THREAD_PRIORITY_NORMAL:
       return B_NORMAL_PRIORITY;
-    case U_thread_PRIORITY_HIGH:
+    case U_THREAD_PRIORITY_HIGH:
       return B_DISPLAY_PRIORITY;
-    case U_thread_PRIORITY_HIGHEST:
+    case U_THREAD_PRIORITY_HIGHEST:
       return B_URGENT_DISPLAY_PRIORITY;
-    case U_thread_PRIORITY_TIMECRITICAL:
+    case U_THREAD_PRIORITY_TIMECRITICAL:
       return B_REAL_TIME_PRIORITY;
   }
 }
